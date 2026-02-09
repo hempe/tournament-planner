@@ -23,37 +23,25 @@ class InputAction extends \Component
         public readonly array $hiddenInputs = [],
         public readonly bool $title_inline = false,
         public readonly Color $color = Color::Primary,
-    ) {}
+    ) {
+    }
 
     protected function template(): void
     {
         $warn = $this->color == Color::Accent ? 'true' : 'false';
-?>
-        <fieldset
-            class="input-action"
-            data-action="<?= htmlspecialchars($this->actionUrl, ENT_QUOTES, 'UTF-8') ?>"
+        ?>
+        <fieldset class="input-action" data-action="<?= htmlspecialchars($this->actionUrl, ENT_QUOTES, 'UTF-8') ?>"
             data-confirm="<?= htmlspecialchars($this->confirmMessage, ENT_QUOTES, 'UTF-8') ?>">
             <?php foreach ($this->hiddenInputs as $name => $value): ?>
-                <input
-                    type="hidden"
-                    name="<?= htmlspecialchars($name) ?>"
-                    value="<?= htmlspecialchars($value) ?>">
+                <input type="hidden" name="<?= htmlspecialchars($name) ?>" value="<?= htmlspecialchars($value) ?>">
             <?php endforeach; ?>
 
             <?php if ($this->type == 'textarea'): ?>
-                <textarea
-                    style="display: flex; flex-grow: 1;"
-                    name="<?= $this->inputName ?>"
-                    class="input"
+                <textarea style="display: flex; flex-grow: 1;" name="<?= $this->inputName ?>" class="input"
                     placeholder="<?= $this->inputPlaceholder ?>"><?= $this->inputValue ?></textarea>
             <?php else: ?>
-                <input
-                    style="display: flex; flex-grow: 1;"
-                    type="<?= $this->type ?>"
-                    value="<?= $this->inputValue ?>"
-                    name="<?= $this->inputName ?>"
-                    class="input"
-                    placeholder="<?= $this->inputPlaceholder ?>" />
+                <input style="display: flex; flex-grow: 1;" type="<?= $this->type ?>" value="<?= $this->inputValue ?>"
+                    name="<?= $this->inputName ?>" class="input" placeholder="<?= $this->inputPlaceholder ?>" />
             <?php endif; ?>
 
             <?= new IconButton(
@@ -66,5 +54,5 @@ class InputAction extends \Component
                 required: true,
             ) ?>
         </fieldset>
-<?php }
+    <?php }
 }

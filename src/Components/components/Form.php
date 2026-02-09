@@ -20,7 +20,7 @@ class Form extends \Component
     protected function template(): void
     {
         $hiddenFields = '';
-        
+
         // Automatically add CSRF token for POST requests
         if (strtolower($this->method) === 'post') {
             $hiddenFields .= sprintf(
@@ -28,7 +28,7 @@ class Form extends \Component
                 htmlspecialchars(csrf_token())
             );
         }
-        
+
         foreach ($this->hiddenInputs as $name => $value) {
             $hiddenFields .= sprintf(
                 '<input type="hidden" name="%s" value="%s">',

@@ -1,15 +1,15 @@
 # Component System Documentation
 
-The Golf El Faro application uses a custom component-based architecture for building UI elements. This system provides reusable, composable components with strong typing and consistent rendering patterns.
+The Golf El Faro application uses a custom component-based architecture for building UI elements. This system provides reusable, composable Components with strong typing and consistent rendering patterns.
 
 ## Core Concepts
 
 ### Component Base Class
 
-All components extend the abstract `Component` class located in `src/core/Component.php`. This base class provides:
+All Components extend the abstract `Component` class located in `src/Core/Component.php`. This base class provides:
 
 - **Output buffering**: Automatic capture of rendered content
-- **Nested rendering**: Support for components within components
+- **Nested rendering**: Support for Components within Components
 - **Type-safe rendering**: Strong typing for all component properties
 
 ```php
@@ -50,7 +50,7 @@ final class MyComponent extends Component
 ### Layout Components
 
 #### Page
-**File**: `src/components/Page.php`
+**File**: `src/Components/Page.php`
 **Purpose**: Main page wrapper with navigation and structure
 
 ```php
@@ -75,7 +75,7 @@ echo new Page(
 ```
 
 #### Card
-**File**: `src/components/Card.php`
+**File**: `src/Components/Card.php`
 **Purpose**: Content container with consistent styling
 
 ```php
@@ -87,7 +87,7 @@ new Card(
 ```
 
 #### Div
-**File**: `src/components/Div.php`
+**File**: `src/Components/Div.php`
 **Purpose**: Generic container with flexible content
 
 ```php
@@ -101,7 +101,7 @@ new Div(
 ### Form Components
 
 #### Form
-**File**: `src/components/Form.php`
+**File**: `src/Components/Form.php`
 **Purpose**: Form wrapper with action and method handling
 
 ```php
@@ -120,7 +120,7 @@ new Form(
 - Accessible form structure
 
 #### Input
-**File**: `src/components/Input.php`
+**File**: `src/Components/Input.php`
 **Purpose**: Text input field with validation support
 
 ```php
@@ -139,7 +139,7 @@ new Input(
 - `text`, `email`, `password`, `number`, `date`, `tel`, `url`
 
 #### InputAction
-**File**: `src/components/InputAction.php`
+**File**: `src/Components/InputAction.php`
 **Purpose**: Input field with associated action button
 
 ```php
@@ -156,7 +156,7 @@ new InputAction(
 ### Button Components
 
 #### IconButton
-**File**: `src/components/IconButton.php`
+**File**: `src/Components/IconButton.php`
 **Purpose**: Button with icon and text
 
 ```php
@@ -170,7 +170,7 @@ new IconButton(
 ```
 
 #### IconActionButton
-**File**: `src/components/IconActionButton.php`
+**File**: `src/Components/IconActionButton.php`
 **Purpose**: Button that submits to a specific action
 
 ```php
@@ -187,7 +187,7 @@ new IconActionButton(
 ### Data Display Components
 
 #### Table
-**File**: `src/components/Table.php`
+**File**: `src/Components/Table.php`
 **Purpose**: Data table with headers and rows
 
 ```php
@@ -199,7 +199,7 @@ new Table(
 ```
 
 #### TableRow
-**File**: `src/components/TableRow.php`
+**File**: `src/Components/TableRow.php`
 **Purpose**: Table row with cells
 
 ```php
@@ -210,7 +210,7 @@ new TableRow(
 ```
 
 #### TableCell
-**File**: `src/components/TableCell.php`
+**File**: `src/Components/TableCell.php`
 **Purpose**: Individual table cell
 
 ```php
@@ -222,7 +222,7 @@ new TableCell(
 ```
 
 #### TableHead
-**File**: `src/components/TableHead.php`
+**File**: `src/Components/TableHead.php`
 **Purpose**: Table header cell
 
 ```php
@@ -235,7 +235,7 @@ new TableHead(
 ### Specialized Components
 
 #### Calendar
-**File**: `src/components/Calendar.php`
+**File**: `src/Components/Calendar.php`
 **Purpose**: Monthly calendar view with events
 
 ```php
@@ -258,7 +258,7 @@ new Calendar(
 ```
 
 #### CalendarEvent
-**File**: `src/components/CalendarEvent.php`
+**File**: `src/Components/CalendarEvent.php`
 **Purpose**: Individual event display in calendar
 
 ```php
@@ -269,7 +269,7 @@ new CalendarEvent(
 ```
 
 #### EventRegistrations
-**File**: `src/components/EventRegistrations.php`
+**File**: `src/Components/EventRegistrations.php`
 **Purpose**: Event registration management interface
 
 ```php
@@ -285,7 +285,7 @@ new EventRegistrations(
 ### UI Elements
 
 #### Icon
-**File**: `src/components/Icon.php`
+**File**: `src/Components/Icon.php`
 **Purpose**: SVG icon display
 
 ```php
@@ -300,7 +300,7 @@ new Icon(
 - `chevron-left`, `chevron-right`, `check`, `x`, `logout`
 
 #### Link
-**File**: `src/components/Link.php`
+**File**: `src/Components/Link.php`
 **Purpose**: Navigation link
 
 ```php
@@ -315,7 +315,7 @@ new Link(
 ## Security Features
 
 ### XSS Protection
-All components automatically escape output using the security helper functions:
+All Components automatically escape output using the security helper functions:
 
 ```php
 // Escape HTML content
@@ -401,7 +401,7 @@ public function testCardComponent(): void
 ```
 
 ### Integration Testing
-Test components in context with actual data:
+Test Components in context with actual data:
 
 ```php
 public function testEventTable(): void
@@ -432,7 +432,7 @@ private function getExpensiveData(): array
 ```
 
 ### Caching
-For frequently used components, implement caching:
+For frequently used Components, implement caching:
 
 ```php
 private function getCachedContent(): string

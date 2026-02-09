@@ -66,8 +66,8 @@ final class UserController
 
     public function delete(Request $request, array $params): Response
     {
-        $userId = (int)$params['id'];
-        
+        $userId = (int) $params['id'];
+
         try {
             DB::$users->delete($userId);
             flash('success', __('users.delete_success'));
@@ -80,9 +80,9 @@ final class UserController
 
     public function toggleAdmin(Request $request, array $params): Response
     {
-        $userId = (int)$params['id'];
+        $userId = (int) $params['id'];
         $isAdmin = $request->getBool('admin');
-        
+
         try {
             DB::$users->setAdmin($userId, $isAdmin);
             flash('success', __('users.admin_update_success'));
@@ -95,8 +95,8 @@ final class UserController
 
     public function changePassword(Request $request, array $params): Response
     {
-        $userId = (int)$params['id'];
-        
+        $userId = (int) $params['id'];
+
         $validation = $request->validate([
             new ValidationRule('password', ['required', 'string', 'min' => 6]),
         ]);

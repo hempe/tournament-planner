@@ -29,7 +29,7 @@ final class Request
         $post = $_POST ?? [];
         $server = $_SERVER ?? [];
         $files = $_FILES ?? [];
-        
+
         // Extract headers from server variables
         $headers = [];
         foreach ($server as $key => $value) {
@@ -38,7 +38,7 @@ final class Request
                 $headers[strtolower($headerName)] = $value;
             }
         }
-        
+
         return new Request($method, $uri, $query, $post, $server, $headers, $files);
     }
 
@@ -86,17 +86,18 @@ final class Request
     public function getInt(string $key, int $default = 0): int
     {
         $value = $this->get($key, $default);
-        return is_numeric($value) ? (int)$value : $default;
+        return is_numeric($value) ? (int) $value : $default;
     }
 
     public function getBool(string $key, bool $default = false): bool
     {
         $value = $this->get($key, $default);
-        if (is_bool($value)) return $value;
+        if (is_bool($value))
+            return $value;
         if (is_string($value)) {
             return in_array(strtolower($value), ['1', 'true', 'on', 'yes'], true);
         }
-        return (bool)$value;
+        return (bool) $value;
     }
 
     public function getArray(string $key, array $default = []): array
@@ -137,8 +138,8 @@ final class Request
 
     public function isSecure(): bool
     {
-        return $this->server['HTTPS'] ?? false || 
-               $this->server['HTTP_X_FORWARDED_PROTO'] ?? '' === 'https';
+        return $this->server['HTTPS'] ?? false ||
+            $this->server['HTTP_X_FORWARDED_PROTO'] ?? '' === 'https';
     }
 
     public function getUserAgent(): string
@@ -148,23 +149,23 @@ final class Request
 
     public function getIp(): string
     {
-        return $this->server['HTTP_X_FORWARDED_FOR'] ?? 
-               $this->server['HTTP_X_REAL_IP'] ?? 
-               $this->server['REMOTE_ADDR'] ?? '';
+        return $this->server['HTTP_X_FORWARDED_FOR'] ??
+            $this->server['HTTP_X_REAL_IP'] ??
+            $this->server['REMOTE_ADDR'] ?? '';
     }
 
     public function validate(array $rules): ValidationResult
     {
         $validator = new Validator();
         $result = $validator->validate($this->getAllInput(), $rules);
-        
+
         if ($result->isValid) {
             $this->validatedData = array_intersect_key(
                 $this->getAllInput(),
                 array_flip(array_map(fn($rule) => $rule->field, $rules))
             );
         }
-        
+
         return $result;
     }
 
@@ -184,17 +185,17 @@ final class Request
     private function sanitizeArray(array $data): array
     {
         $sanitized = [];
-        
+
         foreach ($data as $key => $value) {
             $sanitizedKey = $this->sanitizeString($key);
-            
+
             if (is_array($value)) {
                 $sanitized[$sanitizedKey] = $this->sanitizeArray($value);
             } else {
-                $sanitized[$sanitizedKey] = $this->sanitizeString((string)$value);
+                $sanitized[$sanitizedKey] = $this->sanitizeString((string) $value);
             }
         }
-        
+
         return $sanitized;
     }
 
@@ -203,7 +204,7 @@ final class Request
         // Remove null bytes and normalize line endings
         $value = str_replace("\0", '', $value);
         $value = str_replace(["\r\n", "\r"], "\n", $value);
-        
+
         // Trim whitespace
         return trim($value);
     }

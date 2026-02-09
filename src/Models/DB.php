@@ -25,26 +25,26 @@ final class DB
     private static function createConnection(): mysqli
     {
         $config = Config::getInstance();
-        
-        $host = (string)$config->get('database.host', 'localhost');
-        $port = (int)$config->get('database.port', 3306);
-        $username = (string)$config->get('database.username', 'root');
-        $password = (string)$config->get('database.password', '');
-        $database = (string)$config->get('database.name', 'TPDb');
-        $charset = (string)$config->get('database.charset', 'utf8mb4');
+
+        $host = (string) $config->get('database.host', 'localhost');
+        $port = (int) $config->get('database.port', 3306);
+        $username = (string) $config->get('database.username', 'root');
+        $password = (string) $config->get('database.password', '');
+        $database = (string) $config->get('database.name', 'TPDb');
+        $charset = (string) $config->get('database.charset', 'utf8mb4');
 
         try {
             $conn = new mysqli($host, $username, $password, $database, $port);
-            
+
             if ($conn->connect_error) {
                 throw new Exception("Database connection failed: " . $conn->connect_error);
             }
         } catch (mysqli_sql_exception $e) {
             throw new Exception("Database connection failed: " . $e->getMessage());
         }
-        
+
         $conn->set_charset($charset);
-        
+
         return $conn;
     }
 

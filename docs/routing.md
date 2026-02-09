@@ -4,7 +4,7 @@ The Golf El Faro application features a modern, strongly-typed routing system wi
 
 ## Architecture Overview
 
-The routing system consists of several key components:
+The routing system consists of several key Components:
 
 - **Router**: Main routing engine that matches requests to handlers
 - **Route**: Individual route definition with pattern, handler, and middleware
@@ -16,7 +16,7 @@ The routing system consists of several key components:
 
 ### Router Class
 
-**File**: `src/core/RouterNew.php`
+**File**: `src/Core/RouterNew.php`
 
 The `Router` class is the main routing engine that handles request matching and response generation.
 
@@ -206,7 +206,7 @@ $router->group(
 
 ### Request Object
 
-**File**: `src/core/Request.php`
+**File**: `src/Core/Request.php`
 
 The `Request` class provides strongly-typed access to HTTP request data:
 
@@ -266,7 +266,7 @@ $router->post('/events/{id}/register', function(Request $request, array $params)
 
 ### Response Object
 
-**File**: `src/core/Response.php`
+**File**: `src/Core/Response.php`
 
 The `Response` class provides strongly-typed HTTP responses:
 

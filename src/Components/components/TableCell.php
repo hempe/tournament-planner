@@ -20,13 +20,11 @@ class TableCell extends \Component
 
     protected function template(): void
     { ?>
-        <div
-            style="display: table-cell; <?= $this->width ? 'width:' . $this->width . 'px' : '' ?>"
-            class="table-cell">
+        <div style="display: table-cell; <?= $this->width ? 'width:' . $this->width . 'px' : '' ?>" class="table-cell">
             <?php if ($this->title): ?>
                 <div class='table-cell-title'><?= $this->title ?></div>
             <?php endif; ?>
             <?= $this->content ?>
         </div>
-<?php }
+    <?php }
 }

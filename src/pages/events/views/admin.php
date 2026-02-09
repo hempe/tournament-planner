@@ -68,20 +68,20 @@ use TP\Components\EventRegistrations;
                             confirmMessage: 'Termin definitiv löschen?',
                         ),
                         $event->locked
-                            ? new IconActionButton(
-                                actionUrl: "/events/$id/unlock",
-                                title: 'Entsprrren',
-                                color: Color::Light,
-                                icon: 'fa-lock',
-                                confirmMessage: 'Termin entsperren?',
-                            )
-                            : new IconActionButton(
-                                actionUrl: "/events/$id/lock",
-                                title: 'Sperren',
-                                color: Color::Light,
-                                icon: 'fa-unlock',
-                                confirmMessage: 'Termin sperren?',
-                            )
+                        ? new IconActionButton(
+                            actionUrl: "/events/$id/unlock",
+                            title: 'Entsprrren',
+                            color: Color::Light,
+                            icon: 'fa-lock',
+                            confirmMessage: 'Termin entsperren?',
+                        )
+                        : new IconActionButton(
+                            actionUrl: "/events/$id/lock",
+                            title: 'Sperren',
+                            color: Color::Light,
+                            icon: 'fa-unlock',
+                            confirmMessage: 'Termin sperren?',
+                        )
                     ],
                     widths: [null, null, 1, 1, 1]
                 )
@@ -96,7 +96,7 @@ use TP\Components\EventRegistrations;
         }
 
         if (count($eventRegistrations['2'] ?? [])) {
-            yield  new Card(
+            yield new Card(
                 'Warteliste',
                 new EventRegistrations($eventRegistrations['2'] ?? [], $event)
             );

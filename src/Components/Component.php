@@ -31,8 +31,8 @@ abstract class Component
 
         return match (true) {
             is_callable($content) => $this->captureOutputFromCallback($content),
-            $content instanceof Component => (string)$content,
-            default => (string)$content
+            $content instanceof Component => (string) $content,
+            default => (string) $content
         };
     }
 
@@ -50,7 +50,7 @@ abstract class Component
             return $output;
         }
 
-        return ob_get_clean() . (string)$result;
+        return ob_get_clean() . (string) $result;
     }
 
     protected function escapeHtml(string $value): string

@@ -54,5 +54,5 @@ class Table extends \Component
                 <?= $row ?>
             <?php endforeach; ?>
         </div>
-<?php }
+    <?php }
 }

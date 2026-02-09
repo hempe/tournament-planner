@@ -67,8 +67,8 @@ That's it! No package managers, no dependency downloads, no complex build proces
 ```
 tournament-planner/
 ├── src/                          # Application source (pure PHP)
-│   ├── Core/                     # Framework core classes
-│   ├── Components/               # UI components  
+│   ├── Core/                     # Framework Core classes
+│   ├── Components/               # UI Components  
 │   ├── Models/                   # Data models
 │   └── helpers.php               # Global functions
 ├── resources/lang/               # Translation files
@@ -140,7 +140,7 @@ $router->post('/events', [EventController::class, 'store'], [new AuthMiddleware(
 
 ### Component System
 ```php
-// Reusable UI components
+// Reusable UI Components
 echo new Card(
     title: __('events.title'),
     content: new Table($headers, $rows)
@@ -172,7 +172,7 @@ find src/ -name "*.php" -exec php -l {} \;
 
 ## 📖 Documentation
 
-- **[Components](docs/components.md)**: Component system guide
+- **[Components](docs/Components.md)**: Component system guide
 - **[Routing](docs/routing.md)**: Routing and middleware
 - **[Deployment](docs/deployment.md)**: Production deployment  
 - **[Migration](MIGRATION.md)**: Upgrade from legacy version
@@ -290,7 +290,7 @@ session.gc_maxlifetime=3600
 ## 🛠️ Extending the App
 
 ### Adding New Features
-All core systems are extensible:
+All Core systems are extensible:
 
 ```php
 // Add new validation rule
@@ -328,7 +328,7 @@ return [
 | vendor/ directory (100+ MB) | Pure source code (~2 MB) |
 | Package updates & conflicts | Stable, no external changes |
 | Complex dependency tree | Simple, predictable structure |
-| Security patches for packages | Only PHP core security updates |
+| Security patches for packages | Only PHP Core security updates |
 
 ## 🤝 Contributing
 

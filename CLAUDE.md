@@ -25,10 +25,10 @@ This is a PHP web application for golf event management with a custom MVC-like a
 
 ### Core Architecture
 
-- **Entry Point**: `index.php` - Sets up session, loads core components, and routes requests
-- **Routing System**: Custom router in `src/core/Router.php` with declarative route definitions
-- **Component System**: Base component class in `src/core/Component.php` for reusable UI elements
-- **Database Layer**: Repository pattern with `src/core/DB.php` as main database facade
+- **Entry Point**: `index.php` - Sets up session, loads Core Components, and routes requests
+- **Routing System**: Custom router in `src/Core/Router.php` with declarative route definitions
+- **Component System**: Base component class in `src/Core/Component.php` for reusable UI elements
+- **Database Layer**: Repository pattern with `src/Core/DB.php` as main database facade
 
 ### Key Patterns
 
@@ -39,15 +39,15 @@ This is a PHP web application for golf event management with a custom MVC-like a
 - `User::admin()` - Check admin privileges  
 - `User::canEdit($userId)` - Check if user can edit specific user data
 
-**Components**: All UI components extend `Component` base class and implement `template()` method. Components support nested rendering and automatic output buffering.
+**Components**: All UI Components extend `Component` base class and implement `template()` method. Components support nested rendering and automatic output buffering.
 
 **Database**: Repository pattern with static instances accessible via `DB::$events` and `DB::$users`. Database connection configured in `private/credential.dev.php`.
 
 ### Directory Structure
 
-- `src/core/` - Core framework classes (Router, Component, DB, repositories)
+- `src/Core/` - Core framework classes (Router, Component, DB, repositories)
 - `src/pages/` - Feature modules with routes and views
-- `src/components/` - Reusable UI components
+- `src/Components/` - Reusable UI Components
 - `src/layout/` - Header and footer templates
 - `styles/` - CSS files
 - `src/scripts/` - JavaScript files

@@ -19,20 +19,20 @@ This guide explains how to migrate from the legacy Golf El Faro application to t
 
 **Legacy Structure:**
 ```
-src/core/Router.php          → src/Core/RouterNew.php
-src/core/Component.php       → src/Core/Component.php (enhanced)
-src/core/DB.php             → src/Models/DB.php
-src/core/Log.php            → src/Core/Logger.php
+src/Core/Router.php          → src/Core/RouterNew.php
+src/Core/Component.php       → src/Core/Component.php (enhanced)
+src/Core/DB.php             → src/Models/DB.php
+src/Core/Log.php            → src/Core/Logger.php
 src/pages/*/routes.php      → Route definitions in index.php
 ```
 
 **New Structure:**
 ```
 src/
-├── Core/           # Framework core classes
+├── Core/           # Framework Core classes
 ├── Controllers/    # Request handlers
 ├── Models/         # Data models
-├── Components/     # UI components
+├── Components/     # UI Components
 ├── Middleware/     # Request middleware
 └── helpers.php     # Global functions
 ```
@@ -177,7 +177,7 @@ echo "Hello " . e($name);
    # Set APP_ENV=testing in .env.testing
    ```
 
-2. **Test core functionality:**
+2. **Test Core functionality:**
    - User authentication
    - Event creation/editing
    - User registration for events
@@ -281,7 +281,7 @@ If issues arise during migration:
 
 ### Feature Improvements
 - ✅ Multi-language support
-- ✅ Responsive design components
+- ✅ Responsive design Components
 - ✅ Admin interface improvements
 - ✅ Better error messages
 - ✅ Health monitoring endpoints
@@ -289,7 +289,7 @@ If issues arise during migration:
 ## Support During Migration
 
 ### Documentation
-- Component system: `docs/components.md`
+- Component system: `docs/Components.md`
 - Routing system: `docs/routing.md`
 - Deployment guide: `docs/deployment.md`
 

@@ -12,7 +12,8 @@ class TableHead extends \Component
      */
     public function __construct(
         public readonly array $columns
-    ) {}
+    ) {
+    }
 
     protected function template(): void
     { ?>
@@ -23,5 +24,5 @@ class TableHead extends \Component
                 </div>
             <?php endforeach; ?>
         </div>
-<?php }
+    <?php }
 }

@@ -15,7 +15,8 @@ class EventRegistrations extends \Component
     public function __construct(
         public readonly array $eventUsers,
         public readonly Event $event
-    ) {}
+    ) {
+    }
 
     protected function template(): void
     {

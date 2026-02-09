@@ -108,7 +108,7 @@ final class Application
             ]);
 
             $response = $this->router->handle($request);
-            
+
             $this->logger->debug('Sending response', [
                 'status' => $response->getStatus()->value,
                 'is_redirect' => $response->isRedirect(),
@@ -136,10 +136,10 @@ final class Application
             ini_set('session.cookie_secure', $this->config->get('app.secure', false) ? '1' : '0');
             ini_set('session.cookie_samesite', 'Strict');
             ini_set('session.use_strict_mode', '1');
-            ini_set('session.gc_maxlifetime', (string)$this->config->get('security.session_lifetime', 3600));
+            ini_set('session.gc_maxlifetime', (string) $this->config->get('security.session_lifetime', 3600));
 
             session_start();
-            
+
             // Regenerate session ID periodically
             if (!isset($_SESSION['last_regeneration'])) {
                 $_SESSION['last_regeneration'] = time();
@@ -154,7 +154,7 @@ final class Application
     {
         // Add rate limiting for all requests
         $this->router->addGlobalMiddleware(new RateLimitMiddleware(100, 60));
-        
+
         // Add CSRF protection for POST requests
         $this->router->addGlobalMiddleware(new CsrfMiddleware());
     }

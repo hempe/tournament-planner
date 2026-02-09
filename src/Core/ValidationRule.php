@@ -10,5 +10,6 @@ final class ValidationRule
         public readonly string $field,
         public readonly array $rules,
         public readonly string $message = ''
-    ) {}
+    ) {
+    }
 }

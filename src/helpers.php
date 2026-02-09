@@ -124,7 +124,7 @@ if (!function_exists('old')) {
         if (!isset($_SESSION)) {
             return $default;
         }
-        
+
         $oldInput = $_SESSION['old_input'] ?? [];
         return $oldInput[$key] ?? $default;
     }
@@ -139,7 +139,7 @@ if (!function_exists('flash')) {
         if (!isset($_SESSION)) {
             session_start();
         }
-        
+
         $_SESSION['flash_messages'][$key] = $value;
     }
 }
@@ -153,10 +153,10 @@ if (!function_exists('get_flash')) {
         if (!isset($_SESSION)) {
             return $default;
         }
-        
+
         $value = $_SESSION['flash_messages'][$key] ?? $default;
         unset($_SESSION['flash_messages'][$key]);
-        
+
         return $value;
     }
 }
@@ -170,7 +170,7 @@ if (!function_exists('has_flash')) {
         if (!isset($_SESSION)) {
             return false;
         }
-        
+
         return isset($_SESSION['flash_messages'][$key]);
     }
 }
@@ -184,7 +184,7 @@ if (!function_exists('session')) {
         if (!isset($_SESSION)) {
             return $default;
         }
-        
+
         return $_SESSION[$key] ?? $default;
     }
 }

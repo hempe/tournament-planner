@@ -42,7 +42,7 @@ use TP\Components\IconActionButton;
                     confirmMessage: "$user->username " . ($user->isAdmin ? 'Admin rechte entnehmen?' : 'Admin rechte geben?'),
                     hiddenInputs: [
                         'id' => $user->id,
-                        'admin' =>  $user->isAdmin ? 0 : 1,
+                        'admin' => $user->isAdmin ? 0 : 1,
                     ],
                 ),
                 new IconActionButton(

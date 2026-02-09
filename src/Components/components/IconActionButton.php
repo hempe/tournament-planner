@@ -22,14 +22,14 @@ class IconActionButton extends \Component
         private readonly bool $title_inline = false,
         private readonly Closure|string|Component|array $class = '',
         private readonly Closure|string|Component|array $style = '',
-    ) {}
+    ) {
+    }
 
     protected function template(): void
     {
         $warn = $this->color == Color::Accent ? 'true' : 'false';
-?>
-        <fieldset
-            data-action="<?= htmlspecialchars($this->actionUrl, ENT_QUOTES, 'UTF-8') ?>"
+        ?>
+        <fieldset data-action="<?= htmlspecialchars($this->actionUrl, ENT_QUOTES, 'UTF-8') ?>"
             data-confirm="<?= htmlspecialchars($this->confirmMessage, ENT_QUOTES, 'UTF-8') ?>">
             <?php foreach ($this->hiddenInputs as $name => $value): ?>
                 <input type="hidden" name="<?= htmlspecialchars($name) ?>" value="<?= htmlspecialchars($value) ?>">
@@ -46,5 +46,5 @@ class IconActionButton extends \Component
                 style: $this->style,
             ) ?>
         </fieldset>
-<?php }
+    <?php }
 }

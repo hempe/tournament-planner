@@ -48,7 +48,7 @@ final class Logger implements LoggerInterface
         $timestamp = date($this->dateFormat);
         $contextStr = !empty($context) ? ' ' . json_encode($context, JSON_UNESCAPED_UNICODE) : '';
         $logMessage = sprintf("[%s] %s: %s%s\n", $timestamp, $level->value, $message, $contextStr);
-        
+
         error_log($logMessage, 3, $this->logFile);
     }
 

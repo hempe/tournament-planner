@@ -40,10 +40,10 @@ final class AuthController
         }
 
         $data = $request->getValidatedData();
-        
+
         try {
             $user = User::authenticate($data['username'], $data['password']);
-            
+
             if ($user) {
                 session_regenerate_id(true);
                 User::setCurrent($user);

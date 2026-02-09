@@ -74,7 +74,7 @@ final class Config
             ],
             'database' => [
                 'host' => $_ENV['DB_HOST'] ?? 'localhost',
-                'port' => (int)($_ENV['DB_PORT'] ?? 3306),
+                'port' => (int) ($_ENV['DB_PORT'] ?? 3306),
                 'name' => $_ENV['DB_NAME'] ?? 'TPDb',
                 'username' => $_ENV['DB_USERNAME'] ?? 'TP',
                 'password' => $_ENV['DB_PASSWORD'] ?? '',
@@ -85,9 +85,9 @@ final class Config
                 'file' => $_ENV['LOG_FILE'] ?? __DIR__ . '/../../logs/app.log',
             ],
             'security' => [
-                'session_lifetime' => (int)($_ENV['SESSION_LIFETIME'] ?? 3600),
+                'session_lifetime' => (int) ($_ENV['SESSION_LIFETIME'] ?? 3600),
                 'csrf_token_name' => $_ENV['CSRF_TOKEN_NAME'] ?? '_token',
-                'password_min_length' => (int)($_ENV['PASSWORD_MIN_LENGTH'] ?? 8),
+                'password_min_length' => (int) ($_ENV['PASSWORD_MIN_LENGTH'] ?? 8),
             ],
         ];
 
@@ -106,12 +106,12 @@ final class Config
             if (str_starts_with(trim($line), '#')) {
                 continue;
             }
-            
+
             if (str_contains($line, '=')) {
                 [$key, $value] = explode('=', $line, 2);
                 $key = trim($key);
                 $value = trim($value, " \t\n\r\0\x0B\"'");
-                
+
                 if (!array_key_exists($key, $_ENV)) {
                     $_ENV[$key] = $value;
                 }
@@ -124,17 +124,17 @@ final class Config
         if (str_contains($key, '.')) {
             $keys = explode('.', $key);
             $current = $array;
-            
+
             foreach ($keys as $k) {
                 if (!is_array($current) || !array_key_exists($k, $current)) {
                     return $default;
                 }
                 $current = $current[$k];
             }
-            
+
             return $current;
         }
-        
+
         return $array[$key] ?? $default;
     }
 }

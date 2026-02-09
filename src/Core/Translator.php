@@ -44,11 +44,11 @@ final class Translator
     public function translate(string $key, array $parameters = []): string
     {
         $translation = $this->getTranslation($key);
-        
+
         if (empty($parameters)) {
             return $translation;
         }
-        
+
         return $this->interpolate($translation, $parameters);
     }
 
@@ -56,34 +56,34 @@ final class Translator
     {
         $translation = $this->getTranslation($key);
         $pluralForm = $this->getPluralForm($count, $this->currentLocale);
-        
+
         // Parse plural forms: "singular|plural" or "zero|one|many"
         $forms = explode('|', $translation);
-        
+
         if (count($forms) === 1) {
             return $this->interpolate($forms[0], array_merge(['count' => $count], $parameters));
         }
-        
+
         if (count($forms) === 2) {
             $form = $count === 1 ? $forms[0] : $forms[1];
         } else {
             $form = $forms[$pluralForm] ?? $forms[0];
         }
-        
+
         return $this->interpolate($form, array_merge(['count' => $count], $parameters));
     }
 
     private function getTranslation(string $key): string
     {
         $this->loadTranslations($this->currentLocale);
-        
+
         $translation = $this->getNestedValue($this->translations[$this->currentLocale] ?? [], $key);
-        
+
         if ($translation === null && $this->currentLocale !== $this->fallbackLocale) {
             $this->loadTranslations($this->fallbackLocale);
             $translation = $this->getNestedValue($this->translations[$this->fallbackLocale] ?? [], $key);
         }
-        
+
         return $translation ?? $key;
     }
 
@@ -92,15 +92,15 @@ final class Translator
         if (in_array($locale, $this->loadedLocales, true)) {
             return;
         }
-        
+
         $translationFile = __DIR__ . "/../../resources/lang/{$locale}.php";
-        
+
         if (file_exists($translationFile)) {
             $this->translations[$locale] = require $translationFile;
         } else {
             $this->translations[$locale] = [];
         }
-        
+
         $this->loadedLocales[] = $locale;
     }
 
@@ -109,17 +109,17 @@ final class Translator
         if (str_contains($key, '.')) {
             $keys = explode('.', $key);
             $current = $array;
-            
+
             foreach ($keys as $k) {
                 if (!is_array($current) || !array_key_exists($k, $current)) {
                     return null;
                 }
                 $current = $current[$k];
             }
-            
+
             return is_string($current) ? $current : null;
         }
-        
+
         return is_string($array[$key] ?? null) ? $array[$key] : null;
     }
 
@@ -127,9 +127,9 @@ final class Translator
     {
         $replacements = [];
         foreach ($parameters as $key => $value) {
-            $replacements[':' . $key] = (string)$value;
+            $replacements[':' . $key] = (string) $value;
         }
-        
+
         return strtr($message, $replacements);
     }
 

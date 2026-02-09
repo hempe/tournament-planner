@@ -37,19 +37,19 @@ $router->group(
         $router->post('/{id}/register', [EventController::class, 'register']);
         $router->post('/{id}/unregister', [EventController::class, 'unregister']);
         $router->post('/{id}/comment', [EventController::class, 'updateComment']);
-        
+
         // Admin-only event routes
         $router->group(
             new RouteGroup('', [new AdminMiddleware()]),
             function (Router $router) {
-                $router->get('/new', [EventController::class, 'create']);
-                $router->post('/', [EventController::class, 'store']);
-                $router->get('/{id}/admin', [EventController::class, 'admin']);
-                $router->post('/{id}/update', [EventController::class, 'update']);
-                $router->post('/{id}/delete', [EventController::class, 'delete']);
-                $router->post('/{id}/lock', [EventController::class, 'lock']);
-                $router->post('/{id}/unlock', [EventController::class, 'unlock']);
-            }
+            $router->get('/new', [EventController::class, 'create']);
+            $router->post('/', [EventController::class, 'store']);
+            $router->get('/{id}/admin', [EventController::class, 'admin']);
+            $router->post('/{id}/update', [EventController::class, 'update']);
+            $router->post('/{id}/delete', [EventController::class, 'delete']);
+            $router->post('/{id}/lock', [EventController::class, 'lock']);
+            $router->post('/{id}/unlock', [EventController::class, 'unlock']);
+        }
         );
     }
 );
@@ -70,7 +70,7 @@ $router->group(
 // Health check endpoint
 $router->get('/health', function (Request $request): Response {
     $config = \TP\Core\Config::getInstance();
-    
+
     $status = [
         'status' => 'ok',
         'timestamp' => date('c'),
@@ -80,17 +80,17 @@ $router->get('/health', function (Request $request): Response {
         'app_name' => $config->get('app.name'),
         'locale' => $config->get('app.locale'),
     ];
-    
+
     // Test database connection separately
     try {
         $testConn = @new mysqli(
-            (string)$config->get('database.host'),
-            (string)$config->get('database.username'),
-            (string)$config->get('database.password'),
-            (string)$config->get('database.name'),
-            (int)$config->get('database.port')
+            (string) $config->get('database.host'),
+            (string) $config->get('database.username'),
+            (string) $config->get('database.password'),
+            (string) $config->get('database.name'),
+            (int) $config->get('database.port')
         );
-        
+
         if ($testConn->connect_error) {
             $status['database'] = 'connection_failed: ' . $testConn->connect_error;
         } else {
@@ -100,7 +100,7 @@ $router->get('/health', function (Request $request): Response {
     } catch (Exception $e) {
         $status['database'] = 'error: ' . $e->getMessage();
     }
-    
+
     return Response::json($status);
 });
 

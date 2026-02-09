@@ -24,22 +24,22 @@ class Page extends \Component
         $url = isset($_GET['b']) ? '/?date=' . $_GET['b'] : '/';
         $title = isset($GLOBALS['title']) ? $GLOBALS['title'] : 'Golf el faro';
         $isIndex = basename($_SERVER['PHP_SELF']) == 'index.php';
-        
-        $backButton = $isIndex 
+
+        $backButton = $isIndex
             ? "<a href=\"{$url}\" style=\"padding:0;flex-grow:0;\"><img src=\"favicon-96x96.png\" style=\"height: 50px; width: 50px;\"></a>"
             : "<a class=\"button nav-button\" href=\"{$url}\">" . new Icon('fa-chevron-left', 'Zurück', style: 'color: var(--fg-navtop);') . "</a>";
-            
+
         $adminButtons = '';
         if (User::admin()) {
-            $adminButtons = 
+            $adminButtons =
                 "<a class=\"button nav-button\" href=\"/events\">" . new Icon('fa-calendar', 'Anlässe', style: 'color: var(--fg-navtop);') . "</a>" .
                 "<a class=\"button nav-button\" href=\"/users\">" . new Icon('fa-users', 'Benutzer', style: 'color: var(--fg-navtop);') . "</a>";
         }
-        
-        $logoutButton = User::loggedIn() 
+
+        $logoutButton = User::loggedIn()
             ? new IconActionButton("/logout", 'Logout', Color::None, 'fa-sign-out', 'nav-button', 'color: var(--fg-navtop);')
             : '';
-            
+
         $moonIcon = new Icon('fa-moon', 'Dark theme');
         $sunIcon = new Icon('fa-sun', 'Light theme');
 

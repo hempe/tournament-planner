@@ -11,7 +11,8 @@ class CalendarEvent extends \Component
 {
     public function __construct(
         public readonly Event $event,
-    ) {}
+    ) {
+    }
 
     private function eventStatusText(): string
     {
@@ -25,8 +26,8 @@ class CalendarEvent extends \Component
             return 'Gesprerrt';
 
         return match ($this->event->available) {
-            0 =>  "Warteliste verfügbar",
-            1 =>  "{$this->event->available} Platz frei",
+            0 => "Warteliste verfügbar",
+            1 => "{$this->event->available} Platz frei",
             default => "{$this->event->available} Plätze frei"
         };
     }
@@ -46,14 +47,14 @@ class CalendarEvent extends \Component
                     style: [
                         $this->canJoin() ? 'cursor: pointer;' : 'cursor: not-allowed;',
                         $this->event->userState == 1
-                            ? 'background-color: var(--button-primary-light-bg);' : (
-                                $this->event->userState == 2
-                                ? 'background-color: var(--button-accent-light-bg);' : (
-                                    $this->canJoin()
-                                    ? 'opacity: 1;'
-                                    : 'opacity: 0.5;'
-                                )
-                            ),
+                        ? 'background-color: var(--button-primary-light-bg);' : (
+                            $this->event->userState == 2
+                            ? 'background-color: var(--button-accent-light-bg);' : (
+                                $this->canJoin()
+                                ? 'opacity: 1;'
+                                : 'opacity: 0.5;'
+                            )
+                        ),
                     ],
                     class: ['event-date'],
                     content: function () {
@@ -67,13 +68,11 @@ class CalendarEvent extends \Component
                             content: function () {
                                 if ($this->event->userState == 1)
                                     yield new Icon('fa-user-check', 'Angemeldet');
-
                                 else if ($this->event->userState == 2)
                                     yield new Icon('fa-user-clock', 'Auf Warteliste');
 
                                 if ($this->event->isLocked)
                                     yield new Icon('fa-lock', 'Gesperrt');
-
                                 else if ($this->event->userState == 0 && $this->canJoin())
                                     yield new IconButton(
                                         title: $this->event->available > 0 ? 'Anmelden' : 'Warteliste',

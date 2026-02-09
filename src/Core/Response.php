@@ -121,11 +121,11 @@ final class Response
     {
         if (!headers_sent()) {
             http_response_code($this->status->value);
-            
+
             foreach ($this->headers as $name => $value) {
                 header("{$name}: {$value}");
             }
-            
+
             foreach ($this->cookies as $name => $options) {
                 setcookie(
                     $name,
@@ -138,7 +138,7 @@ final class Response
                 );
             }
         }
-        
+
         echo $this->content;
     }
 

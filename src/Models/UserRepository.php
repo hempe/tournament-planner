@@ -10,7 +10,9 @@ use mysqli;
 
 final class UserRepository
 {
-    public function __construct(private readonly mysqli $conn) {}
+    public function __construct(private readonly mysqli $conn)
+    {
+    }
 
     public function exists(string $userId): bool
     {
@@ -105,7 +107,7 @@ final class UserRepository
         $users = [];
 
         while ($row = $result->fetch_assoc()) {
-            $users[] = new User((int)$row['id'], $row['username'], (bool)$row['admin']);
+            $users[] = new User((int) $row['id'], $row['username'], (bool) $row['admin']);
         }
 
         $stmt->close();
@@ -124,7 +126,7 @@ final class UserRepository
         $result = $stmt->get_result();
 
         if ($row = $result->fetch_assoc()) {
-            $user = new User((int)$row['id'], $username, (bool)$row['admin']);
+            $user = new User((int) $row['id'], $username, (bool) $row['admin']);
             $stmt->close();
             return [$user, $row['password']];
         }

@@ -26,15 +26,15 @@ final class EventController
 
     public function show(Request $request, array $params): Response
     {
-        $eventId = (int)$params['id'];
+        $eventId = (int) $params['id'];
         $userId = User::id();
-        
+
         if ($userId === null) {
             return Response::unauthorized();
         }
 
         $event = DB::$events->get($eventId, $userId);
-        
+
         if (!$event) {
             return Response::notFound(__('events.not_found'));
         }
@@ -79,8 +79,8 @@ final class EventController
 
         try {
             $data = $request->getValidatedData();
-            $eventId = DB::$events->add($data['name'], $data['date'], (int)$data['capacity']);
-            
+            $eventId = DB::$events->add($data['name'], $data['date'], (int) $data['capacity']);
+
             flash('success', __('events.create_success'));
             return Response::redirect("/events/{$eventId}");
         } catch (Exception $e) {
@@ -91,15 +91,15 @@ final class EventController
 
     public function admin(Request $request, array $params): Response
     {
-        $eventId = (int)$params['id'];
+        $eventId = (int) $params['id'];
         $userId = User::id();
-        
+
         if ($userId === null) {
             return Response::unauthorized();
         }
 
         $event = DB::$events->get($eventId, $userId);
-        
+
         if (!$event) {
             return Response::notFound(__('events.not_found'));
         }
@@ -114,8 +114,8 @@ final class EventController
 
     public function update(Request $request, array $params): Response
     {
-        $eventId = (int)$params['id'];
-        
+        $eventId = (int) $params['id'];
+
         $validation = $request->validate([
             new ValidationRule('name', ['required', 'string', 'max' => 255]),
             new ValidationRule('capacity', ['required', 'integer', 'min' => 1]),
@@ -128,8 +128,8 @@ final class EventController
 
         try {
             $data = $request->getValidatedData();
-            DB::$events->update($eventId, $data['name'], (int)$data['capacity']);
-            
+            DB::$events->update($eventId, $data['name'], (int) $data['capacity']);
+
             flash('success', __('events.update_success'));
             return Response::redirect("/events/{$eventId}");
         } catch (Exception $e) {
@@ -140,8 +140,8 @@ final class EventController
 
     public function delete(Request $request, array $params): Response
     {
-        $eventId = (int)$params['id'];
-        
+        $eventId = (int) $params['id'];
+
         try {
             DB::$events->delete($eventId);
             flash('success', __('events.delete_success'));
@@ -154,8 +154,8 @@ final class EventController
 
     public function lock(Request $request, array $params): Response
     {
-        $eventId = (int)$params['id'];
-        
+        $eventId = (int) $params['id'];
+
         try {
             DB::$events->lock($eventId);
             flash('success', __('events.lock_success'));
@@ -168,8 +168,8 @@ final class EventController
 
     public function unlock(Request $request, array $params): Response
     {
-        $eventId = (int)$params['id'];
-        
+        $eventId = (int) $params['id'];
+
         try {
             DB::$events->unlock($eventId);
             flash('success', __('events.unlock_success'));
@@ -182,10 +182,10 @@ final class EventController
 
     public function register(Request $request, array $params): Response
     {
-        $eventId = (int)$params['id'];
+        $eventId = (int) $params['id'];
         $userId = $request->getInt('userId') ?: User::id();
         $comment = $request->getString('comment', '');
-        
+
         if ($userId === null) {
             return Response::unauthorized();
         }
@@ -213,9 +213,9 @@ final class EventController
 
     public function unregister(Request $request, array $params): Response
     {
-        $eventId = (int)$params['id'];
+        $eventId = (int) $params['id'];
         $userId = $request->getInt('userId') ?: User::id();
-        
+
         if ($userId === null) {
             return Response::unauthorized();
         }
@@ -243,10 +243,10 @@ final class EventController
 
     public function updateComment(Request $request, array $params): Response
     {
-        $eventId = (int)$params['id'];
+        $eventId = (int) $params['id'];
         $userId = $request->getInt('userId') ?: User::id();
         $comment = $request->getString('comment', '');
-        
+
         if ($userId === null) {
             return Response::unauthorized();
         }

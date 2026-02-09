@@ -14,17 +14,15 @@ class TableRow extends \Component
     public function __construct(
         public readonly array $columns,
         public readonly string|null $onclick = null,
-    ) {}
+    ) {
+    }
 
     protected function template(): void
     { ?>
-        <div
-            style="display: table-row; <?= $this->onclick ? 'cursor: pointer' : '' ?>"
-            class="table-row"
-            <?= $this->onclick ? "onclick=\"$this->onclick\"" : '' ?>>
+        <div style="display: table-row; <?= $this->onclick ? 'cursor: pointer' : '' ?>" class="table-row" <?= $this->onclick ? "onclick=\"$this->onclick\"" : '' ?>>
             <?php foreach ($this->columns as $col): ?>
                 <?= $col ?>
             <?php endforeach; ?>
         </div>
-<?php }
+    <?php }
 }

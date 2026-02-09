@@ -12,7 +12,8 @@ final class User
         public readonly int $id,
         public readonly string $username,
         public readonly bool $isAdmin
-    ) {}
+    ) {
+    }
 
     public static function loggedIn(): bool
     {
@@ -60,14 +61,14 @@ final class User
         if (!isset(\TP\Models\DB::$users)) {
             return null;
         }
-        
+
         $userRepo = \TP\Models\DB::$users;
         [$user, $hashedPassword] = $userRepo->getWithPassword($username);
-        
+
         if ($user && $hashedPassword && \TP\Core\Security::getInstance()->verifyPassword($password, $hashedPassword)) {
             return $user;
         }
-        
+
         return null;
     }
 

@@ -26,7 +26,7 @@ class IconButton extends \Component
         Closure|string|Component|array $style = '',
     ) {
         $styles = "flex-grow:0;" . $this->title_inline ? '' : 'min-width:16px; display:block;';
-        $this->class =  $this->captureOutput($class);
+        $this->class = $this->captureOutput($class);
         $this->style = $styles . " " . $this->captureOutput($style);
     }
 

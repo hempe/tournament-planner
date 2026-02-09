@@ -146,7 +146,7 @@ class Calendar extends \Component
     {
         $filteredEvents = [];
         foreach ($this->_events as $event) {
-            if ($date->time ==  strtotime($event->date)) {
+            if ($date->time == strtotime($event->date)) {
                 $filteredEvents[] = $event;
             }
         }
@@ -202,8 +202,10 @@ class Calendar extends \Component
                                         yield new Div(
                                             class: function () use ($events, $day) {
                                                 yield 'day_num';
-                                                if (count($events) == 0) yield 'empty';
-                                                if ($day->active) yield 'active';
+                                                if (count($events) == 0)
+                                                    yield 'empty';
+                                                if ($day->active)
+                                                    yield 'active';
                                             },
                                             content: function () use ($day, $events) {
                                                 yield new Div(
@@ -217,14 +219,15 @@ class Calendar extends \Component
                                                     yield new CalendarEvent($event);
                                                 }
 
-                                                if (User::admin() && $day->active) yield new IconButton(
-                                                    title: 'Anlass hinzufügen',
-                                                    onClick: "window.location.href='/events/new?date={$day->str}&b={$day->year}-{$day->month}-1'",
-                                                    icon: 'fa-plus',
-                                                    type: 'button',
-                                                    color: Color::None,
-                                                    class: 'add'
-                                                );
+                                                if (User::admin() && $day->active)
+                                                    yield new IconButton(
+                                                        title: 'Anlass hinzufügen',
+                                                        onClick: "window.location.href='/events/new?date={$day->str}&b={$day->year}-{$day->month}-1'",
+                                                        icon: 'fa-plus',
+                                                        type: 'button',
+                                                        color: Color::None,
+                                                        class: 'add'
+                                                    );
                                             }
                                         );
                                     }
@@ -257,5 +260,7 @@ class CalendarDay
 class CalendarWeek
 {
     /** @param CalendarDay[] $days */
-    public function __construct(public array $days) {}
+    public function __construct(public array $days)
+    {
+    }
 }

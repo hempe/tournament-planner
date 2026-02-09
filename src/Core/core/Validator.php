@@ -10,7 +10,8 @@ final class ValidationRule
         public readonly string $field,
         public readonly array $rules,
         public readonly string $message = ''
-    ) {}
+    ) {
+    }
 }
 
 final class ValidationError
@@ -18,7 +19,8 @@ final class ValidationError
     public function __construct(
         public readonly string $field,
         public readonly string $message
-    ) {}
+    ) {
+    }
 }
 
 final class ValidationResult
@@ -27,7 +29,8 @@ final class ValidationResult
     public function __construct(
         public readonly bool $isValid,
         public readonly array $errors = []
-    ) {}
+    ) {
+    }
 
     /** @return string[] */
     public function getErrorMessages(): array
@@ -52,13 +55,13 @@ final class Validator
     public function validate(array $data, array $rules): ValidationResult
     {
         $errors = [];
-        
+
         foreach ($rules as $rule) {
             $value = $data[$rule->field] ?? null;
             $fieldErrors = $this->validateField($rule->field, $value, $rule->rules);
             $errors = array_merge($errors, $fieldErrors);
         }
-        
+
         return new ValidationResult(empty($errors), $errors);
     }
 
@@ -66,19 +69,19 @@ final class Validator
     private function validateField(string $field, mixed $value, array $rules): array
     {
         $errors = [];
-        
+
         foreach ($rules as $ruleName => $ruleValue) {
             if (is_int($ruleName)) {
                 $ruleName = $ruleValue;
                 $ruleValue = true;
             }
-            
+
             $error = $this->applyRule($field, $value, $ruleName, $ruleValue);
             if ($error !== null) {
                 $errors[] = $error;
             }
         }
-        
+
         return $errors;
     }
 
@@ -116,7 +119,7 @@ final class Validator
 
     private function validateInteger(string $field, mixed $value): ?ValidationError
     {
-        if ($value !== null && !is_int($value) && !ctype_digit((string)$value)) {
+        if ($value !== null && !is_int($value) && !ctype_digit((string) $value)) {
             return new ValidationError($field, "The {$field} field must be an integer.");
         }
         return null;
@@ -132,42 +135,45 @@ final class Validator
 
     private function validateMin(string $field, mixed $value, int $min): ?ValidationError
     {
-        if ($value === null) return null;
-        
+        if ($value === null)
+            return null;
+
         if (is_string($value) && strlen($value) < $min) {
             return new ValidationError($field, "The {$field} field must be at least {$min} characters.");
         }
-        
+
         if (is_numeric($value) && $value < $min) {
             return new ValidationError($field, "The {$field} field must be at least {$min}.");
         }
-        
+
         return null;
     }
 
     private function validateMax(string $field, mixed $value, int $max): ?ValidationError
     {
-        if ($value === null) return null;
-        
+        if ($value === null)
+            return null;
+
         if (is_string($value) && strlen($value) > $max) {
             return new ValidationError($field, "The {$field} field must not exceed {$max} characters.");
         }
-        
+
         if (is_numeric($value) && $value > $max) {
             return new ValidationError($field, "The {$field} field must not exceed {$max}.");
         }
-        
+
         return null;
     }
 
     private function validateDate(string $field, mixed $value): ?ValidationError
     {
-        if ($value === null) return null;
-        
+        if ($value === null)
+            return null;
+
         if (!is_string($value) || !strtotime($value)) {
             return new ValidationError($field, "The {$field} field must be a valid date.");
         }
-        
+
         return null;
     }
 
