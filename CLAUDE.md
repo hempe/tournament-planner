@@ -48,7 +48,7 @@ This is a PHP web application for golf event management with a custom MVC-like a
 - `src/Core/` - Core framework classes (Router, Component, DB, repositories)
 - `src/pages/` - Feature modules with routes and views
 - `src/Components/` - Reusable UI Components
-- `src/layout/` - Header and footer templates
+- `src/Layout/` - Header and footer templates
 - `styles/` - CSS files
 - `src/scripts/` - JavaScript files
 

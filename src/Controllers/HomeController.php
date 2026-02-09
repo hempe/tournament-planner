@@ -25,9 +25,9 @@ final class HomeController
         // Load the home view
         ob_start();
         $date = new DateTime($request->getString('date', date('Y') . '-' . date('m') . '-1'));
-        require __DIR__ . '/../layout/header.php';
+        require __DIR__ . '/../Layout/header.php';
         require __DIR__ . '/../pages/home/views/home.php';
-        require __DIR__ . '/../layout/footer.php';
+        require __DIR__ . '/../Layout/footer.php';
         $content = ob_get_clean();
 
         return Response::ok($content);
@@ -40,9 +40,9 @@ final class HomeController
         }
 
         ob_start();
-        require __DIR__ . '/../layout/header.php';
+        require __DIR__ . '/../Layout/header.php';
         require __DIR__ . '/../pages/home/views/login.php';
-        require __DIR__ . '/../layout/footer.php';
+        require __DIR__ . '/../Layout/footer.php';
         $content = ob_get_clean();
 
         return Response::ok($content);

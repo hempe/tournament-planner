@@ -6,7 +6,6 @@ namespace TP\Core;
 
 use TP\Models\DB;
 use Throwable;
-use Exception;
 
 final class Application
 {
@@ -64,17 +63,8 @@ final class Application
         // Set up global middleware
         $this->setupGlobalMiddleware();
 
-        // Initialize database (allow graceful failure)
-        try {
-            DB::initialize();
-            $this->logger->info('Database initialized successfully');
-        } catch (Exception $e) {
-            $this->logger->warning('Database initialization failed', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
-            // Continue without database - some endpoints may still work
-        }
+        // Initialize database
+        DB::initialize();
 
         $this->booted = true;
         $this->logger->info('Application booted successfully');

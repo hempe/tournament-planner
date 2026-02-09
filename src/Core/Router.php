@@ -1,332 +1,379 @@
 <?php
 
-declare(strict_types=1);
+require_once dirname(__FILE__) . '/Log.php';
 
-namespace TP\Core;
-
-use TP\Models\User;
-use Throwable;
-
-interface MiddlewareInterface
+function pass(Closure|bool $require)
 {
-    public function handle(Request $request, callable $next): Response;
+    if ($require instanceof Closure) {
+        $reflection = new ReflectionFunction($require);
+        $parameters = $reflection->getParameters();
+
+        // Extract named parameters
+        $params = extractParameters($parameters);
+        if (!$require->__invoke(...$params)) {
+            Log::trace('pass($require:Closure)', 'did not pass');
+            return false;
+        }
+    } elseif (!$require) {
+        Log::trace('pass($require:bool)', 'did not pass');
+        return false;
+    }
+
+    return true;
 }
 
-final class CsrfMiddleware implements MiddlewareInterface
+/**
+ * Extracts parameters from the request based on the reflection parameters.
+ *
+ * @param ReflectionParameter[] $parameters The parameters to extract.
+ * @return array The extracted parameters.
+ */
+function extractParameters(array $parameters): array
 {
-    public function handle(Request $request, callable $next): Response
-    {
-        if ($request->getMethod() === HttpMethod::POST) {
-            $token = $request->getString('_token');
+    $params = [];
+    foreach ($parameters as $parameter) {
+        $name = $parameter->getName();
+        if (isset($_GET[$name])) {
+            $params[$name] = $_GET[$name];
+        } elseif (isset($_POST[$name])) {
+            $params[$name] = $_POST[$name];
+        } elseif ($parameter->isDefaultValueAvailable()) {
+            $params[$name] = $parameter->getDefaultValue();
+        } else {
+            throw new InvalidArgumentException("Missing required parameter: $name");
+        }
+    }
+    return $params;
+}
 
-            if (!Security::getInstance()->validateCsrfToken($token)) {
-                return Response::error(HttpStatus::UNPROCESSABLE_ENTITY, __('errors.csrf'));
+// Initialize the dictionary for storing scripts
+$scripts_dict = [];
+
+function add_script(string $name, string $script): void
+{
+    global $scripts_dict;
+    $scripts_dict[$name] = $script;
+}
+
+
+class Route
+{
+    private readonly string $id_template;
+    private readonly array $id_keys;
+
+    public function __construct(
+        private string $method,
+        private readonly  string $route,
+        private readonly Closure $apply,
+        private readonly string $title,
+        private readonly string $header,
+        private readonly string $footer,
+        private readonly Closure|bool $require,
+    ) {
+
+        $this->method = strtoupper($method);
+        $this->id_template = $this->generateRegexFromTemplate($route);
+        $this->id_keys = $this->extractKeysFromTemplate($route);
+    }
+
+    private function generateRegexFromTemplate(string $template): string
+    {
+        // Replace placeholders with the corresponding regex pattern for numbers
+        $pattern = preg_replace('/\{(\w+)\}/', '(?P<$1>\d+)', $template);
+
+        // Escape any forward slashes
+        $pattern = str_replace('/', '\/', $pattern);
+
+        // Ensure it correctly matches both with and without a leading slash, and make trailing slash optional
+        $pattern = '^\/?' . $pattern . '\/?$';
+
+        return '/' . $pattern . '/';
+    }
+
+    // Method to extract the keys from the template
+    private function extractKeysFromTemplate(string $template): array
+    {
+        // Match placeholders within curly braces, like {id}, {otherId}
+        preg_match_all('/\{(\w+)\}/', $template, $matches);
+
+        // Return the keys (e.g., ['id', 'otherId'])
+        return $matches[1];
+    }
+
+
+    public function routeTo(string $request): bool
+    {
+        Log::trace('Route', "[$this->method] $this->route check");
+
+        // Remove query parameters from $request to get the path only
+        $parsedUrl = parse_url($request);
+        $path = $parsedUrl['path'] ?? '';
+
+        // Use the generated regex pattern from the route's template
+        $pattern = $this->id_template;
+
+        // Check if the request path matches the route pattern
+        if (preg_match($pattern, $path, $matches)) {
+            // Log and set the matched parameters to $_GET
+            foreach ($matches as $key => $value) {
+                if ($key !== 0) { // Skip the full match (index 0)
+                    // Set each captured key (from id_keys) to $_GET
+                    if (in_array($key, $this->id_keys)) {
+                        $_GET[$key] = $value;
+                        Log::trace('Route', "[$this->method] $this->route matched: $key = $value");
+                    }
+                }
+            }
+
+            if (!pass($this->require)) {
+                return false;
+            }
+
+            // Log successful match and render the route
+            Log::trace('Route', "[$this->method] $this->route Route matched: $path");
+            $this->render($request);
+            return true;
+        }
+
+        return false; // Return false if no match found
+    }
+
+    private function render(string $request): void
+    {
+        Log::trace('Route', "[$this->method] $this->route render");
+
+        ob_start();
+        $this->apply->__invoke($request);
+        $output = ob_get_clean();
+
+        global $title;
+        $title = $this->title;
+        global $scripts;
+        global $scripts_dict;
+
+        $scripts = implode('', array_map(function ($script) {
+            return "<script>$script</script>";
+        }, $scripts_dict));
+
+        require_once $this->header;
+        echo $output;
+        require_once $this->footer;
+    }
+}
+
+abstract class RouteItem
+{
+    function __construct(
+        public readonly string $method,
+        public readonly string $route,
+        public readonly string $title,
+        public readonly Closure|bool $require,
+    ) {
+        Log::trace('RouteItem', "Adding [$method]: $route");
+    }
+
+    public abstract function apply(string $request): void;
+}
+
+class RouterView extends RouteItem
+{
+
+    public function __construct(
+        string $route,
+        private readonly string $file,
+        string $title,
+        Closure|bool $require,
+    ) {
+        parent::__construct('GET', $route, $title, $require);
+    }
+
+    public function apply(string $request): void
+    {
+        if (isset($_SESSION['popup_error'])) {
+            $error = json_encode($_SESSION['popup_error']);
+            echo <<<HTML
+                <script> document.addEventListener('DOMContentLoaded',  () => customError($error));</script>
+            HTML;
+            unset($_SESSION['popup_error']);
+        }
+
+        require $this->file;
+    }
+}
+
+class RouterAction extends RouteItem
+{
+    public function __construct(
+        string $route,
+        private readonly string $redirect,
+        string $name,
+        private readonly Closure $action,
+        string $title,
+        Closure|bool $require,
+    ) {
+        $postFix = $name ? '/' . $name : '';
+        parent::__construct('POST', $route . $postFix, $title, $require);
+    }
+
+    public function apply(string $request): void
+    {
+        Log::trace('RouterAction', "$this->route Start invoke.");
+        try {
+            // Use reflection to get the parameters required by the action
+            $reflection = new ReflectionFunction($this->action);
+            $parameters = $reflection->getParameters();
+
+            // Extract named parameters
+            $params = extractParameters($parameters);
+
+            // Call the action with named parameters
+            $this->action->__invoke(...$params);
+            Log::trace('RouterAction', "$this->route Called invoke success.");
+        } catch (Error $e) {
+            Log::error('RouterAction', "$this->route Failed to invoke: " . $e->getMessage());
+            $_SESSION['popup_error'] = $e->getMessage();
+        } catch (Exception $e) {
+            Log::error('RouterAction', "$this->route Failed to invoke: " . $e->getMessage());
+            $_SESSION['popup_error'] = $e->getMessage();
+        } finally {
+            // Replace placeholders in $redirect with values from $_GET
+            $redirect = $this->redirect;
+
+            // Use regex to find all placeholders like {id}, {otherId}
+            $redirect = preg_replace_callback('/\{(\w+)\}/', function ($matches) {
+                // Check if the key exists in $_GET, otherwise return the placeholder itself
+                $key = $matches[1];
+                return isset($_GET[$key]) ? $_GET[$key] : $matches[0];  // Default to original placeholder if not found
+            }, $redirect);
+
+            // Get the referer URL
+            $referer = $_SERVER['HTTP_REFERER'] ?? '';
+
+            // Parse the referer URL to get query parameters and fragment
+            $parsedUrl = parse_url($referer);
+            $query = isset($parsedUrl['query']) ? $parsedUrl['query'] : '';
+            $fragment = isset($parsedUrl['fragment']) ? '#' . $parsedUrl['fragment'] : '';
+
+            // Append query parameters and fragment to the redirect URL
+            if ($query) {
+                $redirect .= (strpos($redirect, '?') === false ? '?' : '&') . $query;
+            }
+            $redirect .= $fragment;
+
+            Log::trace('RouterAction', "$this->route Redirect to: $redirect");
+            header('Location: /' . $redirect, true, 303);
+            exit;
+        }
+    }
+}
+
+class RouterBuilder
+{
+    /** @var RouteItem[] $routes */
+    public array $routes = [];
+    private readonly string $method;
+
+    public function __construct(
+        private readonly  string $route_prefix,
+        private readonly string $file_prefix,
+        string $method
+    ) {
+        $this->method = strtoupper($method);
+    }
+
+    /**
+     * Renders the specified view.
+     *
+     * @param string $file The name of the view to render.
+     * @param string $title The title of the view.
+     * @param Closure|bool $require Whether to require the view or not.
+     * @param string $route The route (optional).
+     * @param array<string, array{callback: callable, require?: Closure|bool}>|null $actions
+     * An associative array of actions where each key is a string and the value is an array
+     * containing a `callback` (callable) and an optional `require` (Closure or bool).
+     * @return RouterBuilder
+     */
+    public function view(
+        string $file,
+        string $title,
+        Closure|bool $require,
+        string $route = '',
+        array|null $actions = null,
+    ): RouterBuilder {
+        if ($this->method == 'GET') {
+            $this->routes[] = new RouterView(
+                $this->route_prefix . $route,
+                $this->file_prefix . '/views/' . $file,
+                $title,
+                $require,
+            );
+        } else if ($this->method == 'POST') {
+            if ($actions !== null) {
+                foreach ($actions as $name => $action) {
+                    $redirect = $this->route_prefix . $route;
+                    $actionRequire = $require;
+
+                    if (is_callable($action)) {
+                        // Simple case: just a callable, use default $require
+                        $callback = $action;
+                    } elseif (isset($action['callback']) && is_callable($action['callback'])) {
+                        // Advanced case: action with callback and optional 'require'
+                        $callback = $action['callback'];
+                        if (isset($action['require']))
+                            $actionRequire = fn() => pass($require) && pass($action['require']);
+                        if (isset($action['redirect']))
+                            $redirect = $this->route_prefix . $action['redirect'];
+                    } else {
+                        throw new InvalidArgumentException("Action '$name' is not callable.");
+                    }
+
+                    $this->routes[] = new RouterAction(
+                        $this->route_prefix . $route,
+                        $redirect,
+                        $name,
+                        $callback,
+                        $title,
+                        $actionRequire
+                    );
+                }
             }
         }
-
-        return $next($request);
+        return $this;
     }
 }
 
-final class RateLimitMiddleware implements MiddlewareInterface
+class Router
 {
-    public function __construct(
-        private int $maxRequests = 60,
-        private int $windowSeconds = 60
-    ) {
-    }
-
-    public function handle(Request $request, callable $next): Response
-    {
-        $identifier = $request->getIp();
-
-        if (!Security::getInstance()->rateLimitCheck($identifier, $this->maxRequests, $this->windowSeconds)) {
-            return Response::error(HttpStatus::TOO_MANY_REQUESTS, 'Rate limit exceeded');
-        }
-
-        return $next($request);
-    }
-}
-
-final class Route
-{
-    /** @param MiddlewareInterface[] $middleware */
-    private readonly HttpMethod $method;
-    private readonly string $pattern;
-    private mixed $handler;
-    private readonly array $middleware;
-    private readonly string $name;
-
-    /** @param MiddlewareInterface[] $middleware */
-    public function __construct(
-        HttpMethod $method,
-        string $pattern,
-        callable|array $handler,
-        array $middleware = [],
-        string $name = ''
-    ) {
-        $this->method = $method;
-        $this->pattern = $pattern;
-        $this->handler = $handler;
-        $this->middleware = $middleware;
-        $this->name = $name;
-    }
-
-    public function getMethod(): HttpMethod
-    {
-        return $this->method;
-    }
-
-    public function getPattern(): string
-    {
-        return $this->pattern;
-    }
-
-    public function getHandler(): callable|array
-    {
-        return $this->handler;
-    }
-
-    /** @return MiddlewareInterface[] */
-    public function getMiddleware(): array
-    {
-        return $this->middleware;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function matches(Request $request): ?array
-    {
-        if ($request->getMethod() !== $this->method) {
-            return null;
-        }
-
-        $pattern = $this->compilePattern($this->pattern);
-        $path = $request->getPath();
-
-        if (preg_match($pattern, $path, $matches)) {
-            array_shift($matches); // Remove full match
-            return $matches;
-        }
-
-        return null;
-    }
-
-    private function compilePattern(string $pattern): string
-    {
-        // Convert route pattern to regex
-        $pattern = preg_replace('/\{(\w+)\}/', '(?P<$1>[^/]+)', $pattern);
-        $pattern = str_replace('/', '\/', $pattern);
-        return '/^' . $pattern . '$/';
-    }
-}
-
-final class RouteGroup
-{
-    /** @param MiddlewareInterface[] $middleware */
-    public function __construct(
-        private readonly string $prefix = '',
-        private readonly array $middleware = []
-    ) {
-    }
-
-    public function getPrefix(): string
-    {
-        return $this->prefix;
-    }
-
-    /** @return MiddlewareInterface[] */
-    public function getMiddleware(): array
-    {
-        return $this->middleware;
-    }
-}
-
-final class Router
-{
-    /** @var Route[] */
+    /** @var Route[] $routes */
     private array $routes = [];
 
-    /** @var MiddlewareInterface[] */
-    private array $globalMiddleware = [];
-
-    private LoggerInterface $logger;
-
-    public function __construct()
-    {
-        $this->logger = new Logger();
+    public function __construct(
+        string $view_header,
+        string $view_footer,
+        RouterBuilder $builder
+    ) {
+        foreach ($builder->routes as $route) {
+            $this->routes[] = new Route(
+                method: $route->method,
+                route: $route->route,
+                apply: fn(string $request) => $route->apply($request),
+                title: $route->title,
+                header: $view_header,
+                footer: $view_footer,
+                require: $route->require
+            );
+        }
     }
 
-    public function addGlobalMiddleware(MiddlewareInterface $middleware): void
+    public function route(string $request): bool
     {
-        $this->globalMiddleware[] = $middleware;
-    }
-
-    public function get(string $pattern, callable|array $handler, array $middleware = [], string $name = ''): void
-    {
-        $this->addRoute(HttpMethod::GET, $pattern, $handler, $middleware, $name);
-    }
-
-    public function post(string $pattern, callable|array $handler, array $middleware = [], string $name = ''): void
-    {
-        $this->addRoute(HttpMethod::POST, $pattern, $handler, $middleware, $name);
-    }
-
-    public function put(string $pattern, callable|array $handler, array $middleware = [], string $name = ''): void
-    {
-        $this->addRoute(HttpMethod::PUT, $pattern, $handler, $middleware, $name);
-    }
-
-    public function delete(string $pattern, callable|array $handler, array $middleware = [], string $name = ''): void
-    {
-        $this->addRoute(HttpMethod::DELETE, $pattern, $handler, $middleware, $name);
-    }
-
-    public function group(RouteGroup $group, callable $callback): void
-    {
-        $previousPrefix = $this->currentPrefix ?? '';
-        $previousMiddleware = $this->currentGroupMiddleware ?? [];
-
-        $this->currentPrefix = $previousPrefix . $group->getPrefix();
-        $this->currentGroupMiddleware = array_merge($previousMiddleware, $group->getMiddleware());
-
-        $callback($this);
-
-        $this->currentPrefix = $previousPrefix;
-        $this->currentGroupMiddleware = $previousMiddleware;
-    }
-
-    public function handle(Request $request): Response
-    {
-        $this->logger->info('Handling request', [
-            'method' => $request->getMethod()->value,
-            'path' => $request->getPath(),
-        ]);
-
+        Log::trace('Router', 'Request path: ' . $request);
         foreach ($this->routes as $route) {
-            $matches = $route->matches($request);
-
-            if ($matches !== null) {
-                $this->logger->debug('Route matched', [
-                    'pattern' => $route->getPattern(),
-                    'parameters' => $matches,
-                ]);
-
-                return $this->executeRoute($route, $request, $matches);
+            if ($route->routeTo($request)) {
+                return  true;
             }
         }
 
-        $this->logger->warning('No route matched', [
-            'method' => $request->getMethod()->value,
-            'path' => $request->getPath(),
-        ]);
-
-        return Response::notFound();
+        return false;
     }
-
-    private function addRoute(HttpMethod $method, string $pattern, callable|array $handler, array $middleware, string $name): void
-    {
-        $prefix = $this->currentPrefix ?? '';
-        $groupMiddleware = $this->currentGroupMiddleware ?? [];
-
-        $fullPattern = $prefix . $pattern;
-        $allMiddleware = array_merge($groupMiddleware, $middleware);
-
-        $this->routes[] = new Route($method, $fullPattern, $handler, $allMiddleware, $name);
-
-        $this->logger->debug('Route registered', [
-            'method' => $method->value,
-            'pattern' => $fullPattern,
-            'middleware_count' => count($allMiddleware),
-        ]);
-    }
-
-    private function executeRoute(Route $route, Request $request, array $parameters): Response
-    {
-        // Add route parameters to request
-        foreach ($parameters as $key => $value) {
-            if (is_string($key)) {
-                $request = $this->addParameterToRequest($request, $key, $value);
-            }
-        }
-
-        // Build middleware stack
-        $middleware = array_merge($this->globalMiddleware, $route->getMiddleware());
-
-        // Create handler that executes the route
-        $handler = function (Request $request) use ($route, $parameters): Response {
-            try {
-                $routeHandler = $route->getHandler();
-
-                // Handle array format [ClassName::class, 'method']
-                if (is_array($routeHandler)) {
-                    [$className, $methodName] = $routeHandler;
-                    $instance = new $className();
-                    $result = $instance->$methodName($request, $parameters);
-                } else {
-                    // Handle callable format
-                    $result = $routeHandler($request, $parameters);
-                }
-
-                if ($result instanceof Response) {
-                    return $result;
-                }
-
-                if (is_string($result)) {
-                    return Response::ok($result);
-                }
-
-                if (is_array($result)) {
-                    return Response::json($result);
-                }
-
-                return Response::ok((string) $result);
-
-            } catch (Throwable $e) {
-                $this->logger->error('Route handler error', [
-                    'message' => $e->getMessage(),
-                    'file' => $e->getFile(),
-                    'line' => $e->getLine(),
-                    'trace' => $e->getTraceAsString(),
-                ]);
-
-                $config = Config::getInstance();
-                if ($config->isDevelopment()) {
-                    return Response::error(HttpStatus::INTERNAL_SERVER_ERROR, $e->getMessage());
-                }
-
-                return Response::error(HttpStatus::INTERNAL_SERVER_ERROR, __('errors.general'));
-            }
-        };
-
-        // Execute middleware stack
-        return $this->executeMiddlewareStack($middleware, $request, $handler);
-    }
-
-    private function executeMiddlewareStack(array $middleware, Request $request, callable $finalHandler): Response
-    {
-        $stack = array_reduce(
-            array_reverse($middleware),
-            function (callable $next, MiddlewareInterface $middleware): callable {
-                return fn(Request $request): Response => $middleware->handle($request, $next);
-            },
-            $finalHandler
-        );
-
-        return $stack($request);
-    }
-
-    private function addParameterToRequest(Request $request, string $key, string $value): Request
-    {
-        // This would require modifying the Request class to support adding parameters
-        // For now, we'll use a simple approach with global variables or session
-        $_GET[$key] = $value;
-        return $request;
-    }
-
-    private ?string $currentPrefix = null;
-    private ?array $currentGroupMiddleware = null;
 }

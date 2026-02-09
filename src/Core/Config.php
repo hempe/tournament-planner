@@ -81,7 +81,7 @@ final class Config
                 'charset' => $_ENV['DB_CHARSET'] ?? 'utf8mb4',
             ],
             'logging' => [
-                'level' => $_ENV['LOG_LEVEL'] ?? 'INFO',
+                'level' => $_ENV['LOG_LEVEL'] ?? ($this->isDevelopment() ? 'DEBUG' : 'INFO'),
                 'file' => $_ENV['LOG_FILE'] ?? __DIR__ . '/../../logs/app.log',
             ],
             'security' => [
@@ -95,7 +95,7 @@ final class Config
         $envConfigFile = __DIR__ . "/../../config/{$this->environment->value}.php";
         if (file_exists($envConfigFile)) {
             $envConfig = require $envConfigFile;
-            $this->config = $this->arrayMergeRecursiveDistinct($this->config, $envConfig);
+            $this->config = array_merge_recursive($this->config, $envConfig);
         }
     }
 
@@ -136,20 +136,5 @@ final class Config
         }
 
         return $array[$key] ?? $default;
-    }
-
-    private function arrayMergeRecursiveDistinct(array $array1, array $array2): array
-    {
-        $merged = $array1;
-
-        foreach ($array2 as $key => $value) {
-            if (is_array($value) && isset($merged[$key]) && is_array($merged[$key])) {
-                $merged[$key] = $this->arrayMergeRecursiveDistinct($merged[$key], $value);
-            } else {
-                $merged[$key] = $value;
-            }
-        }
-
-        return $merged;
     }
 }

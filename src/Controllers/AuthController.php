@@ -19,9 +19,9 @@ final class AuthController
         }
 
         ob_start();
-        require __DIR__ . '/../layout/header.php';
+        require __DIR__ . '/../Layout/header.php';
         require __DIR__ . '/../pages/home/views/login.php';
-        require __DIR__ . '/../layout/footer.php';
+        require __DIR__ . '/../Layout/footer.php';
         $content = ob_get_clean();
 
         return Response::ok($content);
