@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace GolfElFaro\Core;
+namespace TP\Core;
 
-use GolfElFaro\Models\DB;
+use TP\Models\DB;
 use Throwable;
 
 final class Application

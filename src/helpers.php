@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use GolfElFaro\Core\Security;
-use GolfElFaro\Core\Translator;
+use TP\Core\Security;
+use TP\Core\Translator;
 
 if (!function_exists('__')) {
     /**
@@ -81,7 +81,7 @@ if (!function_exists('config')) {
      */
     function config(string $key, mixed $default = null): mixed
     {
-        return \GolfElFaro\Core\Config::getInstance()->get($key, $default);
+        return \TP\Core\Config::getInstance()->get($key, $default);
     }
 }
 
@@ -99,9 +99,9 @@ if (!function_exists('app')) {
     /**
      * Get application instance
      */
-    function app(): \GolfElFaro\Core\Application
+    function app(): \TP\Core\Application
     {
-        return \GolfElFaro\Core\Application::getInstance();
+        return \TP\Core\Application::getInstance();
     }
 }
 
@@ -109,7 +109,7 @@ if (!function_exists('logger')) {
     /**
      * Get logger instance
      */
-    function logger(): \GolfElFaro\Core\LoggerInterface
+    function logger(): \TP\Core\LoggerInterface
     {
         return app()->getLogger();
     }

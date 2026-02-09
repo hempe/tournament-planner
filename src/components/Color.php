@@ -1,6 +1,6 @@
 <?php
 
-namespace GolfElFaro\Components;
+namespace TP\Components;
 
 enum Color: string
 {

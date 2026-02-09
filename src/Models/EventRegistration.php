@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace GolfElFaro\Models;
+namespace TP\Models;
 
-use GolfElFaro\Core\DateTimeHelper;
+use TP\Core\DateTimeHelper;
 
 final class EventRegistration
 {

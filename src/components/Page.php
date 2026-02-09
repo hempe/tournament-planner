@@ -1,11 +1,11 @@
 <?php
 
-namespace GolfElFaro\Components;
+namespace TP\Components;
 
-use GolfElFaro\Components\Icon;
-use GolfElFaro\Components\IconActionButton;
-use GolfElFaro\Models\User;
-use GolfElFaro\Components\Color;
+use TP\Components\Icon;
+use TP\Components\IconActionButton;
+use TP\Models\User;
+use TP\Components\Color;
 
 class Page extends \Component
 {

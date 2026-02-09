@@ -1,8 +1,8 @@
 <?php
 
-namespace GolfElFaro\Components;
+namespace TP\Components;
 
-use GolfElFaro\Components\TableCell;
+use TP\Components\TableCell;
 
 class TableRow extends \Component
 {

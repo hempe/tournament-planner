@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GolfElFaro\Core;
+namespace TP\Core;
 
 enum Environment: string
 {
@@ -75,8 +75,8 @@ final class Config
             'database' => [
                 'host' => $_ENV['DB_HOST'] ?? 'localhost',
                 'port' => (int)($_ENV['DB_PORT'] ?? 3306),
-                'name' => $_ENV['DB_NAME'] ?? 'golfelfaroDb',
-                'username' => $_ENV['DB_USERNAME'] ?? 'golfelfaro',
+                'name' => $_ENV['DB_NAME'] ?? 'TPDb',
+                'username' => $_ENV['DB_USERNAME'] ?? 'TP',
                 'password' => $_ENV['DB_PASSWORD'] ?? '',
                 'charset' => $_ENV['DB_CHARSET'] ?? 'utf8mb4',
             ],

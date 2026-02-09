@@ -1,6 +1,6 @@
 <?php
 
-namespace GolfElFaro\Components;
+namespace TP\Components;
 class Icon extends \Component
 {
     public readonly string $class;

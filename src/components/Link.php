@@ -1,6 +1,6 @@
 <?php
 
-namespace GolfElFaro\Components;
+namespace TP\Components;
 class Link extends \Component
 {
     private readonly string $content;

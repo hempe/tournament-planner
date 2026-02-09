@@ -1,11 +1,11 @@
 <?php
 
-use GolfElFaro\Components\Page;
-use GolfElFaro\Components\Table;
-use GolfElFaro\Components\Card;
-use GolfElFaro\Components\IconButton;
-use GolfElFaro\Components\Form;
-use GolfElFaro\Components\Input;
+use TP\Components\Page;
+use TP\Components\Table;
+use TP\Components\Card;
+use TP\Components\IconButton;
+use TP\Components\Form;
+use TP\Components\Input;
 
 ?>
 <?= new Page(

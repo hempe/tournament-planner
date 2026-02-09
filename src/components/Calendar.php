@@ -1,12 +1,12 @@
 <?php
 
-namespace GolfElFaro\Components;
+namespace TP\Components;
 
 date_default_timezone_set('Atlantic/Canary');
 
-use GolfElFaro\Components\Div;
-use GolfElFaro\Components\Card;
-use GolfElFaro\Components\CalendarEvent;
+use TP\Components\Div;
+use TP\Components\Card;
+use TP\Components\CalendarEvent;
 
 class Calendar extends \Component
 {

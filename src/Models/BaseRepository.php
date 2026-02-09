@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GolfElFaro\Models;
+namespace TP\Models;
 
 use mysqli;
 use mysqli_stmt;

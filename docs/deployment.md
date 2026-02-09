@@ -55,8 +55,8 @@ APP_LOCALE=de_CH
 # Database
 DB_HOST=localhost
 DB_PORT=3306
-DB_NAME=golfelfaroDb
-DB_USERNAME=golfelfaro
+DB_NAME=TPDb
+DB_USERNAME=TP
 DB_PASSWORD=your_secure_password
 DB_CHARSET=utf8mb4
 
@@ -75,16 +75,16 @@ LOG_FILE=/path/to/logs/app.log
 #### Create Database and User
 
 ```sql
-CREATE DATABASE golfelfaroDb CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE USER 'golfelfaro'@'localhost' IDENTIFIED BY 'your_secure_password';
-GRANT ALL PRIVILEGES ON golfelfaroDb.* TO 'golfelfaro'@'localhost';
+CREATE DATABASE TPDb CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'TP'@'localhost' IDENTIFIED BY 'your_secure_password';
+GRANT ALL PRIVILEGES ON TPDb.* TO 'TP'@'localhost';
 FLUSH PRIVILEGES;
 ```
 
 #### Initialize Database Schema
 
 ```bash
-mysql -u golfelfaro -p golfelfaroDb < init.sql
+mysql -u TP -p TPDb < init.sql
 ```
 
 #### Create Initial Admin User
@@ -253,7 +253,7 @@ return [
     ],
     'database' => [
         'host' => 'localhost',
-        'name' => 'golfelfaro_dev',
+        'name' => 'TP_dev',
     ],
 ];
 ```
@@ -289,7 +289,7 @@ return [
         'debug' => true,
     ],
     'database' => [
-        'name' => 'golfelfaro_test',
+        'name' => 'TP_test',
     ],
     'logging' => [
         'level' => 'DEBUG',
@@ -473,7 +473,7 @@ $router->get('/health', function(Request $request): Response {
    ```bash
    #!/bin/bash
    # Daily database backup
-   mysqldump -u backup_user -p golfelfaroDb | gzip > /backups/db-$(date +%Y%m%d).sql.gz
+   mysqldump -u backup_user -p TPDb | gzip > /backups/db-$(date +%Y%m%d).sql.gz
    
    # Cleanup old backups (keep 30 days)
    find /backups -name "db-*.sql.gz" -mtime +30 -delete
@@ -504,7 +504,7 @@ $router->get('/health', function(Request $request): Response {
 2. **Database Connection Issues**:
    ```bash
    # Test database connection
-   mysql -u golfelfaro -p -h localhost golfelfaroDb
+   mysql -u TP -p -h localhost TPDb
    
    # Check MySQL service
    systemctl status mysql

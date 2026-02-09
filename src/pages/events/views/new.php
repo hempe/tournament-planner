@@ -1,10 +1,10 @@
 <?php
 
-use GolfElFaro\Components\Page;
-use GolfElFaro\Components\Table;
-use GolfElFaro\Components\Card;
-use GolfElFaro\Components\IconButton;
-use GolfElFaro\Components\Form;
+use TP\Components\Page;
+use TP\Components\Table;
+use TP\Components\Card;
+use TP\Components\IconButton;
+use TP\Components\Form;
 ?>
 <?= new Page(function () {
     $formatter = new IntlDateFormatter('de_DE', IntlDateFormatter::FULL, IntlDateFormatter::NONE);

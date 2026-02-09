@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace GolfElFaro\Core;
+namespace TP\Core;
 
-use GolfElFaro\Core\ValidationRule;
+use TP\Core\ValidationRule;
 
 final class ValidationError
 {

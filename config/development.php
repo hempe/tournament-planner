@@ -11,7 +11,7 @@ return [
     ],
     'database' => [
         'host' => 'localhost',
-        'name' => 'golfelfaroDb',
+        'name' => 'TPDb',
     ],
     'security' => [
         'session_lifetime' => 7200, // 2 hours for development

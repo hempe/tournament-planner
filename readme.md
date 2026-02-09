@@ -19,9 +19,9 @@ php -S localhost:5000 -c php.ini
 1. host in on host point
 2. Get players so he can create start list.
 
-CREATE DATABASE golfelfaroDb
-CREATE USER 'golfelfaro'@'%' IDENTIFIED BY 'g0lf3lf4r0';
-GRANT ALL PRIVILEGES ON golfelfaroDb.\* TO 'golfelfaro'@'%';
+CREATE DATABASE TPDb
+CREATE USER 'TP'@'%' IDENTIFIED BY 'g0lf3lf4r0';
+GRANT ALL PRIVILEGES ON TPDb.\* TO 'TP'@'%';
 FLUSH PRIVILEGES;
 
 insert into users (username, password, admin)

@@ -1,8 +1,8 @@
 <?php
 
-namespace GolfElFaro\Components;
+namespace TP\Components;
 
-use GolfElFaro\Components\IconButton;
+use TP\Components\IconButton;
 
 class InputAction extends \Component
 {

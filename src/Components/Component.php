@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace GolfElFaro\Components;
+namespace TP\Components;
 
 use Closure;
 use Generator;
-use GolfElFaro\Core\Security;
+use TP\Core\Security;
 
 abstract class Component
 {

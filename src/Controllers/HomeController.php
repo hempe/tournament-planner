@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace GolfElFaro\Controllers;
+namespace TP\Controllers;
 
-use GolfElFaro\Core\Request;
-use GolfElFaro\Core\Response;
-use GolfElFaro\Models\User;
-use GolfElFaro\Models\DB;
+use TP\Core\Request;
+use TP\Core\Response;
+use TP\Models\User;
+use TP\Models\DB;
 use DateTime;
 
 final class HomeController

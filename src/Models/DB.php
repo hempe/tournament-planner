@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace GolfElFaro\Models;
+namespace TP\Models;
 
-use GolfElFaro\Core\Config;
+use TP\Core\Config;
 use mysqli;
 use mysqli_sql_exception;
 use Exception;
@@ -30,7 +30,7 @@ final class DB
         $port = (int)$config->get('database.port', 3306);
         $username = (string)$config->get('database.username', 'root');
         $password = (string)$config->get('database.password', '');
-        $database = (string)$config->get('database.name', 'golfelfaroDb');
+        $database = (string)$config->get('database.name', 'TPDb');
         $charset = (string)$config->get('database.charset', 'utf8mb4');
 
         try {

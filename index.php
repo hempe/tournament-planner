@@ -5,17 +5,17 @@ declare(strict_types=1);
 // Bootstrap the application
 require_once __DIR__ . '/bootstrap.php';
 
-use GolfElFaro\Core\Application;
-use GolfElFaro\Core\Router;
-use GolfElFaro\Core\Request;
-use GolfElFaro\Core\Response;
-use GolfElFaro\Core\RouteGroup;
-use GolfElFaro\Middleware\AuthMiddleware;
-use GolfElFaro\Middleware\AdminMiddleware;
-use GolfElFaro\Controllers\HomeController;
-use GolfElFaro\Controllers\AuthController;
-use GolfElFaro\Controllers\EventController;
-use GolfElFaro\Controllers\UserController;
+use TP\Core\Application;
+use TP\Core\Router;
+use TP\Core\Request;
+use TP\Core\Response;
+use TP\Core\RouteGroup;
+use TP\Middleware\AuthMiddleware;
+use TP\Middleware\AdminMiddleware;
+use TP\Controllers\HomeController;
+use TP\Controllers\AuthController;
+use TP\Controllers\EventController;
+use TP\Controllers\UserController;
 
 // Get application instance
 $app = Application::getInstance();
@@ -69,7 +69,7 @@ $router->group(
 
 // Health check endpoint
 $router->get('/health', function (Request $request): Response {
-    $config = \GolfElFaro\Core\Config::getInstance();
+    $config = \TP\Core\Config::getInstance();
     
     $status = [
         'status' => 'ok',

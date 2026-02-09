@@ -1,4 +1,4 @@
-# Golf El Faro - Zero Dependency Version
+# Tournament Planner - Zero Dependency Version
 
 A modern, secure, and production-ready golf event management application built with **pure PHP 8.1+** - no external dependencies required.
 
@@ -65,7 +65,7 @@ That's it! No package managers, no dependency downloads, no complex build proces
 ## 📁 Simple Structure
 
 ```
-golf-el-faro/
+tournament-planner/
 ├── src/                          # Application source (pure PHP)
 │   ├── Core/                     # Framework core classes
 │   ├── Components/               # UI components  
@@ -127,8 +127,8 @@ The app includes a built-in PSR-4 autoloader:
 
 ```php
 // bootstrap.php automatically loads classes
-new GolfElFaro\Core\Router();     // Loads src/Core/Router.php
-new GolfElFaro\Models\User();     // Loads src/Models/User.php
+new TP\Core\Router();     // Loads src/Core/Router.php
+new TP\Models\User();     // Loads src/Models/User.php
 ```
 
 ### Routing System

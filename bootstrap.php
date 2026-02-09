@@ -15,7 +15,7 @@ if (($_ENV['APP_ENV'] ?? 'development') === 'development') {
 
 // Simple PSR-4 autoloader (no external dependencies)
 spl_autoload_register(function (string $className): void {
-    $namespace = 'GolfElFaro\\';
+    $namespace = 'TP\\';
     
     // Only handle our namespace
     if (strpos($className, $namespace) !== 0) {
@@ -47,5 +47,5 @@ require_once __DIR__ . '/src/helpers.php';
 require_once __DIR__ . '/src/core/Component.php';
 
 // Boot the application
-$app = \GolfElFaro\Core\Application::getInstance();
+$app = \TP\Core\Application::getInstance();
 $app->boot();

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GolfElFaro\Core;
+namespace TP\Core;
 
 final class Security
 {

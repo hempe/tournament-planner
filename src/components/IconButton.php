@@ -1,9 +1,9 @@
 <?php
 
-namespace GolfElFaro\Components;
+namespace TP\Components;
 
-use GolfElFaro\Components\Icon;
-use GolfElFaro\Components\Color;
+use TP\Components\Icon;
+use TP\Components\Color;
 
 class IconButton extends \Component
 {

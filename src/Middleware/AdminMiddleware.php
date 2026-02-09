@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace GolfElFaro\Middleware;
+namespace TP\Middleware;
 
-use GolfElFaro\Core\MiddlewareInterface;
-use GolfElFaro\Core\Request;
-use GolfElFaro\Core\Response;
-use GolfElFaro\Models\User;
+use TP\Core\MiddlewareInterface;
+use TP\Core\Request;
+use TP\Core\Response;
+use TP\Models\User;
 
 final class AdminMiddleware implements MiddlewareInterface
 {

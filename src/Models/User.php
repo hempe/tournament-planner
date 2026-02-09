@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace GolfElFaro\Models;
+namespace TP\Models;
 
-use GolfElFaro\Core\Security;
+use TP\Core\Security;
 
 final class User
 {
@@ -57,14 +57,14 @@ final class User
     public static function authenticate(string $username, string $password): ?User
     {
         // Check if database is initialized
-        if (!isset(\GolfElFaro\Models\DB::$users)) {
+        if (!isset(\TP\Models\DB::$users)) {
             return null;
         }
         
-        $userRepo = \GolfElFaro\Models\DB::$users;
+        $userRepo = \TP\Models\DB::$users;
         [$user, $hashedPassword] = $userRepo->getWithPassword($username);
         
-        if ($user && $hashedPassword && \GolfElFaro\Core\Security::getInstance()->verifyPassword($password, $hashedPassword)) {
+        if ($user && $hashedPassword && \TP\Core\Security::getInstance()->verifyPassword($password, $hashedPassword)) {
             return $user;
         }
         

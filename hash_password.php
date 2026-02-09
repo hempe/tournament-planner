@@ -2,7 +2,7 @@
 
 require_once __DIR__ . '/bootstrap.php';
 
-use GolfElFaro\Core\Security;
+use TP\Core\Security;
 
 if ($argc !== 3) {
     echo "Usage: php hash_password.php <username> <password>\n";

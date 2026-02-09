@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace GolfElFaro\Controllers;
+namespace TP\Controllers;
 
-use GolfElFaro\Core\Request;
-use GolfElFaro\Core\Response;
-use GolfElFaro\Core\ValidationRule;
-use GolfElFaro\Models\User;
+use TP\Core\Request;
+use TP\Core\Response;
+use TP\Core\ValidationRule;
+use TP\Models\User;
 use Exception;
 
 final class AuthController

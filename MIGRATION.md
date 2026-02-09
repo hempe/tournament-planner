@@ -43,7 +43,7 @@ src/
 
 ```bash
 # Backup database
-mysqldump -u username -p golfelfaroDb > backup_$(date +%Y%m%d).sql
+mysqldump -u username -p TPDb > backup_$(date +%Y%m%d).sql
 
 # Backup files
 tar -czf backup_files_$(date +%Y%m%d).tar.gz /path/to/current/golf-el-faro/

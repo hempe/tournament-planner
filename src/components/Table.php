@@ -1,9 +1,9 @@
 <?php
 
-namespace GolfElFaro\Components;
+namespace TP\Components;
 
-use GolfElFaro\Components\TableRow;
-use GolfElFaro\Components\TableHead;
+use TP\Components\TableRow;
+use TP\Components\TableHead;
 
 /**
  * @template T

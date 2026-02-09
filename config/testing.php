@@ -8,7 +8,7 @@ return [
     ],
     'database' => [
         'host' => 'localhost',
-        'name' => 'golfelfaro_test',
+        'name' => 'TP_test',
     ],
     'logging' => [
         'level' => 'DEBUG',

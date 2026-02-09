@@ -1,11 +1,11 @@
 <?php
 
-namespace GolfElFaro\Components;
+namespace TP\Components;
 
-use GolfElFaro\Components\IconButton;
-use GolfElFaro\Components\Icon;
-use GolfElFaro\Components\Div;
-use GolfElFaro\Components\Link;
+use TP\Components\IconButton;
+use TP\Components\Icon;
+use TP\Components\Div;
+use TP\Components\Link;
 
 class CalendarEvent extends \Component
 {

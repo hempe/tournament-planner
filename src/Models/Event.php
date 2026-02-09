@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GolfElFaro\Models;
+namespace TP\Models;
 
 final class Event
 {

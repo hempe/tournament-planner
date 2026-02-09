@@ -4,13 +4,13 @@ if (isset($_SESSION['user_id'])) {
     exit;
 }
 
-use GolfElFaro\Components\Page;
-use GolfElFaro\Components\Card;
-use GolfElFaro\Components\Form;
-use GolfElFaro\Components\Input;
-use GolfElFaro\Components\Div;
-use GolfElFaro\Components\IconButton;
-use GolfElFaro\Components\Color;
+use TP\Components\Page;
+use TP\Components\Card;
+use TP\Components\Form;
+use TP\Components\Input;
+use TP\Components\Div;
+use TP\Components\IconButton;
+use TP\Components\Color;
 
 echo new Page(
     new Div(

@@ -1,9 +1,9 @@
 <?php
 
-use GolfElFaro\Components\Page;
-use GolfElFaro\Components\Table;
-use GolfElFaro\Components\Card;
-use GolfElFaro\Components\IconActionButton;
+use TP\Components\Page;
+use TP\Components\Table;
+use TP\Components\Card;
+use TP\Components\IconActionButton;
 
 ?>
 <?= new Page(new Card(

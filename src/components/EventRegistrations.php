@@ -1,11 +1,11 @@
 <?php
 
-namespace GolfElFaro\Components;
+namespace TP\Components;
 
-use GolfElFaro\Components\Table;
-use GolfElFaro\Components\InputAction;
-use GolfElFaro\Components\IconActionButton;
-use GolfElFaro\Components\Div;
+use TP\Components\Table;
+use TP\Components\InputAction;
+use TP\Components\IconActionButton;
+use TP\Components\Div;
 
 class EventRegistrations extends \Component
 {
