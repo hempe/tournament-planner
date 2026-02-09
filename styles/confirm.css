@@ -1,0 +1,63 @@
+.custom-confirm {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+  z-index: 1000;
+}
+
+.custom-confirm-content {
+  position: relative;
+  max-width: 400px;
+  width: 90%;
+}
+
+.custom-confirm-message {
+  padding: 12px;
+  color: var(--text);
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+}
+.custom-confirm-content > .card {
+  background: var(--bg);
+}
+.custom-confirm-actions {
+  padding: 12px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  background: var(--bg-card);
+}
+
+.custom-confirm-actions .button {
+  padding: 8px 16px;
+  font-size: 1rem;
+}
+
+.custom-confirm-actions [primary] {
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
+  border-color: var(--button-primary-bg);
+}
+
+.custom-confirm-actions [primary]:hover,
+.custom-confirm-actions [primary]:focus {
+  background: var(--button-primary-light-bg);
+}
+
+.custom-confirm-actions [data-action="cancel"] {
+  background: var(--button-light-bg);
+  color: var(--button-light-text);
+  border-color: var(--button-light-bg);
+}
+
+.custom-confirm-actions [data-action="cancel"]:hover,
+.custom-confirm-actions [data-action="cancel"]:focus {
+  background: var(--button-light-bg);
+  opacity: 0.8;
+}

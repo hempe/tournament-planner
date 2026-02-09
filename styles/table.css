@@ -1,0 +1,146 @@
+/*
+.table-container {
+  margin: 16px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+  display: table;
+}
+
+.table .th {
+  background-color: var(--table_header_background);
+  color: var(--table_header_color); 
+  padding: 12px;
+  text-align: left;
+}
+
+.table .tr {
+  border-bottom: 1px solid var(--color_table_spacer);
+}
+
+.table .td,
+.table .th {
+  padding: 12px;
+}
+
+.tbody {
+  display: table-row-group;
+}
+.th,
+.td {
+  display: table-cell;
+  vertical-align: middle;
+}
+.tr {
+  display: table-row;
+}
+.table > form,
+.tbody > form {
+  display: contents;
+}
+
+.table .tbody .tr:nth-child(even) {
+  background-color: #f9f9f9; 
+}
+
+.table .tbody .tr:hover {
+  background-color: #e0e0e0; 
+}
+.td-title {
+  display: none;
+}
+
+.no-grow {
+  width: 100px;
+}
+
+.table .td.td-input input.input {
+  max-width: 150px;
+}
+
+@media screen and (max-width: 1000px) {
+  .no-grow {
+    width: unset;
+  }
+  .td-title {
+    display: inline;
+    font-weight: bold;
+  }
+
+  .td-title::after {
+    content: ": ";
+  }
+
+  .th {
+    display: none;
+  }
+
+  .table,
+  .tbody,
+  .tr {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .table .tr {
+    padding-top: 10px;
+  }
+
+  .table .tr:nth-child(2) {
+    padding-top: 0px;
+  }
+
+  .table .td {
+    padding: 4px;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    justify-content: start;
+    align-items: center;
+  }
+
+  .table .td.td-input {
+    justify-content: space-between;
+  }
+  .table .td.td-input > form,
+  .table .td.td-input > form > *:nth-child(2) {
+    flex-grow: 1;
+  }
+
+  .td.td-button {
+    display: block;
+    text-align: right;
+  }
+
+  .td.td-button .td-title {
+    margin: auto 0;
+  }
+
+  .td.td-button:last-child {
+    margin-bottom: 10px;
+  }
+
+  .table .td input {
+    margin: 0;
+  }
+
+  .table .td form {
+    display: flex;
+  }
+
+  .table .td form > input {
+    min-width: 10px;
+    width: 150px;
+    margin-right: 10px;
+  }
+
+  .table .tr.thead {
+    padding-top: 0px;
+    margin-bottom: 10px;
+  }
+}
+
+*/

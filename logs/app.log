@@ -1,0 +1,508 @@
+[2025-08-17 17:54:15] INFO: Booting application
+[2025-08-17 17:56:03] INFO: Booting application
+[2025-08-17 17:56:43] INFO: Booting application
+[2025-08-17 17:57:28] INFO: Booting application
+[2025-08-17 17:57:32] INFO: Booting application
+[2025-08-17 17:57:48] INFO: Booting application
+[2025-08-17 17:58:10] INFO: Booting application
+[2025-08-17 17:59:09] INFO: Booting application
+[2025-08-17 17:59:32] INFO: Booting application
+[2025-08-17 19:59:32] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(39): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 19:59:32] INFO: Application booted successfully
+[2025-08-17 18:00:06] INFO: Booting application
+[2025-08-17 20:00:06] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(39): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 20:00:06] INFO: Application booted successfully
+[2025-08-17 18:01:18] INFO: Booting application
+[2025-08-17 20:01:18] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(39): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 20:01:18] INFO: Application booted successfully
+[2025-08-17 18:02:33] INFO: Booting application
+[2025-08-17 20:02:33] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(39): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 20:02:33] INFO: Application booted successfully
+[2025-08-17 20:02:33] DEBUG: Processing request {"method":"GET","uri":"\/health","ip":"::1"}
+[2025-08-17 20:02:33] DEBUG: Sending response {"status":200,"is_redirect":false}
+[2025-08-17 18:05:19] INFO: Booting application
+[2025-08-17 20:05:19] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(39): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 20:05:19] INFO: Application booted successfully
+[2025-08-17 20:05:19] DEBUG: Processing request {"method":"GET","uri":"\/","ip":"::1"}
+[2025-08-17 20:05:19] DEBUG: Sending response {"status":500,"is_redirect":false}
+[2025-08-17 18:07:45] INFO: Booting application
+[2025-08-17 20:07:45] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(42): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 20:07:45] INFO: Application booted successfully
+[2025-08-17 20:07:45] DEBUG: Processing request {"method":"GET","uri":"\/","ip":"::1"}
+[2025-08-17 20:07:45] DEBUG: Sending response {"status":500,"is_redirect":false}
+[2025-08-17 18:09:02] INFO: Booting application
+[2025-08-17 20:09:02] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(42): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 20:09:02] INFO: Application booted successfully
+[2025-08-17 20:09:02] DEBUG: Processing request {"method":"GET","uri":"\/","ip":"::1"}
+[2025-08-17 20:09:02] DEBUG: Sending response {"status":500,"is_redirect":false}
+[2025-08-17 18:09:06] INFO: Booting application
+[2025-08-17 20:09:06] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(42): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 20:09:06] INFO: Application booted successfully
+[2025-08-17 20:09:06] DEBUG: Processing request {"method":"GET","uri":"\/","ip":"::1"}
+[2025-08-17 20:09:06] DEBUG: Sending response {"status":500,"is_redirect":false}
+[2025-08-17 18:10:21] INFO: Booting application
+[2025-08-17 20:10:21] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(42): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 20:10:21] INFO: Application booted successfully
+[2025-08-17 20:10:21] DEBUG: Processing request {"method":"GET","uri":"\/","ip":"::1"}
+[2025-08-17 20:10:21] DEBUG: Sending response {"status":500,"is_redirect":false}
+[2025-08-17 18:13:10] INFO: Booting application
+[2025-08-17 20:13:10] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(42): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 20:13:10] INFO: Application booted successfully
+[2025-08-17 20:13:10] DEBUG: Processing request {"method":"GET","uri":"\/","ip":"::1"}
+[2025-08-17 20:13:10] DEBUG: Sending response {"status":500,"is_redirect":false}
+[2025-08-17 18:20:20] INFO: Booting application
+[2025-08-17 20:20:20] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(42): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 20:20:20] INFO: Application booted successfully
+[2025-08-17 20:20:20] DEBUG: Processing request {"method":"GET","uri":"\/","ip":"::1"}
+[2025-08-17 20:20:20] DEBUG: Sending response {"status":500,"is_redirect":false}
+[2025-08-17 19:41:36] INFO: Booting application
+[2025-08-17 21:41:36] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(42): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('\/home\/hempe\/git...')\n#4 {main}"}
+[2025-08-17 21:41:36] INFO: Application booted successfully
+[2025-08-17 21:41:36] DEBUG: Processing request {"method":"GET","uri":"\/","ip":"::1"}
+[2025-08-17 21:41:36] DEBUG: Sending response {"status":500,"is_redirect":false}
+[2025-08-17 19:42:00] INFO: Booting application
+[2025-08-17 21:42:00] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(42): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('\/home\/hempe\/git...')\n#4 {main}"}
+[2025-08-17 21:42:00] INFO: Application booted successfully
+[2025-08-17 21:42:00] DEBUG: Processing request {"method":"GET","uri":"\/","ip":"::1"}
+[2025-08-17 21:42:00] DEBUG: Sending response {"status":500,"is_redirect":false}
+[2025-08-17 19:42:04] INFO: Booting application
+[2025-08-17 21:42:04] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(42): GolfElFaro\\Core\\Application->boot()\n#3 Command line code(2): require_once('...')\n#4 {main}"}
+[2025-08-17 21:42:04] INFO: Application booted successfully
+[2025-08-17 19:42:20] INFO: Booting application
+[2025-08-17 21:42:20] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(47): GolfElFaro\\Core\\Application->boot()\n#3 Command line code(2): require_once('...')\n#4 {main}"}
+[2025-08-17 21:42:20] INFO: Application booted successfully
+[2025-08-17 19:42:44] INFO: Booting application
+[2025-08-17 21:42:44] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 Command line code(2): require_once('...')\n#4 {main}"}
+[2025-08-17 21:42:44] INFO: Application booted successfully
+[2025-08-17 19:42:52] INFO: Booting application
+[2025-08-17 21:42:52] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('\/home\/hempe\/git...')\n#4 {main}"}
+[2025-08-17 21:42:52] INFO: Application booted successfully
+[2025-08-17 21:42:52] DEBUG: Processing request {"method":"GET","uri":"\/","ip":"::1"}
+[2025-08-17 21:42:52] DEBUG: Sending response {"status":500,"is_redirect":false}
+[2025-08-17 19:42:56] INFO: Booting application
+[2025-08-17 21:42:56] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('\/home\/hempe\/git...')\n#4 {main}"}
+[2025-08-17 21:42:56] INFO: Application booted successfully
+[2025-08-17 21:42:56] DEBUG: Processing request {"method":"GET","uri":"\/","ip":"::1"}
+[2025-08-17 21:42:56] DEBUG: Sending response {"status":500,"is_redirect":false}
+[2025-08-17 19:43:31] INFO: Booting application
+[2025-08-17 21:43:31] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('\/home\/hempe\/git...')\n#4 {main}"}
+[2025-08-17 21:43:31] INFO: Application booted successfully
+[2025-08-17 21:43:31] DEBUG: Processing request {"method":"GET","uri":"\/","ip":"::1"}
+[2025-08-17 21:43:31] DEBUG: Sending response {"status":200,"is_redirect":false}
+[2025-08-17 19:45:39] INFO: Booting application
+[2025-08-17 21:45:39] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 21:45:39] INFO: Application booted successfully
+[2025-08-17 21:45:39] DEBUG: Processing request {"method":"GET","uri":"\/","ip":"::1"}
+[2025-08-17 21:45:39] DEBUG: Sending response {"status":200,"is_redirect":false}
+[2025-08-17 19:48:09] INFO: Booting application
+[2025-08-17 21:48:09] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('\/home\/hempe\/git...')\n#4 {main}"}
+[2025-08-17 21:48:09] INFO: Application booted successfully
+[2025-08-17 21:48:09] DEBUG: Processing request {"method":"GET","uri":"\/","ip":"::1"}
+[2025-08-17 21:48:09] DEBUG: Sending response {"status":200,"is_redirect":false}
+[2025-08-17 19:48:24] INFO: Booting application
+[2025-08-17 21:48:24] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 21:48:24] INFO: Application booted successfully
+[2025-08-17 21:48:24] DEBUG: Processing request {"method":"GET","uri":"\/","ip":"::1"}
+[2025-08-17 21:48:24] DEBUG: Sending response {"status":200,"is_redirect":false}
+[2025-08-17 19:48:51] INFO: Booting application
+[2025-08-17 21:48:51] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 21:48:51] INFO: Application booted successfully
+[2025-08-17 21:48:51] DEBUG: Processing request {"method":"GET","uri":"\/.well-known\/appspecific\/com.chrome.devtools.json","ip":"::1"}
+[2025-08-17 21:48:51] DEBUG: Sending response {"status":404,"is_redirect":false}
+[2025-08-17 19:48:56] INFO: Booting application
+[2025-08-17 21:48:56] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 21:48:56] INFO: Application booted successfully
+[2025-08-17 21:48:56] DEBUG: Processing request {"method":"GET","uri":"\/","ip":"::1"}
+[2025-08-17 21:48:56] DEBUG: Sending response {"status":200,"is_redirect":false}
+[2025-08-17 19:48:57] INFO: Booting application
+[2025-08-17 21:48:57] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 21:48:57] INFO: Application booted successfully
+[2025-08-17 21:48:57] DEBUG: Processing request {"method":"GET","uri":"\/.well-known\/appspecific\/com.chrome.devtools.json","ip":"::1"}
+[2025-08-17 21:48:57] DEBUG: Sending response {"status":404,"is_redirect":false}
+[2025-08-17 19:49:36] INFO: Booting application
+[2025-08-17 21:49:36] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 21:49:36] INFO: Application booted successfully
+[2025-08-17 21:49:36] DEBUG: Processing request {"method":"POST","uri":"\/","ip":"::1"}
+[2025-08-17 21:49:36] DEBUG: Sending response {"status":404,"is_redirect":false}
+[2025-08-17 19:49:36] INFO: Booting application
+[2025-08-17 21:49:36] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 21:49:36] INFO: Application booted successfully
+[2025-08-17 21:49:36] DEBUG: Processing request {"method":"GET","uri":"\/.well-known\/appspecific\/com.chrome.devtools.json","ip":"::1"}
+[2025-08-17 21:49:36] DEBUG: Sending response {"status":404,"is_redirect":false}
+[2025-08-17 19:50:03] INFO: Booting application
+[2025-08-17 21:50:03] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('\/home\/hempe\/git...')\n#4 {main}"}
+[2025-08-17 21:50:03] INFO: Application booted successfully
+[2025-08-17 21:50:03] DEBUG: Processing request {"method":"GET","uri":"\/","ip":"::1"}
+[2025-08-17 21:50:03] DEBUG: Sending response {"status":200,"is_redirect":false}
+[2025-08-17 19:50:51] INFO: Booting application
+[2025-08-17 21:50:51] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 21:50:51] INFO: Application booted successfully
+[2025-08-17 21:50:51] DEBUG: Processing request {"method":"POST","uri":"\/","ip":"::1"}
+[2025-08-17 21:50:51] DEBUG: Sending response {"status":404,"is_redirect":false}
+[2025-08-17 19:50:58] INFO: Booting application
+[2025-08-17 21:50:58] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('\/home\/hempe\/git...')\n#4 {main}"}
+[2025-08-17 21:50:58] INFO: Application booted successfully
+[2025-08-17 21:50:58] DEBUG: Processing request {"method":"GET","uri":"\/","ip":"::1"}
+[2025-08-17 21:50:58] DEBUG: Sending response {"status":200,"is_redirect":false}
+[2025-08-17 19:51:03] INFO: Booting application
+[2025-08-17 21:51:03] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('\/home\/hempe\/git...')\n#4 {main}"}
+[2025-08-17 21:51:03] INFO: Application booted successfully
+[2025-08-17 21:51:03] DEBUG: Processing request {"method":"GET","uri":"\/","ip":"::1"}
+[2025-08-17 21:51:03] DEBUG: Sending response {"status":200,"is_redirect":false}
+[2025-08-17 19:51:16] INFO: Booting application
+[2025-08-17 21:51:16] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('\/home\/hempe\/git...')\n#4 {main}"}
+[2025-08-17 21:51:16] INFO: Application booted successfully
+[2025-08-17 21:51:16] DEBUG: Processing request {"method":"GET","uri":"\/","ip":"::1"}
+[2025-08-17 21:51:16] DEBUG: Sending response {"status":200,"is_redirect":false}
+[2025-08-17 19:51:29] INFO: Booting application
+[2025-08-17 21:51:29] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 21:51:29] INFO: Application booted successfully
+[2025-08-17 21:51:29] DEBUG: Processing request {"method":"GET","uri":"\/","ip":"::1"}
+[2025-08-17 21:51:29] DEBUG: Sending response {"status":200,"is_redirect":false}
+[2025-08-17 19:51:32] INFO: Booting application
+[2025-08-17 21:51:32] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 21:51:32] INFO: Application booted successfully
+[2025-08-17 21:51:32] DEBUG: Processing request {"method":"POST","uri":"\/","ip":"::1"}
+[2025-08-17 21:51:32] DEBUG: Sending response {"status":404,"is_redirect":false}
+[2025-08-17 19:51:34] INFO: Booting application
+[2025-08-17 21:51:34] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 21:51:34] INFO: Application booted successfully
+[2025-08-17 21:51:34] DEBUG: Processing request {"method":"GET","uri":"\/","ip":"::1"}
+[2025-08-17 21:51:34] DEBUG: Sending response {"status":200,"is_redirect":false}
+[2025-08-17 19:51:40] INFO: Booting application
+[2025-08-17 21:51:40] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 21:51:40] INFO: Application booted successfully
+[2025-08-17 21:51:40] DEBUG: Processing request {"method":"POST","uri":"\/","ip":"::1"}
+[2025-08-17 21:51:40] DEBUG: Sending response {"status":404,"is_redirect":false}
+[2025-08-17 19:52:00] INFO: Booting application
+[2025-08-17 21:52:00] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 21:52:00] INFO: Application booted successfully
+[2025-08-17 21:52:00] DEBUG: Processing request {"method":"GET","uri":"\/","ip":"::1"}
+[2025-08-17 21:52:00] DEBUG: Sending response {"status":200,"is_redirect":false}
+[2025-08-17 19:52:15] INFO: Booting application
+[2025-08-17 21:52:15] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 21:52:15] INFO: Application booted successfully
+[2025-08-17 21:52:15] DEBUG: Processing request {"method":"GET","uri":"\/","ip":"::1"}
+[2025-08-17 21:52:15] DEBUG: Sending response {"status":200,"is_redirect":false}
+[2025-08-17 19:52:15] INFO: Booting application
+[2025-08-17 21:52:15] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('\/home\/hempe\/git...')\n#4 {main}"}
+[2025-08-17 21:52:15] INFO: Application booted successfully
+[2025-08-17 21:52:15] DEBUG: Processing request {"method":"GET","uri":"\/","ip":"::1"}
+[2025-08-17 21:52:15] DEBUG: Sending response {"status":200,"is_redirect":false}
+[2025-08-17 19:52:42] INFO: Booting application
+[2025-08-17 21:52:42] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 21:52:42] INFO: Application booted successfully
+[2025-08-17 21:52:42] DEBUG: Processing request {"method":"POST","uri":"\/login","ip":"::1"}
+[2025-08-17 21:52:42] DEBUG: Sending response {"status":422,"is_redirect":false}
+[2025-08-17 19:52:59] INFO: Booting application
+[2025-08-17 21:52:59] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 21:52:59] INFO: Application booted successfully
+[2025-08-17 21:52:59] DEBUG: Processing request {"method":"GET","uri":"\/","ip":"::1"}
+[2025-08-17 21:52:59] DEBUG: Sending response {"status":200,"is_redirect":false}
+[2025-08-17 19:53:02] INFO: Booting application
+[2025-08-17 21:53:02] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 21:53:02] INFO: Application booted successfully
+[2025-08-17 21:53:02] DEBUG: Processing request {"method":"POST","uri":"\/login","ip":"::1"}
+[2025-08-17 21:53:02] DEBUG: Sending response {"status":422,"is_redirect":false}
+[2025-08-17 19:54:03] INFO: Booting application
+[2025-08-17 21:54:03] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('\/home\/hempe\/git...')\n#4 {main}"}
+[2025-08-17 21:54:03] INFO: Application booted successfully
+[2025-08-17 21:54:03] DEBUG: Processing request {"method":"POST","uri":"\/login","ip":"::1"}
+[2025-08-17 21:54:03] DEBUG: Sending response {"status":422,"is_redirect":false}
+[2025-08-17 19:54:08] INFO: Booting application
+[2025-08-17 21:54:08] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('\/home\/hempe\/git...')\n#4 {main}"}
+[2025-08-17 21:54:08] INFO: Application booted successfully
+[2025-08-17 21:54:08] DEBUG: Processing request {"method":"GET","uri":"\/","ip":"::1"}
+[2025-08-17 21:54:08] DEBUG: Sending response {"status":200,"is_redirect":false}
+[2025-08-17 19:54:44] INFO: Booting application
+[2025-08-17 21:54:44] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('\/home\/hempe\/git...')\n#4 {main}"}
+[2025-08-17 21:54:44] INFO: Application booted successfully
+[2025-08-17 21:54:44] DEBUG: Processing request {"method":"GET","uri":"\/","ip":"::1"}
+[2025-08-17 21:54:44] DEBUG: Sending response {"status":200,"is_redirect":false}
+[2025-08-17 19:54:56] INFO: Booting application
+[2025-08-17 21:54:56] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('\/home\/hempe\/git...')\n#4 {main}"}
+[2025-08-17 21:54:56] INFO: Application booted successfully
+[2025-08-17 21:54:56] DEBUG: Processing request {"method":"GET","uri":"\/","ip":"::1"}
+[2025-08-17 21:54:56] DEBUG: Sending response {"status":200,"is_redirect":false}
+[2025-08-17 19:55:01] INFO: Booting application
+[2025-08-17 21:55:01] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('\/home\/hempe\/git...')\n#4 {main}"}
+[2025-08-17 21:55:01] INFO: Application booted successfully
+[2025-08-17 21:55:01] DEBUG: Processing request {"method":"POST","uri":"\/login","ip":"::1"}
+[2025-08-17 21:55:01] DEBUG: Sending response {"status":422,"is_redirect":false}
+[2025-08-17 19:55:20] INFO: Booting application
+[2025-08-17 21:55:20] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('\/home\/hempe\/git...')\n#4 {main}"}
+[2025-08-17 21:55:20] INFO: Application booted successfully
+[2025-08-17 21:55:20] DEBUG: Processing request {"method":"GET","uri":"\/","ip":"::1"}
+[2025-08-17 21:55:20] DEBUG: Sending response {"status":200,"is_redirect":false}
+[2025-08-17 19:55:29] INFO: Booting application
+[2025-08-17 21:55:29] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('\/home\/hempe\/git...')\n#4 {main}"}
+[2025-08-17 21:55:29] INFO: Application booted successfully
+[2025-08-17 21:55:29] DEBUG: Processing request {"method":"GET","uri":"\/","ip":"::1"}
+[2025-08-17 21:55:29] DEBUG: Sending response {"status":200,"is_redirect":false}
+[2025-08-17 19:55:35] INFO: Booting application
+[2025-08-17 21:55:35] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('\/home\/hempe\/git...')\n#4 {main}"}
+[2025-08-17 21:55:35] INFO: Application booted successfully
+[2025-08-17 21:55:35] DEBUG: Processing request {"method":"POST","uri":"\/login","ip":"::1"}
+[2025-08-17 21:55:35] DEBUG: Sending response {"status":422,"is_redirect":false}
+[2025-08-17 19:55:47] INFO: Booting application
+[2025-08-17 21:55:47] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 21:55:47] INFO: Application booted successfully
+[2025-08-17 21:55:47] DEBUG: Processing request {"method":"POST","uri":"\/login","ip":"::1"}
+[2025-08-17 21:55:47] DEBUG: Sending response {"status":422,"is_redirect":false}
+[2025-08-17 19:55:48] INFO: Booting application
+[2025-08-17 21:55:48] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 21:55:48] INFO: Application booted successfully
+[2025-08-17 21:55:48] DEBUG: Processing request {"method":"GET","uri":"\/login","ip":"::1"}
+[2025-08-17 21:55:48] DEBUG: Sending response {"status":200,"is_redirect":false}
+[2025-08-17 19:55:52] INFO: Booting application
+[2025-08-17 21:55:52] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 21:55:52] INFO: Application booted successfully
+[2025-08-17 21:55:52] DEBUG: Processing request {"method":"POST","uri":"\/login","ip":"::1"}
+[2025-08-17 21:55:52] DEBUG: Sending response {"status":500,"is_redirect":false}
+[2025-08-17 19:56:15] INFO: Booting application
+[2025-08-17 21:56:15] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 Command line code(2): require_once('...')\n#4 {main}"}
+[2025-08-17 21:56:15] INFO: Application booted successfully
+[2025-08-17 19:56:52] INFO: Booting application
+[2025-08-17 21:56:52] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 Command line code(2): require_once('...')\n#4 {main}"}
+[2025-08-17 21:56:52] INFO: Application booted successfully
+[2025-08-17 19:56:58] INFO: Booting application
+[2025-08-17 21:56:58] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('\/home\/hempe\/git...')\n#4 {main}"}
+[2025-08-17 21:56:58] INFO: Application booted successfully
+[2025-08-17 21:56:58] DEBUG: Processing request {"method":"GET","uri":"\/","ip":"::1"}
+[2025-08-17 21:56:58] DEBUG: Sending response {"status":200,"is_redirect":false}
+[2025-08-17 19:56:59] INFO: Booting application
+[2025-08-17 21:56:59] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('\/home\/hempe\/git...')\n#4 {main}"}
+[2025-08-17 21:56:59] INFO: Application booted successfully
+[2025-08-17 21:56:59] DEBUG: Processing request {"method":"GET","uri":"\/","ip":"::1"}
+[2025-08-17 21:56:59] DEBUG: Sending response {"status":200,"is_redirect":false}
+[2025-08-17 19:57:04] INFO: Booting application
+[2025-08-17 21:57:04] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('\/home\/hempe\/git...')\n#4 {main}"}
+[2025-08-17 21:57:04] INFO: Application booted successfully
+[2025-08-17 21:57:04] DEBUG: Processing request {"method":"POST","uri":"\/login","ip":"::1"}
+[2025-08-17 21:57:04] DEBUG: Sending response {"status":500,"is_redirect":false}
+[2025-08-17 19:57:17] INFO: Booting application
+[2025-08-17 21:57:17] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 21:57:17] INFO: Application booted successfully
+[2025-08-17 21:57:17] DEBUG: Processing request {"method":"GET","uri":"\/login","ip":"::1"}
+[2025-08-17 21:57:17] DEBUG: Sending response {"status":200,"is_redirect":false}
+[2025-08-17 19:57:20] INFO: Booting application
+[2025-08-17 21:57:20] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 21:57:20] INFO: Application booted successfully
+[2025-08-17 21:57:20] DEBUG: Processing request {"method":"POST","uri":"\/login","ip":"::1"}
+[2025-08-17 21:57:20] DEBUG: Sending response {"status":500,"is_redirect":false}
+[2025-08-17 19:58:14] INFO: Booting application
+[2025-08-17 21:58:14] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('\/home\/hempe\/git...')\n#4 {main}"}
+[2025-08-17 21:58:14] INFO: Application booted successfully
+[2025-08-17 21:58:14] DEBUG: Processing request {"method":"GET","uri":"\/","ip":"::1"}
+[2025-08-17 21:58:14] DEBUG: Sending response {"status":200,"is_redirect":false}
+[2025-08-17 19:58:24] INFO: Booting application
+[2025-08-17 21:58:24] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('\/home\/hempe\/git...')\n#4 {main}"}
+[2025-08-17 21:58:24] INFO: Application booted successfully
+[2025-08-17 21:58:24] DEBUG: Processing request {"method":"POST","uri":"\/login","ip":"::1"}
+[2025-08-17 21:58:24] DEBUG: Sending response {"status":303,"is_redirect":true}
+[2025-08-17 19:58:28] INFO: Booting application
+[2025-08-17 21:58:28] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 21:58:28] INFO: Application booted successfully
+[2025-08-17 21:58:28] DEBUG: Processing request {"method":"GET","uri":"\/login","ip":"::1"}
+[2025-08-17 21:58:28] DEBUG: Sending response {"status":200,"is_redirect":false}
+[2025-08-17 19:58:31] INFO: Booting application
+[2025-08-17 21:58:31] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 21:58:31] INFO: Application booted successfully
+[2025-08-17 21:58:31] DEBUG: Processing request {"method":"POST","uri":"\/login","ip":"::1"}
+[2025-08-17 21:58:31] DEBUG: Sending response {"status":303,"is_redirect":true}
+[2025-08-17 19:58:31] INFO: Booting application
+[2025-08-17 21:58:31] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 21:58:31] INFO: Application booted successfully
+[2025-08-17 21:58:31] DEBUG: Processing request {"method":"GET","uri":"\/login","ip":"::1"}
+[2025-08-17 21:58:31] DEBUG: Sending response {"status":200,"is_redirect":false}
+[2025-08-17 19:58:37] INFO: Booting application
+[2025-08-17 21:58:37] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 21:58:37] INFO: Application booted successfully
+[2025-08-17 21:58:37] DEBUG: Processing request {"method":"POST","uri":"\/login","ip":"::1"}
+[2025-08-17 21:58:37] DEBUG: Sending response {"status":303,"is_redirect":true}
+[2025-08-17 19:58:37] INFO: Booting application
+[2025-08-17 21:58:37] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 21:58:37] INFO: Application booted successfully
+[2025-08-17 21:58:37] DEBUG: Processing request {"method":"GET","uri":"\/login","ip":"::1"}
+[2025-08-17 21:58:37] DEBUG: Sending response {"status":200,"is_redirect":false}
+[2025-08-17 20:00:19] INFO: Booting application
+[2025-08-17 22:00:19] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/hash_password.php(3): require_once('...')\n#4 {main}"}
+[2025-08-17 22:00:19] INFO: Application booted successfully
+[2025-08-17 20:01:35] INFO: Booting application
+[2025-08-17 22:01:35] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 22:01:35] INFO: Application booted successfully
+[2025-08-17 22:01:35] DEBUG: Processing request {"method":"GET","uri":"\/login","ip":"::1"}
+[2025-08-17 22:01:35] DEBUG: Sending response {"status":200,"is_redirect":false}
+[2025-08-17 20:01:39] INFO: Booting application
+[2025-08-17 22:01:39] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 22:01:39] INFO: Application booted successfully
+[2025-08-17 22:01:39] DEBUG: Processing request {"method":"POST","uri":"\/login","ip":"::1"}
+[2025-08-17 22:01:39] DEBUG: Sending response {"status":303,"is_redirect":true}
+[2025-08-17 20:01:39] INFO: Booting application
+[2025-08-17 22:01:39] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 22:01:39] INFO: Application booted successfully
+[2025-08-17 22:01:39] DEBUG: Processing request {"method":"GET","uri":"\/login","ip":"::1"}
+[2025-08-17 22:01:39] DEBUG: Sending response {"status":200,"is_redirect":false}
+[2025-08-17 20:01:42] INFO: Booting application
+[2025-08-17 22:01:42] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 22:01:42] INFO: Application booted successfully
+[2025-08-17 22:01:42] DEBUG: Processing request {"method":"POST","uri":"\/login","ip":"::1"}
+[2025-08-17 22:01:42] DEBUG: Sending response {"status":303,"is_redirect":true}
+[2025-08-17 20:01:42] INFO: Booting application
+[2025-08-17 22:01:42] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 22:01:42] INFO: Application booted successfully
+[2025-08-17 22:01:42] DEBUG: Processing request {"method":"GET","uri":"\/login","ip":"::1"}
+[2025-08-17 22:01:42] DEBUG: Sending response {"status":200,"is_redirect":false}
+[2025-08-17 20:02:15] INFO: Booting application
+[2025-08-17 22:02:15] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 22:02:15] INFO: Application booted successfully
+[2025-08-17 22:02:15] DEBUG: Processing request {"method":"GET","uri":"\/.well-known\/appspecific\/com.chrome.devtools.json","ip":"::1"}
+[2025-08-17 22:02:15] DEBUG: Sending response {"status":404,"is_redirect":false}
+[2025-08-17 20:02:21] INFO: Booting application
+[2025-08-17 22:02:21] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 22:02:21] INFO: Application booted successfully
+[2025-08-17 22:02:21] DEBUG: Processing request {"method":"POST","uri":"\/login","ip":"::1"}
+[2025-08-17 22:02:21] DEBUG: Sending response {"status":303,"is_redirect":true}
+[2025-08-17 20:02:21] INFO: Booting application
+[2025-08-17 22:02:21] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 22:02:21] INFO: Application booted successfully
+[2025-08-17 22:02:21] DEBUG: Processing request {"method":"GET","uri":"\/login","ip":"::1"}
+[2025-08-17 22:02:21] DEBUG: Sending response {"status":200,"is_redirect":false}
+[2025-08-17 20:02:21] INFO: Booting application
+[2025-08-17 22:02:21] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 22:02:21] INFO: Application booted successfully
+[2025-08-17 22:02:21] DEBUG: Processing request {"method":"GET","uri":"\/.well-known\/appspecific\/com.chrome.devtools.json","ip":"::1"}
+[2025-08-17 22:02:21] DEBUG: Sending response {"status":404,"is_redirect":false}
+[2025-08-17 20:04:00] INFO: Booting application
+[2025-08-17 22:04:00] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 22:04:00] INFO: Application booted successfully
+[2025-08-17 22:04:00] DEBUG: Processing request {"method":"GET","uri":"\/login","ip":"::1"}
+[2025-08-17 22:04:01] DEBUG: Sending response {"status":200,"is_redirect":false}
+[2025-08-17 20:04:01] INFO: Booting application
+[2025-08-17 22:04:01] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 22:04:01] INFO: Application booted successfully
+[2025-08-17 22:04:01] DEBUG: Processing request {"method":"GET","uri":"\/.well-known\/appspecific\/com.chrome.devtools.json","ip":"::1"}
+[2025-08-17 22:04:01] DEBUG: Sending response {"status":404,"is_redirect":false}
+[2025-08-17 20:04:09] INFO: Booting application
+[2025-08-17 22:04:09] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 22:04:09] INFO: Application booted successfully
+[2025-08-17 22:04:09] DEBUG: Processing request {"method":"POST","uri":"\/login","ip":"::1"}
+[2025-08-17 22:04:09] DEBUG: Sending response {"status":303,"is_redirect":true}
+[2025-08-17 20:04:09] INFO: Booting application
+[2025-08-17 22:04:09] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 22:04:09] INFO: Application booted successfully
+[2025-08-17 22:04:09] DEBUG: Processing request {"method":"GET","uri":"\/login","ip":"::1"}
+[2025-08-17 22:04:09] DEBUG: Sending response {"status":200,"is_redirect":false}
+[2025-08-17 20:04:09] INFO: Booting application
+[2025-08-17 22:04:09] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'localhost' (using password: YES)","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 22:04:09] INFO: Application booted successfully
+[2025-08-17 22:04:09] DEBUG: Processing request {"method":"GET","uri":"\/.well-known\/appspecific\/com.chrome.devtools.json","ip":"::1"}
+[2025-08-17 22:04:09] DEBUG: Sending response {"status":404,"is_redirect":false}
+[2025-08-17 20:04:55] INFO: Booting application
+[2025-08-17 22:04:55] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'root'@'localhost'","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 22:04:55] INFO: Application booted successfully
+[2025-08-17 22:04:55] DEBUG: Processing request {"method":"GET","uri":"\/login","ip":"::1"}
+[2025-08-17 22:04:55] DEBUG: Sending response {"status":200,"is_redirect":false}
+[2025-08-17 20:04:55] INFO: Booting application
+[2025-08-17 22:04:55] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'root'@'localhost'","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 22:04:55] INFO: Application booted successfully
+[2025-08-17 22:04:55] DEBUG: Processing request {"method":"GET","uri":"\/.well-known\/appspecific\/com.chrome.devtools.json","ip":"::1"}
+[2025-08-17 22:04:55] DEBUG: Sending response {"status":404,"is_redirect":false}
+[2025-08-17 20:04:59] INFO: Booting application
+[2025-08-17 22:04:59] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'root'@'localhost'","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 22:04:59] INFO: Application booted successfully
+[2025-08-17 22:04:59] DEBUG: Processing request {"method":"POST","uri":"\/login","ip":"::1"}
+[2025-08-17 22:04:59] DEBUG: Sending response {"status":303,"is_redirect":true}
+[2025-08-17 20:04:59] INFO: Booting application
+[2025-08-17 22:04:59] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'root'@'localhost'","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 22:04:59] INFO: Application booted successfully
+[2025-08-17 22:04:59] DEBUG: Processing request {"method":"GET","uri":"\/login","ip":"::1"}
+[2025-08-17 22:04:59] DEBUG: Sending response {"status":200,"is_redirect":false}
+[2025-08-17 20:04:59] INFO: Booting application
+[2025-08-17 22:04:59] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'root'@'localhost'","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 22:04:59] INFO: Application booted successfully
+[2025-08-17 22:04:59] DEBUG: Processing request {"method":"GET","uri":"\/.well-known\/appspecific\/com.chrome.devtools.json","ip":"::1"}
+[2025-08-17 22:04:59] DEBUG: Sending response {"status":404,"is_redirect":false}
+[2025-08-17 20:06:12] INFO: Booting application
+[2025-08-17 22:06:12] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'%' to database 'golfelfaro_dev'","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 22:06:12] INFO: Application booted successfully
+[2025-08-17 22:06:12] DEBUG: Processing request {"method":"GET","uri":"\/login","ip":"::1"}
+[2025-08-17 22:06:12] DEBUG: Sending response {"status":200,"is_redirect":false}
+[2025-08-17 20:06:12] INFO: Booting application
+[2025-08-17 22:06:12] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'%' to database 'golfelfaro_dev'","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 22:06:12] INFO: Application booted successfully
+[2025-08-17 22:06:12] DEBUG: Processing request {"method":"GET","uri":"\/.well-known\/appspecific\/com.chrome.devtools.json","ip":"::1"}
+[2025-08-17 22:06:12] DEBUG: Sending response {"status":404,"is_redirect":false}
+[2025-08-17 20:06:14] INFO: Booting application
+[2025-08-17 22:06:14] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'%' to database 'golfelfaro_dev'","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 22:06:14] INFO: Application booted successfully
+[2025-08-17 22:06:14] DEBUG: Processing request {"method":"POST","uri":"\/login","ip":"::1"}
+[2025-08-17 22:06:14] DEBUG: Sending response {"status":303,"is_redirect":true}
+[2025-08-17 20:06:14] INFO: Booting application
+[2025-08-17 22:06:14] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'%' to database 'golfelfaro_dev'","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 22:06:14] INFO: Application booted successfully
+[2025-08-17 22:06:14] DEBUG: Processing request {"method":"GET","uri":"\/login","ip":"::1"}
+[2025-08-17 22:06:14] DEBUG: Sending response {"status":200,"is_redirect":false}
+[2025-08-17 20:06:14] INFO: Booting application
+[2025-08-17 22:06:14] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'%' to database 'golfelfaro_dev'","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 22:06:14] INFO: Application booted successfully
+[2025-08-17 22:06:14] DEBUG: Processing request {"method":"GET","uri":"\/.well-known\/appspecific\/com.chrome.devtools.json","ip":"::1"}
+[2025-08-17 22:06:14] DEBUG: Sending response {"status":404,"is_redirect":false}
+[2025-08-17 20:06:32] INFO: Booting application
+[2025-08-17 22:06:32] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'%' to database 'golfelfaro_dev'","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 22:06:32] INFO: Application booted successfully
+[2025-08-17 22:06:32] DEBUG: Processing request {"method":"POST","uri":"\/login","ip":"::1"}
+[2025-08-17 22:06:32] DEBUG: Sending response {"status":303,"is_redirect":true}
+[2025-08-17 20:06:32] INFO: Booting application
+[2025-08-17 22:06:32] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'%' to database 'golfelfaro_dev'","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 22:06:32] INFO: Application booted successfully
+[2025-08-17 22:06:32] DEBUG: Processing request {"method":"GET","uri":"\/login","ip":"::1"}
+[2025-08-17 22:06:32] DEBUG: Sending response {"status":200,"is_redirect":false}
+[2025-08-17 20:06:32] INFO: Booting application
+[2025-08-17 22:06:32] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'%' to database 'golfelfaro_dev'","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('...')\n#4 {main}"}
+[2025-08-17 22:06:32] INFO: Application booted successfully
+[2025-08-17 22:06:32] DEBUG: Processing request {"method":"GET","uri":"\/.well-known\/appspecific\/com.chrome.devtools.json","ip":"::1"}
+[2025-08-17 22:06:32] DEBUG: Sending response {"status":404,"is_redirect":false}
+[2025-08-17 20:07:00] INFO: Booting application
+[2025-08-17 22:07:00] WARNING: Database initialization failed {"error":"Database connection failed: Access denied for user 'golfelfaro'@'%' to database 'golfelfaro_dev'","trace":"#0 \/home\/hempe\/git\/golfelfaro\/src\/Models\/DB.php(20): GolfElFaro\\Models\\DB::createConnection()\n#1 \/home\/hempe\/git\/golfelfaro\/src\/Core\/Application.php(69): GolfElFaro\\Models\\DB::initialize()\n#2 \/home\/hempe\/git\/golfelfaro\/bootstrap.php(51): GolfElFaro\\Core\\Application->boot()\n#3 \/home\/hempe\/git\/golfelfaro\/index.php(6): require_once('\/home\/hempe\/git...')\n#4 {main}"}
+[2025-08-17 22:07:00] INFO: Application booted successfully
+[2025-08-17 22:07:00] DEBUG: Processing request {"method":"GET","uri":"\/","ip":"::1"}
+[2025-08-17 22:07:00] DEBUG: Sending response {"status":200,"is_redirect":false}
+[2025-08-17 20:07:23] INFO: Booting application
+[2025-08-17 22:07:23] INFO: Database initialized successfully
+[2025-08-17 22:07:23] INFO: Application booted successfully
+[2025-08-17 22:07:23] DEBUG: Processing request {"method":"GET","uri":"\/","ip":"::1"}
+[2025-08-17 22:07:23] DEBUG: Sending response {"status":200,"is_redirect":false}
+[2025-08-17 20:07:29] INFO: Booting application
+[2025-08-17 22:07:29] INFO: Database initialized successfully
+[2025-08-17 22:07:29] INFO: Application booted successfully
+[2025-08-17 20:08:15] INFO: Booting application
+[2025-08-17 22:08:15] INFO: Database initialized successfully
+[2025-08-17 22:08:15] INFO: Application booted successfully
+[2025-08-17 22:08:15] DEBUG: Processing request {"method":"GET","uri":"\/login","ip":"::1"}
+[2025-08-17 22:08:15] DEBUG: Sending response {"status":200,"is_redirect":false}
+[2025-08-17 20:08:15] INFO: Booting application
+[2025-08-17 22:08:15] INFO: Database initialized successfully
+[2025-08-17 22:08:15] INFO: Application booted successfully
+[2025-08-17 22:08:15] DEBUG: Processing request {"method":"GET","uri":"\/.well-known\/appspecific\/com.chrome.devtools.json","ip":"::1"}
+[2025-08-17 22:08:15] DEBUG: Sending response {"status":404,"is_redirect":false}
+[2025-08-17 20:08:18] INFO: Booting application
+[2025-08-17 22:08:18] INFO: Database initialized successfully
+[2025-08-17 22:08:18] INFO: Application booted successfully
+[2025-08-17 22:08:18] DEBUG: Processing request {"method":"POST","uri":"\/login","ip":"::1"}
+[2025-08-17 22:08:18] DEBUG: Sending response {"status":303,"is_redirect":true}
+[2025-08-17 20:08:18] INFO: Booting application
+[2025-08-17 22:08:18] INFO: Database initialized successfully
+[2025-08-17 22:08:18] INFO: Application booted successfully
+[2025-08-17 22:08:18] DEBUG: Processing request {"method":"GET","uri":"\/","ip":"::1"}
+[2025-08-17 21:08:18] DEBUG: Sending response {"status":500,"is_redirect":false}
+[2025-08-17 20:08:18] INFO: Booting application
+[2025-08-17 22:08:18] INFO: Database initialized successfully
+[2025-08-17 22:08:18] INFO: Application booted successfully
+[2025-08-17 22:08:18] DEBUG: Processing request {"method":"GET","uri":"\/.well-known\/appspecific\/com.chrome.devtools.json","ip":"::1"}
+[2025-08-17 22:08:18] DEBUG: Sending response {"status":404,"is_redirect":false}
+[2025-08-17 20:08:58] INFO: Booting application
+[2025-08-17 22:08:58] INFO: Database initialized successfully
+[2025-08-17 22:08:58] INFO: Application booted successfully
+[2025-08-17 22:08:58] DEBUG: Processing request {"method":"GET","uri":"\/","ip":"::1"}
+[2025-08-17 22:08:58] DEBUG: Sending response {"status":200,"is_redirect":false}

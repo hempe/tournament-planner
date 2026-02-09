@@ -1,0 +1,386 @@
+:root {
+  font-family: "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
+  --theme-toggle-light: none;
+  --theme-toggle-dark: none;
+}
+
+[data-theme="light"] {
+  --fg-navtop: #fff;
+  --bg-navtop: #87b723;
+  --bg: #fff; /* Page background for light theme (lightest) */
+  --bg-card: rgba(
+    0,
+    0,
+    0,
+    0.1
+  ); /* Card background for light theme (in between) */
+  --bg-card-title: #e0e0e0; /* Card title background for light theme (slightly darker) */
+  --bg-input: #ffffff; /* Textarea background for light theme (lightest) */
+  --text: #333; /* Text color for light theme */
+  --text-card-title: #222; /* Title text color for light theme */
+  --border: #ccc; /* Border color for light theme */
+
+  --button-bg: #e0e0e0;
+  --button-text: #333;
+  --button-border: #bbb;
+
+  --button-primary-bg: #87b723;
+  --button-primary-light-bg: #87b72377;
+  --button-primary-text: #ffffff;
+
+  --button-accent-bg: #b6334d;
+  --button-accent-light-bg: #b6334d77;
+  --button-accent-text: #ffffff;
+
+  --button-light-bg: #dcdcdc;
+  --button-light-text: #333;
+
+  --bg-darken: rgba(255, 255, 255, 0.8);
+  --bg-darken-2: rgba(240, 240, 240, 0.9);
+
+  --bg-card-title: rgba(255, 255, 255, 0.6);
+
+  --bg-filter: blur(1px); /* Keeps the backdrop effect consistent */
+  --theme-toggle-dark: block;
+}
+
+[data-theme="dark"] {
+  --bg-navtop: #222;
+  --bg: #333; /* Page background for dark theme (darkest) */
+  --bg-card: rgba(
+    0,
+    0,
+    0,
+    0.3
+  ); /* Card background for dark theme (in between) */
+  --bg-card-title: #2f2f2f; /* Card background for dark theme (in between) */
+  --bg-input: #2f2f2f; /* Textarea background for dark theme (lightest) */
+  --text: #e0e0e0; /* Text color for dark theme */
+  --text-card-title: #eee; /* Title text color for dark theme */
+  --border: #444; /* Border color for dark theme */
+
+  --button-bg: #2c2c2c;
+  --button-text: #e0e0e0;
+  --button-border: #444;
+
+  --button-primary-bg: #87b723;
+  --button-primary-light-bg: #87b72377;
+  --button-primary-text: #ffffff;
+
+  --button-accent-bg: #b6334d;
+  --button-accent-light-bg: #b6334d77;
+  --button-accent-text: #ffffff;
+
+  --button-light-bg: #636363;
+  --button-light-text: #ffffff;
+
+  --bg-darken: rgba(20, 20, 20, 0.8);
+  --bg-darken-2: rgba(33, 33, 33, 0.9);
+
+  --bg-card-title: rgba(0, 0, 0, 0.5);
+
+  --bg-filter: blur(1px); /*This makes the backdrop invisible.*/
+  --theme-toggle-light: block;
+}
+
+/**
+ * 1. Correct the line height in all browsers.
+ * 2. Prevent adjustments of font size after orientation changes in iOS.
+ */
+
+html {
+  line-height: 1.15; /* 1 */
+  -webkit-text-size-adjust: 100%; /* 2 */
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  transition: background 0.3s, color 0.3s;
+}
+
+textarea {
+  width: 100%;
+  min-height: 2.5rem;
+  padding: 12px;
+  font-size: 16px;
+  font-family: "Helvetica Neue", sans-serif;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-input);
+  color: var(--text);
+  resize: vertical;
+  transition: border-color 0.3s ease;
+  outline: none;
+  resize: none;
+}
+
+textarea:focus {
+  border-color: var(--button-primary-bg);
+}
+
+/* Input field style */
+input {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  font-family: "Helvetica Neue", sans-serif;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-input);
+  color: var(--text);
+  transition: border-color 0.3s ease;
+  outline: none;
+  resize: none; /* Prevent resizing for input */
+}
+
+input:focus {
+  border-color: var(--button-primary-bg);
+}
+
+/* Base Button Style */
+button,
+.button {
+  border: 1px solid var(--border);
+  background: var(--button-bg);
+  color: var(--button-text);
+  border: 1px solid var(--button-border);
+  padding: 12px;
+  font-family: inherit;
+  font-size: 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s, border-color 0.3s, transform 0.1s;
+  text-decoration: none;
+  display: block;
+  margin: 0;
+  text-align: center;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+button:hover,
+button:focus,
+button:focus-visible,
+button:focus-within,
+.button:hover,
+.button:focus,
+.button:focus-visible,
+.button:focus-within {
+  border-color: var(--button-primary-bg);
+  outline: var(--button-primary-bg);
+}
+
+button:active,
+.button:active {
+  transform: scale(0.98);
+}
+
+/* Primary Button Style (use by adding the "primary" attribute) */
+button[primary],
+.button[primary] {
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
+  border-color: var(--button-primary-bg);
+}
+
+/* Accent Button Style (use by adding the "accent" attribute) */
+button[accent],
+.button[accent] {
+  background: var(--button-accent-bg);
+  color: var(--button-accent-text);
+  border-color: var(--button-accent-bg);
+}
+
+button[light],
+.button[light] {
+  background: var(--button-light-bg);
+  color: var(--button-light-text);
+  border-color: var(--button-light-bg);
+}
+button[primary][required].pristine,
+.button[primary][required].pristine {
+  background: var(--button-primary-light-bg);
+  color: var(--button-primary-light-text);
+  border-color: transparent;
+}
+button[accent][required].pristine,
+.button[accent][required].pristine {
+  background: var(--button-accent-light-bg);
+  color: var(--button-light-text);
+  border-color: transparent;
+}
+
+/* Modern Card Design */
+.card {
+  border-radius: 8px;
+  transition: transform 0.3s ease;
+  margin: 24px 48px 48px 48px;
+
+  position: relative;
+  background: var(--bg); /* Semi-transparent glass effect */
+
+  backdrop-filter: var(--bg-filter);
+  overflow: hidden; /* Ensures pseudo-element stays inside */
+  background-color: var(--bg-card);
+  box-shadow: 3px 3px 6px #0003;
+}
+@media screen and (max-width: 768px) {
+  .card {
+    margin: 24px 12px 48px 12px;
+  }
+}
+/* Pseudo-element for the blurred background */
+.card::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  filter: blur(100px); /* Blurs only inside the card */
+  z-index: -1;
+  opacity: 0.5; /* Optional: Adjust transparency */
+
+  background-image: url("/background_low_res_2.png");
+  background-position: top center;
+  background-size: cover;
+  --_--background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-attachment: scroll; /* Optional: Ensures it scrolls with the page */
+  background-origin: padding-box; /* Default: Image starts from inside padding */
+  background-clip: border-box; /* Default: Image is visible within the border */
+}
+
+.card-title {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  width: calc(100% - 24px);
+  padding: 12px;
+  font-size: 1.4rem;
+  font-weight: lighter;
+  background-color: var(--bg-card-title);
+  color: var(--text-card-title);
+}
+
+small {
+  opacity: 0.9;
+}
+
+.table {
+  height: 100%;
+}
+
+.table-head {
+  background-color: var(--bg-card-title);
+}
+
+.table-head > .table-header-cell {
+  border-bottom: 1px solid var(--border);
+}
+
+.table-head > .table-header-cell > div {
+  padding: 0px 12px 12px 12px;
+  border-radius: 8px;
+}
+
+.table-cell {
+  vertical-align: top;
+  height: 100%;
+  padding: 12px 6px;
+}
+
+.table-cell:first-child {
+  padding-left: 12px;
+}
+
+.table-cell:last-child {
+  padding-right: 12px;
+}
+
+.table-cell > form,
+.table-cell > fieldset {
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+}
+
+.table-cell {
+  border-bottom: 1px solid var(--border);
+}
+
+.table-row:nth-child(even) {
+  background: var(--bg-darken-2);
+}
+.table-row:nth-child(odd) {
+  background: var(--bg-darken);
+}
+
+.table-cell-title {
+  display: none;
+}
+
+.input-action {
+  gap: 12px;
+}
+
+fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+
+input,
+button,
+textarea {
+  box-sizing: border-box;
+}
+
+.navtop > div {
+  height: 48px;
+  gap: 12px;
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: var(--border);
+  background-color: var(--bg-navtop);
+  color: var(--fg-navtop);
+  box-shadow: 3px 3px 6px #0003;
+}
+
+@media screen and (max-width: 768px) {
+  .navtop > div {
+    height: 64px;
+  }
+}
+
+.navtop {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 1000;
+}
+
+.body {
+  padding-top: 68px;
+}
+
+.nav-button {
+  background-color: transparent;
+  border-color: transparent;
+}
+
+.navtop h1 {
+  font-weight: lighter;
+  font-size: 16px;
+  flex-grow: 1;
+}
+
+@media screen and (max-width: 768px) {
+  .navtop h1 {
+    font-size: 24px;
+  }
+}
