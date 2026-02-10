@@ -4,6 +4,7 @@ use TP\Components\Page;
 use TP\Components\Table;
 use TP\Components\Card;
 use TP\Components\IconActionButton;
+use TP\Models\DB;
 
 ?>
 <?= new Page(new Card(
