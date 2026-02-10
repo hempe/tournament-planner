@@ -31,18 +31,11 @@ $router->post('/logout', [AuthController::class, 'logout'], [new AuthMiddleware(
 $router->group(
     new RouteGroup('/events', [new AuthMiddleware()]),
     function (Router $router) {
-        // Regular user event routes
-        $router->get('/', [EventController::class, 'index']);
-        $router->get('/{id}', [EventController::class, 'detail']);
-        $router->post('/{id}/register', [EventController::class, 'register']);
-        $router->post('/{id}/unregister', [EventController::class, 'unregister']);
-        $router->post('/{id}/comment', [EventController::class, 'updateComment']);
-
         // Admin-only event routes
         $router->group(
             new RouteGroup('', [new AdminMiddleware()]),
             function (Router $router) {
-            $router->get('/new', [EventController::class, 'create']);
+            $router->get('/new', handler: [EventController::class, 'create']);
             $router->post('/', [EventController::class, 'store']);
             $router->get('/{id}/admin', [EventController::class, 'admin']);
             $router->post('/{id}/update', [EventController::class, 'update']);
@@ -51,6 +44,13 @@ $router->group(
             $router->post('/{id}/unlock', [EventController::class, 'unlock']);
         }
         );
+
+        // Regular user event routes
+        $router->get('/', [EventController::class, 'index']);
+        $router->get('/{id}', [EventController::class, 'detail']);
+        $router->post('/{id}/register', [EventController::class, 'register']);
+        $router->post('/{id}/unregister', [EventController::class, 'unregister']);
+        $router->post('/{id}/comment', [EventController::class, 'updateComment']);
     }
 );
 

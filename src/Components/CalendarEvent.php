@@ -6,6 +6,7 @@ use TP\Components\IconButton;
 use TP\Components\Icon;
 use TP\Components\Div;
 use TP\Components\Link;
+use TP\Components\Color;
 use TP\Models\Event;
 
 class CalendarEvent extends Component

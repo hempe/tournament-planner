@@ -2,6 +2,7 @@
 
 namespace TP\Components;
 
+use TP\Components\Color;
 use TP\Components\IconButton;
 
 class IconActionButton extends Component

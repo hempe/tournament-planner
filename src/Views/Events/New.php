@@ -1,10 +1,12 @@
 <?php
 
+use TP\Components\Color;
 use TP\Components\Page;
 use TP\Components\Table;
 use TP\Components\Card;
 use TP\Components\IconButton;
 use TP\Components\Form;
+
 ?>
 <?= new Page(function () {
     $formatter = new IntlDateFormatter('de_DE', IntlDateFormatter::FULL, IntlDateFormatter::NONE);

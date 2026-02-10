@@ -2,10 +2,10 @@
 
 namespace TP\Components;
 
+use TP\Components\Color;
 use TP\Components\Icon;
 use TP\Components\IconActionButton;
 use TP\Models\User;
-use TP\Components\Color;
 
 class Page extends Component
 {

@@ -223,7 +223,9 @@ final class EventController
         $events = DB::$events->all();
 
         ob_start();
+        require __DIR__ . '/../Layout/header.php';
         require __DIR__ . '/../Views/Events/List.php';
+        require __DIR__ . '/../Layout/footer.php';
         $content = ob_get_clean();
 
         return Response::ok($content);

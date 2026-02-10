@@ -1,5 +1,6 @@
 <?php
 
+use TP\Components\Color;
 use TP\Components\Page;
 use TP\Components\Table;
 use TP\Components\Card;

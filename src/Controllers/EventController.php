@@ -18,7 +18,9 @@ final class EventController
         $events = DB::$events->all();
 
         ob_start();
+        require __DIR__ . '/../Layout/header.php';
         require __DIR__ . '/../Views/Events/List.php';
+        require __DIR__ . '/../Layout/footer.php';
         $content = ob_get_clean();
 
         return Response::ok($content);
@@ -39,6 +41,7 @@ final class EventController
             return Response::notFound(__('events.not_found'));
         }
 
+        require __DIR__ . '/../Layout/header.php';
         // Determine which view to show based on user permissions
         if (User::admin()) {
             ob_start();
@@ -52,13 +55,17 @@ final class EventController
             $content = ob_get_clean();
         }
 
+        require __DIR__ . '/../Layout/footer.php';
+
         return Response::ok($content);
     }
 
     public function create(Request $request): Response
     {
         ob_start();
+        require __DIR__ . '/../Layout/header.php';
         require __DIR__ . '/../Views/Events/New.php';
+        require __DIR__ . '/../Layout/footer.php';
         $content = ob_get_clean();
 
         return Response::ok($content);
@@ -106,7 +113,9 @@ final class EventController
 
         ob_start();
         $id = $eventId;
+        require __DIR__ . '/../Layout/header.php';
         require __DIR__ . '/../Views/Events/Admin.php';
+        require __DIR__ . '/../Layout/footer.php';
         $content = ob_get_clean();
 
         return Response::ok($content);

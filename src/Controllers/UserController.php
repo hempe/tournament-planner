@@ -17,7 +17,9 @@ final class UserController
         $users = DB::$users->all();
 
         ob_start();
+        require __DIR__ . '/../Layout/header.php';
         require __DIR__ . '/../Views/Users/List.php';
+        require __DIR__ . '/../Layout/footer.php';
         $content = ob_get_clean();
 
         return Response::ok($content);
@@ -26,7 +28,9 @@ final class UserController
     public function create(Request $request): Response
     {
         ob_start();
+        require __DIR__ . '/../Layout/header.php';
         require __DIR__ . '/../Views/Users/New.php';
+        require __DIR__ . '/../Layout/footer.php';
         $content = ob_get_clean();
 
         return Response::ok($content);

@@ -7,6 +7,7 @@ date_default_timezone_set('Atlantic/Canary');
 use TP\Components\Div;
 use TP\Components\Card;
 use TP\Components\CalendarEvent;
+use TP\Components\Color;
 use TP\Models\Event;
 use TP\Models\User;
 

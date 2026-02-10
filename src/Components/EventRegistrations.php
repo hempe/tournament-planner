@@ -2,6 +2,7 @@
 
 namespace TP\Components;
 
+use TP\Components\Color;
 use TP\Components\Table;
 use TP\Components\InputAction;
 use TP\Components\IconActionButton;
