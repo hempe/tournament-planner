@@ -33,7 +33,7 @@ $router->group(
     function (Router $router) {
         // Regular user event routes
         $router->get('/', [EventController::class, 'index']);
-        $router->get('/{id}', [EventController::class, 'show']);
+        $router->get('/{id}', [EventController::class, 'detail']);
         $router->post('/{id}/register', [EventController::class, 'register']);
         $router->post('/{id}/unregister', [EventController::class, 'unregister']);
         $router->post('/{id}/comment', [EventController::class, 'updateComment']);

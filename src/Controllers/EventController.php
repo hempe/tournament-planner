@@ -18,13 +18,13 @@ final class EventController
         $events = DB::$events->all();
 
         ob_start();
-        require __DIR__ . '/../../src/pages/events/views/list.php';
+        require __DIR__ . '/../Views/Events/List.php';
         $content = ob_get_clean();
 
         return Response::ok($content);
     }
 
-    public function show(Request $request, array $params): Response
+    public function detail(Request $request, array $params): Response
     {
         $eventId = (int) $params['id'];
         $userId = User::id();
@@ -43,12 +43,12 @@ final class EventController
         if (User::admin()) {
             ob_start();
             $id = $eventId;
-            require __DIR__ . '/../../src/pages/events/views/admin.php';
+            require __DIR__ . '/../Views/Events/Admin.php';
             $content = ob_get_clean();
         } else {
             ob_start();
             $id = $eventId;
-            require __DIR__ . '/../../src/pages/events/views/detail.php';
+            require __DIR__ . '/../Views/Events/Detail.php';
             $content = ob_get_clean();
         }
 
@@ -58,7 +58,7 @@ final class EventController
     public function create(Request $request): Response
     {
         ob_start();
-        require __DIR__ . '/../../src/pages/events/views/new.php';
+        require __DIR__ . '/../Views/Events/New.php';
         $content = ob_get_clean();
 
         return Response::ok($content);
@@ -106,7 +106,7 @@ final class EventController
 
         ob_start();
         $id = $eventId;
-        require __DIR__ . '/../../src/pages/events/views/admin.php';
+        require __DIR__ . '/../Views/Events/Admin.php';
         $content = ob_get_clean();
 
         return Response::ok($content);

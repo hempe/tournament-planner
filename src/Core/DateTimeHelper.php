@@ -1,15 +1,16 @@
 <?php
+namespace TP\Core;
 
 class DateTimeHelper
 {
     static function ago(string $timestamp): string
     {
         // Set the default timezone (use your system's or MySQL's timezone)
-        $timezone = new DateTimeZone('Europe/Berlin'); // Or any timezone you need
+        $timezone = new \DateTimeZone('Europe/Berlin'); // Or any timezone you need
 
         // Create DateTime objects with the same timezone
-        $current_time = new DateTime('now', $timezone); // Current time
-        $past_time = new DateTime($timestamp, $timezone); // Past timestamp
+        $current_time = new \DateTime('now', $timezone); // Current time
+        $past_time = new \DateTime($timestamp, $timezone); // Past timestamp
 
         // Calculate the difference
         $diff = $current_time->diff($past_time);

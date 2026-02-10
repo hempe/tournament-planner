@@ -95,7 +95,7 @@ final class Config
         $envConfigFile = __DIR__ . "/../../config/{$this->environment->value}.php";
         if (file_exists($envConfigFile)) {
             $envConfig = require $envConfigFile;
-            $this->config = array_merge_recursive($this->config, $envConfig);
+            $this->config = $this->mergeConfig($this->config, $envConfig);
         }
     }
 
@@ -136,5 +136,17 @@ final class Config
         }
 
         return $array[$key] ?? $default;
+    }
+
+    private function mergeConfig(array $base, array $override): array
+    {
+        foreach ($override as $key => $value) {
+            if (is_array($value) && isset($base[$key]) && is_array($base[$key])) {
+                $base[$key] = $this->mergeConfig($base[$key], $value);
+            } else {
+                $base[$key] = $value;
+            }
+        }
+        return $base;
     }
 }

@@ -1,6 +1,7 @@
 <?php
+namespace TP\Core;
 
-class Log
+final class Log
 {
     public static function trace(string $name, string $message): void
     {

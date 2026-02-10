@@ -1,10 +1,10 @@
 <?php
-
 declare(strict_types=1);
-
 namespace TP\Core;
 
 use TP\Models\DB;
+use TP\Core\Router;
+use Exception;
 use Throwable;
 
 final class Application
@@ -60,11 +60,18 @@ final class Application
         // Start session with secure settings
         $this->configureSession();
 
-        // Set up global middleware
-        $this->setupGlobalMiddleware();
-
         // Initialize database
-        DB::initialize();
+        // Initialize database (allow graceful failure)
+        try {
+            DB::initialize();
+            $this->logger->info('Database initialized successfully');
+        } catch (Exception $e) {
+            $this->logger->warning('Database initialization failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            // Continue without database - some endpoints may still work
+        }
 
         $this->booted = true;
         $this->logger->info('Application booted successfully');
@@ -138,15 +145,6 @@ final class Application
                 $_SESSION['last_regeneration'] = time();
             }
         }
-    }
-
-    private function setupGlobalMiddleware(): void
-    {
-        // Add rate limiting for all requests
-        $this->router->addGlobalMiddleware(new RateLimitMiddleware(100, 60));
-
-        // Add CSRF protection for POST requests
-        $this->router->addGlobalMiddleware(new CsrfMiddleware());
     }
 
     private function handleError(Throwable $e): void

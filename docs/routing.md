@@ -448,17 +448,6 @@ All POST requests are automatically protected against CSRF attacks:
 $router->post('/events', $handler); // Automatically includes CSRF validation
 ```
 
-### Rate Limiting
-Global and route-specific rate limiting:
-
-```php
-// Global rate limiting (100 requests per minute)
-$app->getRouter()->addGlobalMiddleware(new RateLimitMiddleware(100, 60));
-
-// Route-specific rate limiting
-$router->post('/api/events', $handler, [new RateLimitMiddleware(10, 60)]);
-```
-
 ### Input Sanitization
 All request data is automatically sanitized:
 

@@ -1,4 +1,6 @@
 <?php
+namespace TP\Core;
+use \mysqli;
 
 abstract class BaseRepository
 {
@@ -15,14 +17,14 @@ abstract class BaseRepository
      * @param string $query The SQL query.
      * @param string $types The types of the parameters (e.g., "i", "s", etc.).
      * @param array $params The parameters to bind.
-     * @return mysqli_stmt The prepared and executed statement.
-     * @throws Exception If the query fails.
+     * @return \mysqli_stmt The prepared and executed statement.
+     * @throws \Exception If the query fails.
      */
-    protected function prepareAndExecute(string $query, string $types, array $params): mysqli_stmt
+    protected function prepareAndExecute(string $query, string $types, array $params): \mysqli_stmt
     {
         $stmt = $this->conn->prepare($query);
         if (!$stmt) {
-            throw new Exception("Prepare statement failed: " . $this->conn->error);
+            throw new \Exception("Prepare statement failed: " . $this->conn->error);
         }
 
         if (!empty($types) && !empty($params)) {
@@ -36,10 +38,10 @@ abstract class BaseRepository
     /**
      * Fetches all rows from a result set.
      *
-     * @param mysqli_stmt $stmt The executed statement.
+     * @param \mysqli_stmt $stmt The executed statement.
      * @return array The fetched rows.
      */
-    protected function fetchAll(mysqli_stmt $stmt): array
+    protected function fetchAll(\mysqli_stmt $stmt): array
     {
         $result = $stmt->get_result();
         $rows = [];
@@ -53,10 +55,10 @@ abstract class BaseRepository
     /**
      * Fetches a single row from a result set.
      *
-     * @param mysqli_stmt $stmt The executed statement.
+     * @param \mysqli_stmt $stmt The executed statement.
      * @return array|null The fetched row or null if no rows exist.
      */
-    protected function fetchSingle(mysqli_stmt $stmt): ?array
+    protected function fetchSingle(\mysqli_stmt $stmt): ?array
     {
         $result = $stmt->get_result();
         $row = $result->fetch_assoc();
@@ -70,7 +72,7 @@ abstract class BaseRepository
      * @param string $query The SQL query to execute.
      * @param string $types The types of the parameters (e.g., "i", "s", etc.).
      * @param array $params The parameters to bind.
-     * @throws Exception If the query fails.
+     * @throws \Exception If the query fails.
      */
     protected function executeUpdateQuery(string $query, string $types, array $params): void
     {
@@ -85,7 +87,7 @@ abstract class BaseRepository
      * @param string $types The types of the parameters (e.g., "i", "s", etc.).
      * @param array $params The parameters to bind.
      * @return mixed The fetched value.
-     * @throws Exception If the query fails.
+     * @throws \Exception If the query fails.
      */
     protected function fetchSingleValue(string $query, string $types, array $params): mixed
     {
@@ -104,7 +106,7 @@ abstract class BaseRepository
      * @param array $params The parameters to bind.
      * @param callable $mapper A callback function to map each row to a desired format.
      * @return array The mapped rows.
-     * @throws Exception If the query fails.
+     * @throws \Exception If the query fails.
      */
     protected function fetchMappedRows(string $query, string $types, array $params, callable $mapper): array
     {

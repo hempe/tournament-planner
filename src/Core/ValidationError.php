@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace TP\Core;
 
-final class ValidationRule
+final class ValidationError
 {
     public function __construct(
         public readonly string $field,
-        public readonly array $rules,
-        public readonly string $message = ''
+        public readonly string $message
     ) {
     }
 }

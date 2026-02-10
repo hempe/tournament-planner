@@ -1,4 +1,6 @@
 <?php
+namespace TP\Core;
+
 abstract class Component
 {
     // Virtual method with a default implementation
@@ -17,7 +19,7 @@ abstract class Component
      * @param Closure|string|Component|array<Closure|string|Component> $content The content to process.
      * @return string The captured output.
      */
-    protected function captureOutput(Closure|string|Component|array $content): string
+    protected function captureOutput(\Closure|string|Component|array $content): string
     {
         if (is_array($content)) {
             // Process each element in the array recursively
@@ -31,7 +33,7 @@ abstract class Component
         // Handle single content items
         return match (true) {
             is_callable($content) => $this->captureOutputFromCallback($content),
-            $content instanceof Component => (string)$content,
+            $content instanceof Component => (string) $content,
             default => $content // Assume it's a string
         };
     }
@@ -43,7 +45,7 @@ abstract class Component
      * @param callable():string $callback The function that generates content
      * @return string The captured output
      */
-    private function captureOutputFromCallback(Closure $callback): string
+    private function captureOutputFromCallback(\Closure $callback): string
     {
         ob_start();
         $result = $callback();

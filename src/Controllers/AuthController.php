@@ -8,6 +8,8 @@ use TP\Core\Request;
 use TP\Core\Response;
 use TP\Core\ValidationRule;
 use TP\Models\User;
+
+
 use Exception;
 
 final class AuthController
@@ -20,7 +22,7 @@ final class AuthController
 
         ob_start();
         require __DIR__ . '/../Layout/header.php';
-        require __DIR__ . '/../pages/home/views/login.php';
+        require __DIR__ . '/../Views/Home/Login.php';
         require __DIR__ . '/../Layout/footer.php';
         $content = ob_get_clean();
 
