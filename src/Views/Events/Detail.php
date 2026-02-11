@@ -13,11 +13,13 @@ use TP\Models\User;
 
 ?>
 
-<?= new Page(function () {
+<?= new Page(function () use ($id) {
     $formatter = new \IntlDateFormatter('de_DE', \IntlDateFormatter::FULL, \IntlDateFormatter::NONE);
-    $id = $_GET['id'];
 
-    $event = DB::$events->get($id, $_SESSION['user_id']);
+    $event = DB::$events->get(
+        $id,
+        $_SESSION['user_id']
+    );
     if (!$event) {
         Log::trace('event/detail', 'Redirecting to / because we could not find the event');
         header("Location: /", true, 303);

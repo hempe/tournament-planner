@@ -6,6 +6,7 @@ namespace TP\Controllers;
 
 use TP\Core\Request;
 use TP\Core\Response;
+use TP\Core\Log;
 use TP\Core\ValidationRule;
 use TP\Models\User;
 use TP\Models\DB;
@@ -38,6 +39,7 @@ final class EventController
         $event = DB::$events->get($eventId, $userId);
 
         if (!$event) {
+            Log::error('events/{id}', 'Could not find event: ' . $eventId);
             return Response::notFound(__('events.not_found'));
         }
 
@@ -88,7 +90,6 @@ final class EventController
             $data = $request->getValidatedData();
             $eventId = DB::$events->add($data['name'], $data['date'], (int) $data['capacity']);
 
-            flash('success', __('events.create_success'));
             return Response::redirect("/events/{$eventId}");
         } catch (Exception $e) {
             flash('error', $e->getMessage());

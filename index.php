@@ -36,7 +36,7 @@ $router->group(
             new RouteGroup('', [new AdminMiddleware()]),
             function (Router $router) {
             $router->get('/new', handler: [EventController::class, 'create']);
-            $router->post('/', [EventController::class, 'store']);
+            $router->post('/new', [EventController::class, 'store']);
             $router->get('/{id}/admin', [EventController::class, 'admin']);
             $router->post('/{id}/update', [EventController::class, 'update']);
             $router->post('/{id}/delete', [EventController::class, 'delete']);

@@ -6,7 +6,7 @@ return [
         'name' => 'Golf El Faro',
         'welcome' => 'Willkommen bei Golf El Faro',
     ],
-    
+
     // Navigation
     'nav' => [
         'home' => 'Startseite',
@@ -16,7 +16,7 @@ return [
         'admin' => 'Administration',
         'back' => 'Zurück',
     ],
-    
+
     // Authentication
     'auth' => [
         'login' => 'Anmelden',
@@ -28,7 +28,7 @@ return [
         'login_success' => 'Erfolgreich angemeldet',
         'login_required' => 'Anmeldung erforderlich',
     ],
-    
+
     // Events
     'events' => [
         'title' => 'Anlässe',
@@ -45,7 +45,6 @@ return [
         'lock' => 'Sperren',
         'unlock' => 'Entsperren',
         'locked_message' => 'Anmeldung geschlossen, bitte bei kurzfristigen Änderungen oder Kommentaren anrufen!',
-        'create_success' => 'Anlass erfolgreich erstellt',
         'update_success' => 'Anlass erfolgreich aktualisiert',
         'delete_success' => 'Anlass erfolgreich gelöscht',
         'registration_success' => 'Erfolgreich angemeldet',
@@ -58,7 +57,7 @@ return [
         'waitlist' => 'Warteliste',
         'unknown_state' => 'Unbekannter Status',
     ],
-    
+
     // Users
     'users' => [
         'title' => 'Benutzer',
@@ -70,14 +69,13 @@ return [
         'update' => 'Aktualisieren',
         'delete' => 'Löschen',
         'is_admin' => 'Ist Administrator',
-        'create_success' => 'Benutzer erfolgreich erstellt',
         'update_success' => 'Benutzer erfolgreich aktualisiert',
         'delete_success' => 'Benutzer erfolgreich gelöscht',
         'username_taken' => 'Benutzername ":username" ist bereits vergeben',
         'admin_update_success' => 'Administrator-Status aktualisiert',
         'password_update_success' => 'Passwort erfolgreich geändert',
     ],
-    
+
     // Validation
     'validation' => [
         'required' => 'Das Feld :field ist erforderlich.',
@@ -90,7 +88,7 @@ return [
         'boolean' => 'Das Feld :field muss wahr oder falsch sein.',
         'in' => 'Das Feld :field muss einer der folgenden Werte sein: :values.',
     ],
-    
+
     // Errors
     'errors' => [
         'general' => 'Ein Fehler ist aufgetreten.',
@@ -99,7 +97,7 @@ return [
         'forbidden' => 'Zugriff verweigert.',
         'csrf' => 'Sicherheitstoken ungültig. Bitte versuchen Sie es erneut.',
     ],
-    
+
     // Buttons and Actions
     'actions' => [
         'save' => 'Speichern',
@@ -113,7 +111,7 @@ return [
         'yes' => 'Ja',
         'no' => 'Nein',
     ],
-    
+
     // Calendar
     'calendar' => [
         'months' => [
@@ -140,7 +138,7 @@ return [
             'sunday' => 'Sonntag',
         ],
     ],
-    
+
     // Time
     'time' => [
         'just_now' => 'Gerade eben',

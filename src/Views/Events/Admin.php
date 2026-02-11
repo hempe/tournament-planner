@@ -15,11 +15,13 @@ use TP\Components\InputAction;
 
 ?>
 <?= new Page(
-    function () {
+    function () use ($id) {
         $formatter = new IntlDateFormatter('de_DE', IntlDateFormatter::FULL, IntlDateFormatter::NONE);
-        $id = $_GET['id'];
 
-        $event = DB::$events->get($id, $_SESSION['user_id']);
+        $event = DB::$events->get(
+            $id,
+            $_SESSION['user_id']
+        );
         if (!$event) {
             Log::trace('event/detail', 'Redirecting to /events because we could not find the ' . $id . ' event' . $event);
             header("Location: /events", true, 303);

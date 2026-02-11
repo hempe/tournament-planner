@@ -10,40 +10,49 @@ use Exception;
 final class EventRepository extends BaseRepository
 {
     private const QUERY_EVENT = "SELECT 
-            e.id, 
-            e.locked,
-            (e.locked = 1 OR e.date < NOW()) as isLocked,
-            e.name, 
-            e.date, 
-            e.capacity,
-            (SELECT count(*) FROM event_users WHERE state = 1 AND eventId = e.id) as joined,
-            (SELECT count(*) FROM event_users WHERE state = 2 AND eventId = e.id) as waitList,
-            IF(eu.userId IS NOT NULL, eu.state, 0) as userState
-        FROM events e
-        LEFT JOIN event_users eu ON eu.eventId = e.id";
+                e.id, 
+                e.locked,
+                (e.locked = 1 OR e.date < NOW()) AS isLocked,
+                e.name, 
+                e.date, 
+                e.capacity,
+                (SELECT COUNT(*) 
+                    FROM event_users 
+                    WHERE state = 1 AND eventId = e.id) AS joined,
+                (SELECT COUNT(*) 
+                    FROM event_users 
+                    WHERE state = 2 AND eventId = e.id) AS waitList,
+                COALESCE(eu.state, 0) AS userState
+            FROM events e
+            LEFT JOIN event_users eu ON eu.eventId = e.id
+            AND eu.userId = ?
+            ";
 
-    private const QUERY_REGISTERED_EVENTS = self::QUERY_EVENT . " WHERE eu.userId = ?";
-    private const QUERY_EVENT_BY_ID = self::QUERY_EVENT . " WHERE e.id = ? AND eu.userId = ?";
-    private const QUERY_ALL_EVENTS = self::QUERY_EVENT . " WHERE eu.userId = ?";
+    private const QUERY_REGISTERED_EVENTS = self::QUERY_EVENT;
+    private const QUERY_EVENT_BY_ID = self::QUERY_EVENT . " AND e.id = ?";
+    private const QUERY_ALL_EVENTS = self::QUERY_EVENT;
 
     private function mapEvent(array $row): Event
     {
         return new Event(
-            (int)$row['id'],
-            (bool)$row['locked'],
-            (bool)$row['isLocked'],
+            (int) $row['id'],
+            (bool) $row['locked'],
+            (bool) $row['isLocked'],
             $row['date'],
             $row['name'],
-            (int)$row['capacity'],
-            (int)$row['joined'],
-            (int)$row['waitList'],
-            (int)$row['userState']
+            (int) $row['capacity'],
+            (int) $row['joined'],
+            (int) $row['waitList'],
+            (int) $row['userState']
         );
     }
 
     /** @return Event[] */
-    private function fetchEvents(string $query, string $types, array $params): array
-    {
+    private function fetchEvents(
+        string $query,
+        string $types,
+        array $params
+    ): array {
         return $this->fetchMappedRows($query, $types, $params, fn($row) => $this->mapEvent($row));
     }
 
@@ -58,8 +67,8 @@ final class EventRepository extends BaseRepository
         $params = $isAdmin ? [$eventId] : [User::id(), $eventId];
         $types = $isAdmin ? "i" : "ii";
 
-        return $this->fetchMappedRows($query, $types, $params, function($row) {
-            return new User((int)$row['id'], $row['username'], (bool)$row['admin']);
+        return $this->fetchMappedRows($query, $types, $params, function ($row) {
+            return new User((int) $row['id'], $row['username'], (bool) $row['admin']);
         });
     }
 
@@ -92,21 +101,32 @@ final class EventRepository extends BaseRepository
             throw new Exception("Failed to create event");
         }
 
-        return (int)$eventId;
+        return (int) $eventId;
     }
 
     public function lock(int $id): void
     {
-        $this->executeUpdateQuery("UPDATE events SET locked = 1 WHERE id = ?", "i", [$id]);
+        $this->executeUpdateQuery(
+            "UPDATE events SET locked = 1 WHERE id = ?",
+            "i",
+            [$id]
+        );
     }
 
     public function unlock(int $id): void
     {
-        $this->executeUpdateQuery("UPDATE events SET locked = 0 WHERE id = ?", "i", [$id]);
+        $this->executeUpdateQuery(
+            "UPDATE events SET locked = 0 WHERE id = ?",
+            "i",
+            [$id]
+        );
     }
 
-    public function updateRegistrationComment(int $eventId, int $userId, string $comment): void
-    {
+    public function updateRegistrationComment(
+        int $eventId,
+        int $userId,
+        string $comment
+    ): void {
         $this->executeUpdateQuery(
             "UPDATE event_users SET comment = ? WHERE eventId = ? AND userId = ?",
             "sii",
@@ -129,20 +149,30 @@ final class EventRepository extends BaseRepository
             WHERE r.eventId = ? 
             ORDER BY r.state, u.username";
 
-        return $this->fetchMappedRows($query, "i", [$eventId], function($row) {
-            return new EventRegistration(
-                (int)$row['user_id'],
-                $row['username'],
-                $row['comment'] ?? '',
-                $row['timestamp'],
-                (int)$row['state']
-            );
-        });
+        return $this->fetchMappedRows(
+            $query,
+            "i",
+            [$eventId],
+            function ($row) {
+                return new EventRegistration(
+                    (int) $row['user_id'],
+                    $row['username'],
+                    $row['comment'] ?? '',
+                    $row['timestamp'],
+                    (int) $row['state']
+                );
+            }
+        );
     }
 
     public function get(int $id, int $userId): ?Event
     {
-        $rows = $this->fetchMappedRows(self::QUERY_EVENT_BY_ID, 'ii', [$id, $userId], fn($row) => $this->mapEvent($row));
+        $rows = $this->fetchMappedRows(
+            self::QUERY_EVENT_BY_ID,
+            'ii',
+            [$userId, $id],
+            fn($row) => $this->mapEvent($row)
+        );
         return $rows[0] ?? null;
     }
 
@@ -157,7 +187,11 @@ final class EventRepository extends BaseRepository
             if ($userId === null) {
                 return [];
             }
-            return $this->fetchEvents($query, 'iii', [$userId, (int)$date->format('m'), (int)$date->format('Y')]);
+            return $this->fetchEvents(
+                $query,
+                'iii',
+                [$userId, (int) $date->format('m'), (int) $date->format('Y')]
+            );
         }
 
         $userId = User::id();
@@ -165,7 +199,11 @@ final class EventRepository extends BaseRepository
             return [];
         }
 
-        return $this->fetchEvents($query, 'i', [$userId]);
+        return $this->fetchEvents(
+            $query,
+            'i',
+            [$userId]
+        );
     }
 
     /** @return Event[] */
@@ -177,7 +215,11 @@ final class EventRepository extends BaseRepository
         }
 
         $query = self::QUERY_ALL_EVENTS . " AND e.date >= CURDATE() ORDER BY e.date ASC";
-        return $this->fetchEvents($query, 'i', [$userId]);
+        return $this->fetchEvents(
+            $query,
+            'i',
+            [$userId]
+        );
     }
 
     public function register(int $eventId, int $userId, string $comment): void
@@ -210,7 +252,7 @@ final class EventRepository extends BaseRepository
 
     public function isLocked(int $eventId): bool
     {
-        return (bool)$this->fetchSingleValue(
+        return (bool) $this->fetchSingleValue(
             "SELECT (locked = 1 OR date < NOW()) as isLocked FROM events WHERE id = ?",
             "i",
             [$eventId]
@@ -261,6 +303,10 @@ final class EventRepository extends BaseRepository
     /** @return Event[] */
     public function registeredEvents(int $userId): array
     {
-        return $this->fetchEvents(self::QUERY_REGISTERED_EVENTS, 'i', [$userId]);
+        return $this->fetchEvents(
+            self::QUERY_REGISTERED_EVENTS,
+            'i',
+            [$userId]
+        );
     }
 }
