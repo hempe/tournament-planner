@@ -15,10 +15,11 @@
             successPopup.style.display = 'flex';
 
             // Use primary styling and match the UI structure
+            const translations = window.translations?.success || {};
             successPopup.innerHTML = `
                 <div class="custom-success-content">
                     <div class="card primary">
-                        <div class="card-title primary">Erfolg</div>
+                        <div class="card-title primary">${translations.title || 'Erfolg'}</div>
                         <div class="custom-success-message">${message}</div>
                         <div class="custom-success-actions">
                             <button class="button" primary data-action="close">

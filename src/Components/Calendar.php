@@ -15,15 +15,18 @@ class Calendar extends Component
 {
     private readonly CalendarDay $_active;
 
-    private array $_daysNames = [
-        'Montag',
-        'Dienstag',
-        'Mittwoch',
-        'Donnerstag',
-        'Freitag',
-        'Samstag',
-        'Sonntag'
-    ];
+    private function getDaysNames(): array
+    {
+        return [
+            __('calendar.weekdays.monday'),
+            __('calendar.weekdays.tuesday'),
+            __('calendar.weekdays.wednesday'),
+            __('calendar.weekdays.thursday'),
+            __('calendar.weekdays.friday'),
+            __('calendar.weekdays.saturday'),
+            __('calendar.weekdays.sunday'),
+        ];
+    }
 
     /** @var Event[] */
     private readonly array $_events;
@@ -136,7 +139,7 @@ class Calendar extends Component
      */
     public function daysNames(): array
     {
-        return $this->_daysNames;
+        return $this->getDaysNames();
     }
 
     /**
@@ -163,7 +166,7 @@ class Calendar extends Component
             content: new Card(
                 title: [
                     new IconButton(
-                        title: 'Vorheriger Monat',
+                        title: __('calendar.previous_month'),
                         onClick: "window.location.href='./?date={$this->prevMonth()}'",
                         icon: 'fa-chevron-left',
                         type: 'button',
@@ -171,7 +174,7 @@ class Calendar extends Component
                     ),
                     "<span>{$this->formattedDate()}</span>",
                     new IconButton(
-                        title: 'Nächster Monat',
+                        title: __('calendar.next_month'),
                         onClick: "window.location.href='./?date={$this->nextMonth()}'",
                         icon: 'fa-chevron-right',
                         type: 'button',

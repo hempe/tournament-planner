@@ -43,6 +43,7 @@ return [
         'delete' => 'Löschen',
         'lock' => 'Sperren',
         'unlock' => 'Entsperren',
+        'locked' => 'Gesperrt',
         'locked_message' => 'Anmeldung geschlossen, bitte bei kurzfristigen Änderungen oder Kommentaren anrufen!',
         'update_success' => 'Anlass erfolgreich aktualisiert',
         'delete_success' => 'Anlass erfolgreich gelöscht',
@@ -54,6 +55,9 @@ return [
         'comment_update_success' => 'Kommentar aktualisiert',
         'confirmed' => 'Bestätigt',
         'waitlist' => 'Warteliste',
+        'waitlist_available' => 'Warteliste verfügbar',
+        'spots_available' => ':count Plätze frei',
+        'spot_available' => ':count Platz frei',
         'unknown_state' => 'Unbekannter Status',
     ],
 
@@ -90,11 +94,17 @@ return [
 
     // Errors
     'errors' => [
+        'title' => 'Fehler',
         'general' => 'Ein Fehler ist aufgetreten.',
         'not_found' => 'Die angeforderte Seite wurde nicht gefunden.',
         'unauthorized' => 'Sie sind nicht berechtigt, diese Aktion auszuführen.',
         'forbidden' => 'Zugriff verweigert.',
         'csrf' => 'Sicherheitstoken ungültig. Bitte versuchen Sie es erneut.',
+    ],
+
+    // Success
+    'success' => [
+        'title' => 'Erfolg',
     ],
 
     // Buttons and Actions
@@ -113,6 +123,9 @@ return [
 
     // Calendar
     'calendar' => [
+        'previous_month' => 'Vorheriger Monat',
+        'next_month' => 'Nächster Monat',
+        'confirmation' => 'Bestätigung',
         'months' => [
             'january' => 'Januar',
             'february' => 'Februar',

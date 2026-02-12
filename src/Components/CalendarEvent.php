@@ -19,18 +19,18 @@ class CalendarEvent extends Component
     private function eventStatusText(): string
     {
         if ($this->event->userState != 0)
-            return "{$this->event->available} Plätze frei";
+            return __('events.spots_available', ['count' => $this->event->available]);
 
         if ($this->event->isLocked)
-            return 'Gesprerrt';
+            return __('events.locked');
 
         if (!$this->canJoin())
-            return 'Gesprerrt';
+            return __('events.locked');
 
         return match ($this->event->available) {
-            0 => "Warteliste verfügbar",
-            1 => "{$this->event->available} Platz frei",
-            default => "{$this->event->available} Plätze frei"
+            0 => __('events.waitlist_available'),
+            1 => __('events.spot_available', ['count' => $this->event->available]),
+            default => __('events.spots_available', ['count' => $this->event->available])
         };
     }
 
@@ -74,7 +74,7 @@ class CalendarEvent extends Component
                                     yield new Icon('fa-user-clock', 'Auf Warteliste');
 
                                 if ($this->event->isLocked)
-                                    yield new Icon('fa-lock', 'Gesperrt');
+                                    yield new Icon('fa-lock', __('events.locked'));
                                 else if ($this->event->userState == 0 && $this->canJoin())
                                     yield new IconButton(
                                         title: $this->event->available > 0 ? 'Anmelden' : 'Warteliste',

@@ -19,14 +19,15 @@
                 confirmDialog.style.display = 'flex';
 
                 // Create the inner content
+                const translations = window.translations?.confirm || {};
                 confirmDialog.innerHTML = `
                     <div class="custom-confirm-content">
                         <div class="card">
-                            <div class="card-title">Bestätigung</div>
+                            <div class="card-title">${translations.title || 'Bestätigung'}</div>
                             <div class="custom-confirm-message">${message}</div>
                             <div class="custom-confirm-actions">
-                                <button data-action="cancel">Abbrechen</button>
-                                <button ${warn ? 'accent' : 'primary'} data-action="confirm">Bestätigen</button>
+                                <button data-action="cancel">${translations.cancel || 'Abbrechen'}</button>
+                                <button ${warn ? 'accent' : 'primary'} data-action="confirm">${translations.confirm || 'Bestätigen'}</button>
                             </div>
                         </div>
                     </div>

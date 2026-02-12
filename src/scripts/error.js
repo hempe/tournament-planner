@@ -15,10 +15,11 @@
             errorPopup.style.display = 'flex';
 
             // Use accent styling and match the UI structure
+            const translations = window.translations?.error || {};
             errorPopup.innerHTML = `
                 <div class="custom-error-content">
                     <div class="card accent">
-                        <div class="card-title accent">Fehler</div>
+                        <div class="card-title accent">${translations.title || 'Fehler'}</div>
                         <div class="custom-error-message">${message}</div>
                         <div class="custom-error-actions">
                             <button class="button" accent data-action="close">

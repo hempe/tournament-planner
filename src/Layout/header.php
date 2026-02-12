@@ -23,6 +23,22 @@
 
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+    <script>
+        // Global translations for JavaScript
+        window.translations = {
+            confirm: {
+                title: <?= json_encode(__('calendar.confirmation')) ?>,
+                cancel: <?= json_encode(__('actions.cancel')) ?>,
+                confirm: <?= json_encode(__('actions.confirm')) ?>
+            },
+            error: {
+                title: <?= json_encode(__('errors.title')) ?>
+            },
+            success: {
+                title: <?= json_encode(__('success.title')) ?>
+            }
+        };
+    </script>
     <script src="/src/scripts/confirm.js"></script>
     <script src="/src/scripts/error.js"></script>
     <script src="/src/scripts/success.js"></script>
