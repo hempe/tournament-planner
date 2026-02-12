@@ -1,0 +1,56 @@
+/* success.css */
+
+/* Container for the success popup */
+.custom-success {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+  z-index: 1000;
+}
+
+.custom-success-content {
+  position: relative;
+  max-width: 400px;
+  width: 90%;
+}
+
+.custom-success-content > .card {
+  background: var(--bg);
+}
+
+.custom-success-message {
+  padding: 12px;
+  color: var(--text);
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+}
+
+.custom-success-actions {
+  padding: 12px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  background: var(--bg-card);
+}
+
+.custom-success-actions .button {
+  padding: 8px 16px;
+  font-size: 1rem;
+}
+
+.custom-success-actions [primary] {
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
+  border-color: var(--button-primary-bg);
+}
+
+.custom-success-actions [primary]:hover,
+.custom-success-actions [primary]:focus {
+  background: var(--button-primary-light-bg);
+}

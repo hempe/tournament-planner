@@ -49,7 +49,6 @@ final class AuthController
             if ($user) {
                 session_regenerate_id(true);
                 User::setCurrent($user);
-                flash('success', __('auth.login_success'));
                 return Response::redirect('/');
             } else {
                 flash('error', __('auth.login_failed'));

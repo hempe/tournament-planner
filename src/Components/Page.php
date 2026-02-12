@@ -42,8 +42,9 @@ class Page extends Component
                 'Logout',
                 Color::None,
                 'fa-sign-out',
-                'nav-button',
-                class: 'color: var(--fg-navtop);'
+                confirmMessage: '',
+                class: 'nav-button',
+                style: 'color: var(--fg-navtop);'
             )
             : '';
 

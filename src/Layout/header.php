@@ -15,6 +15,7 @@
     <link href="/styles/calendar.css?v=2.0" rel="stylesheet" type="text/css">
     <link href="/styles/confirm.css?v=2.0" rel="stylesheet" type="text/css">
     <link href="/styles/error.css?v=2.0" rel="stylesheet" type="text/css">
+    <link href="/styles/success.css?v=2.0" rel="stylesheet" type="text/css">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plq7G5tGm0rU+1SPhVotteLpBERwTkw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -24,6 +25,7 @@
     <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
     <script src="/src/scripts/confirm.js"></script>
     <script src="/src/scripts/error.js"></script>
+    <script src="/src/scripts/success.js"></script>
     <script src="/src/scripts/fieldset.js"></script>
     <script>
         // Get system theme or saved preference

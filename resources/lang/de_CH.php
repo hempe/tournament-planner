@@ -25,7 +25,6 @@ return [
         'login_failed' => 'Anmeldung fehlgeschlagen',
         'required_fields' => 'Benutzername und Passwort sind erforderlich',
         'logout_success' => 'Erfolgreich abgemeldet',
-        'login_success' => 'Erfolgreich angemeldet',
         'login_required' => 'Anmeldung erforderlich',
     ],
 
