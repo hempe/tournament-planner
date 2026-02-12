@@ -15,8 +15,8 @@ use TP\Components\Form;
             "Mehrfache Termine erstellen",
             new Table(
                 columns: ['', '', ''],
-                items: [null, null, null, null, null],
-                projection: fn($_, $index) => match($index) {
+                items: [0, 1, 2, 3, 4],
+                projection: fn($index) => match($index) {
                     0 => [
                         '<label for="start_date">Startdatum</label>',
                         '<input type="date" id="start_date" name="start_date" class="input" required>',
