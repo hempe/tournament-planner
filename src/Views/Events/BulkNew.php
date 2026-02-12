@@ -14,16 +14,18 @@ use TP\Components\Form;
         content: new Card(
             "Mehrfache Termine erstellen",
             new Table(
-                columns: ['', ''],
+                columns: ['', '', ''],
                 items: [null, null, null, null, null],
                 projection: fn($_, $index) => match($index) {
                     0 => [
                         '<label for="start_date">Startdatum</label>',
-                        '<input type="date" id="start_date" name="start_date" class="input" required>'
+                        '<input type="date" id="start_date" name="start_date" class="input" required>',
+                        ''
                     ],
                     1 => [
                         '<label for="end_date">Enddatum</label>',
-                        '<input type="date" id="end_date" name="end_date" class="input" required>'
+                        '<input type="date" id="end_date" name="end_date" class="input" required>',
+                        ''
                     ],
                     2 => [
                         '<label for="day_of_week">Wochentag</label>',
@@ -36,23 +38,25 @@ use TP\Components\Form;
                         '<option value="5">' . __('calendar.weekdays.friday') . '</option>' .
                         '<option value="6">' . __('calendar.weekdays.saturday') . '</option>' .
                         '<option value="0">' . __('calendar.weekdays.sunday') . '</option>' .
-                        '</select>'
+                        '</select>',
+                        ''
                     ],
                     3 => [
                         '<label for="name">Name</label>',
-                        '<input type="text" id="name" name="name" class="input" maxlength="255" placeholder="Name" required>'
+                        '<input type="text" id="name" name="name" class="input" maxlength="255" placeholder="Name" required>',
+                        ''
                     ],
                     4 => [
                         '<label for="capacity">Max. Teilnehmer</label>',
-                        '<input type="number" id="capacity" name="capacity" class="input" min="1" placeholder="Max. Teilnehmer" required>'
+                        '<input type="number" id="capacity" name="capacity" class="input" min="1" placeholder="Max. Teilnehmer" required>',
+                        new IconButton(
+                            title: 'Vorschau anzeigen',
+                            type: 'submit',
+                            icon: 'fa-eye',
+                            color: Color::Primary,
+                        )
                     ],
-                },
-                footer: new IconButton(
-                    title: 'Vorschau anzeigen',
-                    type: 'submit',
-                    icon: 'fa-eye',
-                    color: Color::Primary,
-                )
+                }
             )
         )
     );
