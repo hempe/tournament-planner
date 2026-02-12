@@ -36,6 +36,7 @@ return [
     'events' => [
         'title' => 'Anlässe',
         'new' => 'Neuer Anlass',
+        'add' => 'Anlass hinzufügen',
         'name' => 'Name',
         'date' => 'Datum',
         'capacity' => 'Kapazität',

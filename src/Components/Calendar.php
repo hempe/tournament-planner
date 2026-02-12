@@ -227,7 +227,7 @@ class Calendar extends Component
 
                                                 if (User::admin() && $day->active)
                                                     yield new IconButton(
-                                                        title: 'Anlass hinzufügen',
+                                                        title: __('events.add'),
                                                         onClick: "window.location.href='/events/new?date={$day->str}&b={$day->year}-{$day->month}-1'",
                                                         icon: 'fa-plus',
                                                         type: 'button',
