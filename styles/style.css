@@ -139,6 +139,24 @@ input:focus {
   border-color: var(--button-primary-bg);
 }
 
+select {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  font-family: "Helvetica Neue", sans-serif;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-input);
+  color: var(--text);
+  transition: border-color 0.3s ease;
+  outline: none;
+  cursor: pointer;
+}
+
+select:focus {
+  border-color: var(--button-primary-bg);
+}
+
 /* Base Button Style */
 button,
 .button {

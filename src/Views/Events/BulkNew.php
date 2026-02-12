@@ -29,7 +29,7 @@ use TP\Components\Form;
                     ],
                     2 => [
                         '<label for="day_of_week">Wochentag</label>',
-                        '<select id="day_of_week" name="day_of_week" class="input" required>' .
+                        '<select id="day_of_week" name="day_of_week" required>' .
                         '<option value="">Bitte wählen</option>' .
                         '<option value="1">' . __('calendar.weekdays.monday') . '</option>' .
                         '<option value="2">' . __('calendar.weekdays.tuesday') . '</option>' .
