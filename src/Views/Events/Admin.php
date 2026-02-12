@@ -103,7 +103,7 @@ use TP\Components\InputAction;
 
         if (count($eventRegistrations['2'] ?? [])) {
             yield new Card(
-                'Warteliste',
+                __('events.waitlist'),
                 new EventRegistrations($eventRegistrations['2'] ?? [], $event)
             );
         }
@@ -113,9 +113,9 @@ use TP\Components\InputAction;
 
         if (count($users) && !$event->isLocked) {
             yield new Card(
-                'Nicht angemeldet',
+                __('auth.not_registered'),
                 new Table(
-                    ['Benutzer', 'Kommentar'],
+                    [__('events.user'), __('events.comment')],
                     $users,
                     fn($user) => [
                         $user->username,
@@ -123,11 +123,11 @@ use TP\Components\InputAction;
                             actionUrl: "/events/$id/user/join",
                             inputName: 'comment',
                             inputValue: '',
-                            title: $eventFull ? 'Warteliste' : 'Anmelden',
+                            title: $eventFull ? __('events.waitlist') : __('events.register'),
                             icon: 'fa-user-plus',
-                            inputPlaceholder: 'Kommentar',
+                            inputPlaceholder: __('events.comment'),
                             color: $eventFull ? Color::Accent : Color::Primary,
-                            confirmMessage: "$user->username " . ($eventFull ? 'auf die Warteliste setzen?' : 'anmelden?'),
+                            confirmMessage: $eventFull ? __('auth.register_user_waitlist', ['username' => $user->username]) : __('auth.register_user', ['username' => $user->username]),
                             hiddenInputs: ['userId' => $user->id]
                         ),
                     ],

@@ -21,9 +21,9 @@ use TP\Models\User;
     }
 
     yield new Card(
-        'Anlässe',
+        __('events.title'),
         new Table(
-            ['Datum', 'Name', 'Max. Teilnehmer', 'Angemeldet', 'Warteliste', ''],
+            [__('events.date'), __('events.name'), __('events.max_participants'), __('events.registered'), __('events.waitlist'), ''],
             DB::$events->all(),
             fn($event) => [
                 $event->date,

@@ -24,7 +24,7 @@ echo new Page(
             content: new Card(
                 style: 'width: min(90vw, 300px)',
                 title: new Div(
-                    content: '<img src="favicon.svg?v=2.0" style="width:calc(100% - 40px); margin:20px" /><p>Willkomen bei Golf el Faro</p>',
+                    content: '<img src="favicon.svg?v=2.0" style="width:calc(100% - 40px); margin:20px" /><p>' . __('auth.welcome') . '</p>',
                     style: [
                         'display: flex;',
                         'flex-direction: column;',
@@ -37,17 +37,17 @@ echo new Page(
                         new Input(
                             type: 'text',
                             name: 'username',
-                            placeholder: 'Benutzername',
+                            placeholder: __('auth.username'),
                             required: true
                         ),
                         new Input(
                             type: 'password',
                             name: 'password',
-                            placeholder: 'Passwort',
+                            placeholder: __('auth.password'),
                             required: true
                         ),
                         new IconButton(
-                            title: 'Anmelden',
+                            title: __('auth.login'),
                             type: 'submit',
                             icon: 'fa-sign-in',
                             color: Color::Primary,

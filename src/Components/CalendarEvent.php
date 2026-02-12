@@ -69,15 +69,15 @@ class CalendarEvent extends Component
                             class: 'event-status',
                             content: function () {
                                 if ($this->event->userState == 1)
-                                    yield new Icon('fa-user-check', 'Angemeldet');
+                                    yield new Icon('fa-user-check', __('events.registered'));
                                 else if ($this->event->userState == 2)
-                                    yield new Icon('fa-user-clock', 'Auf Warteliste');
+                                    yield new Icon('fa-user-clock', __('events.on_waitlist'));
 
                                 if ($this->event->isLocked)
                                     yield new Icon('fa-lock', __('events.locked'));
                                 else if ($this->event->userState == 0 && $this->canJoin())
                                     yield new IconButton(
-                                        title: $this->event->available > 0 ? 'Anmelden' : 'Warteliste',
+                                        title: $this->event->available > 0 ? __('events.register') : __('events.waitlist'),
                                         type: '',
                                         icon: 'fa-user-plus',
                                         color: $this->event->available > 0 ? Color::Primary : Color::Accent,

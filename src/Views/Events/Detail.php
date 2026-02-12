@@ -37,8 +37,8 @@ use TP\Models\User;
     $regState = !$reg
         ? ''
         : ($reg->state == 1
-            ? new Icon('fa-user-check', 'Angemeldet')
-            : new Icon('fa-user-clock', 'Auf Warteliste')
+            ? new Icon('fa-user-check', __('events.registered'))
+            : new Icon('fa-user-clock', __('events.on_waitlist'))
         );
 
     yield new Card(
@@ -47,18 +47,18 @@ use TP\Models\User;
             if (!$reg) {
                 if (!$event->isLocked) {
                     yield new Table(
-                        columns: ['Anmelden' . $event->isLocked],
+                        columns: [__('events.register')],
                         items: [User::current()],
                         projection: fn($user) => [
                             $event->isLocked ? '' : new InputAction(
                                 actionUrl: "/events/$id/user/join",
                                 inputName: 'comment',
                                 inputValue: '',
-                                title: $eventFull ? 'Warteliste' : 'Anmelden',
+                                title: $eventFull ? __('events.waitlist') : __('events.register'),
                                 icon: 'fa-user-plus',
-                                inputPlaceholder: 'Kommentar',
+                                inputPlaceholder: __('events.comment'),
                                 color: $eventFull ? Color::Accent : Color::Primary,
-                                confirmMessage: $eventFull ? 'Auf Warteliste setzen?' : 'Anmelden?',
+                                confirmMessage: $eventFull ? __('events.join_waitlist') : __('events.register_confirm'),
                                 hiddenInputs: ['userId' => $user->id]
                             ),
                         ],
@@ -68,26 +68,26 @@ use TP\Models\User;
                 return;
             }
             yield new Table(
-                columns: [$event->isLocked ? 'Anmeldung geschlossen' : 'Kommentar', ''],
+                columns: [$event->isLocked ? __('events.locked_message') : __('events.comment'), ''],
                 items: [User::current()],
                 projection: fn($user) => [
                     new InputAction(
                         actionUrl: "/events/$id/user/join",
                         inputName: 'comment',
                         inputValue: $reg->comment,
-                        title: 'Speichern',
+                        title: __('events.save'),
                         icon: 'fa-save',
-                        inputPlaceholder: 'Kommentar',
+                        inputPlaceholder: __('events.comment'),
                         color: $event->isLocked ? Color::None : Color::Primary,
-                        confirmMessage: $event->isLocked ? '' : 'Kommentar aktuallisieren?',
+                        confirmMessage: $event->isLocked ? '' : __('events.comment_update_confirm'),
                         hiddenInputs: ['userId' => $user->id]
                     ),
                     new IconActionButton(
                         actionUrl: "/events/$event->id/user/remove",
-                        title: 'Abmelden',
+                        title: __('events.unregister'),
                         color: $event->isLocked ? Color::None : Color::Accent,
                         icon: 'fa-user-minus',
-                        confirmMessage: $event->isLocked ? '' : "Abmelden?",
+                        confirmMessage: $event->isLocked ? '' : __('events.unregister_confirm'),
                         hiddenInputs: ['userId' => $user->id]
                     )
                 ],
@@ -98,12 +98,12 @@ use TP\Models\User;
 
     if ($eventRegistrations) {
         yield new Card(
-            'Angemeldet',
+            __('events.registered'),
             new Table(
                 [''],
                 $eventRegistrations,
                 fn($user) => [
-                    $user->name . ($user->state == 1 ? '' : ' (Warteliste)'),
+                    $user->name . ($user->state == 1 ? '' : ' (' . __('events.waitlist') . ')'),
                 ],
 
             )

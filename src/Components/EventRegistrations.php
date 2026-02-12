@@ -24,7 +24,7 @@ class EventRegistrations extends Component
     protected function template(): void
     {
         echo new Table(
-            ['Benutzer', 'Kommentar', ''],
+            [__('events.user'), __('events.comment'), ''],
             $this->eventUsers,
             fn($user) => [
                 fn() => new Div(
@@ -35,11 +35,11 @@ class EventRegistrations extends Component
                 ),
                 new InputAction(
                     actionUrl: "/events/{$this->event->id}/user/comment",
-                    title: 'Kommentar',
+                    title: __('events.comment'),
                     icon: 'fa-save',
                     inputName: 'comment',
                     inputValue: $user->comment,
-                    inputPlaceholder: 'Kommentar',
+                    inputPlaceholder: __('events.comment'),
                     confirmMessage: '',
                     hiddenInputs: [
                         'userId' => $user->userId
@@ -47,10 +47,10 @@ class EventRegistrations extends Component
                 ),
                 new IconActionButton(
                     actionUrl: "/events/{$this->event->id}/user/remove",
-                    title: 'Abmelden',
+                    title: __('events.unregister'),
                     color: Color::Accent,
                     icon: 'fa-user-minus',
-                    confirmMessage: "{$user->name} abmelden?",
+                    confirmMessage: __('events.unregister_user_confirm', ['name' => $user->name]),
                     hiddenInputs: ['userId' => $user->userId]
                 )
             ],
