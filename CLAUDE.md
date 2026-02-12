@@ -60,7 +60,9 @@ This is a PHP web application for golf event management with a modern MVC archit
 - Controllers return Response objects (ok, redirect, json, notFound, etc.)
 - Validation handled via `$request->validate()` with ValidationRule objects
 
-**Components**: All UI Components extend `Component` base class and implement `template()` method. Components support nested rendering and automatic output buffering.
+**Components**: All UI Components extend `Component` base class and implement `template()` method. Components support nested rendering and automatic output buffering. See [docs/COMPONENTS.md](docs/COMPONENTS.md) for comprehensive component documentation.
+
+**Translation System**: All user-facing text uses `__('key')` function for internationalization. Translations defined in `resources/lang/de_CH.php`. Never hardcode German text in views.
 
 **Database**: Repository pattern with static instances accessible via `DB::$events` and `DB::$users`. Database connection configured in `.env` file.
 
@@ -79,3 +81,60 @@ This is a PHP web application for golf event management with a modern MVC archit
 ### Database Setup
 
 Requires MySQL with extensions `pdo_mysql` and `mysqli` enabled. Database schema defined in `init.sql` with tables for users, events, and event registrations. Configure database credentials in `.env` file.
+
+## Documentation
+
+- **[Component System](docs/COMPONENTS.md)** - Comprehensive guide to UI components
+  - [Table Component](docs/components/Table.md) - Data tables and form tables
+  - [Page Component](docs/components/Page.md) - Page layout and navigation
+  - [Form Component](docs/components/Form.md) - Forms with CSRF protection
+  - [Card Component](docs/components/Card.md) - Content cards
+- **[Translation System](resources/lang/de_CH.php)** - i18n strings
+
+## Important Reminders
+
+### Component Usage
+
+**✅ DO:**
+- Use `yield` in generator functions passed to components
+- Use distinct item values in Table (e.g., `[0, 1, 2]` not `[null, null, null]`)
+- Use `__()` for all user-facing text
+- Check component documentation before using
+
+**❌ DON'T:**
+- Use `echo` in generator functions (won't render)
+- Assume Table projection receives index parameter (only receives item)
+- Add parameters that don't exist (e.g., `footer` on Table)
+- Hardcode German text in views
+
+### Common Patterns
+
+**Multiple items in Page:**
+```php
+<?= new Page(function () {
+    yield new Card('Title 1', 'Content 1');
+    yield new Card('Title 2', 'Content 2');
+}) ?>
+```
+
+**Table with data:**
+```php
+new Table(
+    columns: ['Name', 'Email'],
+    items: $users,
+    projection: fn($user) => [$user->name, $user->email]
+)
+```
+
+**Form table (multiple rows):**
+```php
+new Table(
+    columns: ['Label', 'Input'],
+    items: [0, 1, 2],  // Row indices
+    projection: fn($i) => match($i) {
+        0 => ['Field 1', '<input name="field1">'],
+        1 => ['Field 2', '<input name="field2">'],
+        2 => ['', new IconButton(...)]
+    }
+)
+```
