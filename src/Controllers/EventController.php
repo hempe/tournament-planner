@@ -281,4 +281,121 @@ final class EventController
             return Response::redirect("/events/{$eventId}");
         }
     }
+
+    public function bulkCreate(Request $request): Response
+    {
+        ob_start();
+        require __DIR__ . '/../Layout/header.php';
+        require __DIR__ . '/../Views/Events/BulkNew.php';
+        require __DIR__ . '/../Layout/footer.php';
+        $content = ob_get_clean();
+
+        return Response::ok($content);
+    }
+
+    public function bulkPreview(Request $request): Response
+    {
+        $validation = $request->validate([
+            new ValidationRule('start_date', ['required', 'date']),
+            new ValidationRule('end_date', ['required', 'date']),
+            new ValidationRule('day_of_week', ['required', 'integer', 'min' => 0, 'max' => 6]),
+            new ValidationRule('name', ['required', 'string', 'max' => 255]),
+            new ValidationRule('capacity', ['required', 'integer', 'min' => 1]),
+        ]);
+
+        if (!$validation->isValid) {
+            flash('error', $validation->getErrorMessages());
+            return Response::redirect('/events/bulk/new');
+        }
+
+        try {
+            $data = $request->getValidatedData();
+            $events = $this->calculateRecurringDates(
+                $data['start_date'],
+                $data['end_date'],
+                (int) $data['day_of_week'],
+                $data['name'],
+                (int) $data['capacity']
+            );
+
+            $_SESSION['bulk_events'] = $events;
+
+            ob_start();
+            require __DIR__ . '/../Layout/header.php';
+            require __DIR__ . '/../Views/Events/BulkPreview.php';
+            require __DIR__ . '/../Layout/footer.php';
+            $content = ob_get_clean();
+
+            return Response::ok($content);
+        } catch (Exception $e) {
+            flash('error', $e->getMessage());
+            return Response::redirect('/events/bulk/new');
+        }
+    }
+
+    public function bulkStore(Request $request): Response
+    {
+        if (!isset($_SESSION['bulk_events']) || !is_array($_SESSION['bulk_events'])) {
+            flash('error', 'Session expired. Please start over.');
+            return Response::redirect('/events/bulk/new');
+        }
+
+        $events = $_SESSION['bulk_events'];
+        $successCount = 0;
+        $failures = [];
+
+        foreach ($events as $event) {
+            try {
+                DB::$events->add($event['name'], $event['date'], $event['capacity']);
+                $successCount++;
+            } catch (Exception $e) {
+                $failures[] = "Failed to create event on {$event['date']}: " . $e->getMessage();
+            }
+        }
+
+        unset($_SESSION['bulk_events']);
+
+        if ($successCount > 0) {
+            flash('success', "{$successCount} Termine erfolgreich erstellt.");
+        }
+
+        if (!empty($failures)) {
+            flash('error', $failures);
+        }
+
+        return Response::redirect('/events');
+    }
+
+    private function calculateRecurringDates(
+        string $startDate,
+        string $endDate,
+        int $dayOfWeek,
+        string $name,
+        int $capacity
+    ): array {
+        $start = new \DateTime($startDate);
+        $end = new \DateTime($endDate);
+        $events = [];
+
+        // Find first occurrence of target day-of-week on/after start date
+        $current = clone $start;
+        $currentDayOfWeek = (int) $current->format('w');
+
+        if ($currentDayOfWeek !== $dayOfWeek) {
+            $daysToAdd = ($dayOfWeek - $currentDayOfWeek + 7) % 7;
+            $current->modify("+{$daysToAdd} days");
+        }
+
+        // Loop with +7 days increment until end date exceeded
+        while ($current <= $end) {
+            $events[] = [
+                'name' => $name,
+                'date' => $current->format('Y-m-d'),
+                'capacity' => $capacity,
+            ];
+            $current->modify('+7 days');
+        }
+
+        return $events;
+    }
 }

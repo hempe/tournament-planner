@@ -37,6 +37,9 @@ $router->group(
             function (Router $router) {
             $router->get('/new', handler: [EventController::class, 'create']);
             $router->post('/new', [EventController::class, 'store']);
+            $router->get('/bulk/new', [EventController::class, 'bulkCreate']);
+            $router->post('/bulk/preview', [EventController::class, 'bulkPreview']);
+            $router->post('/bulk/store', [EventController::class, 'bulkStore']);
             $router->get('/{id}/admin', [EventController::class, 'admin']);
             $router->post('/{id}/update', [EventController::class, 'update']);
             $router->post('/{id}/delete', [EventController::class, 'delete']);
