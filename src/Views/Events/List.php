@@ -31,7 +31,7 @@ use TP\Models\User;
     }
 
     yield new Card(
-        __('events.title') . ' (is admin: ' . ($isAdmin ? 'true' : 'false') . ')',
+        __('events.title'),
         new Table(
             $columns,
             DB::$events->all(),
