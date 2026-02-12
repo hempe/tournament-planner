@@ -20,27 +20,44 @@ use TP\Models\User;
         HTML;
     }
 
+    $isAdmin = User::admin();
+
+    $columns = [__('events.date'), __('events.name'), __('events.max_participants'), __('events.registered'), __('events.waitlist')];
+    $widths = [null, null, null, null, null];
+
+    if ($isAdmin) {
+        $columns[] = '';
+        $widths[] = 1;
+    }
+
     yield new Card(
         __('events.title'),
         new Table(
-            [__('events.date'), __('events.name'), __('events.max_participants'), __('events.registered'), __('events.waitlist'), ''],
+            $columns,
             DB::$events->all(),
-            fn($event) => [
-                $event->date,
-                $event->name,
-                $event->capacity,
-                $event->joined,
-                $event->onWaitList,
-                new IconActionButton(
-                    actionUrl: "/events/{$event->id}/delete",
-                    title: __('events.delete'),
-                    color: Color::Accent,
-                    icon: 'fa-trash',
-                    confirmMessage: __('events.delete_confirm', ['name' => $event->name])
-                )
-            ],
+            function($event) use ($isAdmin) {
+                $row = [
+                    $event->date,
+                    $event->name,
+                    $event->capacity,
+                    $event->joined,
+                    $event->onWaitList,
+                ];
+
+                if ($isAdmin) {
+                    $row[] = new IconActionButton(
+                        actionUrl: "/events/{$event->id}/delete",
+                        title: __('events.delete'),
+                        color: Color::Accent,
+                        icon: 'fa-trash',
+                        confirmMessage: __('events.delete_confirm', ['name' => $event->name])
+                    );
+                }
+
+                return $row;
+            },
             fn($event) => "window.location.href='/events/{$event->id}'",
-            widths: [null, null, null, null, null, 1]
+            widths: $widths
         )
     );
 }) ?>
