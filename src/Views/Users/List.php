@@ -11,8 +11,8 @@ use TP\Models\DB;
 
 ?>
 <?= new Page(new Card(
-    'Benutzer' . new IconButton(
-        title: 'Benutzer hinzufügen',
+    __('users.title') . new IconButton(
+        title: __('users.add_user'),
         type: 'button',
         icon: 'fa-user-plus',
         color: Color::None,
@@ -25,23 +25,23 @@ use TP\Models\DB;
             return [
                 htmlspecialchars($user->username),
                 new InputAction(
-                    title: 'Neues Passwort setzen',
+                    title: __('users.set_new_password'),
                     actionUrl: "/users/password",
                     color: Color::Light,
                     inputName: 'password',
                     inputValue: '',
-                    inputPlaceholder: 'Neues Passwort',
+                    inputPlaceholder: __('users.new_password'),
                     icon: 'fa-save',
-                    confirmMessage: 'Neues Passwort setzen?',
+                    confirmMessage: __('users.set_new_password_confirm'),
                     type: 'password',
                     hiddenInputs: ['userId' => $user->id]
                 ),
                 new IconActionButton(
                     actionUrl: "/users/admin",
-                    title: $user->isAdmin ? 'Admin rechte entnehmen?' : 'Admin rechte geben?',
+                    title: $user->isAdmin ? __('users.remove_admin_rights') : __('users.give_admin_rights'),
                     color: $user->isAdmin ? Color::Primary : Color::Light,
                     icon: $user->isAdmin ? 'fa-toggle-on' : 'fa-toggle-off',
-                    confirmMessage: "$user->username " . ($user->isAdmin ? 'Admin rechte entnehmen?' : 'Admin rechte geben?'),
+                    confirmMessage: $user->isAdmin ? __('users.remove_admin_rights_confirm', ['username' => $user->username]) : __('users.give_admin_rights_confirm', ['username' => $user->username]),
                     hiddenInputs: [
                         'id' => $user->id,
                         'admin' => $user->isAdmin ? 0 : 1,
@@ -49,10 +49,10 @@ use TP\Models\DB;
                 ),
                 new IconActionButton(
                     actionUrl: "/users/delete",
-                    title: 'Löschen',
+                    title: __('users.delete'),
                     color: Color::Accent,
                     icon: 'fa-trash',
-                    confirmMessage: "{$user->username} definitiv löschen?",
+                    confirmMessage: __('users.delete_confirm', ['username' => $user->username]),
                     hiddenInputs: ['id' => $user->id],
                 )
             ];

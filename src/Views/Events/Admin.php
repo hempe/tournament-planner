@@ -48,7 +48,7 @@ use TP\Components\InputAction;
                             type: 'text',
                             value: $event->name,
                             name: 'name',
-                            placeholder: 'Name',
+                            placeholder: __('events.name'),
                             style: 'flex-grow:1;',
                             required: true
                         ),
@@ -56,37 +56,37 @@ use TP\Components\InputAction;
                             type: 'text',
                             value: $event->capacity,
                             name: 'capacity',
-                            placeholder: 'Max. Teilnehmer',
+                            placeholder: __('events.max_participants'),
                             style: 'flex-grow:1;',
                             required: true
                         ),
                         new IconButton(
-                            title: 'Speichern',
+                            title: __('events.save'),
                             type: 'submit',
                             icon: 'fa-save',
                             color: Color::Primary,
                         ),
                         new IconActionButton(
                             actionUrl: "/events/$id/delete",
-                            title: 'Löschen',
+                            title: __('events.delete'),
                             color: Color::Accent,
                             icon: 'fa-trash',
-                            confirmMessage: 'Termin definitiv löschen?',
+                            confirmMessage: __('events.delete_confirm_short'),
                         ),
                         $event->locked
                         ? new IconActionButton(
                             actionUrl: "/events/$id/unlock",
-                            title: 'Entsprrren',
+                            title: __('events.unlock'),
                             color: Color::Light,
                             icon: 'fa-lock',
-                            confirmMessage: 'Termin entsperren?',
+                            confirmMessage: __('events.unlock_confirm'),
                         )
                         : new IconActionButton(
                             actionUrl: "/events/$id/lock",
-                            title: 'Sperren',
+                            title: __('events.lock'),
                             color: Color::Light,
                             icon: 'fa-unlock',
-                            confirmMessage: 'Termin sperren?',
+                            confirmMessage: __('events.lock_confirm'),
                         )
                     ],
                     widths: [null, null, 1, 1, 1]

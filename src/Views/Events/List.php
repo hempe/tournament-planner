@@ -33,10 +33,10 @@ use TP\Models\User;
                 $event->onWaitList,
                 new IconActionButton(
                     actionUrl: "/events/{$event->id}/delete",
-                    title: 'Löschen',
+                    title: __('events.delete'),
                     color: Color::Accent,
                     icon: 'fa-trash',
-                    confirmMessage: "Termin ($event->name) definitiv löschen?"
+                    confirmMessage: __('events.delete_confirm', ['name' => $event->name])
                 )
             ],
             fn($event) => "window.location.href='/events/{$event->id}'",

@@ -13,7 +13,7 @@ use TP\Components\Input;
     new Form(
         action: "/users/new",
         content: new Card(
-            'Benutzer erfassen',
+            __('users.create_user'),
             new Table(
                 ['', '', ''],
                 items: [null],
@@ -22,17 +22,17 @@ use TP\Components\Input;
                     new Input(
                         type: 'text',
                         name: 'username',
-                        placeholder: 'Benutzername',
+                        placeholder: __('users.username'),
                         required: true
                     ),
                     new Input(
                         type: 'password',
                         name: 'password',
-                        placeholder: 'Passwort',
+                        placeholder: __('users.password'),
                         required: true
                     ),
                     new IconButton(
-                        title: 'Registrieren',
+                        title: __('users.register'),
                         type: 'submit',
                         icon: 'fa-save',
                         color: Color::Primary,
