@@ -11,7 +11,7 @@ use TP\Models\User;
 ?>
 <?= new Page(function () {
     if (User::admin()) {
-        echo <<<HTML
+        yield <<<HTML
         <div style="margin-bottom: 1rem;">
             <a href="/events/bulk/new" class="button button--primary">
                 <i class="fa fa-calendar-plus"></i> Mehrfache Termine erstellen
