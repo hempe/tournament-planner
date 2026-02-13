@@ -87,13 +87,13 @@ final class EventRepository extends BaseRepository
         $this->fix($id);
     }
 
-    public function add(string $name, string $date, int $capacity): int
+    public function add(string $name, string $date, int $capacity, bool $locked = false): int
     {
         $now = (new DateTime())->format('Y-m-d H:i:s');
         $this->executeUpdateQuery(
-            "INSERT INTO events (name, date, capacity, timestamp) VALUES (?, ?, ?, ?)",
-            "ssis",
-            [$name, $date, $capacity, $now]
+            "INSERT INTO events (name, date, capacity, locked, timestamp) VALUES (?, ?, ?, ?, ?)",
+            "ssiis",
+            [$name, $date, $capacity, $locked ? 1 : 0, $now]
         );
 
         $eventId = $this->fetchSingleValue("SELECT LAST_INSERT_ID()", "", []);

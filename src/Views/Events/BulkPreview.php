@@ -13,35 +13,42 @@ $count = count($events);
 ?>
 <?= new Page(function () use ($events, $count) {
     if ($count === 0) {
+        $message = __('events.bulk_no_events_message');
+        $backText = __('nav.back');
         return new Card(
-            "Keine Termine gefunden",
+            __('events.bulk_no_events'),
             <<<HTML
-            <p>Es wurden keine Termine gefunden, die den angegebenen Kriterien entsprechen.</p>
-            <a href="/events/bulk/new" class="button">Zurück</a>
+            <p>{$message}</p>
+            <a href="/events/bulk/new" class="button">{$backText}</a>
             HTML
         );
     }
 
-    return new Form(
+    yield new Form(
         action: "/events/bulk/store",
         content: new Card(
-            "Vorschau: {$count} Termine werden erstellt",
+            new IconButton(
+                title: __('nav.back'),
+                type: 'button',
+                icon: 'fa-arrow-left',
+                color: Color::None,
+                onClick: "window.location.href='/events/bulk/new'"
+            ) .
+            __('events.bulk_preview_title', ['count' => $count]) .
+            new IconButton(
+                title: __('events.bulk_create_all'),
+                type: 'submit',
+                icon: 'fa-check',
+                color: Color::Primary
+            ),
             new Table(
-                columns: ['Datum', 'Name', 'Kapazität'],
+                columns: [__('events.date'), __('events.name'), __('events.capacity')],
                 items: $events,
                 projection: fn($event) => [
                     $event['date'],
                     $event['name'],
                     $event['capacity']
-                ],
-                footer: <<<HTML
-                <div style="display: flex; gap: 1rem;">
-                    <a href="/events/bulk/new" class="button">Zurück</a>
-                    <button type="submit" class="button button--primary">
-                        <i class="fa fa-check"></i> Alle erstellen
-                    </button>
-                </div>
-                HTML
+                ]
             )
         )
     );

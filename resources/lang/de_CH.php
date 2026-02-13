@@ -78,6 +78,18 @@ return [
         'user' => 'Benutzer',
         'save' => 'Speichern',
         'unknown_state' => 'Unbekannter Status',
+        'bulk_create' => 'Mehrfache Termine erstellen',
+        'bulk_start_date' => 'Startdatum',
+        'bulk_end_date' => 'Enddatum',
+        'bulk_day_of_week' => 'Wochentag',
+        'bulk_select_day' => 'Bitte wählen',
+        'bulk_preview' => 'Vorschau anzeigen',
+        'bulk_preview_title' => 'Vorschau: :count Termine werden erstellt',
+        'bulk_create_all' => 'Alle erstellen',
+        'bulk_no_events' => 'Keine Termine gefunden',
+        'bulk_no_events_message' => 'Es wurden keine Termine gefunden, die den angegebenen Kriterien entsprechen.',
+        'bulk_create_success' => ':count Termine erfolgreich erstellt.',
+        'bulk_session_expired' => 'Sitzung abgelaufen. Bitte beginnen Sie von vorne.',
     ],
 
     // Users

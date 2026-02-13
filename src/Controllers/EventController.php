@@ -336,7 +336,7 @@ final class EventController
     public function bulkStore(Request $request): Response
     {
         if (!isset($_SESSION['bulk_events']) || !is_array($_SESSION['bulk_events'])) {
-            flash('error', 'Session expired. Please start over.');
+            flash('error', __('events.bulk_session_expired'));
             return Response::redirect('/events/bulk/new');
         }
 
@@ -346,7 +346,7 @@ final class EventController
 
         foreach ($events as $event) {
             try {
-                DB::$events->add($event['name'], $event['date'], $event['capacity']);
+                DB::$events->add($event['name'], $event['date'], $event['capacity'], true);
                 $successCount++;
             } catch (Exception $e) {
                 $failures[] = "Failed to create event on {$event['date']}: " . $e->getMessage();
@@ -356,7 +356,7 @@ final class EventController
         unset($_SESSION['bulk_events']);
 
         if ($successCount > 0) {
-            flash('success', "{$successCount} Termine erfolgreich erstellt.");
+            flash('success', __('events.bulk_create_success', ['count' => $successCount]));
         }
 
         if (!empty($failures)) {
