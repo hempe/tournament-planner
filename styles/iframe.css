@@ -1,0 +1,135 @@
+/* Iframe Mode Styles */
+/* Applied when the app is embedded in an iframe */
+
+:root[data-iframe="true"] {
+    /* Reduce spacing for compact mode */
+    --iframe-padding: 8px;
+    --iframe-nav-height: 45px;
+}
+
+/* Compact navigation bar in iframe mode */
+[data-iframe="true"] .navtop {
+    padding: 8px 12px;
+    min-height: var(--iframe-nav-height);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+[data-iframe="true"] .navtop > div {
+    gap: 8px;
+}
+
+/* Smaller title in iframe mode */
+[data-iframe="true"] .navtop h1 {
+    font-size: 1.2rem;
+    margin: 0;
+}
+
+/* Compact buttons */
+[data-iframe="true"] .nav-button {
+    padding: 6px 10px;
+    font-size: 0.85rem;
+}
+
+/* Hide logo/back button image in iframe mode for space */
+[data-iframe="true"] .navtop img {
+    height: 35px;
+    width: 35px;
+}
+
+/* Reduce body padding */
+[data-iframe="true"] .body {
+    padding: 0;
+}
+
+/* Compact cards in iframe mode */
+[data-iframe="true"] .card {
+    margin: 12px;
+    padding: 12px;
+}
+
+/* Smaller fonts in iframe */
+[data-iframe="true"] {
+    font-size: 14px;
+}
+
+/* Compact table spacing */
+[data-iframe="true"] table {
+    font-size: 0.9rem;
+}
+
+[data-iframe="true"] table th,
+[data-iframe="true"] table td {
+    padding: 8px;
+}
+
+/* Reduce calendar spacing */
+[data-iframe="true"] .calendar {
+    gap: 8px;
+}
+
+/* Compact form elements */
+[data-iframe="true"] input,
+[data-iframe="true"] select,
+[data-iframe="true"] textarea {
+    padding: 6px 10px;
+    font-size: 0.9rem;
+}
+
+/* Smaller buttons in forms */
+[data-iframe="true"] button[type="submit"],
+[data-iframe="true"] .button {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+}
+
+/* Remove unnecessary margins */
+[data-iframe="true"] .content {
+    margin: 0;
+    padding: 12px;
+}
+
+/* Compact mode - even more minimal */
+[data-iframe="true"][data-compact="true"] .navtop {
+    padding: 4px 8px;
+    min-height: 40px;
+}
+
+[data-iframe="true"][data-compact="true"] .navtop h1 {
+    font-size: 1rem;
+}
+
+[data-iframe="true"][data-compact="true"] .nav-button {
+    padding: 4px 8px;
+    font-size: 0.75rem;
+}
+
+[data-iframe="true"][data-compact="true"] .card {
+    margin: 8px;
+    padding: 8px;
+}
+
+/* Optional: Hide certain elements in iframe mode */
+[data-iframe="true"] .iframe-hide {
+    display: none !important;
+}
+
+/* Show iframe-only elements */
+.iframe-only {
+    display: none;
+}
+
+[data-iframe="true"] .iframe-only {
+    display: block;
+}
+
+/* Responsive adjustments for iframe */
+@media (max-width: 768px) {
+    [data-iframe="true"] .navtop h1 {
+        font-size: 1rem;
+    }
+
+    [data-iframe="true"] .nav-button {
+        padding: 4px 6px;
+        font-size: 0.75rem;
+    }
+}

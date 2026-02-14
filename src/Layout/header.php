@@ -11,6 +11,7 @@
 
     <link href="/styles/normalize.css?v=3.0" rel="stylesheet" type="text/css">
     <link href="/styles/style.css?v=3.0" rel="stylesheet" type="text/css">
+    <link href="/styles/iframe.css?v=1.0" rel="stylesheet" type="text/css">
 
     <link href="/styles/calendar.css?v=2.0" rel="stylesheet" type="text/css">
     <link href="/styles/confirm.css?v=2.0" rel="stylesheet" type="text/css">
@@ -69,6 +70,40 @@
         function getTheme() {
             return document.documentElement.getAttribute("data-theme");
         }
+    </script>
+    <script>
+        // Detect and apply iframe mode
+        function detectIframeMode() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const isIframeParam = urlParams.get('iframe') === '1';
+            const isCompactParam = urlParams.get('compact') === '1';
+            const isInIframe = window.self !== window.top;
+
+            // Set iframe mode if explicitly requested or if actually in iframe
+            if (isIframeParam || isInIframe) {
+                document.documentElement.setAttribute('data-iframe', 'true');
+
+                // Set compact mode if requested
+                if (isCompactParam) {
+                    document.documentElement.setAttribute('data-compact', 'true');
+                }
+
+                // Store in sessionStorage for consistency
+                sessionStorage.setItem('iframe-mode', 'true');
+                if (isCompactParam) {
+                    sessionStorage.setItem('compact-mode', 'true');
+                }
+            } else if (sessionStorage.getItem('iframe-mode') === 'true') {
+                // Restore from session if not explicitly disabled
+                document.documentElement.setAttribute('data-iframe', 'true');
+                if (sessionStorage.getItem('compact-mode') === 'true') {
+                    document.documentElement.setAttribute('data-compact', 'true');
+                }
+            }
+        }
+
+        // Apply immediately to prevent flash of unstyled content
+        detectIframeMode();
     </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {

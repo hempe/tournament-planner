@@ -247,3 +247,43 @@ if (!function_exists('str_contains')) {
         return strpos($haystack, $needle) !== false;
     }
 }
+
+if (!function_exists('is_iframe_mode')) {
+    /**
+     * Check if the application is running in iframe mode
+     */
+    function is_iframe_mode(): bool
+    {
+        // Check URL parameter
+        if (isset($_GET['iframe']) && $_GET['iframe'] === '1') {
+            return true;
+        }
+
+        // Check session
+        if (isset($_SESSION['iframe-mode']) && $_SESSION['iframe-mode'] === 'true') {
+            return true;
+        }
+
+        return false;
+    }
+}
+
+if (!function_exists('is_compact_mode')) {
+    /**
+     * Check if the application is running in compact iframe mode
+     */
+    function is_compact_mode(): bool
+    {
+        // Check URL parameter
+        if (isset($_GET['compact']) && $_GET['compact'] === '1') {
+            return true;
+        }
+
+        // Check session
+        if (isset($_SESSION['compact-mode']) && $_SESSION['compact-mode'] === 'true') {
+            return true;
+        }
+
+        return false;
+    }
+}
