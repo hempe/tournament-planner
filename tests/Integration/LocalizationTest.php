@@ -401,8 +401,8 @@ class LocalizationTest extends IntegrationTestCase
         echo "   ✓ English login page translations work\n";
 
         Translator::getInstance()->setLocale('es_ES');
-        $this->assertEquals('Login', __('auth.login'));
-        $this->assertEquals('Username', __('auth.username'));
+        $this->assertEquals('Iniciar sesión', __('auth.login'));
+        $this->assertEquals('Usuario', __('auth.username'));
         echo "   ✓ Spanish login page translations work\n";
 
         echo "\n=== Language Selector Tests Passed! ===\n\n";
