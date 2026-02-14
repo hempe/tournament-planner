@@ -18,6 +18,30 @@
     --accent-hover: #3d6a1f;
 }
 
+/* Remove any background effects in iframe - plain white */
+[data-iframe="true"] body {
+    background: #ffffff !important;
+    background-image: none !important;
+    background-color: #ffffff !important;
+}
+
+[data-iframe="true"] .body {
+    background: #ffffff !important;
+    background-image: none !important;
+}
+
+/* Remove card backdrop effects and gradients in iframe */
+[data-iframe="true"] .card {
+    background-color: #f9f9f9 !important;
+    backdrop-filter: none !important;
+    background-image: none !important;
+}
+
+[data-iframe="true"] .card-title {
+    background-color: #f0f0f0 !important;
+    background-image: none !important;
+}
+
 /* Hard edges - remove all rounded corners */
 [data-iframe="true"] * {
     border-radius: 0 !important;
