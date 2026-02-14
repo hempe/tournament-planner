@@ -22,7 +22,7 @@ final class LanguageController
             new ValidationRule('locale', ['required', 'string']),
         ]);
 
-        if (!$validation->isValid()) {
+        if (!$validation->isValid) {
             return Response::redirect($_SERVER['HTTP_REFERER'] ?? '/');
         }
 
