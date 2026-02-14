@@ -77,6 +77,7 @@
             const urlParams = new URLSearchParams(window.location.search);
             const isIframeParam = urlParams.get('iframe') === '1';
             const isCompactParam = urlParams.get('compact') === '1';
+            const themeParam = urlParams.get('theme');
             const isInIframe = window.self !== window.top;
 
             // Set iframe mode if explicitly requested or if actually in iframe
@@ -86,6 +87,15 @@
                 // Set compact mode if requested
                 if (isCompactParam) {
                     document.documentElement.setAttribute('data-compact', 'true');
+                }
+
+                // Force light theme if specified or in iframe mode (default for iframe)
+                if (themeParam === 'light' || !themeParam) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                    localStorage.setItem('theme', 'light');
+                } else if (themeParam === 'dark') {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    localStorage.setItem('theme', 'dark');
                 }
 
                 // Store in sessionStorage for consistency

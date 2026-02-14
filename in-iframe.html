@@ -175,7 +175,7 @@
                     <button class="control-button" onclick="reloadIframe()">↻ Reload</button>
                 </div>
             </div>
-            <iframe id="tournament-iframe" src="/?iframe=1" title="Tournament Planner"></iframe>
+            <iframe id="tournament-iframe" src="/?iframe=1&theme=light" title="Tournament Planner"></iframe>
         </div>
     </div>
 
@@ -190,9 +190,9 @@
 
             // Update iframe URL
             if (mode === 'compact') {
-                iframe.src = '/?iframe=1&compact=1';
+                iframe.src = '/?iframe=1&compact=1&theme=light';
             } else {
-                iframe.src = '/?iframe=1';
+                iframe.src = '/?iframe=1&theme=light';
             }
         }
 

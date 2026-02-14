@@ -89,10 +89,10 @@ class Page extends Component
                             <i class="fa fa-globe"></i>
                         </span>
                     </div>
-                    <a class="button nav-button" style="display: var(--theme-toggle-dark); color: var(--fg-navtop);" onclick="setTheme('dark')">
+                    <a class="button nav-button theme-toggle" style="display: var(--theme-toggle-dark); color: var(--fg-navtop);" onclick="setTheme('dark')">
                         {$moonIcon}
                     </a>
-                    <a class="button nav-button" style="display: var(--theme-toggle-light); color: var(--fg-navtop);" onclick="setTheme('light')">
+                    <a class="button nav-button theme-toggle" style="display: var(--theme-toggle-light); color: var(--fg-navtop);" onclick="setTheme('light')">
                         {$sunIcon}
                     </a>
                     {$logoutButton}
