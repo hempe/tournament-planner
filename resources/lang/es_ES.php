@@ -4,18 +4,18 @@ return [
     // Common
     'app' => [
         'name' => 'Golf El Faro',
-        'welcome' => 'Welcome to Golf El Faro',
+        'welcome' => 'Bienvenido a Golf El Faro',
     ],
 
     // Navigation
     'nav' => [
-        'home' => 'Home',
-        'events' => 'Events',
-        'users' => 'Users',
-        'logout' => 'Logout',
-        'admin' => 'Administration',
-        'back' => 'Back',
-        'language' => 'Language',
+        'home' => 'Inicio',
+        'events' => 'Eventos',
+        'users' => 'Usuarios',
+        'logout' => 'Cerrar sesión',
+        'admin' => 'Administración',
+        'back' => 'Atrás',
+        'language' => 'Idioma',
     ],
 
     // Languages
@@ -27,8 +27,8 @@ return [
 
     // Theme
     'theme' => [
-        'dark' => 'Dark theme',
-        'light' => 'Light theme',
+        'dark' => 'Tema oscuro',
+        'light' => 'Tema claro',
     ],
 
     // Authentication

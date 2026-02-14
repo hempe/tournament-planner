@@ -15,6 +15,20 @@ return [
         'logout' => 'Abmelden',
         'admin' => 'Administration',
         'back' => 'Zurück',
+        'language' => 'Sprache',
+    ],
+
+    // Languages
+    'languages' => [
+        'de_CH' => 'Deutsch',
+        'en_US' => 'English',
+        'es_ES' => 'Español',
+    ],
+
+    // Theme
+    'theme' => [
+        'dark' => 'Dunkles Design',
+        'light' => 'Helles Design',
     ],
 
     // Authentication

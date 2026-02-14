@@ -60,6 +60,9 @@ final class Application
         // Start session with secure settings
         $this->configureSession();
 
+        // Set locale from session or config
+        $this->configureLocale();
+
         // Initialize database
         // Initialize database (allow graceful failure)
         try {
@@ -145,6 +148,15 @@ final class Application
                 $_SESSION['last_regeneration'] = time();
             }
         }
+    }
+
+    private function configureLocale(): void
+    {
+        // Get locale from session or fall back to config
+        $locale = $_SESSION['locale'] ?? $this->config->get('app.locale', 'de_CH');
+
+        // Set the locale in the translator
+        Translator::getInstance()->setLocale($locale);
     }
 
     private function handleError(Throwable $e): void
