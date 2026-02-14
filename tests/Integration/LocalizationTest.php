@@ -272,54 +272,75 @@ class LocalizationTest extends IntegrationTestCase
     }
 
     /**
-     * Test language switching via POST endpoint
+     * Test language switching via POST endpoint (actual HTTP request)
      */
     public function testLanguageSwitchEndpoint(): void
     {
-        echo "\n=== Testing Language Switch Endpoint ===\n";
+        echo "\n=== Testing Language Switch HTTP Endpoint ===\n";
 
-        // Set initial locale
+        // Set initial locale to German
         $_SESSION['locale'] = 'de_CH';
         Translator::getInstance()->setLocale('de_CH');
-        $this->assertEquals('de_CH', Translator::getInstance()->getLocale());
-        echo "\n1. Initial locale set to de_CH\n";
+        echo "\n1. Initial locale: de_CH\n";
 
-        // Switch to English
-        echo "\n2. Switching to English via POST...\n";
-        $_SESSION['locale'] = 'en_US';
-        Translator::getInstance()->setLocale('en_US');
+        // Switch to English via POST request
+        echo "\n2. POST to /language/switch with locale=en_US...\n";
+        $response = $this->request('POST', '/language/switch', [
+            'locale' => 'en_US',
+            'redirect' => '/'
+        ]);
 
-        $this->assertEquals('en_US', Translator::getInstance()->getLocale());
+        // Should redirect
+        $this->assertTrue(
+            in_array($response->statusCode, [301, 302, 303]),
+            "Expected redirect status, got {$response->statusCode}"
+        );
+        echo "   ✓ Endpoint returns redirect (status {$response->statusCode})\n";
+
+        // Verify session was updated
         $this->assertEquals('en_US', $_SESSION['locale']);
-        echo "   ✓ Language switched to en_US\n";
+        echo "   ✓ Session locale updated to en_US\n";
 
-        // Verify translation changed
+        // Verify translator was updated
+        $this->assertEquals('en_US', Translator::getInstance()->getLocale());
+        echo "   ✓ Translator locale updated to en_US\n";
+
+        // Verify translations changed
         $this->assertEquals('Events', __('nav.events'));
-        echo "   ✓ Translations updated to English\n";
+        echo "   ✓ Translations now in English\n";
 
-        // Switch to Spanish
-        echo "\n3. Switching to Spanish via POST...\n";
-        $_SESSION['locale'] = 'es_ES';
-        Translator::getInstance()->setLocale('es_ES');
+        // Switch to Spanish via POST
+        echo "\n3. POST to /language/switch with locale=es_ES...\n";
+        $response = $this->request('POST', '/language/switch', [
+            'locale' => 'es_ES',
+            'redirect' => '/'
+        ]);
 
-        $this->assertEquals('es_ES', Translator::getInstance()->getLocale());
+        $this->assertTrue(
+            in_array($response->statusCode, [301, 302, 303]),
+            "Expected redirect status, got {$response->statusCode}"
+        );
         $this->assertEquals('es_ES', $_SESSION['locale']);
-        echo "   ✓ Language switched to es_ES\n";
-
-        // Verify translation changed
         $this->assertEquals('Eventos', __('nav.events'));
-        echo "   ✓ Translations updated to Spanish\n";
+        echo "   ✓ Successfully switched to Spanish\n";
 
-        // Switch back to German
-        echo "\n4. Switching back to German...\n";
-        $_SESSION['locale'] = 'de_CH';
-        Translator::getInstance()->setLocale('de_CH');
+        // Test invalid locale - should redirect without changing
+        echo "\n4. Testing invalid locale rejection...\n";
+        $_SESSION['locale'] = 'es_ES'; // Keep Spanish
+        $response = $this->request('POST', '/language/switch', [
+            'locale' => 'invalid_locale',
+            'redirect' => '/'
+        ]);
 
-        $this->assertEquals('de_CH', Translator::getInstance()->getLocale());
-        $this->assertEquals('Anlässe', __('nav.events'));
-        echo "   ✓ Language switched back to German\n";
+        // Should still redirect but not change locale
+        $this->assertTrue(
+            in_array($response->statusCode, [301, 302, 303]),
+            "Expected redirect even for invalid locale"
+        );
+        $this->assertEquals('es_ES', $_SESSION['locale'], "Locale should not change for invalid input");
+        echo "   ✓ Invalid locale rejected, session unchanged\n";
 
-        echo "\n=== Language Switch Endpoint Tests Passed! ===\n\n";
+        echo "\n=== Language Switch HTTP Endpoint Tests Passed! ===\n\n";
     }
 
     /**

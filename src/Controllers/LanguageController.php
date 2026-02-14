@@ -26,7 +26,7 @@ final class LanguageController
             return Response::redirect($_SERVER['HTTP_REFERER'] ?? '/');
         }
 
-        $locale = $request->post('locale');
+        $locale = $request->getString('locale');
         $validLocales = ['de_CH', 'en_US', 'es_ES'];
 
         if (!in_array($locale, $validLocales, true)) {
@@ -40,7 +40,7 @@ final class LanguageController
         Translator::getInstance()->setLocale($locale);
 
         // Redirect back to previous page or home
-        $redirectUrl = $request->post('redirect') ?? $_SERVER['HTTP_REFERER'] ?? '/';
+        $redirectUrl = $request->getString('redirect', $_SERVER['HTTP_REFERER'] ?? '/');
         return Response::redirect($redirectUrl);
     }
 
