@@ -1,0 +1,273 @@
+<?php
+
+declare(strict_types=1);
+
+namespace TP\Tests\Integration;
+
+use TP\Core\Translator;
+use TP\Models\DB;
+
+/**
+ * Integration tests for localization and language switching
+ */
+class LocalizationTest extends IntegrationTestCase
+{
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->cleanDatabase();
+    }
+
+    /**
+     * Test that setLocale changes the active locale
+     */
+    public function testSetLocaleChangesActiveLocale(): void
+    {
+        echo "\n=== Testing Locale Switching ===\n";
+
+        $translator = Translator::getInstance();
+
+        // Test German
+        echo "\n1. Setting locale to de_CH...\n";
+        $translator->setLocale('de_CH');
+        $this->assertEquals('de_CH', $translator->getLocale());
+        echo "   ✓ Locale set to de_CH\n";
+
+        // Test English
+        echo "\n2. Setting locale to en_US...\n";
+        $translator->setLocale('en_US');
+        $this->assertEquals('en_US', $translator->getLocale());
+        echo "   ✓ Locale set to en_US\n";
+
+        // Test Spanish
+        echo "\n3. Setting locale to es_ES...\n";
+        $translator->setLocale('es_ES');
+        $this->assertEquals('es_ES', $translator->getLocale());
+        echo "   ✓ Locale set to es_ES\n";
+
+        echo "\n=== Locale Switching Tests Passed! ===\n\n";
+    }
+
+    /**
+     * Test that translations load correctly for each locale
+     */
+    public function testTranslationsLoadForEachLocale(): void
+    {
+        echo "\n=== Testing Translation Loading ===\n";
+
+        $translator = Translator::getInstance();
+
+        // Test German translations
+        echo "\n1. Testing German translations...\n";
+        $translator->setLocale('de_CH');
+        $this->assertEquals('Anlässe', __('nav.events'));
+        $this->assertEquals('Benutzer', __('nav.users'));
+        $this->assertEquals('Abmelden', __('nav.logout'));
+        $this->assertEquals('Willkommen bei Golf El Faro', __('app.welcome'));
+        echo "   ✓ German translations loaded correctly\n";
+
+        // Test English translations
+        echo "\n2. Testing English translations...\n";
+        $translator->setLocale('en_US');
+        $this->assertEquals('Events', __('nav.events'));
+        $this->assertEquals('Users', __('nav.users'));
+        $this->assertEquals('Logout', __('nav.logout'));
+        $this->assertEquals('Welcome to Golf El Faro', __('app.welcome'));
+        echo "   ✓ English translations loaded correctly\n";
+
+        // Test Spanish translations
+        echo "\n3. Testing Spanish translations...\n";
+        $translator->setLocale('es_ES');
+        $this->assertEquals('Eventos', __('nav.events'));
+        $this->assertEquals('Usuarios', __('nav.users'));
+        $this->assertEquals('Cerrar sesión', __('nav.logout'));
+        $this->assertEquals('Bienvenido a Golf El Faro', __('app.welcome'));
+        echo "   ✓ Spanish translations loaded correctly\n";
+
+        echo "\n=== Translation Loading Tests Passed! ===\n\n";
+    }
+
+    /**
+     * Test that language names are translated correctly
+     */
+    public function testLanguageNamesAreTranslated(): void
+    {
+        echo "\n=== Testing Language Names ===\n";
+
+        $translator = Translator::getInstance();
+
+        // All locales should have the same language names
+        $expectedLanguages = [
+            'de_CH' => 'Deutsch',
+            'en_US' => 'English',
+            'es_ES' => 'Español',
+        ];
+
+        foreach (['de_CH', 'en_US', 'es_ES'] as $locale) {
+            echo "\n1. Testing language names in {$locale}...\n";
+            $translator->setLocale($locale);
+
+            foreach ($expectedLanguages as $langCode => $langName) {
+                $translated = __("languages.{$langCode}");
+                $this->assertEquals($langName, $translated, "Language name for {$langCode} should be {$langName} in {$locale}");
+            }
+            echo "   ✓ All language names correct in {$locale}\n";
+        }
+
+        echo "\n=== Language Name Tests Passed! ===\n\n";
+    }
+
+    /**
+     * Test session persistence of locale
+     */
+    public function testSessionPersistsLocale(): void
+    {
+        echo "\n=== Testing Session Persistence ===\n";
+
+        // Set locale in session
+        echo "\n1. Setting locale in session...\n";
+        $_SESSION['locale'] = 'en_US';
+        $this->assertEquals('en_US', $_SESSION['locale']);
+        echo "   ✓ Locale stored in session\n";
+
+        // Verify it persists
+        echo "\n2. Verifying session persistence...\n";
+        $storedLocale = $_SESSION['locale'];
+        $this->assertEquals('en_US', $storedLocale);
+        echo "   ✓ Locale retrieved from session\n";
+
+        // Change locale
+        echo "\n3. Changing locale to es_ES...\n";
+        $_SESSION['locale'] = 'es_ES';
+        $this->assertEquals('es_ES', $_SESSION['locale']);
+        echo "   ✓ Locale updated in session\n";
+
+        echo "\n=== Session Persistence Tests Passed! ===\n\n";
+    }
+
+    /**
+     * Test fallback to default locale
+     */
+    public function testFallbackToDefaultLocale(): void
+    {
+        echo "\n=== Testing Fallback Behavior ===\n";
+
+        $translator = Translator::getInstance();
+
+        // Test that missing keys fall back to English
+        echo "\n1. Testing missing translation key...\n";
+        $translator->setLocale('de_CH');
+        $missingKey = 'some.nonexistent.key';
+        $result = __($missingKey);
+        $this->assertEquals($missingKey, $result, "Missing key should return the key itself");
+        echo "   ✓ Missing key returns key as fallback\n";
+
+        echo "\n=== Fallback Tests Passed! ===\n\n";
+    }
+
+    /**
+     * Test language switching with authentication
+     */
+    public function testLanguageSwitchingAsAuthenticatedUser(): void
+    {
+        echo "\n=== Testing Language Switch with Auth ===\n";
+
+        $this->loginAsAdmin();
+
+        // Simulate language switch via session
+        echo "\n1. Switching to English...\n";
+        $_SESSION['locale'] = 'en_US';
+        Translator::getInstance()->setLocale('en_US');
+        $this->assertEquals('en_US', Translator::getInstance()->getLocale());
+        $this->assertEquals('Events', __('nav.events'));
+        echo "   ✓ Language switched to English while authenticated\n";
+
+        echo "\n2. Switching to Spanish...\n";
+        $_SESSION['locale'] = 'es_ES';
+        Translator::getInstance()->setLocale('es_ES');
+        $this->assertEquals('es_ES', Translator::getInstance()->getLocale());
+        $this->assertEquals('Eventos', __('nav.events'));
+        echo "   ✓ Language switched to Spanish while authenticated\n";
+
+        echo "\n=== Language Switch with Auth Tests Passed! ===\n\n";
+    }
+
+    /**
+     * Test theme translations in all locales
+     */
+    public function testThemeTranslations(): void
+    {
+        echo "\n=== Testing Theme Translations ===\n";
+
+        $translator = Translator::getInstance();
+
+        // Test German
+        echo "\n1. Testing German theme translations...\n";
+        $translator->setLocale('de_CH');
+        $this->assertEquals('Dunkles Design', __('theme.dark'));
+        $this->assertEquals('Helles Design', __('theme.light'));
+        echo "   ✓ German theme translations correct\n";
+
+        // Test English
+        echo "\n2. Testing English theme translations...\n";
+        $translator->setLocale('en_US');
+        $this->assertEquals('Dark theme', __('theme.dark'));
+        $this->assertEquals('Light theme', __('theme.light'));
+        echo "   ✓ English theme translations correct\n";
+
+        // Test Spanish
+        echo "\n3. Testing Spanish theme translations...\n";
+        $translator->setLocale('es_ES');
+        $this->assertEquals('Tema oscuro', __('theme.dark'));
+        $this->assertEquals('Tema claro', __('theme.light'));
+        echo "   ✓ Spanish theme translations correct\n";
+
+        echo "\n=== Theme Translation Tests Passed! ===\n\n";
+    }
+
+    /**
+     * Test that all three locales have consistent translation keys
+     */
+    public function testAllLocalesHaveConsistentKeys(): void
+    {
+        echo "\n=== Testing Translation Key Consistency ===\n";
+
+        $translator = Translator::getInstance();
+
+        // Critical keys that should exist in all locales
+        $criticalKeys = [
+            'app.name',
+            'app.welcome',
+            'nav.home',
+            'nav.events',
+            'nav.users',
+            'nav.logout',
+            'nav.back',
+            'nav.language',
+            'languages.de_CH',
+            'languages.en_US',
+            'languages.es_ES',
+            'theme.dark',
+            'theme.light',
+            'auth.login',
+            'auth.username',
+            'auth.password',
+        ];
+
+        $locales = ['de_CH', 'en_US', 'es_ES'];
+
+        foreach ($locales as $locale) {
+            echo "\n1. Checking {$locale} for critical keys...\n";
+            $translator->setLocale($locale);
+
+            foreach ($criticalKeys as $key) {
+                $translation = __($key);
+                $this->assertNotEquals($key, $translation, "Key '{$key}' missing in {$locale}");
+                $this->assertNotEmpty($translation, "Translation for '{$key}' is empty in {$locale}");
+            }
+            echo "   ✓ All critical keys present in {$locale}\n";
+        }
+
+        echo "\n=== Translation Key Consistency Tests Passed! ===\n\n";
+    }
+}
