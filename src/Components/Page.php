@@ -81,7 +81,7 @@ class Page extends Component
                             onchange="switchLanguage(this.value)"
                             class="nav-button"
                             style="color: var(--fg-navtop); background: transparent; border: none; cursor: pointer; padding: 8px 12px; font-size: 14px; appearance: none; padding-right: 24px;"
-                            title="{$languageIcon->title}"
+                            title="<?= __('nav.language') ?>"
                         >
                             {$languageOptions}
                         </select>
