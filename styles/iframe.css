@@ -38,6 +38,7 @@
     padding: 8px 12px;
     min-height: var(--iframe-nav-height);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    position: static !important; /* Not fixed in iframe - should scroll with content */
 }
 
 [data-iframe="true"] .navtop > div {

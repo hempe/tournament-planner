@@ -12,18 +12,18 @@
         }
 
         body {
-            font-family: Arial, Helvetica, sans-serif;
-            background-color: #ffffff;
-            color: #333333;
-            line-height: 1.6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            color: #444;
+            line-height: 1.7;
         }
 
         /* Header */
         header {
-            background-color: #2d5016;
+            background: linear-gradient(135deg, #3a6b1f 0%, #2d5016 100%);
             color: white;
-            padding: 20px 0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 15px 0;
+            border-bottom: 3px solid #8bc34a;
         }
 
         .header-content {
@@ -36,9 +36,12 @@
         }
 
         .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #a8d08d;
+            font-size: 22px;
+            font-weight: 600;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         nav ul {
@@ -67,12 +70,12 @@
         }
 
         h1 {
-            font-size: 32px;
+            font-size: 36px;
             color: #2d5016;
-            margin-bottom: 20px;
-            font-weight: 600;
-            border-bottom: 3px solid #a8d08d;
-            padding-bottom: 10px;
+            margin-bottom: 25px;
+            font-weight: 700;
+            border-left: 5px solid #8bc34a;
+            padding-left: 20px;
         }
 
         .breadcrumb {
@@ -91,10 +94,11 @@
         }
 
         .content-section {
-            background-color: #f8f9fa;
-            border: 1px solid #ddd;
-            padding: 30px;
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            padding: 35px;
             margin-bottom: 30px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
         .content-section h2 {
@@ -111,42 +115,47 @@
         }
 
         .highlight-box {
-            background-color: #fff;
-            border-left: 4px solid #a8d08d;
+            background-color: #f0f8e8;
+            border-left: 4px solid #8bc34a;
             padding: 20px;
-            margin: 20px 0;
+            margin: 25px 0;
+            border: 1px solid #c5e1a5;
         }
 
         .highlight-box strong {
             color: #2d5016;
         }
 
-        /* Iframe container */
+        /* Iframe container - seamless integration */
         .tournament-system {
-            margin-top: 40px;
-            border: 1px solid #ddd;
-            background: #fff;
+            margin-top: 50px;
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
         .tournament-system h3 {
-            background-color: #2d5016;
+            background: linear-gradient(135deg, #3a6b1f 0%, #2d5016 100%);
             color: white;
-            padding: 15px 20px;
-            font-size: 18px;
+            padding: 18px 25px;
+            font-size: 20px;
             font-weight: 600;
             margin: 0;
+            border-bottom: 3px solid #8bc34a;
         }
 
         .tournament-iframe-container {
             background: #ffffff;
-            min-height: 600px;
+            min-height: 700px;
+            padding: 0;
         }
 
         iframe {
             width: 100%;
             border: none;
             display: block;
-            min-height: 600px;
+            min-height: 700px;
+            background: #ffffff;
         }
 
         /* Footer */
@@ -244,7 +253,7 @@
             <div class="tournament-iframe-container">
                 <iframe
                     id="tournament-iframe"
-                    src="/?iframe=1&theme=light"
+                    src="/?iframe=1"
                     title="Turnier-Anmeldesystem"
                     scrolling="auto"
                 ></iframe>

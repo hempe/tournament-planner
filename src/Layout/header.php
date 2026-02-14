@@ -76,7 +76,6 @@
         function detectIframeMode() {
             const urlParams = new URLSearchParams(window.location.search);
             const isIframeParam = urlParams.get('iframe') === '1';
-            const isCompactParam = urlParams.get('compact') === '1';
             const themeParam = urlParams.get('theme');
             const isInIframe = window.self !== window.top;
 
@@ -84,10 +83,8 @@
             if (isIframeParam || isInIframe) {
                 document.documentElement.setAttribute('data-iframe', 'true');
 
-                // Set compact mode if requested
-                if (isCompactParam) {
-                    document.documentElement.setAttribute('data-compact', 'true');
-                }
+                // Always use compact mode in iframe (no standard/compact toggle)
+                document.documentElement.setAttribute('data-compact', 'true');
 
                 // Force light theme if specified or in iframe mode (default for iframe)
                 if (themeParam === 'light' || !themeParam) {
@@ -100,15 +97,10 @@
 
                 // Store in sessionStorage for consistency
                 sessionStorage.setItem('iframe-mode', 'true');
-                if (isCompactParam) {
-                    sessionStorage.setItem('compact-mode', 'true');
-                }
             } else if (sessionStorage.getItem('iframe-mode') === 'true') {
                 // Restore from session if not explicitly disabled
                 document.documentElement.setAttribute('data-iframe', 'true');
-                if (sessionStorage.getItem('compact-mode') === 'true') {
-                    document.documentElement.setAttribute('data-compact', 'true');
-                }
+                document.documentElement.setAttribute('data-compact', 'true');
             }
         }
 
