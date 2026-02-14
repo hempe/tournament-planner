@@ -106,6 +106,11 @@ class Page extends Component
             form.method = 'POST';
             form.action = '/language/switch';
 
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrf_token';
+            csrfInput.value = '<?= csrf_token() ?>';
+
             const localeInput = document.createElement('input');
             localeInput.type = 'hidden';
             localeInput.name = 'locale';
@@ -116,6 +121,7 @@ class Page extends Component
             redirectInput.name = 'redirect';
             redirectInput.value = window.location.pathname + window.location.search;
 
+            form.appendChild(csrfInput);
             form.appendChild(localeInput);
             form.appendChild(redirectInput);
             document.body.appendChild(form);

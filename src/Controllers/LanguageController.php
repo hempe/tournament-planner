@@ -8,6 +8,7 @@ use TP\Core\Request;
 use TP\Core\Response;
 use TP\Core\Translator;
 use TP\Core\Attributes\Route;
+use TP\Core\ValidationRule;
 
 final class LanguageController
 {
@@ -17,16 +18,19 @@ final class LanguageController
     #[Route('POST', '/language/switch')]
     public function switchLanguage(Request $request): Response
     {
-        $data = $request->validate([
-            'locale' => 'required',
-            'redirect' => 'optional'
+        $validation = $request->validate([
+            new ValidationRule('locale', ['required', 'string']),
         ]);
 
-        $locale = $data['locale'];
+        if (!$validation->isValid()) {
+            return Response::redirect($_SERVER['HTTP_REFERER'] ?? '/');
+        }
+
+        $locale = $request->post('locale');
         $validLocales = ['de_CH', 'en_US', 'es_ES'];
 
         if (!in_array($locale, $validLocales, true)) {
-            return Response::json(['error' => 'Invalid locale'], 400);
+            return Response::redirect($_SERVER['HTTP_REFERER'] ?? '/');
         }
 
         // Store language preference in session
@@ -36,7 +40,7 @@ final class LanguageController
         Translator::getInstance()->setLocale($locale);
 
         // Redirect back to previous page or home
-        $redirectUrl = $data['redirect'] ?? $_SERVER['HTTP_REFERER'] ?? '/';
+        $redirectUrl = $request->post('redirect') ?? $_SERVER['HTTP_REFERER'] ?? '/';
         return Response::redirect($redirectUrl);
     }
 
