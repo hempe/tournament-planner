@@ -9,28 +9,27 @@ use Exception;
 
 final class EventRepository extends BaseRepository
 {
-    private const QUERY_EVENT = "SELECT 
-                e.id, 
+    private const QUERY_EVENT = "SELECT
+                e.id,
                 e.locked,
                 (e.locked = 1 OR e.date < NOW()) AS isLocked,
-                e.name, 
-                e.date, 
+                e.name,
+                e.date,
                 e.capacity,
-                (SELECT COUNT(*) 
-                    FROM event_users 
+                (SELECT COUNT(*)
+                    FROM event_users
                     WHERE state = 1 AND eventId = e.id) AS joined,
-                (SELECT COUNT(*) 
-                    FROM event_users 
+                (SELECT COUNT(*)
+                    FROM event_users
                     WHERE state = 2 AND eventId = e.id) AS waitList,
                 COALESCE(eu.state, 0) AS userState
             FROM events e
             LEFT JOIN event_users eu ON eu.eventId = e.id
-            AND eu.userId = ?
-            ";
+            AND eu.userId = ?";
 
     private const QUERY_REGISTERED_EVENTS = self::QUERY_EVENT;
-    private const QUERY_EVENT_BY_ID = self::QUERY_EVENT . " AND e.id = ?";
-    private const QUERY_ALL_EVENTS = self::QUERY_EVENT;
+    private const QUERY_EVENT_BY_ID = self::QUERY_EVENT . " WHERE e.id = ?";
+    private const QUERY_ALL_EVENTS = self::QUERY_EVENT . " WHERE 1=1";
 
     private function mapEvent(array $row): Event
     {
