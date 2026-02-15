@@ -9,6 +9,7 @@ use TP\Components\Card;
 use TP\Components\CalendarEvent;
 use TP\Components\Color;
 use TP\Components\Icon;
+use TP\Components\IconActionButton;
 use TP\Models\Event;
 use TP\Models\User;
 use TP\Core\Translator;
@@ -176,30 +177,32 @@ class Calendar extends Component
             $languageOptions .= "<option value=\"{$locale}\" {$selected}>{$name}</option>";
         }
 
-        $iframeControls = <<<HTML
-        <div class="iframe-only" style="display: none; gap: 8px; align-items: center;">
-            <select
-                id="iframe-language-select"
-                onchange="switchLanguage(this.value)"
-                style="padding: 6px 10px; font-size: 0.9rem; cursor: pointer; border: 1px solid var(--border); border-radius: 4px; background: var(--bg-input); color: var(--text);"
-                title="{$languages[$currentLocale]}"
-            >
-                {$languageOptions}
-            </select>
+        $languageSelector = <<<HTML
+        <select
+            id="iframe-language-select"
+            onchange="switchLanguage(this.value)"
+            style="padding: 6px 10px; font-size: 0.9rem; cursor: pointer; border: 1px solid var(--border); border-radius: 4px; background: var(--bg-input); color: var(--text);"
+            title="{$languages[$currentLocale]}"
+        >
+            {$languageOptions}
+        </select>
         HTML;
 
-        if (User::loggedIn()) {
-            $iframeControls .= <<<HTML
-            <form method="POST" action="/logout" style="margin: 0;">
-                <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
-                <button type="submit" style="padding: 6px 10px; font-size: 0.9rem; cursor: pointer; background: var(--button-bg); color: var(--button-text); border: 1px solid var(--border); border-radius: 4px;">
-                    <?= htmlspecialchars(__('nav.logout')) ?>
-                </button>
-            </form>
-            HTML;
-        }
+        $logoutButton = User::loggedIn()
+            ? new IconActionButton(
+                "/logout",
+                __('nav.logout'),
+                Color::None,
+                'fa-sign-out',
+                confirmMessage: '',
+                style: 'padding: 6px 10px; font-size: 0.9rem;'
+            )
+            : '';
 
-        $iframeControls .= '</div>';
+        $iframeControls = '<div class="iframe-only" style="display: none; gap: 8px; align-items: center;">'
+            . $languageSelector
+            . $logoutButton
+            . '</div>';
 
         echo new Div(
             class: 'calendar',
