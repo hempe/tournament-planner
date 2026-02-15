@@ -101,6 +101,10 @@ final class Security
 
     public function isPasswordSecure(string $password): bool
     {
+        // Password restrictions commented out per user request
+        return true;
+
+        /*
         $config = Config::getInstance();
         $minLength = $config->get('security.password_min_length', 8);
 
@@ -110,6 +114,7 @@ final class Security
 
         // Check for at least one lowercase, uppercase, digit, and special character
         return preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/', $password) === 1;
+        */
     }
 
     public function cleanFilename(string $filename): string

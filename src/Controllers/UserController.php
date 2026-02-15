@@ -7,11 +7,21 @@ namespace TP\Controllers;
 use TP\Core\Request;
 use TP\Core\Response;
 use TP\Core\ValidationRule;
+use TP\Core\Attributes\RoutePrefix;
+use TP\Core\Attributes\Get;
+use TP\Core\Attributes\Post;
+use TP\Core\Attributes\Middleware;
+use TP\Middleware\AuthMiddleware;
+use TP\Middleware\AdminMiddleware;
 use TP\Models\DB;
 use Exception;
 
+#[RoutePrefix('/users')]
+#[Middleware(AuthMiddleware::class)]
+#[Middleware(AdminMiddleware::class)]
 final class UserController
 {
+    #[Get('/')]
     public function index(Request $request): Response
     {
         $users = DB::$users->all();
@@ -25,6 +35,7 @@ final class UserController
         return Response::ok($content);
     }
 
+    #[Get('/new')]
     public function create(Request $request): Response
     {
         ob_start();
@@ -36,11 +47,12 @@ final class UserController
         return Response::ok($content);
     }
 
+    #[Post('/')]
     public function store(Request $request): Response
     {
         $validation = $request->validate([
             new ValidationRule('username', ['required', 'string', 'min' => 3, 'max' => 255]),
-            new ValidationRule('password', ['required', 'string', 'min' => 6]),
+            new ValidationRule('password', ['required', 'string' /*, 'min' => 6 */]),
         ]);
 
         if (!$validation->isValid) {
@@ -68,6 +80,7 @@ final class UserController
         }
     }
 
+    #[Post('/{id}/delete')]
     public function delete(Request $request, array $params): Response
     {
         $userId = (int) $params['id'];
@@ -82,6 +95,7 @@ final class UserController
         }
     }
 
+    #[Post('/{id}/admin')]
     public function toggleAdmin(Request $request, array $params): Response
     {
         $userId = (int) $params['id'];
@@ -97,12 +111,13 @@ final class UserController
         }
     }
 
+    #[Post('/{id}/password')]
     public function changePassword(Request $request, array $params): Response
     {
         $userId = (int) $params['id'];
 
         $validation = $request->validate([
-            new ValidationRule('password', ['required', 'string', 'min' => 6]),
+            new ValidationRule('password', ['required', 'string' /*, 'min' => 6 */]),
         ]);
 
         if (!$validation->isValid) {
