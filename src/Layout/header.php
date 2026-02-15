@@ -9,6 +9,10 @@
     <meta name="apple-mobile-web-app-title" content="El Faro" />
     <link rel="manifest" href="/site.webmanifest?v=2.0" />
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Guntur:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <link href="/styles/normalize.css?v=3.0" rel="stylesheet" type="text/css">
     <link href="/styles/style.css?v=3.0" rel="stylesheet" type="text/css">
 

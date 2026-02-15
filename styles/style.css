@@ -1,5 +1,5 @@
 :root {
-  font-family: "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
+  font-family: "Hind Guntur", "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
   --theme-toggle-light: none;
   --theme-toggle-dark: none;
 }
@@ -7,18 +7,23 @@
 [data-theme="light"] {
   --fg-navtop: #fff;
   --bg-navtop: #87b723;
-  --bg: #fff; /* Page background for light theme (lightest) */
-  --bg-card: rgba(
-    0,
-    0,
-    0,
-    0.1
-  ); /* Card background for light theme (in between) */
-  --bg-card-title: #e0e0e0; /* Card title background for light theme (slightly darker) */
-  --bg-input: #ffffff; /* Textarea background for light theme (lightest) */
-  --text: #333; /* Text color for light theme */
-  --text-card-title: #222; /* Title text color for light theme */
-  --border: #ccc; /* Border color for light theme */
+  --bg: #fff;
+  /* Page background for light theme (lightest) */
+  --bg-card: rgba(0,
+      0,
+      0,
+      0.1);
+  /* Card background for light theme (in between) */
+  --bg-card-title: #e0e0e0;
+  /* Card title background for light theme (slightly darker) */
+  --bg-input: #ffffff;
+  /* Textarea background for light theme (lightest) */
+  --text: #333;
+  /* Text color for light theme */
+  --text-card-title: #222;
+  /* Title text color for light theme */
+  --border: #ccc;
+  /* Border color for light theme */
 
   --button-bg: #e0e0e0;
   --button-text: #333;
@@ -40,24 +45,30 @@
 
   --bg-card-title: rgba(255, 255, 255, 0.6);
 
-  --bg-filter: blur(1px); /* Keeps the backdrop effect consistent */
+  --bg-filter: blur(1px);
+  /* Keeps the backdrop effect consistent */
   --theme-toggle-dark: block;
 }
 
 [data-theme="dark"] {
   --bg-navtop: #222;
-  --bg: #333; /* Page background for dark theme (darkest) */
-  --bg-card: rgba(
-    0,
-    0,
-    0,
-    0.3
-  ); /* Card background for dark theme (in between) */
-  --bg-card-title: #2f2f2f; /* Card background for dark theme (in between) */
-  --bg-input: #2f2f2f; /* Textarea background for dark theme (lightest) */
-  --text: #e0e0e0; /* Text color for dark theme */
-  --text-card-title: #eee; /* Title text color for dark theme */
-  --border: #444; /* Border color for dark theme */
+  --bg: #333;
+  /* Page background for dark theme (darkest) */
+  --bg-card: rgba(0,
+      0,
+      0,
+      0.3);
+  /* Card background for dark theme (in between) */
+  --bg-card-title: #2f2f2f;
+  /* Card background for dark theme (in between) */
+  --bg-input: #2f2f2f;
+  /* Textarea background for dark theme (lightest) */
+  --text: #e0e0e0;
+  /* Text color for dark theme */
+  --text-card-title: #eee;
+  /* Title text color for dark theme */
+  --border: #444;
+  /* Border color for dark theme */
 
   --button-bg: #2c2c2c;
   --button-text: #e0e0e0;
@@ -79,7 +90,8 @@
 
   --bg-card-title: rgba(0, 0, 0, 0.5);
 
-  --bg-filter: blur(1px); /*This makes the backdrop invisible.*/
+  --bg-filter: blur(1px);
+  /*This makes the backdrop invisible.*/
   --theme-toggle-light: block;
 }
 
@@ -89,8 +101,10 @@
  */
 
 html {
-  line-height: 1.15; /* 1 */
-  -webkit-text-size-adjust: 100%; /* 2 */
+  line-height: 1.15;
+  /* 1 */
+  -webkit-text-size-adjust: 100%;
+  /* 2 */
 }
 
 body {
@@ -105,7 +119,7 @@ textarea {
   min-height: 2.5rem;
   padding: 12px;
   font-size: 16px;
-  font-family: "Helvetica Neue", sans-serif;
+  font-family: inherit;
   border-radius: 8px;
   border: 1px solid var(--border);
   background: var(--bg-input);
@@ -125,14 +139,15 @@ input {
   width: 100%;
   padding: 12px;
   font-size: 16px;
-  font-family: "Helvetica Neue", sans-serif;
+  font-family: inherit;
   border-radius: 8px;
   border: 1px solid var(--border);
   background: var(--bg-input);
   color: var(--text);
   transition: border-color 0.3s ease;
   outline: none;
-  resize: none; /* Prevent resizing for input */
+  resize: none;
+  /* Prevent resizing for input */
 }
 
 input:focus {
@@ -143,7 +158,7 @@ select {
   width: 100%;
   padding: 12px;
   font-size: 16px;
-  font-family: "Helvetica Neue", sans-serif;
+  font-family: inherit;
   border-radius: 8px;
   border: 1px solid var(--border);
   background: var(--bg-input);
@@ -187,8 +202,8 @@ button:focus-within,
 .button:focus,
 .button:focus-visible,
 .button:focus-within {
-  border-color: var(--button-primary-bg);
-  outline: var(--button-primary-bg);
+  border-color: var(--button-primary-light-bg);
+  outline: var(--button-primary-light-bg);
 }
 
 button:active,
@@ -218,6 +233,8 @@ button[light],
   color: var(--button-light-text);
   border-color: var(--button-light-bg);
 }
+
+/*
 button[primary][required].pristine,
 .button[primary][required].pristine {
   background: var(--button-primary-light-bg);
@@ -230,6 +247,7 @@ button[accent][required].pristine,
   color: var(--button-light-text);
   border-color: transparent;
 }
+*/
 
 /* Modern Card Design */
 .card {
@@ -238,35 +256,44 @@ button[accent][required].pristine,
   margin: 24px 48px 48px 48px;
 
   position: relative;
-  background: var(--bg); /* Semi-transparent glass effect */
+  background: var(--bg);
+  /* Semi-transparent glass effect */
 
   backdrop-filter: var(--bg-filter);
-  overflow: hidden; /* Ensures pseudo-element stays inside */
+  overflow: hidden;
+  /* Ensures pseudo-element stays inside */
   background-color: var(--bg-card);
   box-shadow: 3px 3px 6px #0003;
 }
+
 @media screen and (max-width: 768px) {
   .card {
     margin: 24px 12px 48px 12px;
   }
 }
+
 /* Pseudo-element for the blurred background */
 .card::before {
   content: "";
   position: fixed;
   inset: 0;
-  filter: blur(100px); /* Blurs only inside the card */
+  filter: blur(100px);
+  /* Blurs only inside the card */
   z-index: -1;
-  opacity: 0.5; /* Optional: Adjust transparency */
+  opacity: 0.5;
+  /* Optional: Adjust transparency */
 
   background-image: url("/background_low_res_2.png");
   background-position: top center;
   background-size: cover;
   --_--background-size: 100% 100%;
   background-repeat: no-repeat;
-  background-attachment: scroll; /* Optional: Ensures it scrolls with the page */
-  background-origin: padding-box; /* Default: Image starts from inside padding */
-  background-clip: border-box; /* Default: Image is visible within the border */
+  background-attachment: scroll;
+  /* Optional: Ensures it scrolls with the page */
+  background-origin: padding-box;
+  /* Default: Image starts from inside padding */
+  background-clip: border-box;
+  /* Default: Image is visible within the border */
 }
 
 .card-title {
@@ -293,11 +320,11 @@ small {
   background-color: var(--bg-card-title);
 }
 
-.table-head > .table-header-cell {
+.table-head>.table-header-cell {
   border-bottom: 1px solid var(--border);
 }
 
-.table-head > .table-header-cell > div {
+.table-head>.table-header-cell>div {
   padding: 0px 12px 12px 12px;
   border-radius: 8px;
 }
@@ -316,8 +343,8 @@ small {
   padding-right: 12px;
 }
 
-.table-cell > form,
-.table-cell > fieldset {
+.table-cell>form,
+.table-cell>fieldset {
   height: 100%;
   box-sizing: border-box;
   display: flex;
@@ -330,6 +357,7 @@ small {
 .table-row:nth-child(even) {
   background: var(--bg-darken-2);
 }
+
 .table-row:nth-child(odd) {
   background: var(--bg-darken);
 }
@@ -355,7 +383,7 @@ textarea {
   box-sizing: border-box;
 }
 
-.navtop > div {
+.navtop>div {
   height: 48px;
   gap: 12px;
   padding: 6px 12px;
@@ -369,7 +397,7 @@ textarea {
 }
 
 @media screen and (max-width: 768px) {
-  .navtop > div {
+  .navtop>div {
     height: 64px;
   }
 }
