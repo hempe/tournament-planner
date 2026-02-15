@@ -43,8 +43,13 @@ use TP\Models\User;
         );
 
     // Build card title with back button in iframe mode
-    $isIframeMode = isset($_SESSION['iframe_mode']) && $_SESSION['iframe_mode'] === true;
+    $isIframeMode = isset($_GET['iframe']) && $_GET['iframe'] === '1';
     $backUrl = isset($_GET['b']) ? '/?date=' . $_GET['b'] : '/';
+
+    // Preserve iframe parameter in back URL
+    if ($isIframeMode) {
+        $backUrl .= (strpos($backUrl, '?') !== false ? '&' : '?') . 'iframe=1';
+    }
 
     $cardTitle = $isIframeMode
         ? [
@@ -55,8 +60,8 @@ use TP\Models\User;
                 type: 'button',
                 color: Color::None,
             ),
-            "<span>$formattedDate: {$event->name} {$regState}</span>"
-          ]
+            "<span style=\"flex-grow:1\">$formattedDate: {$event->name} {$regState}</span>"
+        ]
         : "$formattedDate: {$event->name} {$regState}";
 
     yield new Card(

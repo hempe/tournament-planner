@@ -41,10 +41,17 @@ class CalendarEvent extends Component
 
     protected function template(): void
     {
+        // Preserve iframe parameter if present
+        $isIframeMode = isset($_GET['iframe']) && $_GET['iframe'] === '1';
+        $href = "/events/{$this->event->id}?b={$this->event->date}";
+        if ($isIframeMode) {
+            $href .= '&iframe=1';
+        }
+
         echo new Div(
             class: 'event',
             content: new Link(
-                href: "/events/{$this->event->id}?b={$this->event->date}",
+                href: $href,
                 content: new Div(
                     style: [
                         $this->canJoin() ? 'cursor: pointer;' : 'cursor: not-allowed;',

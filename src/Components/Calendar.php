@@ -204,13 +204,17 @@ class Calendar extends Component
             . $logoutButton
             . '</div>';
 
+        // Preserve iframe parameter in navigation
+        $isIframeMode = isset($_GET['iframe']) && $_GET['iframe'] === '1';
+        $iframeParam = $isIframeMode ? '&iframe=1' : '';
+
         echo new Div(
             class: 'calendar',
             content: new Card(
                 title: [
                     new IconButton(
                         title: __('calendar.previous_month'),
-                        onClick: "window.location.href='./?date={$this->prevMonth()}'",
+                        onClick: "window.location.href='./?date={$this->prevMonth()}{$iframeParam}'",
                         icon: 'fa-chevron-left',
                         type: 'button',
                         color: Color::None,
@@ -218,7 +222,7 @@ class Calendar extends Component
                     "<span>{$this->formattedDate()}</span>",
                     new IconButton(
                         title: __('calendar.next_month'),
-                        onClick: "window.location.href='./?date={$this->nextMonth()}'",
+                        onClick: "window.location.href='./?date={$this->nextMonth()}{$iframeParam}'",
                         icon: 'fa-chevron-right',
                         type: 'button',
                         color: Color::None,
