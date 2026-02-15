@@ -51,7 +51,7 @@ use TP\Models\User;
                         items: [User::current()],
                         projection: fn($user) => [
                             $event->isLocked ? '' : new InputAction(
-                                actionUrl: "/events/$id/user/join",
+                                actionUrl: "/events/$id/register",
                                 inputName: 'comment',
                                 inputValue: '',
                                 title: $eventFull ? __('events.waitlist') : __('events.register'),
@@ -72,7 +72,7 @@ use TP\Models\User;
                 items: [User::current()],
                 projection: fn($user) => [
                     new InputAction(
-                        actionUrl: "/events/$id/user/join",
+                        actionUrl: "/events/$id/comment",
                         inputName: 'comment',
                         inputValue: $reg->comment,
                         title: __('events.save'),
@@ -83,7 +83,7 @@ use TP\Models\User;
                         hiddenInputs: ['userId' => $user->id]
                     ),
                     new IconActionButton(
-                        actionUrl: "/events/$event->id/user/remove",
+                        actionUrl: "/events/$event->id/unregister",
                         title: __('events.unregister'),
                         color: $event->isLocked ? Color::None : Color::Accent,
                         icon: 'fa-user-minus',

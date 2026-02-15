@@ -34,7 +34,7 @@ class EventRegistrations extends Component
                     ]
                 ),
                 new InputAction(
-                    actionUrl: "/events/{$this->event->id}/user/comment",
+                    actionUrl: "/events/{$this->event->id}/comment",
                     title: __('events.comment'),
                     icon: 'fa-save',
                     inputName: 'comment',
@@ -46,7 +46,7 @@ class EventRegistrations extends Component
                     ]
                 ),
                 new IconActionButton(
-                    actionUrl: "/events/{$this->event->id}/user/remove",
+                    actionUrl: "/events/{$this->event->id}/unregister",
                     title: __('events.unregister'),
                     color: Color::Accent,
                     icon: 'fa-user-minus',

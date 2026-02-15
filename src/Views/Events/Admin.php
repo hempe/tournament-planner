@@ -120,7 +120,7 @@ use TP\Components\InputAction;
                     fn($user) => [
                         $user->username,
                         new InputAction(
-                            actionUrl: "/events/$id/user/join",
+                            actionUrl: "/events/$id/register",
                             inputName: 'comment',
                             inputValue: '',
                             title: $eventFull ? __('events.waitlist') : __('events.register'),
