@@ -4,9 +4,11 @@ namespace TP\Components;
 
 use TP\Components\Color;
 use TP\Components\IconButton;
+use TP\Core\Url;
 
 class IconActionButton extends Component
 {
+    private readonly string $actionUrl;
     /**
      * @param string $actionUrl The URL to which the form will be submitted.
      * @param string $confirmMessage The confirmation message displayed when the form is submitted.
@@ -14,7 +16,7 @@ class IconActionButton extends Component
      * @param Closure|string|Component|array<Closure|string|Component> $class
      */
     public function __construct(
-        private readonly string $actionUrl,
+        string $actionUrl,
         private readonly string $title,
         private readonly Color $color,
         private readonly string $icon,
@@ -24,6 +26,7 @@ class IconActionButton extends Component
         private readonly \Closure|string|Component|array $class = '',
         private readonly \Closure|string|Component|array $style = '',
     ) {
+        $this->actionUrl = Url::build($actionUrl);
     }
 
     protected function template(): void

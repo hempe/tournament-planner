@@ -89,6 +89,13 @@ final class Config
                 'csrf_token_name' => $_ENV['CSRF_TOKEN_NAME'] ?? '_token',
                 'password_min_length' => (int) ($_ENV['PASSWORD_MIN_LENGTH'] ?? 8),
             ],
+            'routing' => [
+                'cache_enabled' => filter_var(
+                    $_ENV['ROUTE_CACHE_ENABLED'] ?? ($this->isProduction() ? 'true' : 'false'),
+                    FILTER_VALIDATE_BOOLEAN
+                ),
+                'cache_file' => $_ENV['ROUTE_CACHE_FILE'] ?? __DIR__ . '/../../storage/cache/routes.php',
+            ],
         ];
 
         // Environment-specific overrides

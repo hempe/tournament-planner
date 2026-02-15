@@ -30,6 +30,34 @@ final class Router
         $this->addRoute('DELETE', $pattern, $handler, $middleware, $name);
     }
 
+    /**
+     * Load pre-scanned route definitions from attributes.
+     *
+     * @param array<array{method: string, pattern: string, handler: array, middleware: array, name: string}> $routes
+     */
+    public function loadRoutes(array $routes): void
+    {
+        foreach ($routes as $route) {
+            $this->routes[] = [
+                'method' => $route['method'],
+                'pattern' => $this->normalizePath($route['pattern']),
+                'handler' => $route['handler'],
+                'middleware' => $route['middleware'],
+                'name' => $route['name'] ?? '',
+            ];
+        }
+    }
+
+    /**
+     * Get all registered routes (for testing/debugging).
+     *
+     * @return array<array{method: string, pattern: string, handler: callable|array, middleware: array, name: string}>
+     */
+    public function getRoutes(): array
+    {
+        return $this->routes;
+    }
+
     public function group(RouteGroup $group, callable $callback): void
     {
         // Push group prefix and middleware to stacks

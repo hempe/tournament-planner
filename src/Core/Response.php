@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace TP\Core;
 
+use function PHPUnit\Framework\throwException;
+
 enum HttpStatus: int
 {
     case OK = 200;
@@ -29,6 +31,7 @@ final class Response
     private array $headers = [];
     private array $cookies = [];
 
+
     public function __construct(
         private string $content = '',
         private HttpStatus $status = HttpStatus::OK,
@@ -49,7 +52,7 @@ final class Response
 
     public static function redirect(string $url, HttpStatus $status = HttpStatus::SEE_OTHER): Response
     {
-        return new Response('', $status, ['Location' => $url]);
+        return new Response('', $status, ['Location' => Url::build($url)]);
     }
 
     public static function json(array $data, HttpStatus $status = HttpStatus::OK): Response

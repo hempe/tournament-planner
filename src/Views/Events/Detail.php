@@ -10,6 +10,7 @@ use TP\Components\Icon;
 use TP\Components\IconButton;
 use TP\Components\InputAction;
 use TP\Components\IconActionButton;
+use TP\Models\EventRegistration;
 use TP\Models\User;
 
 ?>
@@ -31,7 +32,6 @@ use TP\Models\User;
     $eventRegistrations = DB::$events->registrations($event->id);
 
     $eventFull = $event->available <= 0;
-    $user = User::current();
     $filteredRegs = array_filter($eventRegistrations, fn($reg) => $reg->userId == User::id());
     $reg = !empty($filteredRegs) ? array_values($filteredRegs)[0] : null;
 
@@ -73,7 +73,7 @@ use TP\Models\User;
 
     yield new Card(
         $cardTitle,
-        function () use ($id, $event, $eventFull, $reg, $queryString) {
+        function () use ($id, $event, $eventFull, $reg, $queryString, $isIframeMode) {
             if (!$reg) {
                 if (!$event->isLocked) {
                     yield new Table(
@@ -89,7 +89,8 @@ use TP\Models\User;
                                 inputPlaceholder: __('events.comment'),
                                 color: $eventFull ? Color::Accent : Color::Primary,
                                 confirmMessage: $eventFull ? __('events.join_waitlist') : __('events.register_confirm'),
-                                hiddenInputs: ['userId' => $user->id]
+                                hiddenInputs: ['userId' => $user->id],
+                                title_inline: $isIframeMode
                             ),
                         ],
                         widths: [null]
@@ -110,7 +111,8 @@ use TP\Models\User;
                         inputPlaceholder: __('events.comment'),
                         color: $event->isLocked ? Color::None : Color::Primary,
                         confirmMessage: $event->isLocked ? '' : __('events.comment_update_confirm'),
-                        hiddenInputs: ['userId' => $user->id]
+                        hiddenInputs: ['userId' => $user->id],
+                        title_inline: $isIframeMode
                     ),
                     new IconActionButton(
                         actionUrl: "/events/$event->id/unregister{$queryString}",
@@ -118,7 +120,8 @@ use TP\Models\User;
                         color: $event->isLocked ? Color::None : Color::Accent,
                         icon: 'fa-user-minus',
                         confirmMessage: $event->isLocked ? '' : __('events.unregister_confirm'),
-                        hiddenInputs: ['userId' => $user->id]
+                        hiddenInputs: ['userId' => $user->id],
+                        title_inline: $isIframeMode
                     )
                 ],
                 widths: [null, 1]
@@ -127,12 +130,15 @@ use TP\Models\User;
     );
 
     if ($eventRegistrations) {
+        $registeredTitle = __('events.registered');
         yield new Card(
-            __('events.registered'),
+            $isIframeMode ?
+            "<span style=\"flex-grow:1\">$registeredTitle</span>"
+            : $registeredTitle,
             new Table(
                 [''],
                 $eventRegistrations,
-                fn($user) => [
+                fn(EventRegistration $user) => [
                     $user->name . ($user->state == 1 ? '' : ' (' . __('events.waitlist') . ')'),
                 ],
 

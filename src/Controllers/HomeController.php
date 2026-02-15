@@ -6,12 +6,14 @@ namespace TP\Controllers;
 
 use TP\Core\Request;
 use TP\Core\Response;
+use TP\Core\Attributes\Get;
 use TP\Models\User;
 use TP\Models\DB;
 use DateTime;
 
 final class HomeController
 {
+    #[Get('/')]
     public function index(Request $request): Response
     {
         if (!User::loggedIn()) {

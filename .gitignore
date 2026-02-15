@@ -16,3 +16,11 @@ private/
 .DS_Store
 Thumbs.db
 .env
+
+# Composer dependencies
+/vendor/
+composer.lock
+
+# PHPUnit
+.phpunit.cache/
+.phpunit.result.cache

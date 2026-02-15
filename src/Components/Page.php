@@ -7,6 +7,7 @@ use TP\Components\Icon;
 use TP\Components\IconActionButton;
 use TP\Models\User;
 use TP\Core\Translator;
+use TP\Core\Url;
 
 class Page extends Component
 {
@@ -22,7 +23,8 @@ class Page extends Component
 
     protected function template(): void
     {
-        $url = isset($_GET['b']) ? '/?date=' . $_GET['b'] : '/';
+        $url = Url::build(isset($_GET['b']) ? '/?date=' . $_GET['b'] : '/');
+        $formAction = Url::build('/language/switch');
         $title = isset($GLOBALS['title']) ? $GLOBALS['title'] : 'Golf el faro';
         $isIndex = basename($_SERVER['PHP_SELF']) == 'index.php';
 
@@ -59,8 +61,6 @@ class Page extends Component
             'en_US' => __('languages.en_US'),
             'es_ES' => __('languages.es_ES'),
         ];
-        $currentLangName = $languages[$currentLocale] ?? 'Language';
-        $languageIcon = new Icon('fa-globe', __('nav.language'));
 
         $languageOptions = '';
         foreach ($languages as $locale => $name) {
@@ -104,7 +104,7 @@ class Page extends Component
         function switchLanguage(locale) {
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = '/language/switch';
+            form.action = '{$formAction};
 
             const csrfInput = document.createElement('input');
             csrfInput.type = 'hidden';

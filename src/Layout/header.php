@@ -11,7 +11,8 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Guntur:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Guntur:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
 
     <link href="/styles/normalize.css?v=3.0" rel="stylesheet" type="text/css">
     <link href="/styles/style.css?v=3.0" rel="stylesheet" type="text/css">
@@ -22,7 +23,9 @@
     <link href="/styles/success.css?v=2.0" rel="stylesheet" type="text/css">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plq7G5tGm0rU+1SPhVotteLpBERwTkw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+        integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plq7G5tGm0rU+1SPhVotteLpBERwTkw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <title>Golf el Fargo</title>
 
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
@@ -182,7 +185,7 @@
         detectIframeMode();
     </script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const scrollTop = sessionStorage.getItem('scrollPosition');
             const currentUrl = window.location.href;
 
@@ -194,15 +197,17 @@
             }
 
             sessionStorage.setItem('currentUrl', currentUrl);
-            document.addEventListener('scroll', function() {
+            document.addEventListener('scroll', function () {
                 sessionStorage.setItem('scrollPosition', document.documentElement.scrollTop);
             });
 
-            document.body.style.opacity = '1'; // Set opacity after content is loaded
+            setTimeout(() => {
+                document.body.style.opacity = '1'; // Set opacity after content is loaded
+            }, 100);
         });
     </script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Select all forms on the page
             const forms = document.querySelectorAll('form, fieldset');
 

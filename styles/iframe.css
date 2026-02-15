@@ -4,12 +4,47 @@
 /* Force light theme in iframe mode - no dark theme support */
 :root {
     --bg-primary: #ffffff;
-    --bg-secondary: #f8f9fa;
-    --fg-primary: #333333;
-    --fg-secondary: #666666;
     --border-color: #dddddd;
-    --accent-color: #2d5016;
-    --accent-hover: #3d6a1f;
+    --accent-color: #87b723;
+    --accent-hover: #d4e1af;
+
+    --bg: #fff;
+    --bg-card: rgba(0, 0, 0, 0.1);
+    --bg-card-title: #e0e0e0;
+    --bg-input: #ffffff;
+    --text: #333;
+    --text-card-title: #222;
+    --border: #ccc;
+    --button-bg: transparent;
+    --button-text: #333;
+    --button-border: transparent;
+    --button-primary-bg: #87b723;
+    --button-primary-light-bg: #d4e1af;
+    --button-primary-text: #ffffff;
+    --button-accent-bg: #b6334d;
+    --button-accent-light-bg: #b6334d77;
+    --button-accent-text: #ffffff;
+    --button-light-bg: #dcdcdc;
+    --button-light-text: #333;
+    --bg-darken: #ecf1f1;
+    --bg-darken-2: #e4ebeb;
+    --bg-card-title: rgba(255, 255, 255, 0.6);
+    --bg-filter: blur(1px);
+    --theme-toggle-dark: block;
+}
+
+.card-title,
+.card-title>* {
+    color: #83BB41;
+}
+
+.card-title {
+    text-transform: uppercase;
+    font-size: 1.8em;
+}
+
+.card-title>span {
+    margin-top: 10px;
 }
 
 /* Remove any background effects in iframe - plain white */
@@ -17,6 +52,7 @@ body {
     background: #ffffff !important;
     background-image: none !important;
     background-color: #ffffff !important;
+    font-size: 1em;
 }
 
 .body {
@@ -28,11 +64,13 @@ body {
 
 /* Remove card backdrop effects and gradients in iframe */
 .card {
-    background-color: #f9f9f9 !important;
+    background-color: #fff !important;
     backdrop-filter: none !important;
     background-image: none !important;
-    margin: 12px;
-    padding: 12px;
+    margin: 0px !important;
+    padding: 0px !important;
+    box-shadow: none;
+    overflow-y: auto;
 }
 
 /* Remove the blurred background pseudo-element */
@@ -41,7 +79,7 @@ body {
 }
 
 .card-title {
-    background-color: #f0f0f0 !important;
+    background-color: #fff !important;
     background-image: none !important;
     flex-wrap: wrap !important;
     gap: 8px !important;
@@ -62,14 +100,48 @@ table {
     border-radius: 0 !important;
 }
 
+button,
+.button {
+    text-transform: uppercase;
+    font-size: 1.1em;
+}
+
+input,
+select,
+textarea {
+    background: #f8fafa !important;
+    border-color: #dde1e1 !important;
+    border-top-color: #dde1e1 !important;
+    color: #afb8bb !important;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.03) !important;
+    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.03) !important;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.03) !important;
+    border-radius: 3px !important;
+    border: 1px solid #dde1e1 !important;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    color: #2e343c !important;
+    border-color: #85ba48 !important;
+}
+
 /* Hide the entire navigation bar in iframe mode */
 .navtop {
     display: none !important;
 }
 
-/* Smaller fonts in iframe */
-:root {
-    font-size: 14px;
+.table-row {
+    background-color: transparent !important;
+}
+
+.table-row:nth-child(2n-1) {
+    background-color: rgba(0, 0, 0, 0.03) !important;
+}
+
+.table-cell {
+    border: none !important;
 }
 
 /* Compact table spacing */
@@ -96,7 +168,6 @@ table td {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    box-shadow: none;
 }
 
 .calendar>.card>.card-content {
@@ -156,11 +227,6 @@ button[type="submit"],
     display: none !important;
 }
 
-/* Show iframe-only elements */
-.iframe-only {
-    display: flex !important;
-}
-
 /* Responsive adjustments for iframe */
 @media (max-width: 768px) {
     .navtop h1 {
@@ -171,4 +237,68 @@ button[type="submit"],
         padding: 4px 6px;
         font-size: 0.75rem;
     }
+
+    .day_num.empty {
+        display: none;
+    }
+}
+
+@media (min-width: 768px) {
+
+    .event-status>button:has(.fa-user-check),
+    .event-status>button:has(.fa-user-plus) {
+        display: none;
+    }
+
+    .event-status {
+        position: absolute;
+        bottom: 0px;
+        right: 4px;
+    }
+
+    .event-date {
+        position: relative;
+    }
+}
+
+fieldset {
+    align-items: center;
+}
+
+fieldset>.button,
+fieldset>button {
+    height: 40px;
+}
+
+.event-date {
+    border: none !important;
+}
+
+.event-date.can-join {
+    background-color: var(--button-primary-bg);
+}
+
+.event-date.can-join>.event-desc {
+    color: var(--button-primary-text);
+}
+
+.event-date:not(.joined).locked {
+    background-color: #bbb;
+}
+
+.event-date.joined {
+    background-color: #0089d0;
+    color: var(--button-primary-text);
+}
+
+.event-date.joined>.event-desc {
+    color: var(--button-primary-text);
+}
+
+.event-date:not(.joined).locked>.event-desc {
+    color: #333;
+}
+
+button>span {
+    margin-top: 4px;
 }

@@ -7,13 +7,16 @@ namespace TP\Controllers;
 use TP\Core\Request;
 use TP\Core\Response;
 use TP\Core\ValidationRule;
+use TP\Core\Attributes\Get;
+use TP\Core\Attributes\Post;
+use TP\Core\Attributes\Middleware;
+use TP\Middleware\AuthMiddleware;
 use TP\Models\User;
-
-
 use Exception;
 
 final class AuthController
 {
+    #[Get('/login')]
     public function loginForm(Request $request): Response
     {
         if (User::loggedIn()) {
@@ -29,6 +32,7 @@ final class AuthController
         return Response::ok($content);
     }
 
+    #[Post('/login')]
     public function login(Request $request): Response
     {
         $validation = $request->validate([
@@ -60,6 +64,8 @@ final class AuthController
         }
     }
 
+    #[Post('/logout')]
+    #[Middleware(AuthMiddleware::class)]
     public function logout(Request $request): Response
     {
         User::logout();

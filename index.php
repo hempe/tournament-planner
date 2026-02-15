@@ -6,71 +6,19 @@ declare(strict_types=1);
 require_once __DIR__ . '/bootstrap.php';
 
 use TP\Core\Application;
-use TP\Core\Router;
 use TP\Core\Request;
 use TP\Core\Response;
-use TP\Core\RouteGroup;
-use TP\Middleware\AuthMiddleware;
-use TP\Middleware\AdminMiddleware;
-use TP\Controllers\HomeController;
-use TP\Controllers\AuthController;
-use TP\Controllers\EventController;
-use TP\Controllers\UserController;
+use TP\Core\RouteLoader;
 
 // Get application instance
 $app = Application::getInstance();
 $router = $app->getRouter();
 
-// Home and authentication routes
-$router->get('/', [HomeController::class, 'index']);
-$router->get('/login', [AuthController::class, 'loginForm']);
-$router->post('/login', [AuthController::class, 'login']);
-$router->post('/logout', [AuthController::class, 'logout'], [new AuthMiddleware()]);
+// Load attribute-based routes
+$routeLoader = new RouteLoader();
+$routeLoader->load($router);
 
-// Event routes (authenticated users)
-$router->group(
-    new RouteGroup('/events', [new AuthMiddleware()]),
-    function (Router $router) {
-        // Admin-only event routes
-        $router->group(
-            new RouteGroup('', [new AdminMiddleware()]),
-            function (Router $router) {
-            $router->get('/new', handler: [EventController::class, 'create']);
-            $router->post('/new', [EventController::class, 'store']);
-            $router->get('/bulk/new', [EventController::class, 'bulkCreate']);
-            $router->post('/bulk/preview', [EventController::class, 'bulkPreview']);
-            $router->post('/bulk/store', [EventController::class, 'bulkStore']);
-            $router->get('/{id}/admin', [EventController::class, 'admin']);
-            $router->post('/{id}/update', [EventController::class, 'update']);
-            $router->post('/{id}/delete', [EventController::class, 'delete']);
-            $router->post('/{id}/lock', [EventController::class, 'lock']);
-            $router->post('/{id}/unlock', [EventController::class, 'unlock']);
-        }
-        );
-
-        // Regular user event routes
-        $router->get('/', [EventController::class, 'index']);
-        $router->get('/{id}', [EventController::class, 'detail']);
-        $router->post('/{id}/register', [EventController::class, 'register']);
-        $router->post('/{id}/unregister', [EventController::class, 'unregister']);
-        $router->post('/{id}/comment', [EventController::class, 'updateComment']);
-    }
-);
-
-// User management routes (admin only)
-$router->group(
-    new RouteGroup('/users', [new AuthMiddleware(), new AdminMiddleware()]),
-    function (Router $router) {
-        $router->get('/', [UserController::class, 'index']);
-        $router->get('/new', [UserController::class, 'create']);
-        $router->post('/', [UserController::class, 'store']);
-        $router->post('/{id}/delete', [UserController::class, 'delete']);
-        $router->post('/{id}/admin', [UserController::class, 'toggleAdmin']);
-        $router->post('/{id}/password', [UserController::class, 'changePassword']);
-    }
-);
-
-// Health check endpoint
+// Health check endpoint (closure route - can't use attributes)
 $router->get('/health', function (Request $request): Response {
     $config = \TP\Core\Config::getInstance();
 

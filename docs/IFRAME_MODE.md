@@ -83,15 +83,6 @@ Use these selectors to style iframe mode:
 [data-iframe="true"] .iframe-hide {
     display: none;
 }
-
-/* Show only in iframe mode */
-.iframe-only {
-    display: none;
-}
-
-[data-iframe="true"] .iframe-only {
-    display: block;
-}
 ```
 
 ## PHP Helpers

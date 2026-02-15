@@ -34,7 +34,8 @@ class IconButton extends Component
     {
         $required = $this->required ? 'required' : '';
         $onClick = $this->onClick ? $this->onClick : 'event.stopPropagation();';
-        $titleInline = $this->title_inline ? $this->title : '';
+        $title = $this->title;
+        $titleInline = $this->title_inline ? "<span>$title</span>" : '';
         $icon = new Icon($this->icon, $this->title);
 
         echo <<<HTML

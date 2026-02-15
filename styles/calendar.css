@@ -21,6 +21,7 @@
     display: flex;
     flex-direction: column;
   }
+
   .day_num:not(.active) {
     display: none;
   }
@@ -33,19 +34,23 @@
 .day_names {
   display: none;
 }
+
 .day_num {
   position: relative;
   border-radius: 4px;
   min-height: 18px;
 }
-.day_num > .add {
+
+.day_num>.add {
   position: absolute;
   right: 0px;
   top: 0px;
 }
+
 .day_num:not(.active) {
   background-color: var(--bg-darken);
 }
+
 .day_num.active {
   background-color: var(--bg-darken-2);
 }
@@ -55,7 +60,7 @@ a {
   text-decoration: none;
 }
 
-.day_num > span {
+.day_num>span {
   position: absolute;
   left: 4px;
   top: 4px;
@@ -65,10 +70,12 @@ a {
   justify-content: center;
   align-items: center;
 }
+
 .day_num {
   padding-top: 24px;
 }
-.day_num:not(.active) > span {
+
+.day_num:not(.active)>span {
   color: #888;
 }
 
@@ -79,6 +86,7 @@ a {
   align-items: center;
   font-size: 12px;
 }
+
 .event-header i {
   font-size: 10px;
 }
@@ -88,6 +96,7 @@ a {
   display: block;
   text-decoration: none;
 }
+
 .event {
   padding: 8px 16px;
 }
@@ -98,6 +107,18 @@ a {
   border: 1px solid #888;
   border-radius: 4px;
   padding: 8px;
+}
+
+.event-date.joined {
+  background-color: var(--button-primary-light-bg);
+}
+
+.event-date.can-join {
+  opacity: 1;
+}
+
+.event-date.cant-join {
+  opacity: 0.5;
 }
 
 .event.joined {

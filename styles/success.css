@@ -10,7 +10,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+  background-color: rgba(0, 0, 0, 0.5);
+  /* Semi-transparent overlay */
   z-index: 1000;
 }
 
@@ -20,7 +21,7 @@
   width: 90%;
 }
 
-.custom-success-content > .card {
+.custom-success-content>.card {
   background: var(--bg);
 }
 
@@ -53,4 +54,5 @@
 .custom-success-actions [primary]:hover,
 .custom-success-actions [primary]:focus {
   background: var(--button-primary-light-bg);
+  border-color: var(--button-primary-light-bg);
 }

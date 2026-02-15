@@ -1,8 +1,11 @@
 <?php
 
 namespace TP\Components;
+use TP\Core\Url;
+
 class Link extends Component
 {
+    private readonly string $href;
     private readonly string $content;
     private readonly string $class;
     private readonly string $style;
@@ -13,11 +16,12 @@ class Link extends Component
      * @param Closure|string|Component|array<Closure|string|Component> $style
      */
     public function __construct(
-        private readonly string $href,
+        string $href,
         \Closure|string|Component|array $content,
         \Closure|string|Component|array $class = '',
         \Closure|string|Component|array $style = '',
     ) {
+        $this->href = Url::build($href);
         $this->content = $this->captureOutput($content);
         $this->class = $this->captureOutput($class);
         $this->style = $this->captureOutput($style);

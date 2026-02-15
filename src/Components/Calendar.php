@@ -177,32 +177,19 @@ class Calendar extends Component
             $languageOptions .= "<option value=\"{$locale}\" {$selected}>{$name}</option>";
         }
 
-        $languageSelector = <<<HTML
-        <select
-            id="iframe-language-select"
-            onchange="switchLanguage(this.value)"
-            style="padding: 6px 10px; font-size: 0.9rem; cursor: pointer; border: 1px solid var(--border); border-radius: 4px; background: var(--bg-input); color: var(--text);"
-            title="{$languages[$currentLocale]}"
-        >
-            {$languageOptions}
-        </select>
-        HTML;
+        $isIframeMode = isset($_GET['iframe']) && $_GET['iframe'] === '1';
 
-        $logoutButton = User::loggedIn()
+        $logoutButton = (User::loggedIn() && $isIframeMode)
             ? new IconActionButton(
                 "/logout",
                 __('nav.logout'),
-                Color::None,
+                Color::Primary,
                 'fa-sign-out',
                 confirmMessage: '',
-                style: 'padding: 6px 10px; font-size: 0.9rem;'
+                style: 'padding: 6px 10px; font-size: 0.9rem;',
+                title_inline: true
             )
             : '';
-
-        $iframeControls = '<div class="iframe-only" style="display: none; gap: 8px; align-items: center;">'
-            . $languageSelector
-            . $logoutButton
-            . '</div>';
 
         // Preserve iframe parameter in navigation
         $isIframeMode = isset($_GET['iframe']) && $_GET['iframe'] === '1';
@@ -227,7 +214,7 @@ class Calendar extends Component
                         type: 'button',
                         color: Color::None,
                     ),
-                    $iframeControls
+                    $logoutButton
                 ],
                 content: new Div(
                     class: 'view',

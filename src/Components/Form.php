@@ -1,19 +1,22 @@
 <?php
 
 namespace TP\Components;
+use TP\Core\Url;
 
 class Form extends Component
 {
     public readonly string $content;
+    private readonly string $action;
     /**
      * @param Closure|string|Component|array<Closure|string|Component> $content The card's content
      */
     public function __construct(
-        private readonly string $action,
+        string $action,
         \Closure|string|Component|array $content,
         private readonly string $method = 'post',
         public readonly array $hiddenInputs = [],
     ) {
+        $this->action = Url::build($action);
         $this->content = $this->captureOutput($content);
     }
 

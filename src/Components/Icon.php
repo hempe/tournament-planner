@@ -22,7 +22,7 @@ class Icon extends Component
             <i 
                 style="{$this->style}"
                 class="fas {$this->icon} {$this->class}" 
-                title="{$this->title}>">
+                title="{$this->title}">
             </i>
         HTML;
     }
