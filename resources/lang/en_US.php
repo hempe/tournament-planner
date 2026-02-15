@@ -128,6 +128,7 @@ return [
         'remove_admin_rights' => 'Remove admin rights?',
         'give_admin_rights_confirm' => 'Give admin rights to :username?',
         'remove_admin_rights_confirm' => 'Remove admin rights from :username?',
+        'create_success' => 'User created successfully',
         'update_success' => 'User updated successfully',
         'delete_success' => 'User deleted successfully',
         'username_taken' => 'Username ":username" is already taken',

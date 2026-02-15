@@ -128,6 +128,7 @@ return [
         'remove_admin_rights' => '¿Quitar derechos de administrador?',
         'give_admin_rights_confirm' => '¿Dar derechos de administrador a :username?',
         'remove_admin_rights_confirm' => '¿Quitar derechos de administrador a :username?',
+        'create_success' => 'Usuario creado correctamente',
         'update_success' => 'Usuario actualizado correctamente',
         'delete_success' => 'Usuario eliminado correctamente',
         'username_taken' => 'El nombre de usuario ":username" ya está en uso',

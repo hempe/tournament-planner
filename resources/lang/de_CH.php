@@ -128,6 +128,7 @@ return [
         'remove_admin_rights' => 'Admin rechte entnehmen?',
         'give_admin_rights_confirm' => ':username Admin rechte geben?',
         'remove_admin_rights_confirm' => ':username Admin rechte entnehmen?',
+        'create_success' => 'Benutzer erfolgreich erstellt',
         'update_success' => 'Benutzer erfolgreich aktualisiert',
         'delete_success' => 'Benutzer erfolgreich gelöscht',
         'username_taken' => 'Benutzername ":username" ist bereits vergeben',
