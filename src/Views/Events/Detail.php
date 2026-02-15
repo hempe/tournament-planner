@@ -42,14 +42,21 @@ use TP\Models\User;
             : new Icon('fa-user-clock', __('events.on_waitlist'))
         );
 
-    // Build card title with back button in iframe mode
+    // Build URLs with preserved query parameters
     $isIframeMode = isset($_GET['iframe']) && $_GET['iframe'] === '1';
     $backUrl = isset($_GET['b']) ? '/?date=' . $_GET['b'] : '/';
+    $queryParams = [];
 
-    // Preserve iframe parameter in back URL
     if ($isIframeMode) {
+        $queryParams[] = 'iframe=1';
         $backUrl .= (strpos($backUrl, '?') !== false ? '&' : '?') . 'iframe=1';
     }
+
+    if ($backDate = $_GET['b'] ?? null) {
+        $queryParams[] = 'b=' . urlencode($backDate);
+    }
+
+    $queryString = !empty($queryParams) ? '?' . implode('&', $queryParams) : '';
 
     $cardTitle = $isIframeMode
         ? [
@@ -66,7 +73,7 @@ use TP\Models\User;
 
     yield new Card(
         $cardTitle,
-        function () use ($id, $event, $eventFull, $reg) {
+        function () use ($id, $event, $eventFull, $reg, $queryString) {
             if (!$reg) {
                 if (!$event->isLocked) {
                     yield new Table(
@@ -74,7 +81,7 @@ use TP\Models\User;
                         items: [User::current()],
                         projection: fn($user) => [
                             $event->isLocked ? '' : new InputAction(
-                                actionUrl: "/events/$id/register",
+                                actionUrl: "/events/$id/register{$queryString}",
                                 inputName: 'comment',
                                 inputValue: '',
                                 title: $eventFull ? __('events.waitlist') : __('events.register'),
@@ -95,7 +102,7 @@ use TP\Models\User;
                 items: [User::current()],
                 projection: fn($user) => [
                     new InputAction(
-                        actionUrl: "/events/$id/comment",
+                        actionUrl: "/events/$id/comment{$queryString}",
                         inputName: 'comment',
                         inputValue: $reg->comment,
                         title: __('events.save'),
@@ -106,7 +113,7 @@ use TP\Models\User;
                         hiddenInputs: ['userId' => $user->id]
                     ),
                     new IconActionButton(
-                        actionUrl: "/events/$event->id/unregister",
+                        actionUrl: "/events/$event->id/unregister{$queryString}",
                         title: __('events.unregister'),
                         color: $event->isLocked ? Color::None : Color::Accent,
                         icon: 'fa-user-minus',

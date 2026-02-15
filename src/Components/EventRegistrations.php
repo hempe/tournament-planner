@@ -23,37 +23,49 @@ class EventRegistrations extends Component
 
     protected function template(): void
     {
+        // Build query string for preserving parameters
+        $queryParams = [];
+        if (isset($_GET['iframe']) && $_GET['iframe'] === '1') {
+            $queryParams[] = 'iframe=1';
+        }
+        if ($backDate = $_GET['b'] ?? null) {
+            $queryParams[] = 'b=' . urlencode($backDate);
+        }
+        $queryString = !empty($queryParams) ? '?' . implode('&', $queryParams) : '';
+
         echo new Table(
             [__('events.user'), __('events.comment'), ''],
             $this->eventUsers,
-            fn($user) => [
-                fn() => new Div(
-                    content: [
-                        new Div($user->name),
-                        "<small style=\"font-size:0.8em\">{$user->ago}</small>"
-                    ]
-                ),
-                new InputAction(
-                    actionUrl: "/events/{$this->event->id}/comment",
-                    title: __('events.comment'),
-                    icon: 'fa-save',
-                    inputName: 'comment',
-                    inputValue: $user->comment,
-                    inputPlaceholder: __('events.comment'),
-                    confirmMessage: '',
-                    hiddenInputs: [
-                        'userId' => $user->userId
-                    ]
-                ),
-                new IconActionButton(
-                    actionUrl: "/events/{$this->event->id}/unregister",
-                    title: __('events.unregister'),
-                    color: Color::Accent,
-                    icon: 'fa-user-minus',
-                    confirmMessage: __('events.unregister_user_confirm', ['name' => $user->name]),
-                    hiddenInputs: ['userId' => $user->userId]
-                )
-            ],
+            function ($user) use ($queryString) {
+                return [
+                    fn() => new Div(
+                        content: [
+                            new Div($user->name),
+                            "<small style=\"font-size:0.8em\">{$user->ago}</small>"
+                        ]
+                    ),
+                    new InputAction(
+                        actionUrl: "/events/{$this->event->id}/comment{$queryString}",
+                        title: __('events.comment'),
+                        icon: 'fa-save',
+                        inputName: 'comment',
+                        inputValue: $user->comment,
+                        inputPlaceholder: __('events.comment'),
+                        confirmMessage: '',
+                        hiddenInputs: [
+                            'userId' => $user->userId
+                        ]
+                    ),
+                    new IconActionButton(
+                        actionUrl: "/events/{$this->event->id}/unregister{$queryString}",
+                        title: __('events.unregister'),
+                        color: Color::Accent,
+                        icon: 'fa-user-minus',
+                        confirmMessage: __('events.unregister_user_confirm', ['name' => $user->name]),
+                        hiddenInputs: ['userId' => $user->userId]
+                    )
+                ];
+            },
             widths: [200, null, 1]
         );
     }

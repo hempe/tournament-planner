@@ -34,6 +34,16 @@ use TP\Components\InputAction;
             return $result;
         }, []);
 
+        // Build query string for preserving parameters
+        $queryParams = [];
+        if (isset($_GET['iframe']) && $_GET['iframe'] === '1') {
+            $queryParams[] = 'iframe=1';
+        }
+        if ($backDate = $_GET['b'] ?? null) {
+            $queryParams[] = 'b=' . urlencode($backDate);
+        }
+        $queryString = !empty($queryParams) ? '?' . implode('&', $queryParams) : '';
+
         $eventFull = $event->available <= 0;
 
         yield new Form(
@@ -117,20 +127,22 @@ use TP\Components\InputAction;
                 new Table(
                     [__('events.user'), __('events.comment')],
                     $users,
-                    fn($user) => [
-                        $user->username,
-                        new InputAction(
-                            actionUrl: "/events/$id/register",
-                            inputName: 'comment',
-                            inputValue: '',
-                            title: $eventFull ? __('events.waitlist') : __('events.register'),
-                            icon: 'fa-user-plus',
-                            inputPlaceholder: __('events.comment'),
-                            color: $eventFull ? Color::Accent : Color::Primary,
-                            confirmMessage: $eventFull ? __('auth.register_user_waitlist', ['username' => $user->username]) : __('auth.register_user', ['username' => $user->username]),
-                            hiddenInputs: ['userId' => $user->id]
-                        ),
-                    ],
+                    function ($user) use ($id, $eventFull, $queryString) {
+                        return [
+                            $user->username,
+                            new InputAction(
+                                actionUrl: "/events/$id/register{$queryString}",
+                                inputName: 'comment',
+                                inputValue: '',
+                                title: $eventFull ? __('events.waitlist') : __('events.register'),
+                                icon: 'fa-user-plus',
+                                inputPlaceholder: __('events.comment'),
+                                color: $eventFull ? Color::Accent : Color::Primary,
+                                confirmMessage: $eventFull ? __('auth.register_user_waitlist', ['username' => $user->username]) : __('auth.register_user', ['username' => $user->username]),
+                                hiddenInputs: ['userId' => $user->id]
+                            ),
+                        ];
+                    },
                     widths: [200, null]
                 )
             );
