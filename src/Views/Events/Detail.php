@@ -7,6 +7,7 @@ use TP\Components\Table;
 use TP\Components\Card;
 use TP\Components\Color;
 use TP\Components\Icon;
+use TP\Components\IconButton;
 use TP\Components\InputAction;
 use TP\Components\IconActionButton;
 use TP\Models\User;
@@ -41,8 +42,25 @@ use TP\Models\User;
             : new Icon('fa-user-clock', __('events.on_waitlist'))
         );
 
+    // Build card title with back button in iframe mode
+    $isIframeMode = isset($_SESSION['iframe_mode']) && $_SESSION['iframe_mode'] === true;
+    $backUrl = isset($_GET['b']) ? '/?date=' . $_GET['b'] : '/';
+
+    $cardTitle = $isIframeMode
+        ? [
+            new IconButton(
+                title: __('nav.back'),
+                onClick: "window.location.href='$backUrl'",
+                icon: 'fa-chevron-left',
+                type: 'button',
+                color: Color::None,
+            ),
+            "<span>$formattedDate: {$event->name} {$regState}</span>"
+          ]
+        : "$formattedDate: {$event->name} {$regState}";
+
     yield new Card(
-        "$formattedDate: {$event->name} {$regState}",
+        $cardTitle,
         function () use ($id, $event, $eventFull, $reg) {
             if (!$reg) {
                 if (!$event->isLocked) {
