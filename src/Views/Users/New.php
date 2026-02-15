@@ -11,7 +11,7 @@ use TP\Components\Input;
 ?>
 <?= new Page(
     new Form(
-        action: "/users/new",
+        action: "/users",
         content: new Card(
             __('users.create_user'),
             new Table(
