@@ -57,7 +57,7 @@ APP_ENV=development
 APP_NAME="Golf El Faro"
 APP_URL=http://localhost:5000
 APP_TIMEZONE=Europe/Zurich
-APP_LOCALE=de_CH
+APP_LOCALE=de
 
 # Database
 DB_HOST=localhost
@@ -89,7 +89,7 @@ EOF
 
 Load the database schema:
 ```bash
-mysql -u root -p TPDb < init.sql
+mysql -u root -p TPDb < database/init.sql
 ```
 
 Verify tables were created:
@@ -260,7 +260,7 @@ CREATE DATABASE TPDb CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 EOF
 
 # Reload schema
-mysql -u root -p TPDb < init.sql
+mysql -u root -p TPDb < database/init.sql
 ```
 
 ## Development Tools

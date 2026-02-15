@@ -19,7 +19,7 @@ cp .env.example .env
 # Edit .env with your database credentials
 
 # 2. Initialize database
-mysql -u root -p < init.sql
+mysql -u root -p < database/init.sql
 
 # 3. Start server
 php -S localhost:5000 -c php.ini
@@ -65,7 +65,7 @@ That's it! 🚀
 ✅ User authentication and admin roles
 ✅ Event registration with waitlist support
 ✅ Calendar view
-✅ Multi-language support (German/English)
+✅ Multi-language support (German/English/Spanish)
 ✅ Responsive design
 ✅ Health monitoring endpoint
 
@@ -74,8 +74,7 @@ That's it! 🚀
 - Need help? → See [INSTALLATION.md](INSTALLATION.md#troubleshooting)
 - Deploying to production? → See [DEPLOYMENT.md](DEPLOYMENT.md)
 - Want to add features? → See [DEVELOPMENT.md](DEVELOPMENT.md)
-- Understanding the code? → See [APPLICATION.md](APPLICATION.md)
 
 ## License
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-[Your License Here]

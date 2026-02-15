@@ -111,14 +111,14 @@
                 // Auto-detect and set browser language if not already set
                 if (!sessionStorage.getItem('locale-set')) {
                     const browserLang = navigator.language || navigator.userLanguage;
-                    let desiredLocale = 'de_CH'; // Default
+                    let desiredLocale = 'de'; // Default
 
                     if (browserLang.startsWith('en')) {
-                        desiredLocale = 'en_US';
+                        desiredLocale = 'en';
                     } else if (browserLang.startsWith('es')) {
-                        desiredLocale = 'es_ES';
+                        desiredLocale = 'es';
                     } else if (browserLang.startsWith('de')) {
-                        desiredLocale = 'de_CH';
+                        desiredLocale = 'de';
                     }
 
                     // Only submit if locale needs to change

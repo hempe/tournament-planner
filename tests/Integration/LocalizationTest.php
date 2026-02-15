@@ -28,22 +28,22 @@ class LocalizationTest extends IntegrationTestCase
         $translator = Translator::getInstance();
 
         // Test German
-        echo "\n1. Setting locale to de_CH...\n";
-        $translator->setLocale('de_CH');
-        $this->assertEquals('de_CH', $translator->getLocale());
-        echo "   ✓ Locale set to de_CH\n";
+        echo "\n1. Setting locale to de...\n";
+        $translator->setLocale('de');
+        $this->assertEquals('de', $translator->getLocale());
+        echo "   ✓ Locale set to de\n";
 
         // Test English
-        echo "\n2. Setting locale to en_US...\n";
-        $translator->setLocale('en_US');
-        $this->assertEquals('en_US', $translator->getLocale());
-        echo "   ✓ Locale set to en_US\n";
+        echo "\n2. Setting locale to en...\n";
+        $translator->setLocale('en');
+        $this->assertEquals('en', $translator->getLocale());
+        echo "   ✓ Locale set to en\n";
 
         // Test Spanish
-        echo "\n3. Setting locale to es_ES...\n";
-        $translator->setLocale('es_ES');
-        $this->assertEquals('es_ES', $translator->getLocale());
-        echo "   ✓ Locale set to es_ES\n";
+        echo "\n3. Setting locale to es...\n";
+        $translator->setLocale('es');
+        $this->assertEquals('es', $translator->getLocale());
+        echo "   ✓ Locale set to es\n";
 
         echo "\n=== Locale Switching Tests Passed! ===\n\n";
     }
@@ -59,7 +59,7 @@ class LocalizationTest extends IntegrationTestCase
 
         // Test German translations
         echo "\n1. Testing German translations...\n";
-        $translator->setLocale('de_CH');
+        $translator->setLocale('de');
         $this->assertEquals('Anlässe', __('nav.events'));
         $this->assertEquals('Benutzer', __('nav.users'));
         $this->assertEquals('Abmelden', __('nav.logout'));
@@ -68,7 +68,7 @@ class LocalizationTest extends IntegrationTestCase
 
         // Test English translations
         echo "\n2. Testing English translations...\n";
-        $translator->setLocale('en_US');
+        $translator->setLocale('en');
         $this->assertEquals('Events', __('nav.events'));
         $this->assertEquals('Users', __('nav.users'));
         $this->assertEquals('Logout', __('nav.logout'));
@@ -77,7 +77,7 @@ class LocalizationTest extends IntegrationTestCase
 
         // Test Spanish translations
         echo "\n3. Testing Spanish translations...\n";
-        $translator->setLocale('es_ES');
+        $translator->setLocale('es');
         $this->assertEquals('Eventos', __('nav.events'));
         $this->assertEquals('Usuarios', __('nav.users'));
         $this->assertEquals('Cerrar sesión', __('nav.logout'));
@@ -98,12 +98,12 @@ class LocalizationTest extends IntegrationTestCase
 
         // All locales should have the same language names
         $expectedLanguages = [
-            'de_CH' => 'Deutsch',
-            'en_US' => 'English',
-            'es_ES' => 'Español',
+            'de' => 'Deutsch',
+            'en' => 'English',
+            'es' => 'Español',
         ];
 
-        foreach (['de_CH', 'en_US', 'es_ES'] as $locale) {
+        foreach (['de', 'en', 'es'] as $locale) {
             echo "\n1. Testing language names in {$locale}...\n";
             $translator->setLocale($locale);
 
@@ -126,20 +126,20 @@ class LocalizationTest extends IntegrationTestCase
 
         // Set locale in session
         echo "\n1. Setting locale in session...\n";
-        $_SESSION['locale'] = 'en_US';
-        $this->assertEquals('en_US', $_SESSION['locale']);
+        $_SESSION['locale'] = 'en';
+        $this->assertEquals('en', $_SESSION['locale']);
         echo "   ✓ Locale stored in session\n";
 
         // Verify it persists
         echo "\n2. Verifying session persistence...\n";
         $storedLocale = $_SESSION['locale'];
-        $this->assertEquals('en_US', $storedLocale);
+        $this->assertEquals('en', $storedLocale);
         echo "   ✓ Locale retrieved from session\n";
 
         // Change locale
-        echo "\n3. Changing locale to es_ES...\n";
-        $_SESSION['locale'] = 'es_ES';
-        $this->assertEquals('es_ES', $_SESSION['locale']);
+        echo "\n3. Changing locale to es...\n";
+        $_SESSION['locale'] = 'es';
+        $this->assertEquals('es', $_SESSION['locale']);
         echo "   ✓ Locale updated in session\n";
 
         echo "\n=== Session Persistence Tests Passed! ===\n\n";
@@ -156,7 +156,7 @@ class LocalizationTest extends IntegrationTestCase
 
         // Test that missing keys fall back to English
         echo "\n1. Testing missing translation key...\n";
-        $translator->setLocale('de_CH');
+        $translator->setLocale('de');
         $missingKey = 'some.nonexistent.key';
         $result = __($missingKey);
         $this->assertEquals($missingKey, $result, "Missing key should return the key itself");
@@ -176,16 +176,16 @@ class LocalizationTest extends IntegrationTestCase
 
         // Simulate language switch via session
         echo "\n1. Switching to English...\n";
-        $_SESSION['locale'] = 'en_US';
-        Translator::getInstance()->setLocale('en_US');
-        $this->assertEquals('en_US', Translator::getInstance()->getLocale());
+        $_SESSION['locale'] = 'en';
+        Translator::getInstance()->setLocale('en');
+        $this->assertEquals('en', Translator::getInstance()->getLocale());
         $this->assertEquals('Events', __('nav.events'));
         echo "   ✓ Language switched to English while authenticated\n";
 
         echo "\n2. Switching to Spanish...\n";
-        $_SESSION['locale'] = 'es_ES';
-        Translator::getInstance()->setLocale('es_ES');
-        $this->assertEquals('es_ES', Translator::getInstance()->getLocale());
+        $_SESSION['locale'] = 'es';
+        Translator::getInstance()->setLocale('es');
+        $this->assertEquals('es', Translator::getInstance()->getLocale());
         $this->assertEquals('Eventos', __('nav.events'));
         echo "   ✓ Language switched to Spanish while authenticated\n";
 
@@ -203,21 +203,21 @@ class LocalizationTest extends IntegrationTestCase
 
         // Test German
         echo "\n1. Testing German theme translations...\n";
-        $translator->setLocale('de_CH');
+        $translator->setLocale('de');
         $this->assertEquals('Dunkles Design', __('theme.dark'));
         $this->assertEquals('Helles Design', __('theme.light'));
         echo "   ✓ German theme translations correct\n";
 
         // Test English
         echo "\n2. Testing English theme translations...\n";
-        $translator->setLocale('en_US');
+        $translator->setLocale('en');
         $this->assertEquals('Dark theme', __('theme.dark'));
         $this->assertEquals('Light theme', __('theme.light'));
         echo "   ✓ English theme translations correct\n";
 
         // Test Spanish
         echo "\n3. Testing Spanish theme translations...\n";
-        $translator->setLocale('es_ES');
+        $translator->setLocale('es');
         $this->assertEquals('Tema oscuro', __('theme.dark'));
         $this->assertEquals('Tema claro', __('theme.light'));
         echo "   ✓ Spanish theme translations correct\n";
@@ -244,9 +244,9 @@ class LocalizationTest extends IntegrationTestCase
             'nav.logout',
             'nav.back',
             'nav.language',
-            'languages.de_CH',
-            'languages.en_US',
-            'languages.es_ES',
+            'languages.de',
+            'languages.en',
+            'languages.es',
             'theme.dark',
             'theme.light',
             'auth.login',
@@ -254,7 +254,7 @@ class LocalizationTest extends IntegrationTestCase
             'auth.password',
         ];
 
-        $locales = ['de_CH', 'en_US', 'es_ES'];
+        $locales = ['de', 'en', 'es'];
 
         foreach ($locales as $locale) {
             echo "\n1. Checking {$locale} for critical keys...\n";
@@ -279,14 +279,14 @@ class LocalizationTest extends IntegrationTestCase
         echo "\n=== Testing Language Switch HTTP Endpoint ===\n";
 
         // Set initial locale to German
-        $_SESSION['locale'] = 'de_CH';
-        Translator::getInstance()->setLocale('de_CH');
-        echo "\n1. Initial locale: de_CH\n";
+        $_SESSION['locale'] = 'de';
+        Translator::getInstance()->setLocale('de');
+        echo "\n1. Initial locale: de\n";
 
         // Switch to English via POST request
-        echo "\n2. POST to /language/switch with locale=en_US...\n";
+        echo "\n2. POST to /language/switch with locale=en...\n";
         $response = $this->request('POST', '/language/switch', [
-            'locale' => 'en_US',
+            'locale' => 'en',
             'redirect' => '/'
         ]);
 
@@ -298,21 +298,21 @@ class LocalizationTest extends IntegrationTestCase
         echo "   ✓ Endpoint returns redirect (status {$response->statusCode})\n";
 
         // Verify session was updated
-        $this->assertEquals('en_US', $_SESSION['locale']);
-        echo "   ✓ Session locale updated to en_US\n";
+        $this->assertEquals('en', $_SESSION['locale']);
+        echo "   ✓ Session locale updated to en\n";
 
         // Verify translator was updated
-        $this->assertEquals('en_US', Translator::getInstance()->getLocale());
-        echo "   ✓ Translator locale updated to en_US\n";
+        $this->assertEquals('en', Translator::getInstance()->getLocale());
+        echo "   ✓ Translator locale updated to en\n";
 
         // Verify translations changed
         $this->assertEquals('Events', __('nav.events'));
         echo "   ✓ Translations now in English\n";
 
         // Switch to Spanish via POST
-        echo "\n3. POST to /language/switch with locale=es_ES...\n";
+        echo "\n3. POST to /language/switch with locale=es...\n";
         $response = $this->request('POST', '/language/switch', [
-            'locale' => 'es_ES',
+            'locale' => 'es',
             'redirect' => '/'
         ]);
 
@@ -320,13 +320,13 @@ class LocalizationTest extends IntegrationTestCase
             in_array($response->statusCode, [301, 302, 303]),
             "Expected redirect status, got {$response->statusCode}"
         );
-        $this->assertEquals('es_ES', $_SESSION['locale']);
+        $this->assertEquals('es', $_SESSION['locale']);
         $this->assertEquals('Eventos', __('nav.events'));
         echo "   ✓ Successfully switched to Spanish\n";
 
         // Test invalid locale - should redirect without changing
         echo "\n4. Testing invalid locale rejection...\n";
-        $_SESSION['locale'] = 'es_ES'; // Keep Spanish
+        $_SESSION['locale'] = 'es'; // Keep Spanish
         $response = $this->request('POST', '/language/switch', [
             'locale' => 'invalid_locale',
             'redirect' => '/'
@@ -337,7 +337,7 @@ class LocalizationTest extends IntegrationTestCase
             in_array($response->statusCode, [301, 302, 303]),
             "Expected redirect even for invalid locale"
         );
-        $this->assertEquals('es_ES', $_SESSION['locale'], "Locale should not change for invalid input");
+        $this->assertEquals('es', $_SESSION['locale'], "Locale should not change for invalid input");
         echo "   ✓ Invalid locale rejected, session unchanged\n";
 
         echo "\n=== Language Switch HTTP Endpoint Tests Passed! ===\n\n";
@@ -351,8 +351,8 @@ class LocalizationTest extends IntegrationTestCase
         echo "\n=== Testing Language Persistence ===\n";
 
         // Set language in session
-        echo "\n1. Setting language to en_US in session...\n";
-        $_SESSION['locale'] = 'en_US';
+        echo "\n1. Setting language to en in session...\n";
+        $_SESSION['locale'] = 'en';
         echo "   ✓ Language stored in session\n";
 
         // Simulate new request - translator should pick up session locale
@@ -360,7 +360,7 @@ class LocalizationTest extends IntegrationTestCase
         $newTranslator = Translator::getInstance();
         $newTranslator->setLocale($_SESSION['locale']);
 
-        $this->assertEquals('en_US', $newTranslator->getLocale());
+        $this->assertEquals('en', $newTranslator->getLocale());
         echo "   ✓ Language retrieved from session on new request\n";
 
         // Verify translations work
@@ -379,7 +379,7 @@ class LocalizationTest extends IntegrationTestCase
 
         // Test that all three languages are available
         echo "\n1. Verifying available languages...\n";
-        $availableLanguages = ['de_CH', 'en_US', 'es_ES'];
+        $availableLanguages = ['de', 'en', 'es'];
         foreach ($availableLanguages as $locale) {
             $langName = __("languages.{$locale}");
             $this->assertNotEmpty($langName);
@@ -390,17 +390,17 @@ class LocalizationTest extends IntegrationTestCase
         // Test switching between languages
         echo "\n2. Testing language switching...\n";
 
-        Translator::getInstance()->setLocale('de_CH');
+        Translator::getInstance()->setLocale('de');
         $this->assertEquals('Anmelden', __('auth.login'));
         $this->assertEquals('Benutzername', __('auth.username'));
         echo "   ✓ German login page translations work\n";
 
-        Translator::getInstance()->setLocale('en_US');
+        Translator::getInstance()->setLocale('en');
         $this->assertEquals('Login', __('auth.login'));
         $this->assertEquals('Username', __('auth.username'));
         echo "   ✓ English login page translations work\n";
 
-        Translator::getInstance()->setLocale('es_ES');
+        Translator::getInstance()->setLocale('es');
         $this->assertEquals('Iniciar sesión', __('auth.login'));
         $this->assertEquals('Usuario', __('auth.username'));
         echo "   ✓ Spanish login page translations work\n";

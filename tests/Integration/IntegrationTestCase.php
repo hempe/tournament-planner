@@ -62,7 +62,7 @@ abstract class IntegrationTestCase extends TestCase
         $conn->select_db($dbName);
 
         // Load schema
-        $schema = file_get_contents(__DIR__ . '/../../init.sql');
+        $schema = file_get_contents(__DIR__ . '/../../database/init.sql');
 
         // Remove CREATE DATABASE and USE statements (we already created it)
         $schema = preg_replace('/CREATE\s+DATABASE\s+IF\s+NOT\s+EXISTS\s+\w+\s*;/i', '', $schema);

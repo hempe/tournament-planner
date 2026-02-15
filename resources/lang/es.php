@@ -20,9 +20,9 @@ return [
 
     // Languages
     'languages' => [
-        'de_CH' => 'Deutsch',
-        'en_US' => 'English',
-        'es_ES' => 'Español',
+        'de' => 'Deutsch',
+        'en' => 'English',
+        'es' => 'Español',
     ],
 
     // Theme

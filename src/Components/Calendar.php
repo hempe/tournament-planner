@@ -167,9 +167,9 @@ class Calendar extends Component
         // Build iframe-specific controls
         $currentLocale = Translator::getInstance()->getLocale();
         $languages = [
-            'de_CH' => __('languages.de_CH'),
-            'en_US' => __('languages.en_US'),
-            'es_ES' => __('languages.es_ES'),
+            'de' => __('languages.de'),
+            'en' => __('languages.en'),
+            'es' => __('languages.es'),
         ];
         $languageOptions = '';
         foreach ($languages as $locale => $name) {

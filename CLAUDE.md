@@ -16,7 +16,7 @@ php -S localhost:5000 -c php.ini
 
 **Database initialization:**
 ```bash
-mysql < init.sql
+mysql < database/init.sql
 ```
 
 **Environment setup:**
@@ -80,7 +80,7 @@ This is a PHP web application for golf event management with a modern MVC archit
 
 ### Database Setup
 
-Requires MySQL with extensions `pdo_mysql` and `mysqli` enabled. Database schema defined in `init.sql` with tables for users, events, and event registrations. Configure database credentials in `.env` file.
+Requires MySQL with extensions `pdo_mysql` and `mysqli` enabled. Database schema defined in `database/init.sql` with tables for users, events, and event registrations. Configure database credentials in `.env` file.
 
 ## Documentation
 

@@ -24,3 +24,8 @@ composer.lock
 # PHPUnit
 .phpunit.cache/
 .phpunit.result.cache
+coverage-report/
+coverage.xml
+coverage-cobertura.xml
+.phpunit.cache/
+*.session.sql

@@ -27,7 +27,7 @@ final class LanguageController
         }
 
         $locale = $request->getString('locale');
-        $validLocales = ['de_CH', 'en_US', 'es_ES'];
+        $validLocales = ['de', 'en', 'es'];
 
         if (!in_array($locale, $validLocales, true)) {
             return Response::redirect($_SERVER['HTTP_REFERER'] ?? '/');

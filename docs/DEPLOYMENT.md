@@ -21,7 +21,7 @@ APP_ENV=production
 APP_NAME="Golf El Faro"
 APP_URL=https://yourdomain.com
 APP_TIMEZONE=Europe/Zurich
-APP_LOCALE=de_CH
+APP_LOCALE=de
 
 DB_HOST=localhost
 DB_PORT=3306
@@ -408,7 +408,7 @@ chown -R www-data:www-data /var/www/golf-el-faro
 chmod 600 .env
 
 # 4. Initialize database
-mysql -u root -p < init.sql
+mysql -u root -p < database/init.sql
 
 # 5. Test
 curl https://yourdomain.com/health

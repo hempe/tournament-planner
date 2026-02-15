@@ -70,7 +70,7 @@ final class Config
                 'name' => $_ENV['APP_NAME'] ?? 'Golf El Faro',
                 'url' => $_ENV['APP_URL'] ?? 'http://localhost:5000',
                 'timezone' => $_ENV['APP_TIMEZONE'] ?? 'Europe/Zurich',
-                'locale' => $_ENV['APP_LOCALE'] ?? 'de_CH',
+                'locale' => $_ENV['APP_LOCALE'] ?? 'de',
             ],
             'database' => [
                 'host' => $_ENV['DB_HOST'] ?? 'localhost',

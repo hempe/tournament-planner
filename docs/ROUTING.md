@@ -16,7 +16,7 @@ The routing system consists of several key Components:
 
 ### Router Class
 
-**File**: `src/Core/RouterNew.php`
+**File**: `src/Core/Router.php`
 
 The `Router` class is the main routing engine that handles request matching and response generation.
 

@@ -12,7 +12,7 @@ final class Translator
     private string $fallbackLocale;
     private array $loadedLocales = [];
 
-    private function __construct(string $locale = 'de_CH', string $fallbackLocale = 'en_US')
+    private function __construct(string $locale = 'de', string $fallbackLocale = 'en')
     {
         $this->currentLocale = $locale;
         $this->fallbackLocale = $fallbackLocale;
@@ -23,8 +23,8 @@ final class Translator
         if (self::$instance === null) {
             $config = Config::getInstance();
             self::$instance = new Translator(
-                $config->get('app.locale', 'de_CH'),
-                $config->get('app.fallback_locale', 'en_US')
+                $config->get('app.locale', 'de'),
+                $config->get('app.fallback_locale', 'en')
             );
         }
         return self::$instance;
