@@ -8,12 +8,46 @@ use TP\Core\Request;
 use TP\Core\Response;
 use TP\Core\Log;
 use TP\Core\ValidationRule;
+use TP\Core\Attributes\RoutePrefix;
+use TP\Core\Attributes\Get;
+use TP\Core\Attributes\Post;
+use TP\Core\Attributes\Middleware;
+use TP\Middleware\AuthMiddleware;
+use TP\Middleware\AdminMiddleware;
 use TP\Models\User;
 use TP\Models\DB;
 use Exception;
 
+#[RoutePrefix('/events')]
+#[Middleware(AuthMiddleware::class)]
 final class EventController
 {
+    /**
+     * Build event detail URL with preserved query parameters
+     */
+    private function buildEventUrl(int $eventId, Request $request): string
+    {
+        $url = "/events/{$eventId}";
+        $params = [];
+
+        // Preserve iframe parameter
+        if ($request->get('iframe') === '1') {
+            $params[] = 'iframe=1';
+        }
+
+        // Preserve back date parameter
+        if ($backDate = $request->getString('b')) {
+            $params[] = 'b=' . urlencode($backDate);
+        }
+
+        if (!empty($params)) {
+            $url .= '?' . implode('&', $params);
+        }
+
+        return $url;
+    }
+
+    #[Get('/')]
     public function index(Request $request): Response
     {
         $events = DB::$events->all();
@@ -27,6 +61,7 @@ final class EventController
         return Response::ok($content);
     }
 
+    #[Get('/{id}')]
     public function detail(Request $request, array $params): Response
     {
         $eventId = (int) $params['id'];
@@ -62,6 +97,8 @@ final class EventController
         return Response::ok($content);
     }
 
+    #[Get('/new')]
+    #[Middleware(AdminMiddleware::class)]
     public function create(Request $request): Response
     {
         ob_start();
@@ -73,6 +110,8 @@ final class EventController
         return Response::ok($content);
     }
 
+    #[Post('/new')]
+    #[Middleware(AdminMiddleware::class)]
     public function store(Request $request): Response
     {
         $validation = $request->validate([
@@ -97,6 +136,8 @@ final class EventController
         }
     }
 
+    #[Get('/{id}/admin')]
+    #[Middleware(AdminMiddleware::class)]
     public function admin(Request $request, array $params): Response
     {
         $eventId = (int) $params['id'];
@@ -122,6 +163,8 @@ final class EventController
         return Response::ok($content);
     }
 
+    #[Post('/{id}/update')]
+    #[Middleware(AdminMiddleware::class)]
     public function update(Request $request, array $params): Response
     {
         $eventId = (int) $params['id'];
@@ -148,6 +191,8 @@ final class EventController
         }
     }
 
+    #[Post('/{id}/delete')]
+    #[Middleware(AdminMiddleware::class)]
     public function delete(Request $request, array $params): Response
     {
         $eventId = (int) $params['id'];
@@ -162,6 +207,8 @@ final class EventController
         }
     }
 
+    #[Post('/{id}/lock')]
+    #[Middleware(AdminMiddleware::class)]
     public function lock(Request $request, array $params): Response
     {
         $eventId = (int) $params['id'];
@@ -176,6 +223,8 @@ final class EventController
         }
     }
 
+    #[Post('/{id}/unlock')]
+    #[Middleware(AdminMiddleware::class)]
     public function unlock(Request $request, array $params): Response
     {
         $eventId = (int) $params['id'];
@@ -190,6 +239,7 @@ final class EventController
         }
     }
 
+    #[Post('/{id}/register')]
     public function register(Request $request, array $params): Response
     {
         $eventId = (int) $params['id'];
@@ -209,18 +259,19 @@ final class EventController
             // Check if event is locked
             if (DB::$events->isLocked($eventId)) {
                 flash('error', __('events.locked_message'));
-                return Response::redirect("/events/{$eventId}");
+                return Response::redirect($this->buildEventUrl($eventId, $request));
             }
 
             DB::$events->register($eventId, $userId, $comment);
             flash('success', __('events.registration_success'));
-            return Response::redirect("/events/{$eventId}");
+            return Response::redirect($this->buildEventUrl($eventId, $request));
         } catch (Exception $e) {
             flash('error', $e->getMessage());
-            return Response::redirect("/events/{$eventId}");
+            return Response::redirect($this->buildEventUrl($eventId, $request));
         }
     }
 
+    #[Post('/{id}/unregister')]
     public function unregister(Request $request, array $params): Response
     {
         $eventId = (int) $params['id'];
@@ -239,18 +290,19 @@ final class EventController
             // Check if event is locked
             if (DB::$events->isLocked($eventId)) {
                 flash('error', __('events.locked_message'));
-                return Response::redirect("/events/{$eventId}");
+                return Response::redirect($this->buildEventUrl($eventId, $request));
             }
 
             DB::$events->unregister($eventId, $userId);
             flash('success', __('events.unregistration_success'));
-            return Response::redirect("/events/{$eventId}");
+            return Response::redirect($this->buildEventUrl($eventId, $request));
         } catch (Exception $e) {
             flash('error', $e->getMessage());
-            return Response::redirect("/events/{$eventId}");
+            return Response::redirect($this->buildEventUrl($eventId, $request));
         }
     }
 
+    #[Post('/{id}/comment')]
     public function updateComment(Request $request, array $params): Response
     {
         $eventId = (int) $params['id'];
@@ -270,18 +322,20 @@ final class EventController
             // Check if event is locked
             if (DB::$events->isLocked($eventId)) {
                 flash('error', __('events.locked_message'));
-                return Response::redirect("/events/{$eventId}");
+                return Response::redirect($this->buildEventUrl($eventId, $request));
             }
 
             DB::$events->updateRegistrationComment($eventId, $userId, $comment);
             flash('success', __('events.comment_update_success'));
-            return Response::redirect("/events/{$eventId}");
+            return Response::redirect($this->buildEventUrl($eventId, $request));
         } catch (Exception $e) {
             flash('error', $e->getMessage());
-            return Response::redirect("/events/{$eventId}");
+            return Response::redirect($this->buildEventUrl($eventId, $request));
         }
     }
 
+    #[Get('/bulk/new')]
+    #[Middleware(AdminMiddleware::class)]
     public function bulkCreate(Request $request): Response
     {
         ob_start();
@@ -293,6 +347,8 @@ final class EventController
         return Response::ok($content);
     }
 
+    #[Post('/bulk/preview')]
+    #[Middleware(AdminMiddleware::class)]
     public function bulkPreview(Request $request): Response
     {
         $validation = $request->validate([
@@ -333,6 +389,8 @@ final class EventController
         }
     }
 
+    #[Post('/bulk/store')]
+    #[Middleware(AdminMiddleware::class)]
     public function bulkStore(Request $request): Response
     {
         if (!isset($_SESSION['bulk_events']) || !is_array($_SESSION['bulk_events'])) {
