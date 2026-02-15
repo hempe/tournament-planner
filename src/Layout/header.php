@@ -117,33 +117,42 @@
                     // Only submit if locale needs to change
                     const currentLocale = '<?= \TP\Core\Translator::getInstance()->getLocale() ?>';
                     if (desiredLocale !== currentLocale) {
-                        // Set locale via form submission
-                        const form = document.createElement('form');
-                        form.method = 'POST';
-                        form.action = '/language/switch';
-                        form.style.display = 'none';
+                        // Wait for DOM to be ready before submitting form
+                        function submitLanguageForm() {
+                            const form = document.createElement('form');
+                            form.method = 'POST';
+                            form.action = '/language/switch';
+                            form.style.display = 'none';
 
-                        const csrfInput = document.createElement('input');
-                        csrfInput.type = 'hidden';
-                        csrfInput.name = 'csrf_token';
-                        csrfInput.value = '<?= csrf_token() ?>';
+                            const csrfInput = document.createElement('input');
+                            csrfInput.type = 'hidden';
+                            csrfInput.name = 'csrf_token';
+                            csrfInput.value = '<?= csrf_token() ?>';
 
-                        const localeInput = document.createElement('input');
-                        localeInput.type = 'hidden';
-                        localeInput.name = 'locale';
-                        localeInput.value = desiredLocale;
+                            const localeInput = document.createElement('input');
+                            localeInput.type = 'hidden';
+                            localeInput.name = 'locale';
+                            localeInput.value = desiredLocale;
 
-                        const redirectInput = document.createElement('input');
-                        redirectInput.type = 'hidden';
-                        redirectInput.name = 'redirect';
-                        redirectInput.value = window.location.pathname + window.location.search;
+                            const redirectInput = document.createElement('input');
+                            redirectInput.type = 'hidden';
+                            redirectInput.name = 'redirect';
+                            redirectInput.value = window.location.pathname + window.location.search;
 
-                        form.appendChild(csrfInput);
-                        form.appendChild(localeInput);
-                        form.appendChild(redirectInput);
+                            form.appendChild(csrfInput);
+                            form.appendChild(localeInput);
+                            form.appendChild(redirectInput);
 
-                        document.body.appendChild(form);
-                        form.submit();
+                            document.body.appendChild(form);
+                            form.submit();
+                        }
+
+                        // Submit when DOM is ready
+                        if (document.body) {
+                            submitLanguageForm();
+                        } else {
+                            document.addEventListener('DOMContentLoaded', submitLanguageForm);
+                        }
                     }
 
                     sessionStorage.setItem('locale-set', 'true');
