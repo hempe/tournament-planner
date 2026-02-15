@@ -11,7 +11,6 @@
 
     <link href="/styles/normalize.css?v=3.0" rel="stylesheet" type="text/css">
     <link href="/styles/style.css?v=3.0" rel="stylesheet" type="text/css">
-    <link href="/styles/iframe.css?v=1.0" rel="stylesheet" type="text/css">
 
     <link href="/styles/calendar.css?v=2.0" rel="stylesheet" type="text/css">
     <link href="/styles/confirm.css?v=2.0" rel="stylesheet" type="text/css">
@@ -95,12 +94,74 @@
                     localStorage.setItem('theme', 'dark');
                 }
 
+                // Load iframe-specific CSS
+                const iframeCSS = document.createElement('link');
+                iframeCSS.rel = 'stylesheet';
+                iframeCSS.type = 'text/css';
+                iframeCSS.href = '/styles/iframe.css?v=1.2';
+                document.head.appendChild(iframeCSS);
+
+                // Auto-detect and set browser language if not already set
+                if (!sessionStorage.getItem('locale-set')) {
+                    const browserLang = navigator.language || navigator.userLanguage;
+                    let desiredLocale = 'de_CH'; // Default
+
+                    if (browserLang.startsWith('en')) {
+                        desiredLocale = 'en_US';
+                    } else if (browserLang.startsWith('es')) {
+                        desiredLocale = 'es_ES';
+                    } else if (browserLang.startsWith('de')) {
+                        desiredLocale = 'de_CH';
+                    }
+
+                    // Only submit if locale needs to change
+                    const currentLocale = '<?= \TP\Core\Translator::getInstance()->getLocale() ?>';
+                    if (desiredLocale !== currentLocale) {
+                        // Set locale via form submission
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = '/language/switch';
+                        form.style.display = 'none';
+
+                        const csrfInput = document.createElement('input');
+                        csrfInput.type = 'hidden';
+                        csrfInput.name = 'csrf_token';
+                        csrfInput.value = '<?= csrf_token() ?>';
+
+                        const localeInput = document.createElement('input');
+                        localeInput.type = 'hidden';
+                        localeInput.name = 'locale';
+                        localeInput.value = desiredLocale;
+
+                        const redirectInput = document.createElement('input');
+                        redirectInput.type = 'hidden';
+                        redirectInput.name = 'redirect';
+                        redirectInput.value = window.location.pathname + window.location.search;
+
+                        form.appendChild(csrfInput);
+                        form.appendChild(localeInput);
+                        form.appendChild(redirectInput);
+
+                        document.body.appendChild(form);
+                        form.submit();
+                    }
+
+                    sessionStorage.setItem('locale-set', 'true');
+                }
+
                 // Store in sessionStorage for consistency
                 sessionStorage.setItem('iframe-mode', 'true');
             } else if (sessionStorage.getItem('iframe-mode') === 'true') {
                 // Restore from session if not explicitly disabled
                 document.documentElement.setAttribute('data-iframe', 'true');
                 document.documentElement.setAttribute('data-compact', 'true');
+
+                // Load iframe CSS if restoring from session
+                const iframeCSS = document.createElement('link');
+                iframeCSS.rel = 'stylesheet';
+                iframeCSS.type = 'text/css';
+                iframeCSS.href = '/styles/iframe.css?v=1.2';
+                document.head.appendChild(iframeCSS);
             }
         }
 

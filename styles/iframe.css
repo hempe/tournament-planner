@@ -1,14 +1,14 @@
 /* Iframe Mode Styles */
-/* Applied when the app is embedded in an iframe */
+/* This file is only loaded when the app is embedded in an iframe */
 
-:root[data-iframe="true"] {
+:root {
     /* Reduce spacing for compact mode */
     --iframe-padding: 8px;
     --iframe-nav-height: 45px;
 }
 
 /* Force light theme in iframe mode - no dark theme support */
-[data-iframe="true"] {
+:root {
     --bg-primary: #ffffff;
     --bg-secondary: #f8f9fa;
     --fg-primary: #333333;
@@ -19,172 +19,143 @@
 }
 
 /* Remove any background effects in iframe - plain white */
-[data-iframe="true"] body {
+body {
     background: #ffffff !important;
     background-image: none !important;
     background-color: #ffffff !important;
 }
 
-[data-iframe="true"] .body {
+.body {
     background: #ffffff !important;
     background-image: none !important;
+    padding: 0 !important;
+    padding-top: 0 !important;
 }
 
 /* Remove card backdrop effects and gradients in iframe */
-[data-iframe="true"] .card {
+.card {
     background-color: #f9f9f9 !important;
     backdrop-filter: none !important;
     background-image: none !important;
-}
-
-[data-iframe="true"] .card-title {
-    background-color: #f0f0f0 !important;
-    background-image: none !important;
-}
-
-/* Hard edges - remove all rounded corners */
-[data-iframe="true"] * {
-    border-radius: 0 !important;
-}
-
-[data-iframe="true"] button,
-[data-iframe="true"] input,
-[data-iframe="true"] select,
-[data-iframe="true"] textarea,
-[data-iframe="true"] .card,
-[data-iframe="true"] .button,
-[data-iframe="true"] table {
-    border-radius: 0 !important;
-}
-
-/* Compact navigation bar in iframe mode */
-[data-iframe="true"] .navtop {
-    padding: 8px 12px;
-    min-height: var(--iframe-nav-height);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    position: static !important; /* Not fixed in iframe - should scroll with content */
-}
-
-[data-iframe="true"] .navtop > div {
-    gap: 8px;
-}
-
-/* Smaller title in iframe mode */
-[data-iframe="true"] .navtop h1 {
-    font-size: 1.2rem;
-    margin: 0;
-}
-
-/* Compact buttons */
-[data-iframe="true"] .nav-button {
-    padding: 6px 10px;
-    font-size: 0.85rem;
-}
-
-/* Hide logo/back button image in iframe mode for space */
-[data-iframe="true"] .navtop img {
-    height: 35px;
-    width: 35px;
-}
-
-/* Reduce body padding */
-[data-iframe="true"] .body {
-    padding: 0;
-}
-
-/* Compact cards in iframe mode */
-[data-iframe="true"] .card {
     margin: 12px;
     padding: 12px;
 }
 
+/* Remove the blurred background pseudo-element */
+.card::before {
+    display: none !important;
+}
+
+.card-title {
+    background-color: #f0f0f0 !important;
+    background-image: none !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+}
+
+/* Hard edges - remove all rounded corners */
+* {
+    border-radius: 0 !important;
+}
+
+button,
+input,
+select,
+textarea,
+.card,
+.button,
+table {
+    border-radius: 0 !important;
+}
+
+/* Hide the entire navigation bar in iframe mode */
+.navtop {
+    display: none !important;
+}
+
 /* Smaller fonts in iframe */
-[data-iframe="true"] {
+:root {
     font-size: 14px;
 }
 
 /* Compact table spacing */
-[data-iframe="true"] table {
+table {
     font-size: 0.9rem;
 }
 
-[data-iframe="true"] table th,
-[data-iframe="true"] table td {
+table th,
+table td {
     padding: 8px;
 }
 
 /* Reduce calendar spacing */
-[data-iframe="true"] .calendar {
+.calendar {
     gap: 8px;
 }
 
 /* Compact form elements */
-[data-iframe="true"] input,
-[data-iframe="true"] select,
-[data-iframe="true"] textarea {
+input,
+select,
+textarea {
     padding: 6px 10px;
     font-size: 0.9rem;
 }
 
 /* Smaller buttons in forms */
-[data-iframe="true"] button[type="submit"],
-[data-iframe="true"] .button {
+button[type="submit"],
+.button {
     padding: 8px 16px;
     font-size: 0.9rem;
 }
 
 /* Remove unnecessary margins */
-[data-iframe="true"] .content {
+.content {
     margin: 0;
     padding: 12px;
 }
 
 /* Compact mode - even more minimal */
-[data-iframe="true"][data-compact="true"] .navtop {
+[data-compact="true"] .navtop {
     padding: 4px 8px;
     min-height: 40px;
 }
 
-[data-iframe="true"][data-compact="true"] .navtop h1 {
+[data-compact="true"] .navtop h1 {
     font-size: 1rem;
 }
 
-[data-iframe="true"][data-compact="true"] .nav-button {
+[data-compact="true"] .nav-button {
     padding: 4px 8px;
     font-size: 0.75rem;
 }
 
-[data-iframe="true"][data-compact="true"] .card {
+[data-compact="true"] .card {
     margin: 8px;
     padding: 8px;
 }
 
 /* Hide theme toggle in iframe mode (theme is controlled by host) */
-[data-iframe="true"] .theme-toggle {
+.theme-toggle {
     display: none !important;
 }
 
 /* Optional: Hide certain elements in iframe mode */
-[data-iframe="true"] .iframe-hide {
+.iframe-hide {
     display: none !important;
 }
 
 /* Show iframe-only elements */
 .iframe-only {
-    display: none;
-}
-
-[data-iframe="true"] .iframe-only {
-    display: block;
+    display: flex !important;
 }
 
 /* Responsive adjustments for iframe */
 @media (max-width: 768px) {
-    [data-iframe="true"] .navtop h1 {
+    .navtop h1 {
         font-size: 1rem;
     }
 
-    [data-iframe="true"] .nav-button {
+    .nav-button {
         padding: 4px 6px;
         font-size: 0.75rem;
     }

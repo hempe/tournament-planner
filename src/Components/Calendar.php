@@ -8,8 +8,10 @@ use TP\Components\Div;
 use TP\Components\Card;
 use TP\Components\CalendarEvent;
 use TP\Components\Color;
+use TP\Components\Icon;
 use TP\Models\Event;
 use TP\Models\User;
+use TP\Core\Translator;
 
 class Calendar extends Component
 {
@@ -161,6 +163,44 @@ class Calendar extends Component
 
     protected function template(): void
     {
+        // Build iframe-specific controls
+        $currentLocale = Translator::getInstance()->getLocale();
+        $languages = [
+            'de_CH' => __('languages.de_CH'),
+            'en_US' => __('languages.en_US'),
+            'es_ES' => __('languages.es_ES'),
+        ];
+        $languageOptions = '';
+        foreach ($languages as $locale => $name) {
+            $selected = $locale === $currentLocale ? 'selected' : '';
+            $languageOptions .= "<option value=\"{$locale}\" {$selected}>{$name}</option>";
+        }
+
+        $iframeControls = <<<HTML
+        <div class="iframe-only" style="display: none; gap: 8px; align-items: center;">
+            <select
+                id="iframe-language-select"
+                onchange="switchLanguage(this.value)"
+                style="padding: 6px 10px; font-size: 0.9rem; cursor: pointer; border: 1px solid var(--border); border-radius: 4px; background: var(--bg-input); color: var(--text);"
+                title="{$languages[$currentLocale]}"
+            >
+                {$languageOptions}
+            </select>
+        HTML;
+
+        if (User::loggedIn()) {
+            $iframeControls .= <<<HTML
+            <form method="POST" action="/logout" style="margin: 0;">
+                <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
+                <button type="submit" style="padding: 6px 10px; font-size: 0.9rem; cursor: pointer; background: var(--button-bg); color: var(--button-text); border: 1px solid var(--border); border-radius: 4px;">
+                    <?= htmlspecialchars(__('nav.logout')) ?>
+                </button>
+            </form>
+            HTML;
+        }
+
+        $iframeControls .= '</div>';
+
         echo new Div(
             class: 'calendar',
             content: new Card(
@@ -179,7 +219,8 @@ class Calendar extends Component
                         icon: 'fa-chevron-right',
                         type: 'button',
                         color: Color::None,
-                    )
+                    ),
+                    $iframeControls
                 ],
                 content: new Div(
                     class: 'view',

@@ -140,6 +140,11 @@ final class Application
 
             session_start();
 
+            // Detect iframe mode from URL parameter
+            if (isset($_GET['iframe']) && $_GET['iframe'] === '1') {
+                $_SESSION['iframe_mode'] = true;
+            }
+
             // Regenerate session ID periodically
             if (!isset($_SESSION['last_regeneration'])) {
                 $_SESSION['last_regeneration'] = time();

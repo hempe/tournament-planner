@@ -22,6 +22,11 @@ final class User
 
     public static function admin(): bool
     {
+        // No admin rights in iframe mode
+        if (isset($_SESSION['iframe_mode']) && $_SESSION['iframe_mode'] === true) {
+            return false;
+        }
+
         return (isset($_SESSION['is_admin']) && $_SESSION['is_admin'] == 1);
     }
 

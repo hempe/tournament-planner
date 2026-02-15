@@ -6,11 +6,14 @@ The Tournament Planner supports running in **iframe mode** for embedding into ot
 
 When running in iframe mode, the application automatically adapts its UI:
 
-- **Compact navigation bar** - Reduced height and padding
+- **No navigation bar** - Main navigation is hidden, controls moved to calendar header
+- **Auto language detection** - Automatically detects and sets browser language
 - **Smaller fonts** - Optimized for embedded viewing
 - **Reduced spacing** - Tighter margins and padding
 - **Responsive design** - Works on mobile and desktop
-- **Theme support** - Inherits or sets its own theme
+- **Light theme only** - Forces light theme for seamless integration
+- **No admin rights** - Admin features are disabled in iframe mode
+- **Hard edges** - No rounded corners for clean integration
 
 ## Usage
 
@@ -44,11 +47,12 @@ http://localhost:5000/iframe-demo.html
 
 ## Detection
 
-The application detects iframe mode in two ways:
+The application detects iframe mode in three ways:
 
 1. **URL Parameter**: `?iframe=1` in the query string
 2. **JavaScript Detection**: Automatically detects if `window.self !== window.top`
 3. **Session Storage**: Persists the iframe mode setting across page loads
+4. **Browser Language**: Automatically detects browser language (de, en, es) on first load
 
 ## CSS Styling
 
