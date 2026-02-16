@@ -19,6 +19,12 @@ php -S localhost:5000 -c php.ini
 mysql < database/init.sql
 ```
 
+**Run tests:**
+```bash
+composer test              # Run all tests
+composer test:coverage     # Run with code coverage
+```
+
 **Environment setup:**
 Copy `.env` file and configure database credentials:
 ```bash
@@ -66,6 +72,10 @@ This is a PHP web application for golf event management with a modern MVC archit
 
 **Database**: Repository pattern with static instances accessible via `DB::$events` and `DB::$users`. Database connection configured in `.env` file.
 
+**Testing**: Comprehensive test suite with 86 tests covering controllers, localization, and event management. Code coverage: ~59% overall, with controller coverage at 80%+. Tests use PCOV for fast coverage analysis.
+
+**Error Handling**: User-friendly error pages for 404 (Not Found), 403 (Forbidden), and 500 (Server Error) with navigation buttons to help users get back to safety.
+
 ### Directory Structure
 
 - `src/Core/` - Core framework classes (Router, Request, Response, Config, Validator, etc.)
@@ -90,6 +100,7 @@ Requires MySQL with extensions `pdo_mysql` and `mysqli` enabled. Database schema
   - [Form Component](docs/components/Form.md) - Forms with CSRF protection
   - [Card Component](docs/components/Card.md) - Content cards
 - **[Translation System](resources/lang/de_CH.php)** - i18n strings
+- **[Testing Guide](docs/TESTING.md)** - Test suite documentation and code coverage
 
 ## Important Reminders
 

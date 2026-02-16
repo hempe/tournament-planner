@@ -18,6 +18,13 @@ return [
         'language' => 'Sprache',
     ],
 
+    'navigation' => [
+        'home' => 'Zur Startseite',
+        'events' => 'Zu den Anlässen',
+        'login' => 'Zur Anmeldung',
+        'try_again' => 'Nochmal versuchen',
+    ],
+
     // Languages
     'languages' => [
         'de' => 'Deutsch',
@@ -157,6 +164,10 @@ return [
         'unauthorized' => 'Sie sind nicht berechtigt, diese Aktion auszuführen.',
         'forbidden' => 'Zugriff verweigert.',
         'csrf' => 'Sicherheitstoken ungültig. Bitte versuchen Sie es erneut.',
+        '404_title' => 'Seite nicht gefunden',
+        '403_title' => 'Zugriff verweigert',
+        '500_title' => 'Serverfehler',
+        'server_error' => 'Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.',
     ],
 
     // Success

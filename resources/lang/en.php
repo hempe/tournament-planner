@@ -18,6 +18,13 @@ return [
         'language' => 'Language',
     ],
 
+    'navigation' => [
+        'home' => 'Go to Home',
+        'events' => 'Go to Events',
+        'login' => 'Go to Login',
+        'try_again' => 'Try Again',
+    ],
+
     // Languages
     'languages' => [
         'de' => 'Deutsch',
@@ -157,6 +164,10 @@ return [
         'unauthorized' => 'You are not authorized to perform this action.',
         'forbidden' => 'Access denied.',
         'csrf' => 'Security token invalid. Please try again.',
+        '404_title' => 'Page Not Found',
+        '403_title' => 'Access Denied',
+        '500_title' => 'Server Error',
+        'server_error' => 'An unexpected error occurred. Please try again later.',
     ],
 
     // Success

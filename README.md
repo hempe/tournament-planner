@@ -40,6 +40,7 @@ That's it! 🚀
 ### For Developers
 - **[DEVELOPMENT.md](DEVELOPMENT.md)** - How to add routes, views, and features
 - **[APPLICATION.md](APPLICATION.md)** - Application overview and architecture
+- **[TESTING.md](docs/TESTING.md)** - Testing guide and code coverage
 - **[MIGRATION.md](MIGRATION.md)** - Historical changes and migration guide
 
 ### For AI Assistants
@@ -67,13 +68,31 @@ That's it! 🚀
 ✅ Calendar view
 ✅ Multi-language support (German/English/Spanish)
 ✅ Responsive design
+✅ User-friendly error pages (404, 403, 500)
 ✅ Health monitoring endpoint
+✅ Comprehensive test suite with 59% code coverage
+
+## Testing
+
+```bash
+# Run all tests
+composer test
+
+# Run with code coverage
+composer test:coverage
+
+# Generate HTML coverage report
+composer test:coverage-html
+```
+
+See [TESTING.md](docs/TESTING.md) for detailed testing documentation.
 
 ## Quick Links
 
 - Need help? → See [INSTALLATION.md](INSTALLATION.md#troubleshooting)
 - Deploying to production? → See [DEPLOYMENT.md](DEPLOYMENT.md)
 - Want to add features? → See [DEVELOPMENT.md](DEVELOPMENT.md)
+- Running tests? → See [TESTING.md](docs/TESTING.md)
 
 ## License
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

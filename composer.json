@@ -20,6 +20,8 @@
     },
     "scripts": {
         "test": "phpunit",
-        "test:integration": "phpunit --testsuite integration"
+        "test:integration": "phpunit --testsuite integration",
+        "test:coverage": "php -d pcov.enabled=1 vendor/bin/phpunit --coverage-text",
+        "test:coverage-html": "php -d pcov.enabled=1 vendor/bin/phpunit --coverage-html coverage"
     }
 }

@@ -17,6 +17,7 @@ The test suite provides comprehensive integration tests that verify the complete
 ## Requirements
 
 - PHP 8.1 or higher with `mysqli` extension enabled
+- PCOV extension for code coverage (install via: `yay -S php-pcov` on Arch/Manjaro)
 - MySQL/MariaDB database server
 - Composer (for installing PHPUnit)
 - Database credentials matching your `.env` configuration
@@ -84,43 +85,64 @@ Default test database credentials:
 
 ### Quick Start
 
-Use the main test runner script that handles everything:
+Run all tests using Composer:
 
 ```bash
-./run-tests.sh
+# Run all tests
+composer test
+
+# Run only integration tests
+composer test:integration
+
+# Run with code coverage report
+composer test:coverage
+
+# Generate HTML coverage report
+composer test:coverage-html
 ```
 
-This script will:
-1. Initialize the test database with clean schema
-2. Run all integration tests
-3. Clean up the test database afterward
+### Code Coverage
+
+The project uses PCOV for fast code coverage analysis. Current coverage:
+
+**Controller Coverage (Line Coverage):**
+- AuthController: **89.66%**
+- HomeController: **80.00%**
+- LanguageController: **100.00%**
+- UserController: **80.33%**
+- EventController: **74.09%**
+- **Overall Project: ~59%**
+
+To view detailed coverage:
+
+```bash
+# Text report in terminal
+composer test:coverage
+
+# HTML report in browser
+composer test:coverage-html
+open coverage/index.html
+```
 
 ### Manual Test Execution
 
 If you prefer to run tests manually:
 
 ```bash
-# 1. Initialize test database
-./tests/init-test-db.sh
+# Run tests
+vendor/bin/phpunit
 
-# 2. Run tests
+# Run with coverage (requires PCOV enabled)
+php -d pcov.enabled=1 vendor/bin/phpunit --coverage-text
+
+# Run specific test suite
 vendor/bin/phpunit --testsuite integration
 
-# 3. Clean up
-./tests/cleanup-test-db.sh
-```
-
-### Running Specific Tests
-
-```bash
-# Run only integration tests
-composer test:integration
-
 # Run a specific test file
-vendor/bin/phpunit tests/Integration/EventManagementTest.php
+vendor/bin/phpunit tests/Integration/Controllers/AuthControllerTest.php
 
 # Run a specific test method
-vendor/bin/phpunit --filter testCompleteEventManagementWorkflow
+vendor/bin/phpunit --filter testLoginWithValidCredentials
 ```
 
 ## Test Structure
@@ -134,7 +156,15 @@ tests/
 ├── cleanup-test-db.sh              # Database cleanup script
 └── Integration/
     ├── IntegrationTestCase.php     # Base test class
-    └── EventManagementTest.php     # Main integration tests
+    ├── EventManagementTest.php     # Event management tests
+    ├── LocalizationTest.php        # Translation and locale tests
+    ├── TranslationValidationTest.php  # Translation consistency tests
+    └── Controllers/
+        ├── AuthControllerTest.php      # Authentication tests
+        ├── HomeControllerTest.php      # Home page tests
+        ├── EventControllerTest.php     # Event controller tests
+        ├── UserControllerTest.php      # User management tests
+        └── LanguageControllerTest.php  # Language switching tests
 ```
 
 ### Test Files
@@ -411,17 +441,87 @@ Typical test execution time:
 5. **Clean database before each test** to ensure consistent state
 6. **Test both success and failure cases** where applicable
 
+## Test Coverage Details
+
+### Controller Tests
+
+**AuthController** (89.66% coverage):
+- ✅ Login form display
+- ✅ Login with valid/invalid credentials
+- ✅ Missing username/password validation
+- ✅ Logout functionality
+- ✅ Authentication redirects
+
+**HomeController** (80.00% coverage):
+- ✅ Login form for unauthenticated users
+- ✅ Home page for authenticated users
+- ✅ Date parameter handling
+
+**LanguageController** (100.00% coverage):
+- ✅ Switch between all languages (de, en, es)
+- ✅ Invalid locale rejection
+- ✅ Custom redirect handling
+- ✅ Current language API
+
+**UserController** (80.33% coverage):
+- ✅ User list display
+- ✅ User creation with validation
+- ✅ Duplicate username prevention
+- ✅ User deletion
+- ✅ Admin toggle functionality
+- ✅ Password changes
+- ✅ Admin permission checks
+
+**EventController** (74.09% coverage):
+- ✅ Event listing
+- ✅ Event detail views
+- ✅ Event creation and validation
+- ✅ Event updates and deletion
+- ✅ Lock/unlock functionality
+- ✅ User registration/unregistration
+- ✅ Comment updates
+- ✅ Bulk event creation
+- ✅ Waitlist handling
+
+### Localization Tests
+
+- ✅ Language switching (German, English, Spanish)
+- ✅ Translation loading and fallbacks
+- ✅ Session persistence
+- ✅ Translation key consistency across languages
+- ✅ Empty translation detection
+- ✅ Required key validation
+
+## Error Pages
+
+User-friendly error pages with navigation:
+
+**404 - Page Not Found** (`src/Views/Errors/404.php`):
+- Clear "page not found" message
+- Navigation buttons to Home, Events, or Login
+- Translated into all supported languages
+
+**403 - Access Denied** (`src/Views/Errors/403.php`):
+- "Access denied" message
+- Navigation back to safe pages
+- Consistent styling with app theme
+
+**500 - Server Error** (`src/Views/Errors/500.php`):
+- Friendly error message
+- Try Again and Home buttons
+- Automatic error logging
+
 ## Future Enhancements
 
 Potential additions to the test suite:
 
-- [ ] HTTP endpoint tests (full request/response cycle)
-- [ ] Authentication/authorization tests
-- [ ] Form validation tests
+- [ ] Increase EventController coverage to 80%+
 - [ ] CSRF token tests
 - [ ] API endpoint tests (if API added)
 - [ ] Performance/load tests
 - [ ] Browser automation tests (Selenium/Playwright)
+- [ ] Unit tests for components
+- [ ] Security vulnerability tests
 
 ## Support
 

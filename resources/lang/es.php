@@ -18,6 +18,13 @@ return [
         'language' => 'Idioma',
     ],
 
+    'navigation' => [
+        'home' => 'Ir al Inicio',
+        'events' => 'Ir a Eventos',
+        'login' => 'Ir al Inicio de Sesión',
+        'try_again' => 'Intentar de Nuevo',
+    ],
+
     // Languages
     'languages' => [
         'de' => 'Deutsch',
@@ -157,6 +164,10 @@ return [
         'unauthorized' => 'No está autorizado para realizar esta acción.',
         'forbidden' => 'Acceso denegado.',
         'csrf' => 'Token de seguridad inválido. Por favor, inténtelo de nuevo.',
+        '404_title' => 'Página No Encontrada',
+        '403_title' => 'Acceso Denegado',
+        '500_title' => 'Error del Servidor',
+        'server_error' => 'Ocurrió un error inesperado. Por favor, inténtelo más tarde.',
     ],
 
     // Success

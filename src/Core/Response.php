@@ -71,17 +71,40 @@ final class Response
 
     public static function notFound(string $message = 'Not Found'): Response
     {
-        return new Response($message, HttpStatus::NOT_FOUND);
+        ob_start();
+        require __DIR__ . '/../Layout/header.php';
+        require __DIR__ . '/../Views/Errors/404.php';
+        require __DIR__ . '/../Layout/footer.php';
+        $content = ob_get_clean();
+
+        return new Response($content, HttpStatus::NOT_FOUND);
     }
 
     public static function forbidden(string $message = 'Forbidden'): Response
     {
-        return new Response($message, HttpStatus::FORBIDDEN);
+        ob_start();
+        require __DIR__ . '/../Layout/header.php';
+        require __DIR__ . '/../Views/Errors/403.php';
+        require __DIR__ . '/../Layout/footer.php';
+        $content = ob_get_clean();
+
+        return new Response($content, HttpStatus::FORBIDDEN);
     }
 
     public static function unauthorized(string $message = 'Unauthorized'): Response
     {
         return new Response($message, HttpStatus::UNAUTHORIZED);
+    }
+
+    public static function serverError(string $message = 'Internal Server Error'): Response
+    {
+        ob_start();
+        require __DIR__ . '/../Layout/header.php';
+        require __DIR__ . '/../Views/Errors/500.php';
+        require __DIR__ . '/../Layout/footer.php';
+        $content = ob_get_clean();
+
+        return new Response($content, HttpStatus::INTERNAL_SERVER_ERROR);
     }
 
     public function getContent(): string
