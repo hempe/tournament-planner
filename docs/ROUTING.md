@@ -1,108 +1,64 @@
 # Routing System Documentation
 
-The Golf El Faro application features a modern, strongly-typed routing system with middleware support, parameter injection, and comprehensive security features.
+The routing system is attribute-based: routes are defined via PHP 8 attributes on controller classes and methods. A `RouteLoader` scans all controllers at startup and registers the discovered routes with the `Router`.
 
-## Architecture Overview
+## Defining Routes
 
-The routing system consists of several key Components:
+### Route Prefix
 
-- **Router**: Main routing engine that matches requests to handlers
-- **Route**: Individual route definition with pattern, handler, and middleware
-- **Middleware**: Request/response processing pipeline
-- **Request/Response**: Strongly-typed HTTP abstraction
-- **Application**: Main application container
-
-## Core Components
-
-### Router Class
-
-**File**: `src/Core/Router.php`
-
-The `Router` class is the main routing engine that handles request matching and response generation.
+Apply a URL prefix to all routes in a controller:
 
 ```php
-final class Router
+#[RoutePrefix('/events')]
+final class EventController
 {
-    public function get(string $pattern, callable $handler, array $middleware = [], string $name = ''): void;
-    public function post(string $pattern, callable $handler, array $middleware = [], string $name = ''): void;
-    public function put(string $pattern, callable $handler, array $middleware = [], string $name = ''): void;
-    public function delete(string $pattern, callable $handler, array $middleware = [], string $name = ''): void;
-    public function group(RouteGroup $group, callable $callback): void;
-    public function handle(Request $request): Response;
+    // ...
 }
 ```
 
-### Route Patterns
+### HTTP Method Attributes
 
-Routes support parameter placeholders using curly braces:
-
-```php
-$router->get('/events/{id}', $handler);           // Matches /events/123
-$router->get('/users/{id}/posts/{postId}', $handler); // Matches /users/1/posts/456
-```
-
-**Pattern Rules**:
-- Parameters are captured as named groups
-- Parameters match any non-slash characters (`[^/]+`)
-- Parameters are automatically validated and injected
-
-## HTTP Methods
-
-### GET Routes
-Used for retrieving data and displaying pages:
+Use `#[Get]`, `#[Post]`, `#[Put]`, or `#[Delete]` on controller methods:
 
 ```php
-$router->get('/', function(Request $request): Response {
-    return Response::ok(new HomePage());
-});
+#[Get('/')]
+public function index(Request $request): Response { ... }
 
-$router->get('/events', function(Request $request): Response {
-    $events = DB::$events->getAll();
-    return Response::ok(new EventsPage($events));
-});
+#[Get('/{id}')]
+public function detail(Request $request, array $params): Response
+{
+    $eventId = (int) $params['id'];
+    // ...
+}
+
+#[Post('/{id}/register')]
+public function register(Request $request, array $params): Response { ... }
 ```
 
-### POST Routes
-Used for form submissions and data creation:
+URL parameters (e.g. `{id}`) are matched as `[^/]+` and injected via the `$params` array. Methods without URL parameters omit the `$params` argument.
+
+### Middleware Attribute
+
+Apply middleware at the class or method level:
 
 ```php
-$router->post('/events', function(Request $request): Response {
-    $validation = $request->validate([
-        new ValidationRule('name', ['required', 'string', 'max' => 255]),
-        new ValidationRule('date', ['required', 'date']),
-        new ValidationRule('capacity', ['required', 'integer', 'min' => 1]),
-    ]);
-    
-    if (!$validation->isValid) {
-        return Response::error(HttpStatus::UNPROCESSABLE_ENTITY, $validation->getErrorMessages());
-    }
-    
-    $data = $request->getValidatedData();
-    $eventId = DB::$events->create($data);
-    
-    return Response::redirect("/events/{$eventId}");
-});
+#[RoutePrefix('/events')]
+#[Middleware(AuthMiddleware::class)]   // applies to all methods
+final class EventController
+{
+    #[Get('/new')]
+    #[Middleware(AdminMiddleware::class)]  // additionally requires admin
+    public function create(Request $request): Response { ... }
+}
 ```
 
-### RESTful Routes
-Support for REST operations:
+When applied to the class, the middleware runs for every route in that controller. When applied to a method, it runs in addition to any class-level middleware.
 
-```php
-$router->get('/api/events', $listHandler);          // List events
-$router->post('/api/events', $createHandler);       // Create event
-$router->get('/api/events/{id}', $showHandler);     // Show event
-$router->put('/api/events/{id}', $updateHandler);   // Update event
-$router->delete('/api/events/{id}', $deleteHandler); // Delete event
-```
+## Available Middleware
 
-## Middleware System
+### AuthMiddleware
 
-Middleware provides a powerful way to filter and process HTTP requests:
-
-### Available Middleware
-
-#### AuthMiddleware
-Ensures user is authenticated:
+Redirects unauthenticated users to `/login` (303):
 
 ```php
 final class AuthMiddleware implements MiddlewareInterface
@@ -117,8 +73,9 @@ final class AuthMiddleware implements MiddlewareInterface
 }
 ```
 
-#### AdminMiddleware
-Requires admin privileges:
+### AdminMiddleware
+
+Returns 403 Forbidden for non-admin users:
 
 ```php
 final class AdminMiddleware implements MiddlewareInterface
@@ -133,398 +90,112 @@ final class AdminMiddleware implements MiddlewareInterface
 }
 ```
 
-#### CsrfMiddleware
-Validates CSRF tokens for POST requests:
+## Closure-Based Routes
+
+Simple routes that don't belong to a controller can be registered directly on the router (e.g. in `index.php`). The `/health` endpoint uses this pattern:
 
 ```php
-$router->post('/events', $handler, [new CsrfMiddleware()]);
+$router->get('/health', function (Request $request): Response {
+    return Response::json(['status' => 'ok']);
+});
 ```
 
-#### RateLimitMiddleware
-Limits request frequency:
+## Route Loading
+
+Routes are discovered automatically at startup:
 
 ```php
-$router->group(
-    new RouteGroup('', [new RateLimitMiddleware(100, 60)]),
-    function(Router $router) {
-        // API routes with rate limiting
-    }
-);
+// index.php
+$routeLoader = new RouteLoader();
+$routeLoader->load($router);
 ```
 
-### Custom Middleware
-
-Create custom middleware by implementing `MiddlewareInterface`:
+`RouteLoader` uses `ControllerDiscovery` to find all PHP files under `src/Controllers/` and `RouteScanner` to read their attributes. Route caching can be enabled via config:
 
 ```php
-final class LoggingMiddleware implements MiddlewareInterface
-{
-    public function handle(Request $request, callable $next): Response
-    {
-        $start = microtime(true);
-        $response = $next($request);
-        $duration = microtime(true) - $start;
-        
-        Logger::getInstance()->info('Request processed', [
-            'method' => $request->getMethod()->value,
-            'path' => $request->getPath(),
-            'status' => $response->getStatus()->value,
-            'duration' => $duration,
-        ]);
-        
-        return $response;
-    }
-}
+// .env or config
+routing.cache_enabled = true
+routing.cache_file = storage/cache/routes.php
 ```
 
-## Route Groups
+When caching is enabled, scanned routes are serialized to disk. The cache is invalidated automatically when any controller file changes.
 
-Group routes with common middleware or URL prefixes:
-
-```php
-// Admin routes with authentication and admin middleware
-$router->group(
-    new RouteGroup('/admin', [new AuthMiddleware(), new AdminMiddleware()]),
-    function(Router $router) {
-        $router->get('/events', $adminEventsHandler);
-        $router->get('/users', $adminUsersHandler);
-        $router->post('/users', $createUserHandler);
-    }
-);
-
-// API routes with rate limiting
-$router->group(
-    new RouteGroup('/api', [new RateLimitMiddleware(1000, 3600)]),
-    function(Router $router) {
-        $router->get('/events', $apiEventsHandler);
-        $router->get('/events/{id}', $apiEventHandler);
-    }
-);
-```
-
-## Request Handling
-
-### Request Object
+## Request Object
 
 **File**: `src/Core/Request.php`
 
-The `Request` class provides strongly-typed access to HTTP request data:
-
 ```php
-final class Request
-{
-    public function getMethod(): HttpMethod;
-    public function getUri(): string;
-    public function getPath(): string;
-    public function get(string $key, mixed $default = null): mixed;
-    public function getString(string $key, string $default = ''): string;
-    public function getInt(string $key, int $default = 0): int;
-    public function getBool(string $key, bool $default = false): bool;
-    public function getArray(string $key, array $default = []): array;
-    public function validate(array $rules): ValidationResult;
-}
+$request->getMethod(): HttpMethod
+$request->getPath(): string
+$request->get(string $key, mixed $default = null): mixed
+$request->getString(string $key, string $default = ''): string
+$request->getInt(string $key, int $default = 0): int
+$request->getBool(string $key, bool $default = false): bool
+$request->getArray(string $key, array $default = []): array
+$request->validate(array $rules): ValidationResult
+$request->getValidatedData(): array
 ```
 
-### Parameter Access
+### Validation
 
 ```php
-$router->get('/events/{id}', function(Request $request, array $params): Response {
-    $eventId = (int)$params['id'];
-    $event = DB::$events->get($eventId);
-    
-    if (!$event) {
-        return Response::notFound();
-    }
-    
-    return Response::ok(new EventDetailPage($event));
-});
-```
+$validation = $request->validate([
+    new ValidationRule('name', ['required', 'string', 'max' => 255]),
+    new ValidationRule('capacity', ['required', 'integer', 'min' => 1]),
+]);
 
-### Form Data Processing
-
-```php
-$router->post('/events/{id}/register', function(Request $request, array $params): Response {
-    $eventId = (int)$params['id'];
-    
-    $validation = $request->validate([
-        new ValidationRule('comment', ['string', 'max' => 500]),
-        new ValidationRule('user_id', ['required', 'integer']),
-    ]);
-    
-    if (!$validation->isValid) {
-        return Response::json(['errors' => $validation->getErrorsByField()], HttpStatus::UNPROCESSABLE_ENTITY);
-    }
-    
-    $data = $request->getValidatedData();
-    DB::$events->register($eventId, $data['user_id'], $data['comment'] ?? '');
-    
+if (!$validation->isValid) {
+    flash('error', $validation->getErrorMessages());
     return Response::redirect("/events/{$eventId}");
-});
+}
+
+$data = $request->getValidatedData();
 ```
 
-## Response Handling
-
-### Response Object
+## Response Object
 
 **File**: `src/Core/Response.php`
 
-The `Response` class provides strongly-typed HTTP responses:
-
 ```php
-final class Response
-{
-    public static function ok(string $content = '', array $headers = []): Response;
-    public static function created(string $content = '', array $headers = []): Response;
-    public static function redirect(string $url, HttpStatus $status = HttpStatus::SEE_OTHER): Response;
-    public static function json(array $data, HttpStatus $status = HttpStatus::OK): Response;
-    public static function error(HttpStatus $status, string $message = ''): Response;
-    public static function notFound(string $message = 'Not Found'): Response;
-    public static function forbidden(string $message = 'Forbidden'): Response;
-    public static function unauthorized(string $message = 'Unauthorized'): Response;
-}
+Response::ok(string $content = ''): Response          // 200
+Response::redirect(string $url): Response             // 303
+Response::json(array $data): Response                 // 200 application/json
+Response::unauthorized(): Response                    // 401
+Response::notFound(string $message = ''): Response    // 404 with error page
+Response::forbidden(): Response                       // 403 with error page
 ```
 
-### Response Types
+`notFound()` and `forbidden()` render full HTML error pages (via `src/Views/Errors/`).
 
-#### HTML Responses
-```php
-return Response::ok(new EventListPage($events));
-```
+## All Registered Routes
 
-#### JSON Responses
-```php
-return Response::json([
-    'events' => $events,
-    'total' => count($events),
-]);
-```
-
-#### Redirects
-```php
-return Response::redirect('/events');
-return Response::redirect('/login', HttpStatus::TEMPORARY_REDIRECT);
-```
-
-#### Error Responses
-```php
-return Response::notFound('Event not found');
-return Response::forbidden('Access denied');
-return Response::error(HttpStatus::INTERNAL_SERVER_ERROR, 'Something went wrong');
-```
-
-## Route Definition Examples
-
-### Basic Routes
-
-```php
-// Home page
-$router->get('/', function(Request $request): Response {
-    if (!User::loggedIn()) {
-        return Response::ok(new LoginPage());
-    }
-    
-    $events = DB::$events->getUpcoming();
-    return Response::ok(new HomePage($events));
-});
-
-// Login form
-$router->post('/login', function(Request $request): Response {
-    $validation = $request->validate([
-        new ValidationRule('username', ['required', 'string']),
-        new ValidationRule('password', ['required', 'string']),
-    ]);
-    
-    if (!$validation->isValid) {
-        return Response::redirect('/login');
-    }
-    
-    $data = $request->getValidatedData();
-    $user = User::authenticate($data['username'], $data['password']);
-    
-    if ($user) {
-        User::setCurrent($user);
-        return Response::redirect('/');
-    }
-    
-    return Response::redirect('/login');
-});
-```
-
-### Event Management Routes
-
-```php
-// Events listing
-$router->get('/events', function(Request $request): Response {
-    $events = DB::$events->getAll();
-    return Response::ok(new EventListPage($events));
-}, [new AuthMiddleware()]);
-
-// Event creation form
-$router->get('/events/new', function(Request $request): Response {
-    return Response::ok(new EventCreatePage());
-}, [new AuthMiddleware(), new AdminMiddleware()]);
-
-// Event creation handler
-$router->post('/events', function(Request $request): Response {
-    $validation = $request->validate([
-        new ValidationRule('name', ['required', 'string', 'max' => 255]),
-        new ValidationRule('date', ['required', 'date']),
-        new ValidationRule('capacity', ['required', 'integer', 'min' => 1]),
-    ]);
-    
-    if (!$validation->isValid) {
-        return Response::redirect('/events/new');
-    }
-    
-    $data = $request->getValidatedData();
-    $eventId = DB::$events->create($data);
-    
-    return Response::redirect("/events/{$eventId}");
-}, [new AuthMiddleware(), new AdminMiddleware()]);
-
-// Event detail page
-$router->get('/events/{id}', function(Request $request, array $params): Response {
-    $eventId = (int)$params['id'];
-    $event = DB::$events->get($eventId, User::id());
-    
-    if (!$event) {
-        return Response::notFound();
-    }
-    
-    if (User::admin()) {
-        return Response::ok(new EventAdminPage($event));
-    }
-    
-    return Response::ok(new EventDetailPage($event));
-}, [new AuthMiddleware()]);
-```
-
-## Error Handling
-
-### Route-Level Error Handling
-
-```php
-$router->get('/events/{id}', function(Request $request, array $params): Response {
-    try {
-        $eventId = (int)$params['id'];
-        $event = DB::$events->get($eventId);
-        
-        if (!$event) {
-            return Response::notFound(__('events.not_found'));
-        }
-        
-        return Response::ok(new EventDetailPage($event));
-        
-    } catch (DatabaseException $e) {
-        Logger::getInstance()->error('Database error in event detail', [
-            'event_id' => $eventId,
-            'error' => $e->getMessage(),
-        ]);
-        
-        return Response::error(HttpStatus::INTERNAL_SERVER_ERROR, __('errors.database'));
-        
-    } catch (Throwable $e) {
-        Logger::getInstance()->error('Unexpected error in event detail', [
-            'event_id' => $eventId,
-            'error' => $e->getMessage(),
-        ]);
-        
-        return Response::error(HttpStatus::INTERNAL_SERVER_ERROR, __('errors.general'));
-    }
-});
-```
-
-### Global Error Handling
-
-The application automatically handles uncaught exceptions and provides appropriate error responses based on the environment.
-
-## Security Features
-
-### CSRF Protection
-All POST requests are automatically protected against CSRF attacks:
-
-```php
-// CSRF token automatically validated for POST requests
-$router->post('/events', $handler); // Automatically includes CSRF validation
-```
-
-### Input Sanitization
-All request data is automatically sanitized:
-
-- Null bytes removed
-- Line endings normalized
-- Whitespace trimmed
-
-### Parameter Validation
-Strongly-typed parameter access with validation:
-
-```php
-$eventId = $request->getInt('id'); // Always returns an integer
-$name = $request->getString('name'); // Always returns a string
-$isActive = $request->getBool('active'); // Always returns a boolean
-```
-
-## Performance Considerations
-
-### Route Caching
-For production, consider caching compiled routes:
-
-```php
-// Compile routes to cache
-$compiledRoutes = $router->compile();
-file_put_contents('cache/routes.php', serialize($compiledRoutes));
-```
-
-### Middleware Optimization
-Order middleware for optimal performance:
-
-1. Rate limiting (fastest rejection)
-2. Authentication (lightweight check)
-3. Authorization (more expensive check)
-4. CSRF validation (token comparison)
-
-### Lazy Loading
-Use lazy loading for expensive operations:
-
-```php
-$router->get('/events', function(Request $request): Response {
-    $events = lazy(fn() => DB::$events->getAll());
-    return Response::ok(new EventListPage($events));
-});
-```
-
-## Testing Routes
-
-### Unit Testing
-
-```php
-public function testEventDetailRoute(): void
-{
-    $request = new Request(HttpMethod::GET, '/events/123', [], [], [], []);
-    $router = new Router();
-    $router->get('/events/{id}', $this->eventDetailHandler);
-    
-    $response = $router->handle($request);
-    
-    $this->assertEquals(HttpStatus::OK, $response->getStatus());
-}
-```
-
-### Integration Testing
-
-```php
-public function testEventCreationFlow(): void
-{
-    $this->actingAs($this->adminUser);
-    
-    $response = $this->post('/events', [
-        'name' => 'Test Event',
-        'date' => '2024-12-25',
-        'capacity' => 20,
-        '_token' => csrf_token(),
-    ]);
-    
-    $this->assertRedirect('/events/1');
-    $this->assertDatabaseHas('events', ['name' => 'Test Event']);
-}
-```
+| Method | Pattern | Controller::method | Middleware |
+|--------|---------|-------------------|------------|
+| GET | `/health` | closure | - |
+| GET | `/` | HomeController::index | Auth |
+| GET | `/login` | AuthController::loginForm | - |
+| POST | `/login` | AuthController::login | - |
+| POST | `/logout` | AuthController::logout | Auth |
+| POST | `/language/switch` | LanguageController::switchLanguage | - |
+| GET | `/language/current` | LanguageController::getCurrentLanguage | - |
+| GET | `/events` | EventController::index | Auth |
+| GET | `/events/new` | EventController::create | Auth, Admin |
+| POST | `/events/new` | EventController::store | Auth, Admin |
+| GET | `/events/bulk/new` | EventController::bulkCreate | Auth, Admin |
+| POST | `/events/bulk/preview` | EventController::bulkPreview | Auth, Admin |
+| POST | `/events/bulk/store` | EventController::bulkStore | Auth, Admin |
+| GET | `/events/{id}` | EventController::detail | Auth |
+| GET | `/events/{id}/admin` | EventController::admin | Auth, Admin |
+| POST | `/events/{id}/update` | EventController::update | Auth, Admin |
+| POST | `/events/{id}/delete` | EventController::delete | Auth, Admin |
+| POST | `/events/{id}/lock` | EventController::lock | Auth, Admin |
+| POST | `/events/{id}/unlock` | EventController::unlock | Auth, Admin |
+| POST | `/events/{id}/register` | EventController::register | Auth |
+| POST | `/events/{id}/unregister` | EventController::unregister | Auth |
+| POST | `/events/{id}/comment` | EventController::updateComment | Auth |
+| GET | `/users` | UserController::index | Auth, Admin |
+| GET | `/users/new` | UserController::create | Auth, Admin |
+| POST | `/users` | UserController::store | Auth, Admin |
+| POST | `/users/{id}/delete` | UserController::delete | Auth, Admin |
+| POST | `/users/{id}/admin` | UserController::toggleAdmin | Auth, Admin |
+| POST | `/users/{id}/password` | UserController::changePassword | Auth, Admin |
