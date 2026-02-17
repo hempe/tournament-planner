@@ -62,9 +62,9 @@ final class RouteScanner
     }
 
     /**
-     * Get middleware from class attributes.
+     * Get middleware class names from class attributes.
      *
-     * @return array<object>
+     * @return array<class-string>
      */
     private function getClassMiddleware(ReflectionClass $reflection): array
     {
@@ -74,7 +74,7 @@ final class RouteScanner
         foreach ($attributes as $attribute) {
             /** @var Middleware $instance */
             $instance = $attribute->newInstance();
-            $middleware[] = new $instance->middlewareClass();
+            $middleware[] = $instance->middlewareClass;
         }
 
         return $middleware;
@@ -128,6 +128,11 @@ final class RouteScanner
      *
      * @return array<object>
      */
+    /**
+     * Get middleware class names from method attributes.
+     *
+     * @return array<class-string>
+     */
     private function getMethodMiddleware(ReflectionMethod $method): array
     {
         $attributes = $method->getAttributes(Middleware::class);
@@ -136,7 +141,7 @@ final class RouteScanner
         foreach ($attributes as $attribute) {
             /** @var Middleware $instance */
             $instance = $attribute->newInstance();
-            $middleware[] = new $instance->middlewareClass();
+            $middleware[] = $instance->middlewareClass;
         }
 
         return $middleware;

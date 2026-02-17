@@ -88,8 +88,11 @@ final class Router
                 continue;
             }
 
-            // Build middleware pipeline
-            $pipeline = $route['middleware'];
+            // Build middleware pipeline - instantiate class names if needed
+            $pipeline = array_map(
+                fn($m) => is_string($m) ? new $m() : $m,
+                $route['middleware']
+            );
 
             // Build nested callable chain (innermost is handler)
             $next = function (Request $req) use ($route, $params) {
