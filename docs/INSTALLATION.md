@@ -45,12 +45,7 @@ cd tournament-planner
 
 ### 2. Configure Environment
 
-Create environment configuration file:
-```bash
-cp .env.example .env
-```
-
-Edit `.env` with your settings:
+Create environment configuration file (copy the template below into `.env`):
 ```env
 # Application
 APP_ENV=development
@@ -299,13 +294,13 @@ mysql -u TP -p TPDb < backup_YYYYMMDD_HHMMSS.sql
 
 ## Next Steps
 
-- [Learn how to deploy to production](DEPLOYMENT.md)
-- [Learn how to develop new features](DEVELOPMENT.md)
-- [Understand the application structure](APPLICATION.md)
+- [Deploy to production](DEPLOYMENT.md)
+- [Routing system](ROUTING.md)
+- [Component system](COMPONENTS.md)
 
 ## Getting Help
 
 If you encounter issues not covered here:
 1. Check `logs/app.log` for detailed error messages
 2. Enable debug logging: Set `LOG_LEVEL=DEBUG` in `.env`
-3. Review the [APPLICATION.md](APPLICATION.md) for architecture details
+3. Review the [CLAUDE.md](../CLAUDE.md) for architecture details

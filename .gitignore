@@ -21,6 +21,9 @@ Thumbs.db
 /vendor/
 composer.lock
 
+# Generated cache
+storage/cache/
+
 # PHPUnit
 .phpunit.cache/
 .phpunit.result.cache
