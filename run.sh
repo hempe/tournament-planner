@@ -1,1 +1,1 @@
-php -S localhost:5000 -c php.ini
+ROUTE_CACHE_ENABLED=true php -S localhost:5000 -c php.ini
