@@ -23,7 +23,7 @@ use TP\Components\InputAction;
             $_SESSION['user_id']
         );
         if (!$event) {
-            Log::trace('event/detail', 'Redirecting to /events because we could not find the ' . $id . ' event' . $event);
+            logger()->debug('Redirecting to /events because we could not find the event: ' . $id);
             header("Location: /events", true, 303);
             exit;
         }

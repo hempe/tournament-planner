@@ -6,7 +6,6 @@ namespace TP\Controllers;
 
 use TP\Core\Request;
 use TP\Core\Response;
-use TP\Core\Log;
 use TP\Core\ValidationRule;
 use TP\Core\Attributes\RoutePrefix;
 use TP\Core\Attributes\Get;
@@ -74,7 +73,7 @@ final class EventController
         $event = DB::$events->get($eventId, $userId);
 
         if (!$event) {
-            Log::error('events/{id}', 'Could not find event: ' . $eventId);
+            logger()->error('Could not find event: ' . $eventId);
             return Response::notFound(__('events.not_found'));
         }
 

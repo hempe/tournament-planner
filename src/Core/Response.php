@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace TP\Core;
 
-use function PHPUnit\Framework\throwException;
-
 enum HttpStatus: int
 {
     case OK = 200;
@@ -45,11 +43,6 @@ final class Response
         return new Response($content, HttpStatus::OK, $headers);
     }
 
-    public static function created(string $content = '', array $headers = []): Response
-    {
-        return new Response($content, HttpStatus::CREATED, $headers);
-    }
-
     public static function redirect(string $url, HttpStatus $status = HttpStatus::SEE_OTHER): Response
     {
         return new Response('', $status, ['Location' => Url::build($url)]);
@@ -62,11 +55,6 @@ final class Response
             $status,
             ['Content-Type' => 'application/json']
         );
-    }
-
-    public static function error(HttpStatus $status, string $message = ''): Response
-    {
-        return new Response($message, $status);
     }
 
     public static function notFound(string $message = 'Not Found'): Response
@@ -96,51 +84,9 @@ final class Response
         return new Response($message, HttpStatus::UNAUTHORIZED);
     }
 
-    public static function serverError(string $message = 'Internal Server Error'): Response
-    {
-        ob_start();
-        require __DIR__ . '/../Layout/header.php';
-        require __DIR__ . '/../Views/Errors/500.php';
-        require __DIR__ . '/../Layout/footer.php';
-        $content = ob_get_clean();
-
-        return new Response($content, HttpStatus::INTERNAL_SERVER_ERROR);
-    }
-
-    public function getContent(): string
-    {
-        return $this->content;
-    }
-
     public function getStatus(): HttpStatus
     {
         return $this->status;
-    }
-
-    public function getHeaders(): array
-    {
-        return $this->headers;
-    }
-
-    public function withHeader(string $name, string $value): Response
-    {
-        $response = clone $this;
-        $response->headers[$name] = $value;
-        return $response;
-    }
-
-    public function withCookie(string $name, string $value, array $options = []): Response
-    {
-        $response = clone $this;
-        $response->cookies[$name] = array_merge([
-            'value' => $value,
-            'expire' => 0,
-            'path' => '/',
-            'domain' => '',
-            'secure' => false,
-            'httponly' => true,
-        ], $options);
-        return $response;
     }
 
     public function send(): void
@@ -177,10 +123,5 @@ final class Response
             HttpStatus::TEMPORARY_REDIRECT,
             HttpStatus::PERMANENT_REDIRECT,
         ], true);
-    }
-
-    public function isError(): bool
-    {
-        return $this->status->value >= 400;
     }
 }

@@ -23,7 +23,7 @@ use TP\Models\User;
         $_SESSION['user_id']
     );
     if (!$event) {
-        Log::trace('event/detail', 'Redirecting to / because we could not find the event');
+        logger()->debug('Redirecting to / because we could not find the event');
         header("Location: /", true, 303);
         exit;
     }
