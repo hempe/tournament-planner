@@ -35,14 +35,14 @@ For even more compact UI, add `?compact=1`:
 
 ### Demo Page
 
-A demo page is included at `/iframe-demo.html` that shows the application embedded in an iframe, matching the exact layout of the Golf El Faro website:
+A demo page is included at `examples/iframe-demo.html` that shows the application embedded in an iframe, matching the exact layout of the Golf El Faro website:
 
 ```bash
 # Start the development server
 ./run.sh
 
 # Open in browser
-http://localhost:5000/iframe-demo.html
+http://localhost:5000/examples/iframe-demo.html
 ```
 
 ## Detection

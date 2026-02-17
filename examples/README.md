@@ -20,7 +20,7 @@ Demonstration of embedding the Tournament Planner in an iframe within another we
    php -S localhost:5000
    ```
 
-2. Open `iframe-demo.html` in a browser
+2. Open `http://localhost:5000/examples/iframe-demo.html` in a browser
 
 3. The demo shows how the planner integrates with the main golf club website
 
