@@ -13,6 +13,7 @@
     </testsuites>
     <php>
         <env name="APP_ENV" value="testing"/>
+        <env name="ROUTE_CACHE_ENABLED" value="true"/>
         <env name="DB_HOST" value="localhost"/>
         <env name="DB_PORT" value="3306"/>
         <env name="DB_NAME" value="TP_test"/>
