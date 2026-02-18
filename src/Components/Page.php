@@ -6,6 +6,7 @@ use TP\Components\Color;
 use TP\Components\Icon;
 use TP\Components\IconActionButton;
 use TP\Components\IconButton;
+use TP\Components\Select;
 use TP\Models\User;
 use TP\Core\Translator;
 use TP\Core\Url;
@@ -70,17 +71,19 @@ class Page extends Component
 
         // Language selector
         $currentLocale = Translator::getInstance()->getLocale();
-        $languages = [
-            'de' => __('languages.de'),
-            'en' => __('languages.en'),
-            'es' => __('languages.es'),
-        ];
-
-        $languageOptions = '';
-        foreach ($languages as $locale => $name) {
-            $selected = $locale === $currentLocale ? 'selected' : '';
-            $languageOptions .= "<option value=\"{$locale}\" {$selected}>{$name}</option>";
-        }
+        $languageSelect = new Select(
+            options: [
+                'de' => __('languages.de'),
+                'en' => __('languages.en'),
+                'es' => __('languages.es'),
+            ],
+            selected: $currentLocale,
+            class: 'nav-button',
+            id: 'language-select',
+            onchange: 'switchLanguage(this.value)',
+            style: 'color: var(--fg-navtop); background: transparent; border: none; cursor: pointer; padding: 8px 12px; font-size: 14px; appearance: none; padding-right: 24px;',
+            title: __('nav.language'),
+        );
 
         echo <<<HTML
         <div class="body">
@@ -90,15 +93,7 @@ class Page extends Component
                     <h1>{$title}</h1>
                     {$adminButtons}
                     <div class="language-selector" style="position: relative; display: inline-block;">
-                        <select
-                            id="language-select"
-                            onchange="switchLanguage(this.value)"
-                            class="nav-button"
-                            style="color: var(--fg-navtop); background: transparent; border: none; cursor: pointer; padding: 8px 12px; font-size: 14px; appearance: none; padding-right: 24px;"
-                            title="<?= __('nav.language') ?>"
-                        >
-                            {$languageOptions}
-                        </select>
+                        {$languageSelect}
                         <span style="position: absolute; right: 0px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--fg-navtop);">
                             <i class="fa fa-globe"></i>
                         </span>

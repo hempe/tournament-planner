@@ -170,18 +170,6 @@ class Calendar extends Component
     protected function template(): void
     {
         // Build iframe-specific controls
-        $currentLocale = Translator::getInstance()->getLocale();
-        $languages = [
-            'de' => __('languages.de'),
-            'en' => __('languages.en'),
-            'es' => __('languages.es'),
-        ];
-        $languageOptions = '';
-        foreach ($languages as $locale => $name) {
-            $selected = $locale === $currentLocale ? 'selected' : '';
-            $languageOptions .= "<option value=\"{$locale}\" {$selected}>{$name}</option>";
-        }
-
         $isIframeMode = isset($_GET['iframe']) && $_GET['iframe'] === '1';
 
         $logoutButton = (User::loggedIn() && $isIframeMode)

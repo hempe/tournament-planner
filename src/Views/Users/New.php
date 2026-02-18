@@ -1,12 +1,13 @@
 <?php
 
 use TP\Components\Color;
+use TP\Components\Input;
 use TP\Components\Page;
+use TP\Components\Select;
 use TP\Components\Table;
 use TP\Components\Card;
 use TP\Components\IconButton;
 use TP\Components\Form;
-use TP\Components\Input;
 
 ?>
 <?= new Page(
@@ -19,10 +20,11 @@ use TP\Components\Input;
                 items: [null],
                 widths: [1, null, null, 1],
                 projection: fn() => [
-                    '<select name="male" class="input" required>'
-                        . '<option value="1">' . __('users.herr') . '</option>'
-                        . '<option value="0">' . __('users.frau') . '</option>'
-                        . '</select>',
+                    new Select(
+                        name: 'male',
+                        options: ['1' => __('users.mr'), '0' => __('users.mrs')],
+                        required: true,
+                    ),
                     new Input(
                         type: 'text',
                         name: 'username',

@@ -122,9 +122,9 @@ return [
     // Users
     'users' => [
         'title' => 'Users',
-        'anrede' => 'Salutation',
-        'herr' => 'Mr.',
-        'frau' => 'Mrs.',
+        'salutation' => 'Salutation',
+        'mr' => 'Mr.',
+        'mrs' => 'Mrs.',
         'new' => 'New User',
         'add_user' => 'Add User',
         'create_user' => 'Create User',

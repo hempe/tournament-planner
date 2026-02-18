@@ -17,8 +17,10 @@ class Input extends Component
         private readonly string $name = '',
         private readonly string $placeholder = '',
         private readonly bool $required = false,
-        \Closure|string|Component|array $class = '',
+        \Closure|string|Component|array $class = 'input',
         \Closure|string|Component|array $style = '',
+        private readonly string $step = '',
+        private readonly string $id = '',
     ) {
         $this->class = $this->captureOutput($class);
         $this->style = $this->captureOutput($style);
@@ -27,12 +29,18 @@ class Input extends Component
     protected function template(): void
     {
         $required = $this->required ? 'required' : '';
+        $step = $this->step !== '' ? "step=\"{$this->step}\"" : '';
+        $id = $this->id !== '' ? "id=\"{$this->id}\"" : '';
+        $value = htmlspecialchars($this->value);
         echo <<<HTML
-            <input type="{$this->type}" 
-                value="{$this->value}" 
-                name="{$this->name}" 
-                placeholder="{$this->placeholder}" 
-                style="{$this->style}" 
+            <input type="{$this->type}"
+                value="{$value}"
+                name="{$this->name}"
+                class="{$this->class}"
+                placeholder="{$this->placeholder}"
+                style="{$this->style}"
+                {$id}
+                {$step}
                 {$required}>
         HTML;
     }
