@@ -117,6 +117,12 @@ return [
         'mixed' => 'Mixed',
         'separate' => 'Separate',
         'play_together' => 'Ladies & Gents together',
+        'export' => 'Export',
+        'export_col_name' => 'Name',
+        'export_col_is_guest' => 'Guest',
+        'export_col_timestamp' => 'Registration date',
+        'export_yes' => 'Yes',
+        'export_no' => 'No',
     ],
 
     // Users

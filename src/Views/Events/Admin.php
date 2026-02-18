@@ -54,7 +54,7 @@ assert(is_int($id));
             content: new Card(
                 title: $formattedDate . ': ' . $event->name . ' · ' . ($event->mixed ? __('events.mixed') : __('events.separate')),
                 content: new Table(
-                    ['Name', 'Max. Teilnehmer', '', '', ''],
+                    ['Name', 'Max. Teilnehmer', '', '', '', ''],
                     [$event],
                     fn($event) => [
                         new Input(
@@ -100,9 +100,16 @@ assert(is_int($id));
                             color: Color::Light,
                             icon: 'fa-unlock',
                             confirmMessage: __('events.lock_confirm'),
-                        )
+                        ),
+                        new IconButton(
+                            title: __('events.export'),
+                            onClick: "window.location.href='/events/$id/export'",
+                            icon: 'fa-download',
+                            type: 'button',
+                            color: Color::Light,
+                        ),
                     ],
-                    widths: [null, null, 1, 1, 1]
+                    widths: [null, null, 1, 1, 1, 1]
                 )
             )
         );

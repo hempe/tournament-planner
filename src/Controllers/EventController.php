@@ -206,6 +206,59 @@ final class EventController
         }
     }
 
+    #[Get('/{id}/export')]
+    #[Middleware(AdminMiddleware::class)]
+    public function export(Request $request, array $params): Response
+    {
+        $eventId = (int) $params['id'];
+        $userId = User::id();
+
+        if ($userId === null) {
+            return Response::unauthorized();
+        }
+
+        $event = DB::$events->get($eventId, $userId);
+
+        if (!$event) {
+            return Response::notFound(__('events.not_found'));
+        }
+
+        $registrations = DB::$events->registrations($eventId);
+        $guests = DB::$guests->allForEvent($eventId);
+
+        $csvField = fn(string $s): string => '"' . str_replace('"', '""', $s) . '"';
+        $isoDate = fn(string $ts): string => (new \DateTime($ts))->format('Y-m-d\TH:i:s');
+        $filename = preg_replace('/[^A-Za-z0-9_\-]/', '_', $event->date . '_' . $event->name) . '.csv';
+
+        $rows = [];
+        $rows[] = implode(',', [
+            $csvField(__('events.export_col_name')),
+            $csvField(__('events.export_col_is_guest')),
+            $csvField(__('events.export_col_timestamp')),
+        ]);
+
+        foreach ($registrations as $reg) {
+            $rows[] = implode(',', [
+                $csvField($reg->name),
+                $csvField(__('events.export_no')),
+                $csvField($isoDate($reg->timestamp)),
+            ]);
+        }
+
+        foreach ($guests as $guest) {
+            $rows[] = implode(',', [
+                $csvField($guest->firstName . ' ' . $guest->lastName),
+                $csvField(__('events.export_yes')),
+                $csvField($isoDate($guest->timestamp)),
+            ]);
+        }
+
+        return Response::ok("\xEF\xBB\xBF" . implode("\r\n", $rows), [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
+    }
+
     #[Post('/{id}/lock')]
     #[Middleware(AdminMiddleware::class)]
     public function lock(Request $request, array $params): Response
