@@ -147,5 +147,49 @@ use TP\Components\InputAction;
                 )
             );
         }
+
+        $guests = DB::$guests->allForEvent($id);
+
+        yield new Card(
+            [
+                "<span style=\"flex-grow:1\">" . __('guests.title') . "</span>",
+                new IconButton(
+                    title: __('guests.add'),
+                    onClick: "window.location.href='/events/$id/guests/new'",
+                    icon: 'fa-user-plus',
+                    type: 'button',
+                    color: Color::Primary,
+                ),
+            ],
+            count($guests) > 0
+                ? new Table(
+                    [__('guests.first_name'), __('guests.last_name'), __('guests.email'), __('guests.handicap'), __('guests.rfeg'), __('guests.comment'), '', ''],
+                    $guests,
+                    fn($guest) => [
+                        $guest->firstName,
+                        $guest->lastName,
+                        $guest->email,
+                        $guest->handicap,
+                        $guest->rfeg ?? '',
+                        $guest->comment ?? '',
+                        new IconButton(
+                            title: __('events.edit'),
+                            onClick: "window.location.href='/events/$id/guests/{$guest->id}/edit'",
+                            icon: 'fa-edit',
+                            type: 'button',
+                            color: Color::Light,
+                        ),
+                        new IconActionButton(
+                            actionUrl: "/events/$id/guests/{$guest->id}/delete",
+                            title: __('events.delete'),
+                            color: Color::Accent,
+                            icon: 'fa-trash',
+                            confirmMessage: __('guests.delete_confirm'),
+                        ),
+                    ],
+                    widths: [null, null, null, 1, null, null, 1, 1]
+                )
+                : ''
+        );
     }
 );

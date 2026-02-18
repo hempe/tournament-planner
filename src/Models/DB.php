@@ -13,6 +13,7 @@ final class DB
 {
     public static EventRepository $events;
     public static UserRepository $users;
+    public static GuestRepository $guests;
     private static mysqli $conn;
 
     public static function initialize(): void
@@ -20,6 +21,7 @@ final class DB
         self::$conn = self::createConnection();
         self::$events = new EventRepository(self::$conn);
         self::$users = new UserRepository(self::$conn);
+        self::$guests = new GuestRepository(self::$conn);
     }
 
     private static function createConnection(): mysqli

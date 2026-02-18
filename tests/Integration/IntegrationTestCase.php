@@ -132,6 +132,7 @@ abstract class IntegrationTestCase extends TestCase
     {
         $conn = DB::getConnection();
         $conn->query("SET FOREIGN_KEY_CHECKS = 0");
+        $conn->query("TRUNCATE TABLE event_guests");
         $conn->query("TRUNCATE TABLE event_users");
         $conn->query("TRUNCATE TABLE events");
         $conn->query("TRUNCATE TABLE users");

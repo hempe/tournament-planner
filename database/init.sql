@@ -29,3 +29,16 @@ CREATE TABLE IF NOT EXISTS event_users (
 );
 
 ALTER TABLE event_users ADD UNIQUE KEY unique_user_event (userId, eventId);
+
+CREATE TABLE IF NOT EXISTS event_guests (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    event_id INT NOT NULL,
+    first_name VARCHAR(255) NOT NULL,
+    last_name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    handicap DECIMAL(4,1) NOT NULL,
+    rfeg VARCHAR(255),
+    comment VARCHAR(2048),
+    timestamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT FK_GUEST_EVENT FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
+);

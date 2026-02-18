@@ -1,6 +1,5 @@
 <?php
 
-use TP\Core\Log;
 use TP\Models\DB;
 use TP\Components\Page;
 use TP\Components\Table;
@@ -12,6 +11,7 @@ use TP\Components\InputAction;
 use TP\Components\IconActionButton;
 use TP\Models\EventRegistration;
 use TP\Models\User;
+use TP\Models\EventGuest;
 
 ?>
 
@@ -99,7 +99,7 @@ use TP\Models\User;
                 return;
             }
             yield new Table(
-                columns: [$event->isLocked ? __('events.locked_message') : __('events.comment'), ''],
+                columns: [$event->isLocked ? __('events.locked_message') : __('events.comment_update'), ''],
                 items: [User::current()],
                 projection: fn($user) => [
                     new InputAction(
@@ -142,6 +142,18 @@ use TP\Models\User;
                     $user->name . ($user->state == 1 ? '' : ' (' . __('events.waitlist') . ')'),
                 ],
 
+            )
+        );
+    }
+
+    $guests = DB::$guests->allForEvent($event->id);
+    if (count($guests) > 0) {
+        yield new Card(
+            __('guests.title'),
+            new Table(
+                [''],
+                $guests,
+                fn(EventGuest $guest) => [$guest->firstName . ' ' . $guest->lastName],
             )
         );
     }

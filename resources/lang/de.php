@@ -86,6 +86,7 @@ return [
         'not_found' => 'Anlass nicht gefunden',
         'lock_success' => 'Anlass gesperrt',
         'unlock_success' => 'Anlass entsperrt',
+        'comment_update' => 'Kommentar aktualisiern',
         'comment_update_success' => 'Kommentar aktualisiert',
         'comment_update_confirm' => 'Kommentar aktuallisieren?',
         'confirmed' => 'Bestätigt',
@@ -219,6 +220,25 @@ return [
             'saturday' => 'Samstag',
             'sunday' => 'Sonntag',
         ],
+    ],
+
+    // Guests
+    'guests' => [
+        'title' => 'Gäste',
+        'add' => 'Gast hinzufügen',
+        'edit' => 'Gast bearbeiten',
+        'first_name' => 'Vorname',
+        'last_name' => 'Nachname',
+        'email' => 'eMail',
+        'handicap' => 'Handicap',
+        'rfeg' => 'Fed. Española',
+        'comment' => 'Kommentar',
+        'register' => 'Als Gast anmelden',
+        'register_success' => 'Erfolgreich als Gast angemeldet',
+        'update_success' => 'Gast erfolgreich aktualisiert',
+        'delete_success' => 'Gast erfolgreich gelöscht',
+        'delete_confirm' => 'Gast definitiv löschen?',
+        'not_found' => 'Gast nicht gefunden',
     ],
 
     // Time

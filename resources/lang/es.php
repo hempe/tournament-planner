@@ -86,6 +86,7 @@ return [
         'not_found' => 'Evento no encontrado',
         'lock_success' => 'Evento bloqueado',
         'unlock_success' => 'Evento desbloqueado',
+        'comment_update' => 'Actualizar comentario',
         'comment_update_success' => 'Comentario actualizado',
         'comment_update_confirm' => '¿Actualizar comentario?',
         'confirmed' => 'Confirmado',
@@ -219,6 +220,25 @@ return [
             'saturday' => 'Sábado',
             'sunday' => 'Domingo',
         ],
+    ],
+
+    // Guests
+    'guests' => [
+        'title' => 'Invitados',
+        'add' => 'Añadir Invitado',
+        'edit' => 'Editar Invitado',
+        'first_name' => 'Nombre',
+        'last_name' => 'Apellido',
+        'email' => 'Correo electrónico',
+        'handicap' => 'Handicap',
+        'rfeg' => 'Fed. Española',
+        'comment' => 'Comentario',
+        'register' => 'Registrarse como invitado',
+        'register_success' => 'Registrado correctamente como invitado',
+        'update_success' => 'Invitado actualizado correctamente',
+        'delete_success' => 'Invitado eliminado correctamente',
+        'delete_confirm' => '¿Eliminar invitado permanentemente?',
+        'not_found' => 'Invitado no encontrado',
     ],
 
     // Time

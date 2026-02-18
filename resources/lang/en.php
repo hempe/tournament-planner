@@ -86,6 +86,7 @@ return [
         'not_found' => 'Event not found',
         'lock_success' => 'Event locked',
         'unlock_success' => 'Event unlocked',
+        'comment_update' => 'Update comment',
         'comment_update_success' => 'Comment updated',
         'comment_update_confirm' => 'Update comment?',
         'confirmed' => 'Confirmed',
@@ -219,6 +220,25 @@ return [
             'saturday' => 'Saturday',
             'sunday' => 'Sunday',
         ],
+    ],
+
+    // Guests
+    'guests' => [
+        'title' => 'Guests',
+        'add' => 'Add Guest',
+        'edit' => 'Edit Guest',
+        'first_name' => 'First Name',
+        'last_name' => 'Last Name',
+        'email' => 'Email',
+        'handicap' => 'Handicap',
+        'rfeg' => 'Fed. Española',
+        'comment' => 'Comment',
+        'register' => 'Register as Guest',
+        'register_success' => 'Successfully registered as guest',
+        'update_success' => 'Guest updated successfully',
+        'delete_success' => 'Guest deleted successfully',
+        'delete_confirm' => 'Permanently delete guest?',
+        'not_found' => 'Guest not found',
     ],
 
     // Time
