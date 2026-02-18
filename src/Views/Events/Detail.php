@@ -9,14 +9,17 @@ use TP\Components\Icon;
 use TP\Components\IconButton;
 use TP\Components\InputAction;
 use TP\Components\IconActionButton;
+use TP\Core\Translator;
 use TP\Models\EventRegistration;
 use TP\Models\User;
 use TP\Models\EventGuest;
 
+assert(is_int($id));
+
 ?>
 
 <?= new Page(function () use ($id) {
-    $formatter = new \IntlDateFormatter('de_DE', \IntlDateFormatter::FULL, \IntlDateFormatter::NONE);
+    $formatter = new \IntlDateFormatter(Translator::getInstance()->getLocale(), \IntlDateFormatter::FULL, \IntlDateFormatter::NONE);
 
     $event = DB::$events->get(
         $id,

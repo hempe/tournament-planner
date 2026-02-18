@@ -32,7 +32,7 @@ final class HomeController
             $eventRenderer = fn($event) => new GuestCalendarEvent($event);
             ob_start();
             require __DIR__ . '/../Layout/header.php';
-            require __DIR__ . '/../Views/Guest/Home.php';
+            require __DIR__ . '/../Views/Guests/Home.php';
             require __DIR__ . '/../Layout/footer.php';
             $content = ob_get_clean();
         }

@@ -1,16 +1,20 @@
 <?php
 
 use TP\Components\Color;
-use TP\Components\IconActionButton;
+use TP\Components\IconButton;
 use TP\Components\Page;
 use TP\Components\Table;
 use TP\Components\Card;
 use TP\Components\Form;
+use TP\Core\Translator;
 use TP\Models\User;
+use TP\Models\Event;
+
+assert($event instanceof Event);
 
 ?>
 <?= new Page(function () use ($event) {
-    $formatter = new IntlDateFormatter('de_DE', IntlDateFormatter::FULL, IntlDateFormatter::NONE);
+    $formatter = new IntlDateFormatter(Translator::getInstance()->getLocale(), IntlDateFormatter::FULL, IntlDateFormatter::NONE);
     $formattedDate = $formatter->format(strtotime($event->date));
 
     $isAdmin = User::admin();
@@ -39,17 +43,17 @@ use TP\Models\User;
                     6 => [__('guests.comment'), '<textarea name="comment" class="input" placeholder="' . __('guests.comment') . '"></textarea>'],
                     7 => [
                         '',
-                        new IconActionButton(
-                            actionUrl: $action,
+                        new IconButton(
+                            type: 'submit',
                             title: __('guests.register'),
-                            //type: 'submit',
-
+                            title_inline: true,
                             icon: 'fa-user-plus',
                             color: Color::Primary,
+                            style: 'width:100%'
                         )
                     ],
                 },
-                widths: [1, null]
+                widths: [150, null]
             )
         )
     );

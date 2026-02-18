@@ -8,7 +8,6 @@ use TP\Components\Div;
 use TP\Components\Card;
 use TP\Components\CalendarEvent;
 use TP\Components\Color;
-use TP\Components\Icon;
 use TP\Components\IconActionButton;
 use TP\Models\Event;
 use TP\Models\User;
@@ -83,8 +82,9 @@ class Calendar extends Component
      */
     public function formattedDate(): string
     {
+
         $date = $this->_active->time;
-        $formatter = new \IntlDateFormatter('de_DE', \IntlDateFormatter::FULL, \IntlDateFormatter::FULL);
+        $formatter = new \IntlDateFormatter(Translator::getInstance()->getLocale(), \IntlDateFormatter::FULL, \IntlDateFormatter::FULL);
         $formatter->setPattern('LLLL Y');
         return $formatter->format($date);
     }

@@ -78,7 +78,7 @@ class Page extends Component
         $languageOptions = '';
         foreach ($languages as $locale => $name) {
             $selected = $locale === $currentLocale ? 'selected' : '';
-            $languageOptions .= "<option style='color:black;' value=\"{$locale}\" {$selected}>{$name}</option>";
+            $languageOptions .= "<option value=\"{$locale}\" {$selected}>{$name}</option>";
         }
 
         echo <<<HTML
@@ -118,7 +118,7 @@ class Page extends Component
         function switchLanguage(locale) {
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = '{$formAction};
+            form.action = '{$formAction}';
 
             const csrfInput = document.createElement('input');
             csrfInput.type = 'hidden';

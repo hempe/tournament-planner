@@ -435,3 +435,7 @@ textarea {
   /* Not sure what to do with the language selection */
   display: none;
 }
+
+option {
+  color: black;
+}

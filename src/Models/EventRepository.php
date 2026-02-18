@@ -310,7 +310,7 @@ final class EventRepository extends BaseRepository
     }
 
     /**
-     * Fetch events without user context (for guest/unauthenticated views).
+     * Fetch events without user context (for guests/unauthenticated views).
      * userId 0 will never match, so userState is always 0.
      *
      * @return Event[]

@@ -6,6 +6,11 @@ use TP\Components\Table;
 use TP\Components\Card;
 use TP\Components\IconButton;
 use TP\Components\Form;
+use TP\Models\Event;
+use TP\Models\EventGuest;
+
+assert($event instanceof Event);
+assert($guest instanceof EventGuest);
 
 ?>
 <?= new Page(function () use ($event, $guest) {
@@ -34,14 +39,19 @@ use TP\Components\Form;
                     4 => [__('guests.handicap'), '<input type="number" step="0.1" name="handicap" class="input" value="' . htmlspecialchars($guest->handicap !== null ? (string) $guest->handicap : '') . '" placeholder="' . __('guests.handicap') . '">'],
                     5 => [__('guests.rfeg'), '<input type="text" name="rfeg" class="input" value="' . htmlspecialchars($guest->rfeg ?? '') . '" placeholder="' . __('guests.rfeg') . '">'],
                     6 => [__('guests.comment'), '<textarea name="comment" class="input" placeholder="' . __('guests.comment') . '">' . htmlspecialchars($guest->comment ?? '') . '</textarea>'],
-                    7 => ['', new IconButton(
-                        title: __('events.save'),
-                        type: 'submit',
-                        icon: 'fa-save',
-                        color: Color::Primary,
-                    )],
+                    7 => [
+                        '',
+                        new IconButton(
+                            type: 'submit',
+                            title: __('events.save'),
+                            title_inline: true,
+                            icon: 'fa-save',
+                            color: Color::Primary,
+                            style: 'width:100%'
+                        )
+                    ],
                 },
-                widths: [1, null]
+                widths: [150, null]
             )
         )
     );

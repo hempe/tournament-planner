@@ -1,6 +1,5 @@
 <?php
 
-use TP\Core\Log;
 use TP\Models\DB;
 use TP\Components\Color;
 use TP\Components\Page;
@@ -12,11 +11,14 @@ use TP\Components\Input;
 use TP\Components\IconActionButton;
 use TP\Components\EventRegistrations;
 use TP\Components\InputAction;
+use TP\Core\Translator;
+
+assert(is_int($id));
 
 ?>
 <?= new Page(
     function () use ($id) {
-        $formatter = new IntlDateFormatter('de_DE', IntlDateFormatter::FULL, IntlDateFormatter::NONE);
+        $formatter = new IntlDateFormatter(Translator::getInstance()->getLocale(), IntlDateFormatter::FULL, IntlDateFormatter::NONE);
 
         $event = DB::$events->get(
             $id,
@@ -119,7 +121,7 @@ use TP\Components\InputAction;
         }
 
         $users = DB::$events->availableUsers($id);
-        $formatter = new IntlDateFormatter('de_DE', IntlDateFormatter::FULL, IntlDateFormatter::NONE);
+        $formatter = new IntlDateFormatter(Translator::getInstance()->getLocale(), IntlDateFormatter::FULL, IntlDateFormatter::NONE);
 
         if (count($users) && !$event->isLocked) {
             yield new Card(
@@ -162,34 +164,34 @@ use TP\Components\InputAction;
                 ),
             ],
             count($guests) > 0
-                ? new Table(
-                    [__('guests.first_name'), __('guests.last_name'), __('guests.email'), __('guests.handicap'), __('guests.rfeg'), __('guests.comment'), '', ''],
-                    $guests,
-                    fn($guest) => [
-                        $guest->firstName,
-                        $guest->lastName,
-                        $guest->email,
-                        $guest->handicap,
-                        $guest->rfeg ?? '',
-                        $guest->comment ?? '',
-                        new IconButton(
-                            title: __('events.edit'),
-                            onClick: "window.location.href='/events/$id/guests/{$guest->id}/edit'",
-                            icon: 'fa-edit',
-                            type: 'button',
-                            color: Color::Light,
-                        ),
-                        new IconActionButton(
-                            actionUrl: "/events/$id/guests/{$guest->id}/delete",
-                            title: __('events.delete'),
-                            color: Color::Accent,
-                            icon: 'fa-trash',
-                            confirmMessage: __('guests.delete_confirm'),
-                        ),
-                    ],
-                    widths: [null, null, null, 1, null, null, 1, 1]
-                )
-                : ''
+            ? new Table(
+                [__('guests.first_name'), __('guests.last_name'), __('guests.email'), __('guests.handicap'), __('guests.rfeg'), __('guests.comment'), '', ''],
+                $guests,
+                fn($guest) => [
+                    $guest->firstName,
+                    $guest->lastName,
+                    $guest->email,
+                    $guest->handicap,
+                    $guest->rfeg ?? '',
+                    $guest->comment ?? '',
+                    new IconButton(
+                        title: __('events.edit'),
+                        onClick: "window.location.href='/events/$id/guests/{$guest->id}/edit'",
+                        icon: 'fa-edit',
+                        type: 'button',
+                        color: Color::Light,
+                    ),
+                    new IconActionButton(
+                        actionUrl: "/events/$id/guests/{$guest->id}/delete",
+                        title: __('events.delete'),
+                        color: Color::Accent,
+                        icon: 'fa-trash',
+                        confirmMessage: __('guests.delete_confirm'),
+                    ),
+                ],
+                widths: [null, null, null, 1, null, null, 1, 1]
+            )
+            : ''
         );
     }
 );

@@ -6,10 +6,11 @@ use TP\Components\Table;
 use TP\Components\Card;
 use TP\Components\IconButton;
 use TP\Components\Form;
+use TP\Core\Translator;
 
 ?>
 <?= new Page(function () {
-    $formatter = new IntlDateFormatter('de_DE', IntlDateFormatter::FULL, IntlDateFormatter::NONE);
+    $formatter = new IntlDateFormatter(Translator::getInstance()->getLocale(), IntlDateFormatter::FULL, IntlDateFormatter::NONE);
     return new Form(
         action: "/events/new",
         hiddenInputs: ['date' => $_GET['date']],
