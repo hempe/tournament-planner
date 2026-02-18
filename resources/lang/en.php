@@ -90,6 +90,8 @@ return [
         'comment_update_confirm' => 'Update comment?',
         'confirmed' => 'Confirmed',
         'waitlist' => 'Waitlist',
+        'available' => 'Available',
+        'full' => 'Full',
         'waitlist_available' => 'Waitlist available',
         'on_waitlist' => 'On waitlist',
         'join_waitlist' => 'Join waitlist?',

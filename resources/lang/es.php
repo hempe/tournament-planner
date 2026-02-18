@@ -90,6 +90,8 @@ return [
         'comment_update_confirm' => '¿Actualizar comentario?',
         'confirmed' => 'Confirmado',
         'waitlist' => 'Lista de espera',
+        'available' => 'Disponible',
+        'full' => 'Completo',
         'waitlist_available' => 'Lista de espera disponible',
         'on_waitlist' => 'En lista de espera',
         'join_waitlist' => '¿Unirse a la lista de espera?',

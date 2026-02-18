@@ -308,4 +308,22 @@ final class EventRepository extends BaseRepository
             [$userId]
         );
     }
+
+    /**
+     * Fetch events without user context (for guest/unauthenticated views).
+     * userId 0 will never match, so userState is always 0.
+     *
+     * @return Event[]
+     */
+    public function allForGuest(?DateTime $date = null): array
+    {
+        $query = self::QUERY_ALL_EVENTS;
+
+        if ($date) {
+            $query .= " AND MONTH(e.date) = ? AND YEAR(e.date) = ?";
+            return $this->fetchEvents($query, 'iii', [0, (int) $date->format('m'), (int) $date->format('Y')]);
+        }
+
+        return $this->fetchEvents($query, 'i', [0]);
+    }
 }

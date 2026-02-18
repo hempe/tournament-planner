@@ -34,13 +34,16 @@ class Calendar extends Component
     /** @var Event[] */
     private readonly array $_events;
 
+    private readonly \Closure $eventRenderer;
+
     /**
      * Calendar constructor.
      *
      * @param \DateTime $date The date for the calendar.
      * @param array $events List of events for the calendar.
+     * @param callable|null $eventRenderer Optional renderer; defaults to CalendarEvent.
      */
-    public function __construct(\DateTime $date, array $events)
+    public function __construct(\DateTime $date, array $events, ?callable $eventRenderer = null)
     {
         $this->_active = new CalendarDay(
             $date ? $date->format('d') : date('d'),
@@ -49,6 +52,7 @@ class Calendar extends Component
             true
         );
         $this->_events = $events;
+        $this->eventRenderer = \Closure::fromCallable($eventRenderer ?? fn(Event $event) => new CalendarEvent($event));
     }
 
     /**
@@ -257,7 +261,7 @@ class Calendar extends Component
                                                 yield "<span>{$day->day}</span>";
 
                                                 foreach ($events as $event) {
-                                                    yield new CalendarEvent($event);
+                                                    yield ($this->eventRenderer)($event);
                                                 }
 
                                                 if (User::admin() && $day->active)

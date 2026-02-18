@@ -90,6 +90,8 @@ return [
         'comment_update_confirm' => 'Kommentar aktuallisieren?',
         'confirmed' => 'Bestätigt',
         'waitlist' => 'Warteliste',
+        'available' => 'Verfügbar',
+        'full' => 'Ausgebucht',
         'waitlist_available' => 'Warteliste verfügbar',
         'on_waitlist' => 'Auf Warteliste',
         'join_waitlist' => 'Auf Warteliste setzen?',
