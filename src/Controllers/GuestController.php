@@ -13,6 +13,7 @@ use TP\Core\Attributes\Post;
 use TP\Core\Attributes\Middleware;
 use TP\Middleware\AdminMiddleware;
 use TP\Models\DB;
+use TP\Models\User;
 use Exception;
 
 #[RoutePrefix('/events')]
@@ -20,12 +21,15 @@ final class GuestController
 {
     private function validationRules(): array
     {
+        $emailRules = User::admin() ? ['email', 'max' => 255] : ['required', 'email', 'max' => 255];
+        $handicapRules = User::admin() ? ['string'] : ['required', 'string'];
+
         return [
             new ValidationRule('male', ['required', 'boolean']),
             new ValidationRule('first_name', ['required', 'string', 'max' => 255]),
             new ValidationRule('last_name', ['required', 'string', 'max' => 255]),
-            new ValidationRule('email', ['required', 'email', 'max' => 255]),
-            new ValidationRule('handicap', ['required', 'string']),
+            new ValidationRule('email', $emailRules),
+            new ValidationRule('handicap', $handicapRules),
             new ValidationRule('rfeg', ['string', 'max' => 255]),
             new ValidationRule('comment', ['string', 'max' => 2048]),
         ];
@@ -69,8 +73,8 @@ final class GuestController
                 (bool) $data['male'],
                 $data['first_name'],
                 $data['last_name'],
-                $data['email'],
-                (float) $data['handicap'],
+                $data['email'] !== '' ? $data['email'] : null,
+                isset($data['handicap']) && $data['handicap'] !== '' ? (float) $data['handicap'] : null,
                 $data['rfeg'] ?? null,
                 $data['comment'] ?? null,
             );
@@ -130,8 +134,8 @@ final class GuestController
                 (bool) $data['male'],
                 $data['first_name'],
                 $data['last_name'],
-                $data['email'],
-                (float) $data['handicap'],
+                $data['email'] !== '' ? $data['email'] : null,
+                isset($data['handicap']) && $data['handicap'] !== '' ? (float) $data['handicap'] : null,
                 $data['rfeg'] ?? null,
                 $data['comment'] ?? null,
             );

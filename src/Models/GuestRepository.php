@@ -14,8 +14,8 @@ final class GuestRepository extends BaseRepository
             (bool) $row['male'],
             $row['first_name'],
             $row['last_name'],
-            $row['email'],
-            (float) $row['handicap'],
+            $row['email'] ?? null,
+            isset($row['handicap']) ? (float) $row['handicap'] : null,
             $row['rfeg'] ?? null,
             $row['comment'] ?? null,
             $row['timestamp'],
@@ -49,8 +49,8 @@ final class GuestRepository extends BaseRepository
         bool $male,
         string $firstName,
         string $lastName,
-        string $email,
-        float $handicap,
+        ?string $email,
+        ?float $handicap,
         ?string $rfeg,
         ?string $comment
     ): int {
@@ -70,8 +70,8 @@ final class GuestRepository extends BaseRepository
         bool $male,
         string $firstName,
         string $lastName,
-        string $email,
-        float $handicap,
+        ?string $email,
+        ?float $handicap,
         ?string $rfeg,
         ?string $comment
     ): void {
