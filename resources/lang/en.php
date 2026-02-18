@@ -114,6 +114,9 @@ return [
         'bulk_no_events_message' => 'No events were found matching the specified criteria.',
         'bulk_create_success' => ':count events created successfully.',
         'bulk_session_expired' => 'Session expired. Please start over.',
+        'mixed' => 'Mixed',
+        'separate' => 'Separate',
+        'play_together' => 'Ladies & Gents together',
     ],
 
     // Users

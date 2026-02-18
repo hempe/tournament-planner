@@ -17,7 +17,8 @@ final class Event
         public readonly int $capacity,
         public readonly int $joined,
         public readonly int $onWaitList,
-        public readonly int $userState
+        public readonly int $userState,
+        public readonly bool $mixed = true,
     ) {
         $this->available = $capacity - $joined;
     }

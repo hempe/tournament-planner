@@ -10,7 +10,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+  background: radial-gradient(ellipse farthest-corner at center,
+      rgba(0, 0, 0, 0.5) 0%,
+      rgba(0, 0, 0, 0.0) 75%,
+      transparent 100%);
   z-index: 1000;
 }
 
@@ -20,8 +23,9 @@
   width: 90%;
 }
 
-.custom-error-content > .card {
+.custom-error-content>.card {
   background: var(--bg);
+  border-radius: 8px !important;
 }
 
 .custom-error-message {

@@ -114,6 +114,9 @@ return [
         'bulk_no_events_message' => 'No se encontraron eventos que coincidan con los criterios especificados.',
         'bulk_create_success' => ':count eventos creados correctamente.',
         'bulk_session_expired' => 'Sesión expirada. Por favor, comience de nuevo.',
+        'mixed' => 'Mixto',
+        'separate' => 'Separado',
+        'play_together' => 'Damas y caballeros juntos',
     ],
 
     // Users
@@ -234,7 +237,7 @@ return [
         'last_name' => 'Apellido',
         'email' => 'Correo electrónico',
         'handicap' => 'Handicap',
-        'rfeg' => 'Fed. Española',
+        'rfeg' => 'RFeg',
         'comment' => 'Comentario',
         'register' => 'Registrarse como invitado',
         'register_success' => 'Registrado correctamente como invitado',

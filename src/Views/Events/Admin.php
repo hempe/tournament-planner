@@ -51,7 +51,7 @@ assert(is_int($id));
         yield new Form(
             action: "/events/$id",
             content: new Card(
-                title: $formattedDate . ': ' . $event->name,
+                title: $formattedDate . ': ' . $event->name . ' · ' . ($event->mixed ? __('events.mixed') : __('events.separate')),
                 content: new Table(
                     ['Name', 'Max. Teilnehmer', '', '', ''],
                     [$event],
@@ -120,36 +120,6 @@ assert(is_int($id));
             );
         }
 
-        $users = DB::$events->availableUsers($id);
-        $formatter = new IntlDateFormatter(Translator::getInstance()->getLocale(), IntlDateFormatter::FULL, IntlDateFormatter::NONE);
-
-        if (count($users) && !$event->isLocked) {
-            yield new Card(
-                __('auth.not_registered'),
-                new Table(
-                    [__('events.user'), __('events.comment')],
-                    $users,
-                    function ($user) use ($id, $eventFull, $queryString) {
-                        return [
-                            $user->username,
-                            new InputAction(
-                                actionUrl: "/events/$id/register{$queryString}",
-                                inputName: 'comment',
-                                inputValue: '',
-                                title: $eventFull ? __('events.waitlist') : __('events.register'),
-                                icon: 'fa-user-plus',
-                                inputPlaceholder: __('events.comment'),
-                                color: $eventFull ? Color::Accent : Color::Primary,
-                                confirmMessage: $eventFull ? __('auth.register_user_waitlist', ['username' => $user->username]) : __('auth.register_user', ['username' => $user->username]),
-                                hiddenInputs: ['userId' => $user->id]
-                            ),
-                        ];
-                    },
-                    widths: [200, null]
-                )
-            );
-        }
-
         $guests = DB::$guests->allForEvent($id);
 
         yield new Card(
@@ -193,5 +163,35 @@ assert(is_int($id));
             )
             : ''
         );
+
+        $users = DB::$events->availableUsers($id);
+        $formatter = new IntlDateFormatter(Translator::getInstance()->getLocale(), IntlDateFormatter::FULL, IntlDateFormatter::NONE);
+
+        if (count($users) && !$event->isLocked) {
+            yield new Card(
+                __('auth.not_registered'),
+                new Table(
+                    [__('events.user'), __('events.comment')],
+                    $users,
+                    function ($user) use ($id, $eventFull, $queryString) {
+                        return [
+                            $user->username,
+                            new InputAction(
+                                actionUrl: "/events/$id/register{$queryString}",
+                                inputName: 'comment',
+                                inputValue: '',
+                                title: $eventFull ? __('events.waitlist') : __('events.register'),
+                                icon: 'fa-user-plus',
+                                inputPlaceholder: __('events.comment'),
+                                color: $eventFull ? Color::Accent : Color::Primary,
+                                confirmMessage: $eventFull ? __('auth.register_user_waitlist', ['username' => $user->username]) : __('auth.register_user', ['username' => $user->username]),
+                                hiddenInputs: ['userId' => $user->id]
+                            ),
+                        ];
+                    },
+                    widths: [200, null]
+                )
+            );
+        }
     }
 );

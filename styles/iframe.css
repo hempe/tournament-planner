@@ -303,3 +303,15 @@ fieldset>button {
 button>span {
     margin-top: 4px;
 }
+
+.custom-success-content>.card,
+.custom-error-content>.card,
+.custom-confirm-content>.card {
+    padding-top: 8px !important;
+}
+
+.custom-success-content>.card>*>button:not(:has(i)),
+.custom-error-content>.card>*>button:not(:has(i)),
+.custom-confirm-content>.card>*>button:not(:has(i)) {
+    padding: 8px 14px 4px 12px !important;
+}

@@ -114,6 +114,9 @@ return [
         'bulk_no_events_message' => 'Es wurden keine Termine gefunden, die den angegebenen Kriterien entsprechen.',
         'bulk_create_success' => ':count Termine erfolgreich erstellt.',
         'bulk_session_expired' => 'Sitzung abgelaufen. Bitte beginnen Sie von vorne.',
+        'mixed' => 'Gemischt',
+        'separate' => 'Getrennt',
+        'play_together' => 'Damen & Herren gemeinsam',
     ],
 
     // Users
@@ -234,7 +237,7 @@ return [
         'last_name' => 'Nachname',
         'email' => 'eMail',
         'handicap' => 'Handicap',
-        'rfeg' => 'Fed. Española',
+        'rfeg' => 'RFeg',
         'comment' => 'Kommentar',
         'register' => 'Als Gast anmelden',
         'register_success' => 'Erfolgreich als Gast angemeldet',

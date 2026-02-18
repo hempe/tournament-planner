@@ -10,7 +10,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgba(0, 0, 0, 0.5);
+  background: radial-gradient(ellipse farthest-corner at center,
+      rgba(0, 0, 0, 0.5) 0%,
+      rgba(0, 0, 0, 0.0) 75%,
+      transparent 100%);
   /* Semi-transparent overlay */
   z-index: 1000;
 }
@@ -23,7 +26,9 @@
 
 .custom-success-content>.card {
   background: var(--bg);
+  border-radius: 8px !important;
 }
+
 
 .custom-success-message {
   padding: 12px;

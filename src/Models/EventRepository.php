@@ -16,6 +16,7 @@ final class EventRepository extends BaseRepository
                 e.name,
                 e.date,
                 e.capacity,
+                e.mixed,
                 (SELECT COUNT(*)
                     FROM event_users
                     WHERE state = 1 AND eventId = e.id) AS joined,
@@ -42,7 +43,8 @@ final class EventRepository extends BaseRepository
             (int) $row['capacity'],
             (int) $row['joined'],
             (int) $row['waitList'],
-            (int) $row['userState']
+            (int) $row['userState'],
+            (bool) $row['mixed'],
         );
     }
 
@@ -86,13 +88,13 @@ final class EventRepository extends BaseRepository
         $this->fix($id);
     }
 
-    public function add(string $name, string $date, int $capacity, bool $locked = false): int
+    public function add(string $name, string $date, int $capacity, bool $locked = false, bool $mixed = true): int
     {
         $now = (new DateTime())->format('Y-m-d H:i:s');
         $this->executeUpdateQuery(
-            "INSERT INTO events (name, date, capacity, locked, timestamp) VALUES (?, ?, ?, ?, ?)",
-            "ssiis",
-            [$name, $date, $capacity, $locked ? 1 : 0, $now]
+            "INSERT INTO events (name, date, capacity, locked, mixed, timestamp) VALUES (?, ?, ?, ?, ?, ?)",
+            "sssiis",
+            [$name, $date, $capacity, $locked ? 1 : 0, $mixed ? 1 : 0, $now]
         );
 
         $eventId = $this->fetchSingleValue("SELECT LAST_INSERT_ID()", "", []);

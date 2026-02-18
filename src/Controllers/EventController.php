@@ -115,6 +115,7 @@ final class EventController
             new ValidationRule('name', ['required', 'string', 'max' => 255]),
             new ValidationRule('date', ['required', 'date']),
             new ValidationRule('capacity', ['required', 'integer', 'min' => 1]),
+            new ValidationRule('mixed', ['boolean']),
         ]);
 
         if (!$validation->isValid) {
@@ -124,7 +125,8 @@ final class EventController
 
         try {
             $data = $request->getValidatedData();
-            $eventId = DB::$events->add($data['name'], $data['date'], (int) $data['capacity']);
+            $mixed = ($data['mixed'] ?? '0') === '1';
+            $eventId = DB::$events->add($data['name'], $data['date'], (int) $data['capacity'], false, $mixed);
 
             return Response::redirect("/events/{$eventId}");
         } catch (Exception $e) {
@@ -354,6 +356,7 @@ final class EventController
             new ValidationRule('day_of_week', ['required', 'integer', 'min' => 0, 'max' => 6]),
             new ValidationRule('name', ['required', 'string', 'max' => 255]),
             new ValidationRule('capacity', ['required', 'integer', 'min' => 1]),
+            new ValidationRule('mixed', ['boolean']),
         ]);
 
         if (!$validation->isValid) {
@@ -363,12 +366,14 @@ final class EventController
 
         try {
             $data = $request->getValidatedData();
+            $mixed = ($data['mixed'] ?? '0') === '1';
             $events = $this->calculateRecurringDates(
                 $data['start_date'],
                 $data['end_date'],
                 (int) $data['day_of_week'],
                 $data['name'],
-                (int) $data['capacity']
+                (int) $data['capacity'],
+                $mixed
             );
 
             $_SESSION['bulk_events'] = $events;
@@ -401,7 +406,7 @@ final class EventController
 
         foreach ($events as $event) {
             try {
-                DB::$events->add($event['name'], $event['date'], $event['capacity'], true);
+                DB::$events->add($event['name'], $event['date'], $event['capacity'], true, (bool) ($event['mixed'] ?? true));
                 $successCount++;
             } catch (Exception $e) {
                 $failures[] = "Failed to create event on {$event['date']}: " . $e->getMessage();
@@ -426,7 +431,8 @@ final class EventController
         string $endDate,
         int $dayOfWeek,
         string $name,
-        int $capacity
+        int $capacity,
+        bool $mixed = true
     ): array {
         $start = new \DateTime($startDate);
         $end = new \DateTime($endDate);
@@ -447,6 +453,7 @@ final class EventController
                 'name' => $name,
                 'date' => $current->format('Y-m-d'),
                 'capacity' => $capacity,
+                'mixed' => $mixed,
             ];
             $current->modify('+7 days');
         }

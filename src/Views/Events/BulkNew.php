@@ -15,7 +15,7 @@ use TP\Components\Form;
             __('events.bulk_create'),
             new Table(
                 columns: ['', '', ''],
-                items: [0, 1, 2, 3, 4],
+                items: [0, 1, 2, 3, 4, 5],
                 projection: fn($index) => match($index) {
                     0 => [
                         '<label for="start_date">' . __('events.bulk_start_date') . '</label>',
@@ -49,6 +49,11 @@ use TP\Components\Form;
                     4 => [
                         '<label for="capacity">' . __('events.max_participants') . '</label>',
                         '<input type="number" id="capacity" name="capacity" class="input" min="1" placeholder="' . __('events.max_participants') . '" required>',
+                        ''
+                    ],
+                    5 => [
+                        __('events.play_together'),
+                        '<input type="hidden" name="mixed" value="0"><input type="checkbox" name="mixed" value="1" checked>',
                         new IconButton(
                             title: __('events.bulk_preview'),
                             type: 'submit',

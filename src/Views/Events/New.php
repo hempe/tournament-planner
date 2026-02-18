@@ -17,25 +17,26 @@ use TP\Core\Translator;
         content: new Card(
             "Neuer Termin: " . $formatter->format(strtotime($_GET['date'])),
             new Table(
-                columns: ['', '', ''],
+                columns: ['', '', '', ''],
                 items: [null],
                 projection: fn() => [
                     <<<HTML
-                        <input 
-                            type="text" 
-                            name="name" 
-                            class="input" 
+                        <input
+                            type="text"
+                            name="name"
+                            class="input"
                             placeholder="Name"
                             required>
                     HTML,
                     <<<HTML
-                        <input 
-                            type="number" 
-                            name="capacity" 
-                            class="input" 
-                            placeholder="Max. Teilnehmer" 
+                        <input
+                            type="number"
+                            name="capacity"
+                            class="input"
+                            placeholder="Max. Teilnehmer"
                             required>
                     HTML,
+                    '<input type="hidden" name="mixed" value="0"><label style="display:flex;align-items:center;gap:.4rem;white-space:nowrap"><input type="checkbox" name="mixed" value="1" checked> ' . __('events.play_together') . '</label>',
                     new IconButton(
                         title: 'Speichern',
                         type: 'submit',
