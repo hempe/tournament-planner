@@ -42,14 +42,15 @@ final class UserRepository
         return $taken;
     }
 
-    public function create(string $username, string $password): int
+    public function create(string $username, string $password, bool $male = true): int
     {
         $hashedPassword = Security::getInstance()->hashPassword($password);
-        $stmt = $this->conn->prepare("INSERT INTO users (username, password, admin) VALUES (?, ?, 0)");
+        $maleInt = $male ? 1 : 0;
+        $stmt = $this->conn->prepare("INSERT INTO users (username, password, admin, male) VALUES (?, ?, 0, ?)");
         if (!$stmt) {
             throw new Exception("Prepare statement failed: " . $this->conn->error);
         }
-        $stmt->bind_param("ss", $username, $hashedPassword);
+        $stmt->bind_param("ssi", $username, $hashedPassword, $maleInt);
         $success = $stmt->execute();
         if (!$success) {
             $stmt->close();
@@ -98,7 +99,7 @@ final class UserRepository
     /** @return User[] */
     public function all(): array
     {
-        $stmt = $this->conn->prepare("SELECT id, username, admin FROM users");
+        $stmt = $this->conn->prepare("SELECT id, username, admin, male FROM users");
         if (!$stmt) {
             throw new Exception("Prepare statement failed: " . $this->conn->error);
         }
@@ -107,7 +108,7 @@ final class UserRepository
         $users = [];
 
         while ($row = $result->fetch_assoc()) {
-            $users[] = new User((int) $row['id'], $row['username'], (bool) $row['admin']);
+            $users[] = new User((int) $row['id'], $row['username'], (bool) $row['admin'], (bool) $row['male']);
         }
 
         $stmt->close();
@@ -117,7 +118,7 @@ final class UserRepository
     /** @return array{0: User|null, 1: string|null} */
     public function getWithPassword(string $username): array
     {
-        $stmt = $this->conn->prepare("SELECT id, password, admin FROM users WHERE username = ?");
+        $stmt = $this->conn->prepare("SELECT id, password, admin, male FROM users WHERE username = ?");
         if (!$stmt) {
             throw new Exception("Prepare statement failed: " . $this->conn->error);
         }
@@ -126,7 +127,7 @@ final class UserRepository
         $result = $stmt->get_result();
 
         if ($row = $result->fetch_assoc()) {
-            $user = new User((int) $row['id'], $username, (bool) $row['admin']);
+            $user = new User((int) $row['id'], $username, (bool) $row['admin'], (bool) $row['male']);
             $stmt->close();
             return [$user, $row['password']];
         }

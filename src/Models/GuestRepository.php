@@ -11,6 +11,7 @@ final class GuestRepository extends BaseRepository
         return new EventGuest(
             (int) $row['id'],
             (int) $row['event_id'],
+            (bool) $row['male'],
             $row['first_name'],
             $row['last_name'],
             $row['email'],
@@ -45,6 +46,7 @@ final class GuestRepository extends BaseRepository
 
     public function add(
         int $eventId,
+        bool $male,
         string $firstName,
         string $lastName,
         string $email,
@@ -52,10 +54,11 @@ final class GuestRepository extends BaseRepository
         ?string $rfeg,
         ?string $comment
     ): int {
+        $maleInt = $male ? 1 : 0;
         $stmt = $this->prepareAndExecute(
-            'INSERT INTO event_guests (event_id, first_name, last_name, email, handicap, rfeg, comment) VALUES (?, ?, ?, ?, ?, ?, ?)',
-            'isssdss',
-            [$eventId, $firstName, $lastName, $email, $handicap, $rfeg, $comment]
+            'INSERT INTO event_guests (event_id, male, first_name, last_name, email, handicap, rfeg, comment) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+            'iisssdss',
+            [$eventId, $maleInt, $firstName, $lastName, $email, $handicap, $rfeg, $comment]
         );
         $insertId = $this->conn->insert_id;
         $stmt->close();
@@ -64,6 +67,7 @@ final class GuestRepository extends BaseRepository
 
     public function update(
         int $id,
+        bool $male,
         string $firstName,
         string $lastName,
         string $email,
@@ -71,10 +75,11 @@ final class GuestRepository extends BaseRepository
         ?string $rfeg,
         ?string $comment
     ): void {
+        $maleInt = $male ? 1 : 0;
         $this->executeUpdateQuery(
-            'UPDATE event_guests SET first_name = ?, last_name = ?, email = ?, handicap = ?, rfeg = ?, comment = ? WHERE id = ?',
-            'sssdssi',
-            [$firstName, $lastName, $email, $handicap, $rfeg, $comment, $id]
+            'UPDATE event_guests SET male = ?, first_name = ?, last_name = ?, email = ?, handicap = ?, rfeg = ?, comment = ? WHERE id = ?',
+            'isssdssi',
+            [$maleInt, $firstName, $lastName, $email, $handicap, $rfeg, $comment, $id]
         );
     }
 

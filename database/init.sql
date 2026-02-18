@@ -5,7 +5,8 @@ CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
-    admin BOOLEAN NOT NULL
+    admin BOOLEAN NOT NULL,
+    male BOOLEAN NOT NULL DEFAULT 1
 );
 
 CREATE TABLE IF NOT EXISTS events (
@@ -33,6 +34,7 @@ ALTER TABLE event_users ADD UNIQUE KEY unique_user_event (userId, eventId);
 CREATE TABLE IF NOT EXISTS event_guests (
     id INT AUTO_INCREMENT PRIMARY KEY,
     event_id INT NOT NULL,
+    male BOOLEAN NOT NULL DEFAULT 1,
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
@@ -42,3 +44,7 @@ CREATE TABLE IF NOT EXISTS event_guests (
     timestamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT FK_GUEST_EVENT FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
 );
+
+-- Migration: run these on existing databases
+-- ALTER TABLE users ADD COLUMN male BOOLEAN NOT NULL DEFAULT 1;
+-- ALTER TABLE event_guests ADD COLUMN male BOOLEAN NOT NULL DEFAULT 1;

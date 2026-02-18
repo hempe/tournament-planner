@@ -73,6 +73,7 @@ class UserControllerTest extends IntegrationTestCase
         $this->loginAsAdmin();
 
         $response = $this->request('POST', '/users', [
+            'male' => '1',
             'username' => 'newuser',
             'password' => 'NewPass123!'
         ]);

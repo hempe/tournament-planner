@@ -11,7 +11,8 @@ final class User
     public function __construct(
         public readonly int $id,
         public readonly string $username,
-        public readonly bool $isAdmin
+        public readonly bool $isAdmin,
+        public readonly bool $male = true,
     ) {
     }
 
@@ -40,6 +41,7 @@ final class User
         $_SESSION['user_id'] = $user->id;
         $_SESSION['user_name'] = $user->username;
         $_SESSION['is_admin'] = $user->isAdmin;
+        $_SESSION['male'] = $user->male;
     }
 
     public static function current(): ?User
@@ -51,7 +53,8 @@ final class User
         return new User(
             $_SESSION['user_id'],
             $_SESSION['user_name'],
-            $_SESSION['is_admin']
+            $_SESSION['is_admin'],
+            $_SESSION['male'] ?? true,
         );
     }
 

@@ -43,6 +43,7 @@ class GuestControllerTest extends IntegrationTestCase
         $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
 
         $response = $this->request('POST', "/events/$eventId/guests/new", [
+            'male' => '1',
             'first_name' => 'Hans',
             'last_name' => 'Müller',
             'email' => 'hans@example.com',
@@ -68,6 +69,7 @@ class GuestControllerTest extends IntegrationTestCase
         $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
 
         $response = $this->request('POST', "/events/$eventId/guests/new", [
+            'male' => '0',
             'first_name' => 'Anna',
             'last_name' => 'Schmidt',
             'email' => 'anna@example.com',
@@ -136,7 +138,7 @@ class GuestControllerTest extends IntegrationTestCase
     public function testEditGuestFormRequiresAdmin(): void
     {
         $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
-        $guestId = DB::$guests->add($eventId, 'Hans', 'Müller', 'hans@example.com', 18.0, null, null);
+        $guestId = DB::$guests->add($eventId, true, 'Hans', 'Müller', 'hans@example.com', 18.0, null, null);
 
         DB::$users->create('regularuser', 'Pass123!');
         $this->loginAs('regularuser', 'Pass123!');
@@ -151,7 +153,7 @@ class GuestControllerTest extends IntegrationTestCase
         $this->loginAsAdmin();
 
         $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
-        $guestId = DB::$guests->add($eventId, 'Hans', 'Müller', 'hans@example.com', 18.0, 'ES123', 'A note');
+        $guestId = DB::$guests->add($eventId, true, 'Hans', 'Müller', 'hans@example.com', 18.0, 'ES123', 'A note');
 
         $response = $this->request('GET', "/events/$eventId/guests/$guestId/edit");
 
@@ -177,9 +179,10 @@ class GuestControllerTest extends IntegrationTestCase
         $this->loginAsAdmin();
 
         $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
-        $guestId = DB::$guests->add($eventId, 'Hans', 'Müller', 'hans@example.com', 18.0, null, null);
+        $guestId = DB::$guests->add($eventId, true, 'Hans', 'Müller', 'hans@example.com', 18.0, null, null);
 
         $response = $this->request('POST', "/events/$eventId/guests/$guestId/update", [
+            'male' => '1',
             'first_name' => 'Johann',
             'last_name' => 'Müller',
             'email' => 'johann@example.com',
@@ -201,7 +204,7 @@ class GuestControllerTest extends IntegrationTestCase
     public function testUpdateGuestRequiresAdmin(): void
     {
         $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
-        $guestId = DB::$guests->add($eventId, 'Hans', 'Müller', 'hans@example.com', 18.0, null, null);
+        $guestId = DB::$guests->add($eventId, true, 'Hans', 'Müller', 'hans@example.com', 18.0, null, null);
 
         DB::$users->create('regularuser', 'Pass123!');
         $this->loginAs('regularuser', 'Pass123!');
@@ -225,7 +228,7 @@ class GuestControllerTest extends IntegrationTestCase
         $this->loginAsAdmin();
 
         $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
-        $guestId = DB::$guests->add($eventId, 'Hans', 'Müller', 'hans@example.com', 18.0, null, null);
+        $guestId = DB::$guests->add($eventId, true, 'Hans', 'Müller', 'hans@example.com', 18.0, null, null);
 
         $response = $this->request('POST', "/events/$eventId/guests/$guestId/update", [
             'first_name' => '',
@@ -246,7 +249,7 @@ class GuestControllerTest extends IntegrationTestCase
         $this->loginAsAdmin();
 
         $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
-        $guestId = DB::$guests->add($eventId, 'Hans', 'Müller', 'hans@example.com', 18.0, null, null);
+        $guestId = DB::$guests->add($eventId, true, 'Hans', 'Müller', 'hans@example.com', 18.0, null, null);
 
         $response = $this->request('POST', "/events/$eventId/guests/$guestId/delete");
 
@@ -259,7 +262,7 @@ class GuestControllerTest extends IntegrationTestCase
     public function testDeleteGuestRequiresAdmin(): void
     {
         $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
-        $guestId = DB::$guests->add($eventId, 'Hans', 'Müller', 'hans@example.com', 18.0, null, null);
+        $guestId = DB::$guests->add($eventId, true, 'Hans', 'Müller', 'hans@example.com', 18.0, null, null);
 
         DB::$users->create('regularuser', 'Pass123!');
         $this->loginAs('regularuser', 'Pass123!');
@@ -278,7 +281,7 @@ class GuestControllerTest extends IntegrationTestCase
         $this->loginAsAdmin();
 
         $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
-        DB::$guests->add($eventId, 'Hans', 'Müller', 'hans@example.com', 18.0, null, null);
+        DB::$guests->add($eventId, true, 'Hans', 'Müller', 'hans@example.com', 18.0, null, null);
 
         DB::$events->delete($eventId);
 
@@ -291,8 +294,8 @@ class GuestControllerTest extends IntegrationTestCase
         $eventId1 = DB::$events->add('Event 1', '2026-03-15', 20);
         $eventId2 = DB::$events->add('Event 2', '2026-03-16', 20);
 
-        DB::$guests->add($eventId1, 'Hans', 'Müller', 'hans@example.com', 18.0, null, null);
-        DB::$guests->add($eventId2, 'Anna', 'Schmidt', 'anna@example.com', 12.0, null, null);
+        DB::$guests->add($eventId1, true, 'Hans', 'Müller', 'hans@example.com', 18.0, null, null);
+        DB::$guests->add($eventId2, false, 'Anna', 'Schmidt', 'anna@example.com', 12.0, null, null);
 
         $guests1 = DB::$guests->allForEvent($eventId1);
         $guests2 = DB::$guests->allForEvent($eventId2);

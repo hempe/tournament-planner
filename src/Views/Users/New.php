@@ -15,10 +15,14 @@ use TP\Components\Input;
         content: new Card(
             __('users.create_user'),
             new Table(
-                ['', '', ''],
+                ['', '', '', ''],
                 items: [null],
-                widths: [null, null, 1],
+                widths: [1, null, null, 1],
                 projection: fn() => [
+                    '<select name="male" class="input" required>'
+                        . '<option value="1">' . __('users.herr') . '</option>'
+                        . '<option value="0">' . __('users.frau') . '</option>'
+                        . '</select>',
                     new Input(
                         type: 'text',
                         name: 'username',

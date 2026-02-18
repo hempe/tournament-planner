@@ -21,6 +21,7 @@ final class GuestController
     private function validationRules(): array
     {
         return [
+            new ValidationRule('male', ['required', 'boolean']),
             new ValidationRule('first_name', ['required', 'string', 'max' => 255]),
             new ValidationRule('last_name', ['required', 'string', 'max' => 255]),
             new ValidationRule('email', ['required', 'email', 'max' => 255]),
@@ -65,6 +66,7 @@ final class GuestController
             $data = $request->getValidatedData();
             DB::$guests->add(
                 $eventId,
+                (bool) $data['male'],
                 $data['first_name'],
                 $data['last_name'],
                 $data['email'],
@@ -125,6 +127,7 @@ final class GuestController
             $data = $request->getValidatedData();
             DB::$guests->update(
                 $guestId,
+                (bool) $data['male'],
                 $data['first_name'],
                 $data['last_name'],
                 $data['email'],

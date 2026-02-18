@@ -119,6 +119,9 @@ return [
     // Users
     'users' => [
         'title' => 'Benutzer',
+        'anrede' => 'Anrede',
+        'herr' => 'Herr',
+        'frau' => 'Frau',
         'new' => 'Neuer Benutzer',
         'add_user' => 'Benutzer hinzufügen',
         'create_user' => 'Benutzer erfassen',

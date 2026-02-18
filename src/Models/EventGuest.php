@@ -9,6 +9,7 @@ final class EventGuest
     public function __construct(
         public readonly int $id,
         public readonly int $eventId,
+        public readonly bool $male,
         public readonly string $firstName,
         public readonly string $lastName,
         public readonly string $email,

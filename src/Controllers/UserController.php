@@ -51,6 +51,7 @@ final class UserController
     public function store(Request $request): Response
     {
         $validation = $request->validate([
+            new ValidationRule('male', ['required', 'boolean']),
             new ValidationRule('username', ['required', 'string', 'min' => 3, 'max' => 255]),
             new ValidationRule('password', ['required', 'string' /*, 'min' => 6 */]),
         ]);
@@ -70,7 +71,7 @@ final class UserController
                 return Response::redirect('/users/new');
             }
 
-            $userId = DB::$users->create($username, $password);
+            $userId = DB::$users->create($username, $password, (bool) $data['male']);
             flash('success', __('users.create_success'));
             return Response::redirect('/users');
 
