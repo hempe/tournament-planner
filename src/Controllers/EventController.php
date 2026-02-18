@@ -16,6 +16,7 @@ use TP\Middleware\AdminMiddleware;
 use TP\Models\User;
 use TP\Models\DB;
 use Exception;
+use function PHPUnit\Framework\returnArgument;
 
 #[RoutePrefix('/events')]
 #[Middleware(AuthMiddleware::class)]
@@ -63,6 +64,10 @@ final class EventController
     #[Get('/{id}')]
     public function detail(Request $request, array $params): Response
     {
+        if (User::admin()) {
+            return $this->admin($request, $params);
+        }
+
         $eventId = (int) $params['id'];
         $userId = User::id();
 
@@ -78,18 +83,11 @@ final class EventController
         }
 
         require __DIR__ . '/../Layout/header.php';
-        // Determine which view to show based on user permissions
-        if (User::admin()) {
-            ob_start();
-            $id = $eventId;
-            require __DIR__ . '/../Views/Events/Admin.php';
-            $content = ob_get_clean();
-        } else {
-            ob_start();
-            $id = $eventId;
-            require __DIR__ . '/../Views/Events/Detail.php';
-            $content = ob_get_clean();
-        }
+
+        ob_start();
+        $id = $eventId;
+        require __DIR__ . '/../Views/Events/Detail.php';
+        $content = ob_get_clean();
 
         require __DIR__ . '/../Layout/footer.php';
 
@@ -162,7 +160,7 @@ final class EventController
         return Response::ok($content);
     }
 
-    #[Post('/{id}/update')]
+    #[Post('/{id}')]
     #[Middleware(AdminMiddleware::class)]
     public function update(Request $request, array $params): Response
     {

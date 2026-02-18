@@ -164,7 +164,7 @@ new Form(
 
 ```php
 new Form(
-    action: "/events/{$id}/update",
+    action: "/events/{$id}",
     content: new Card(
         'Edit Event',
         new Table(

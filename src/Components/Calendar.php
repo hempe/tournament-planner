@@ -13,6 +13,7 @@ use TP\Components\IconActionButton;
 use TP\Models\Event;
 use TP\Models\User;
 use TP\Core\Translator;
+use TP\Core\Url;
 
 class Calendar extends Component
 {
@@ -195,6 +196,18 @@ class Calendar extends Component
             )
             : '';
 
+        $loginButton = (!User::loggedIn() && $isIframeMode)
+            ? new IconButton(
+                title: __('auth.login'),
+                onClick: "window.location.href='" . Url::build('/login') . "'",
+                icon: 'fa-sign-in',
+                type: 'button',
+                color: Color::Primary,
+                style: 'padding: 6px 10px; font-size: 0.9rem;',
+                title_inline: true
+            )
+            : '';
+
         // Preserve iframe parameter in navigation
         $isIframeMode = isset($_GET['iframe']) && $_GET['iframe'] === '1';
         $iframeParam = $isIframeMode ? '&iframe=1' : '';
@@ -218,7 +231,8 @@ class Calendar extends Component
                         type: 'button',
                         color: Color::None,
                     ),
-                    $logoutButton
+                    $logoutButton,
+                    $loginButton
                 ],
                 content: new Div(
                     class: 'view',

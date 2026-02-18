@@ -3,6 +3,7 @@
 
 /* Force light theme in iframe mode - no dark theme support */
 :root {
+    font-family: "Hind Guntur", "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
     --bg-primary: #ffffff;
     --border-color: #dddddd;
     --accent-color: #87b723;

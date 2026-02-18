@@ -54,7 +54,7 @@ class HomeControllerTest extends IntegrationTestCase
 
     public function testLoginFormShowsCorrectly(): void
     {
-        $response = $this->request('GET', '/');
+        $response = $this->request('GET', '/login');
 
         $this->assertEquals(200, $response->statusCode);
         $this->assertStringContainsString('username', strtolower($response->body));

@@ -186,7 +186,7 @@ Response::forbidden(): Response                       // 403 with error page
 | POST | `/events/bulk/store` | EventController::bulkStore | Auth, Admin |
 | GET | `/events/{id}` | EventController::detail | Auth |
 | GET | `/events/{id}/admin` | EventController::admin | Auth, Admin |
-| POST | `/events/{id}/update` | EventController::update | Auth, Admin |
+| POST | `/events/{id}` | EventController::update | Auth, Admin |
 | POST | `/events/{id}/delete` | EventController::delete | Auth, Admin |
 | POST | `/events/{id}/lock` | EventController::lock | Auth, Admin |
 | POST | `/events/{id}/unlock` | EventController::unlock | Auth, Admin |

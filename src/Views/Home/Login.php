@@ -12,8 +12,6 @@ use TP\Components\Div;
 use TP\Components\IconButton;
 use TP\Components\Color;
 
-$isIframeMode = isset($_GET['iframe']) && $_GET['iframe'] === '1';
-
 echo new Page(
     new Div(
         class: 'content',
@@ -25,9 +23,7 @@ echo new Page(
             action: "/login",
             content: new Card(
                 style: 'width: min(90vw, 400px)',
-                title: $isIframeMode
-                ? ''
-                : new Div(
+                title: new Div(
                     content: '<img src="favicon.svg?v=2.0" style="width:calc(100% - 40px); margin:20px" /><p>' . __('auth.welcome') . '</p>',
                     style: [
                         'display: flex;',

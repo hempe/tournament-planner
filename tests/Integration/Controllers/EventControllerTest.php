@@ -134,7 +134,7 @@ class EventControllerTest extends IntegrationTestCase
 
         $eventId = DB::$events->add('Original Name', '2026-03-15', 20);
 
-        $response = $this->request('POST', "/events/$eventId/update", [
+        $response = $this->request('POST', "/events/$eventId", [
             'name' => 'Updated Name',
             'capacity' => '30'
         ]);
@@ -152,7 +152,7 @@ class EventControllerTest extends IntegrationTestCase
 
         $eventId = DB::$events->add('Original Name', '2026-03-15', 20);
 
-        $response = $this->request('POST', "/events/$eventId/update", [
+        $response = $this->request('POST', "/events/$eventId", [
             'name' => '',
             'capacity' => '-5'
         ]);

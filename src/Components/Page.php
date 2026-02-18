@@ -5,6 +5,7 @@ namespace TP\Components;
 use TP\Components\Color;
 use TP\Components\Icon;
 use TP\Components\IconActionButton;
+use TP\Components\IconButton;
 use TP\Models\User;
 use TP\Core\Translator;
 use TP\Core\Url;
@@ -41,13 +42,25 @@ class Page extends Component
 
         $logoutButton = User::loggedIn()
             ? new IconActionButton(
-                "/logout",
-                __('nav.logout'),
-                Color::None,
-                'fa-sign-out',
+                actionUrl: "/logout",
+                title: __('nav.logout'),
+                color: Color::None,
+                icon: 'fa-sign-out',
                 confirmMessage: '',
                 class: 'nav-button',
                 style: 'color: var(--fg-navtop);'
+            )
+            : '';
+
+        $loginButton = !User::loggedIn()
+            ? new IconActionButton(
+                actionUrl: Url::build('/login'),
+                title: __('auth.login'),
+                icon: 'fa-sign-in',
+                color: Color::None,
+                class: 'nav-button',
+                style: 'color: var(--fg-navtop);',
+                title_inline: true
             )
             : '';
 
@@ -65,7 +78,7 @@ class Page extends Component
         $languageOptions = '';
         foreach ($languages as $locale => $name) {
             $selected = $locale === $currentLocale ? 'selected' : '';
-            $languageOptions .= "<option value=\"{$locale}\" {$selected}>{$name}</option>";
+            $languageOptions .= "<option style='color:black;' value=\"{$locale}\" {$selected}>{$name}</option>";
         }
 
         echo <<<HTML
@@ -85,7 +98,7 @@ class Page extends Component
                         >
                             {$languageOptions}
                         </select>
-                        <span style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--fg-navtop);">
+                        <span style="position: absolute; right: 0px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--fg-navtop);">
                             <i class="fa fa-globe"></i>
                         </span>
                     </div>
@@ -96,6 +109,7 @@ class Page extends Component
                         {$sunIcon}
                     </a>
                     {$logoutButton}
+                    {$loginButton}
                 </div>
             </nav>
             {$this->content}

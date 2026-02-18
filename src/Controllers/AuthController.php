@@ -70,6 +70,6 @@ final class AuthController
     {
         User::logout();
         flash('success', __('auth.logout_success'));
-        return Response::redirect('/login');
+        return Response::redirect('/');
     }
 }
