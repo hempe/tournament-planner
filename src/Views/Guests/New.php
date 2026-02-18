@@ -7,6 +7,7 @@ use TP\Components\Table;
 use TP\Components\Card;
 use TP\Components\Form;
 use TP\Core\Translator;
+use TP\Core\Url;
 use TP\Models\User;
 use TP\Models\Event;
 
@@ -25,11 +26,26 @@ assert($event instanceof Event);
         . '<option value="0">' . __('users.frau') . '</option>'
         . '</select>';
 
-    $action = "/events/{$event->id}/guests/new";
+    $isIframeMode = isset($_GET['iframe']) && $_GET['iframe'] === '1';
+    $backUrl = Url::build(isset($_GET['b']) ? '/guest?date=' . $_GET['b'] : '/guest');
+    $cardTitle = $isIframeMode
+        ? [
+            new IconButton(
+                title: __('nav.back'),
+                onClick: "window.location.href='{$backUrl}'",
+                icon: 'fa-chevron-left',
+                type: 'button',
+                color: Color::None,
+            ),
+            "<span style=\"flex-grow:1\">{$formattedDate}: {$event->name}</span>",
+        ]
+        : "{$formattedDate}: {$event->name}";
+
+    $action = Url::build("/events/{$event->id}/guests/new");
     yield new Form(
         action: $action,
         content: new Card(
-            title: "{$formattedDate}: {$event->name}",
+            title: $cardTitle,
             content: new Table(
                 columns: ['', ''],
                 items: [0, 1, 2, 3, 4, 5, 6, 7],

@@ -4,6 +4,7 @@ namespace TP\Components;
 
 use TP\Components\Icon;
 use TP\Components\Div;
+use TP\Core\Url;
 use TP\Models\Event;
 
 class GuestCalendarEvent extends Component
@@ -42,7 +43,8 @@ class GuestCalendarEvent extends Component
         $canRegister = !$this->event->isLocked && $this->event->available > 0;
 
         $style = $canRegister ? 'cursor: pointer;' : 'cursor: default;';
-        $onclick = $canRegister ? " onclick=\"window.location.href='/events/{$this->event->id}/guests/new'\"" : '';
+        $url = Url::build("/events/{$this->event->id}/guests/new?b={$this->event->date}");
+        $onclick = $canRegister ? " onclick=\"window.location.href='{$url}'\"" : '';
 
         $inner = new Div(
             class: ['event-desc'],

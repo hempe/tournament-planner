@@ -27,7 +27,8 @@ class Page extends Component
         $url = Url::build(isset($_GET['b']) ? '/?date=' . $_GET['b'] : '/');
         $formAction = Url::build('/language/switch');
         $title = isset($GLOBALS['title']) ? $GLOBALS['title'] : 'Golf el faro';
-        $isIndex = basename($_SERVER['PHP_SELF']) == 'index.php';
+        $path = strtok($_SERVER['REQUEST_URI'] ?? '/', '?');
+        $isIndex = ($path === '/' || $path === '/guest');
 
         $backButton = $isIndex
             ? "<a href=\"{$url}\" style=\"padding:0;flex-grow:0;\"><img src=\"favicon-96x96.png\" style=\"height: 50px; width: 50px;\"></a>"
