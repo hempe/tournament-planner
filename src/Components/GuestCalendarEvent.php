@@ -39,27 +39,20 @@ class GuestCalendarEvent extends Component
     {
         $statusClass = $this->statusClass();
         $statusText = $this->statusText();
+        $canRegister = !$this->event->isLocked && $this->event->available > 0;
 
-        echo new Div(
-            class: 'event',
-            content: new Div(
-                style: ['cursor: default;'],
-                class: ['event-date', $statusClass],
-                content: function () use ($statusText) {
-                    if ($eventName = $this->event->name)
-                        yield new Div(
-                            class: 'event-desc',
-                            content: "{$eventName}<br><small>{$statusText}</small>"
-                        );
-                    yield new Div(
-                        class: 'event-status',
-                        content: function () {
-                            if ($this->event->isLocked)
-                                yield new Icon('fa-lock', __('events.locked'));
-                        }
-                    );
-                }
-            )
+        $style = $canRegister ? 'cursor: pointer;' : 'cursor: default;';
+        $onclick = $canRegister ? " onclick=\"window.location.href='/events/{$this->event->id}/guests/new'\"" : '';
+
+        $inner = new Div(
+            class: ['event-desc'],
+            content: "{$this->event->name}<br><small>{$statusText}</small>"
         );
+        $status = new Div(
+            class: 'event-status',
+            content: $this->event->isLocked ? new Icon('fa-lock', __('events.locked')) : ''
+        );
+
+        echo "<div class='event'><div class='event-date {$statusClass}' style='{$style}'{$onclick}>{$inner}{$status}</div></div>";
     }
 }
