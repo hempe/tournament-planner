@@ -5,6 +5,7 @@ namespace TP\Components;
 date_default_timezone_set('Atlantic/Canary');
 
 use TP\Components\Div;
+use TP\Components\Span;
 use TP\Components\Card;
 use TP\Components\CalendarEvent;
 use TP\Components\Color;
@@ -211,7 +212,7 @@ class Calendar extends Component
                         type: 'button',
                         color: Color::None,
                     ),
-                    "<span>{$this->formattedDate()}</span>",
+                    new Span($this->formattedDate()),
                     new IconButton(
                         title: __('calendar.next_month'),
                         onClick: "window.location.href='./?date={$this->nextMonth()}{$iframeParam}'",
@@ -229,7 +230,10 @@ class Calendar extends Component
                             class: 'day_names',
                             content: function () {
                                 foreach ($this->daysNames() as $day) {
-                                    yield "<div class='day_name'>$day</div>";
+                                    yield new Div(
+                                        content: $day,
+                                        class: 'day_name'
+                                    );
                                 }
                             }
                         );
@@ -260,16 +264,16 @@ class Calendar extends Component
                                                     class: 'day_date'
                                                 );
 
-                                                yield "<span>{$day->day}</span>";
-
+                                                yield new Span($day->day);
                                                 foreach ($events as $event) {
                                                     yield ($this->eventRenderer)($event);
                                                 }
 
+                                                $href = Url::build("/events/new?date={$day->str}&b={$day->year}-{$day->month}-1");
                                                 if (User::admin() && $day->active)
                                                     yield new IconButton(
                                                         title: __('events.add'),
-                                                        onClick: "window.location.href='/events/new?date={$day->str}&b={$day->year}-{$day->month}-1'",
+                                                        onClick: "window.location.href='{$href}",
                                                         icon: 'fa-plus',
                                                         type: 'button',
                                                         color: Color::None,

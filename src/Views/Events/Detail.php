@@ -1,6 +1,7 @@
 <?php
 
 use TP\Models\DB;
+use TP\Components\Span;
 use TP\Components\Page;
 use TP\Components\Table;
 use TP\Components\Card;
@@ -70,7 +71,10 @@ assert(is_int($id));
                 type: 'button',
                 color: Color::None,
             ),
-            "<span style=\"flex-grow:1\">$formattedDate: {$event->name} {$regState}</span>"
+            new Span(
+                content: "$formattedDate: {$event->name} {$regState}",
+                style: "flex-grow:1"
+            )
         ]
         : "$formattedDate: {$event->name} {$regState}";
 
@@ -135,9 +139,7 @@ assert(is_int($id));
     if ($eventRegistrations) {
         $registeredTitle = __('events.registered');
         yield new Card(
-            $isIframeMode ?
-            "<span style=\"flex-grow:1\">$registeredTitle</span>"
-            : $registeredTitle,
+            $isIframeMode ? new Span(content: $registeredTitle, style: 'flex-grow:1') : $registeredTitle,
             new Table(
                 [''],
                 $eventRegistrations,

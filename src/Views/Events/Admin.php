@@ -1,6 +1,7 @@
 <?php
 
 use TP\Models\DB;
+use TP\Components\Span;
 use TP\Components\Color;
 use TP\Components\Page;
 use TP\Components\Table;
@@ -124,7 +125,10 @@ assert(is_int($id));
 
         yield new Card(
             [
-                "<span style=\"flex-grow:1\">" . __('guests.title') . "</span>",
+                new Span(
+                    content: __('guests.title'),
+                    style: 'flex-grow:1'
+                ),
                 new IconButton(
                     title: __('guests.add'),
                     onClick: "window.location.href='/events/$id/guests/new'",
