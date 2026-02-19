@@ -54,7 +54,7 @@ assert(is_int($id));
             content: new Card(
                 title: $formattedDate . ': ' . $event->name . ' · ' . ($event->mixed ? __('events.mixed') : __('events.separate')),
                 content: new Table(
-                    ['Name', 'Max. Teilnehmer', '', '', '', ''],
+                    [__('events.name'), __('events.max_participants'), '', '', '', '', ''],
                     [$event],
                     fn($event) => [
                         new Input(
@@ -73,6 +73,7 @@ assert(is_int($id));
                             style: 'flex-grow:1;',
                             required: true
                         ),
+                        '<input type="hidden" name="mixed" value="0"><label style="display:flex;align-items:center;gap:.4rem;white-space:nowrap"><input type="checkbox" name="mixed" value="1"' . ($event->mixed ? ' checked' : '') . '> ' . __('events.play_together') . '</label>',
                         new IconButton(
                             title: __('events.save'),
                             type: 'submit',
@@ -109,7 +110,7 @@ assert(is_int($id));
                             color: Color::Light,
                         ),
                     ],
-                    widths: [null, null, 1, 1, 1, 1]
+                    widths: [null, null, 1, 1, 1, 1, 1]
                 )
             )
         );

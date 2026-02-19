@@ -78,12 +78,12 @@ final class EventRepository extends BaseRepository
         $this->executeUpdateQuery("DELETE FROM events WHERE id = ?", "i", [$id]);
     }
 
-    public function update(int $id, string $name, int $capacity): void
+    public function update(int $id, string $name, int $capacity, bool $mixed = true): void
     {
         $this->executeUpdateQuery(
-            "UPDATE events SET name = ?, capacity = ? WHERE id = ?",
-            "sii",
-            [$name, $capacity, $id]
+            "UPDATE events SET name = ?, capacity = ?, mixed = ? WHERE id = ?",
+            "siii",
+            [$name, $capacity, $mixed ? 1 : 0, $id]
         );
         $this->fix($id);
     }

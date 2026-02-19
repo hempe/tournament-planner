@@ -171,6 +171,7 @@ final class EventController
         $validation = $request->validate([
             new ValidationRule('name', ['required', 'string', 'max' => 255]),
             new ValidationRule('capacity', ['required', 'integer', 'min' => 1]),
+            new ValidationRule('mixed', ['boolean']),
         ]);
 
         if (!$validation->isValid) {
@@ -180,7 +181,8 @@ final class EventController
 
         try {
             $data = $request->getValidatedData();
-            DB::$events->update($eventId, $data['name'], (int) $data['capacity']);
+            $mixed = ($data['mixed'] ?? '0') === '1';
+            DB::$events->update($eventId, $data['name'], (int) $data['capacity'], $mixed);
 
             flash('success', __('events.update_success'));
             return Response::redirect("/events/{$eventId}");
