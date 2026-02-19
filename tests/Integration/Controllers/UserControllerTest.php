@@ -277,4 +277,131 @@ class UserControllerTest extends IntegrationTestCase
 
         $this->assertEquals(403, $response->statusCode);
     }
+
+    public function testStoreCreatesUserWithRfegAndMemberNumber(): void
+    {
+        $this->loginAsAdmin();
+
+        $response = $this->request('POST', '/users', [
+            'male' => '1',
+            'username' => 'rfeguser',
+            'password' => 'Pass123!',
+            'rfeg' => 'RF999',
+            'member_number' => 'M42',
+        ]);
+
+        $this->assertEquals(303, $response->statusCode);
+
+        $users = DB::$users->all();
+        $user = array_values(array_filter($users, fn($u) => $u->username === 'rfeguser'))[0] ?? null;
+        $this->assertNotNull($user);
+        $this->assertEquals('RF999', $user->rfeg);
+        $this->assertEquals('M42', $user->memberNumber);
+    }
+
+    public function testUpdateRfegSetsValue(): void
+    {
+        $this->loginAsAdmin();
+
+        $userId = DB::$users->create('testuser', 'Pass123!');
+
+        $response = $this->request('POST', "/users/$userId/rfeg", [
+            'rfeg' => 'RF123',
+        ]);
+
+        $this->assertEquals(303, $response->statusCode);
+
+        $users = DB::$users->all();
+        $user = array_values(array_filter($users, fn($u) => $u->id === $userId))[0] ?? null;
+        $this->assertEquals('RF123', $user->rfeg);
+    }
+
+    public function testUpdateRfegClearsWithEmpty(): void
+    {
+        $this->loginAsAdmin();
+
+        $userId = DB::$users->create('testuser', 'Pass123!', true, 'OLD_RFEG');
+
+        $response = $this->request('POST', "/users/$userId/rfeg", [
+            'rfeg' => '',
+        ]);
+
+        $this->assertEquals(303, $response->statusCode);
+
+        $users = DB::$users->all();
+        $user = array_values(array_filter($users, fn($u) => $u->id === $userId))[0] ?? null;
+        $this->assertNull($user->rfeg);
+    }
+
+    public function testUpdateRfegRequiresAdmin(): void
+    {
+        $this->loginAsAdmin();
+        $userId = DB::$users->create('regularuser', 'Pass123!');
+
+        $this->loginAs('regularuser', 'Pass123!');
+
+        $response = $this->request('POST', "/users/$userId/rfeg", [
+            'rfeg' => 'RF123',
+        ]);
+
+        $this->assertEquals(403, $response->statusCode);
+
+        // Verify rfeg was NOT changed
+        $users = DB::$users->all();
+        $user = array_values(array_filter($users, fn($u) => $u->id === $userId))[0] ?? null;
+        $this->assertNull($user->rfeg);
+    }
+
+    public function testUpdateMemberNumberSetsValue(): void
+    {
+        $this->loginAsAdmin();
+
+        $userId = DB::$users->create('testuser', 'Pass123!');
+
+        $response = $this->request('POST', "/users/$userId/member_number", [
+            'member_number' => 'M99',
+        ]);
+
+        $this->assertEquals(303, $response->statusCode);
+
+        $users = DB::$users->all();
+        $user = array_values(array_filter($users, fn($u) => $u->id === $userId))[0] ?? null;
+        $this->assertEquals('M99', $user->memberNumber);
+    }
+
+    public function testUpdateMemberNumberClearsWithEmpty(): void
+    {
+        $this->loginAsAdmin();
+
+        $userId = DB::$users->create('testuser', 'Pass123!', true, null, 'OLD_NUM');
+
+        $response = $this->request('POST', "/users/$userId/member_number", [
+            'member_number' => '',
+        ]);
+
+        $this->assertEquals(303, $response->statusCode);
+
+        $users = DB::$users->all();
+        $user = array_values(array_filter($users, fn($u) => $u->id === $userId))[0] ?? null;
+        $this->assertNull($user->memberNumber);
+    }
+
+    public function testUpdateMemberNumberRequiresAdmin(): void
+    {
+        $this->loginAsAdmin();
+        $userId = DB::$users->create('regularuser', 'Pass123!');
+
+        $this->loginAs('regularuser', 'Pass123!');
+
+        $response = $this->request('POST', "/users/$userId/member_number", [
+            'member_number' => 'M99',
+        ]);
+
+        $this->assertEquals(403, $response->statusCode);
+
+        // Verify member_number was NOT changed
+        $users = DB::$users->all();
+        $user = array_values(array_filter($users, fn($u) => $u->id === $userId))[0] ?? null;
+        $this->assertNull($user->memberNumber);
+    }
 }

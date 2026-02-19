@@ -65,8 +65,8 @@ final class UserController
             $data = $request->getValidatedData();
             $username = trim($data['username']);
             $password = trim($data['password']);
-            $rfeg = isset($data['rfeg']) && $data['rfeg'] !== '' ? trim($data['rfeg']) : null;
-            $memberNumber = isset($data['member_number']) && $data['member_number'] !== '' ? trim($data['member_number']) : null;
+            $rfeg = $request->getString('rfeg') ?: null;
+            $memberNumber = $request->getString('member_number') ?: null;
 
             if (DB::$users->userNameAlreadyTaken($username)) {
                 flash('error', __('users.username_taken', ['username' => $username]));

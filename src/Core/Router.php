@@ -125,6 +125,11 @@ final class Router
             'middleware' => $allMiddleware,
             'name' => $name,
         ];
+
+        // Keep specific routes (no parameters) before parameterised routes
+        usort($this->routes, fn($a, $b) =>
+            substr_count($a['pattern'], '{') <=> substr_count($b['pattern'], '{')
+        );
     }
 
     private function matchRoute(string $pattern, string $path): ?array

@@ -441,8 +441,109 @@ class EventControllerTest extends IntegrationTestCase
 
         $response = $this->request('GET', "/events/$eventId/admin");
 
-        // Admin view may have issues with output buffering in tests
-        // Just verify it doesn't return forbidden
         $this->assertNotEquals(403, $response->statusCode);
+    }
+
+    public function testCreateFormShows(): void
+    {
+        $this->loginAsAdmin();
+
+        $response = $this->request('GET', '/events/new');
+
+        $this->assertEquals(200, $response->statusCode);
+    }
+
+    public function testCreateFormRequiresAdmin(): void
+    {
+        $this->loginAsAdmin();
+        DB::$users->create('regularuser', 'Pass123!');
+        $this->loginAs('regularuser', 'Pass123!');
+
+        $response = $this->request('GET', '/events/new');
+
+        $this->assertEquals(403, $response->statusCode);
+    }
+
+    public function testUpdateTogglesMixedFlag(): void
+    {
+        $this->loginAsAdmin();
+
+        $eventId = DB::$events->add('Test Event', '2026-03-15', 20, false, true);
+
+        $response = $this->request('POST', "/events/$eventId", [
+            'name' => 'Test Event',
+            'capacity' => '20',
+            'mixed' => '0',
+        ]);
+
+        $this->assertEquals(303, $response->statusCode);
+
+        $event = DB::$events->get($eventId, 1);
+        $this->assertFalse($event->mixed);
+    }
+
+    public function testExportReturnsCsv(): void
+    {
+        $this->loginAsAdmin();
+
+        $eventId = DB::$events->add('Export Event', '2026-03-15', 20);
+
+        $response = $this->request('GET', "/events/$eventId/export");
+
+        $this->assertEquals(200, $response->statusCode);
+        // Body starts with UTF-8 BOM
+        $this->assertStringStartsWith("\xEF\xBB\xBF", $response->body);
+    }
+
+    public function testExportContainsRegistrations(): void
+    {
+        $this->loginAsAdmin();
+
+        $eventId = DB::$events->add('Export Event', '2026-03-15', 20);
+        $userId = DB::$users->create('csvuser', 'Pass123!', true, 'RF123', 'M001');
+        DB::$events->register($eventId, $userId, '');
+
+        $response = $this->request('GET', "/events/$eventId/export");
+
+        $this->assertEquals(200, $response->statusCode);
+        $this->assertStringContainsString('csvuser', $response->body);
+        $this->assertStringContainsString('RF123', $response->body);
+        $this->assertStringContainsString('M001', $response->body);
+    }
+
+    public function testExportContainsGuests(): void
+    {
+        $this->loginAsAdmin();
+
+        $eventId = DB::$events->add('Export Event', '2026-03-15', 20);
+        DB::$guests->add($eventId, true, 'Jane', 'Doe', null, null, 'RFG456', null);
+
+        $response = $this->request('GET', "/events/$eventId/export");
+
+        $this->assertEquals(200, $response->statusCode);
+        $this->assertStringContainsString('Jane', $response->body);
+        $this->assertStringContainsString('Doe', $response->body);
+        $this->assertStringContainsString('RFG456', $response->body);
+    }
+
+    public function testExportReturns404ForUnknownEvent(): void
+    {
+        $this->loginAsAdmin();
+
+        $response = $this->request('GET', '/events/99999/export');
+
+        $this->assertEquals(404, $response->statusCode);
+    }
+
+    public function testExportRequiresAdmin(): void
+    {
+        $this->loginAsAdmin();
+        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        DB::$users->create('regularuser', 'Pass123!');
+        $this->loginAs('regularuser', 'Pass123!');
+
+        $response = $this->request('GET', "/events/$eventId/export");
+
+        $this->assertEquals(403, $response->statusCode);
     }
 }
