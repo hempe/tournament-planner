@@ -1,43 +1,39 @@
 <?php
+
 namespace TP\Core;
 
 class DateTimeHelper
 {
     static function ago(string $timestamp): string
     {
-        // Set the default timezone (use your system's or MySQL's timezone)
-        $timezone = new \DateTimeZone('Europe/Berlin'); // Or any timezone you need
-
-        // Create DateTime objects with the same timezone
-        $current_time = new \DateTime('now', $timezone); // Current time
-        $past_time = new \DateTime($timestamp, $timezone); // Past timestamp
-
-        // Calculate the difference
+        $timezone = new \DateTimeZone('Europe/Berlin');
+        $current_time = new \DateTime('now', $timezone);
+        $past_time = new \DateTime($timestamp, $timezone);
         $diff = $current_time->diff($past_time);
 
-        // Initialize an array for the result
-        $relative_time = [];
+        $translator = Translator::getInstance();
+        $parts = [];
 
         if ($diff->y > 0) {
-            $relative_time[] = $diff->y . ' Jahr' . ($diff->y > 1 ? 'e' : '');
+            $parts[] = $translator->choice('time.years', $diff->y);
         }
         if ($diff->m > 0) {
-            $relative_time[] = $diff->m . ' Monat' . ($diff->m > 1 ? 'e' : '');
+            $parts[] = $translator->choice('time.months', $diff->m);
         }
         if ($diff->d > 0) {
-            $relative_time[] = $diff->d . ' Tag' . ($diff->d > 1 ? 'e' : '');
+            $parts[] = $translator->choice('time.days', $diff->d);
         }
         if ($diff->h > 0) {
-            $relative_time[] = $diff->h . ' Std.';
+            $parts[] = $translator->translate('time.hours', ['count' => $diff->h]);
         }
         if ($diff->i > 0) {
-            $relative_time[] = $diff->i . ' Min.';
+            $parts[] = $translator->translate('time.minutes', ['count' => $diff->i]);
         }
 
-        if (empty($relative_time)) {
-            return "Gerade eben";
-        } else {
-            return implode(' ', $relative_time);
+        if (empty($parts)) {
+            return $translator->translate('time.just_now');
         }
+
+        return implode(' ', $parts);
     }
 }
