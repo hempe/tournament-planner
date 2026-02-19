@@ -116,7 +116,7 @@ return [
         'bulk_session_expired' => 'Sitzung abgelaufen. Bitte beginnen Sie von vorne.',
         'mixed' => 'Gemischt',
         'separate' => 'Getrennt',
-        'play_together' => 'Damen & Herren gemeinsam',
+        'play_together' => 'Mixed',
         'participants' => 'Teilnehmer',
         'male' => 'Herren',
         'female' => 'Damen',

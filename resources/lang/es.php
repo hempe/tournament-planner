@@ -116,7 +116,7 @@ return [
         'bulk_session_expired' => 'Sesión expirada. Por favor, comience de nuevo.',
         'mixed' => 'Mixto',
         'separate' => 'Separado',
-        'play_together' => 'Damas y caballeros juntos',
+        'play_together' => 'Mixed',
         'participants' => 'Participantes',
         'male' => 'Caballeros',
         'female' => 'Damas',

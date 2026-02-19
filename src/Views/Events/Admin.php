@@ -1,6 +1,8 @@
 <?php
 
 use TP\Models\DB;
+use TP\Components\Div;
+use TP\Components\Small;
 use TP\Components\Span;
 use TP\Components\Color;
 use TP\Components\Page;
@@ -73,7 +75,7 @@ assert(is_int($id));
                             style: 'flex-grow:1;',
                             required: true
                         ),
-                        '<input type="hidden" name="mixed" value="0"><label style="display:flex;align-items:center;gap:.4rem;white-space:nowrap"><input type="checkbox" name="mixed" value="1"' . ($event->mixed ? ' checked' : '') . '> ' . __('events.play_together') . '</label>',
+                        '<input type="hidden" name="mixed" value="0"><label style="display:flex;align-items:center;gap:.4rem;white-space:nowrap;margin-top:5px;"><input type="checkbox" name="mixed" value="1"' . ($event->mixed ? ' checked' : '') . '> ' . __('events.play_together') . '</label>',
                         new IconButton(
                             title: __('events.save'),
                             type: 'submit',
@@ -115,10 +117,10 @@ assert(is_int($id));
             )
         );
 
-        $registeredMales   = $eventRegistrations['1']['male']   ?? [];
+        $registeredMales = $eventRegistrations['1']['male'] ?? [];
         $registeredFemales = $eventRegistrations['1']['female'] ?? [];
-        $waitlistMales     = $eventRegistrations['2']['male']   ?? [];
-        $waitlistFemales   = $eventRegistrations['2']['female'] ?? [];
+        $waitlistMales = $eventRegistrations['2']['male'] ?? [];
+        $waitlistFemales = $eventRegistrations['2']['female'] ?? [];
 
         if ($event->mixed) {
             $registered = array_merge($registeredMales, $registeredFemales);
@@ -150,7 +152,12 @@ assert(is_int($id));
             [__('guests.first_name'), __('guests.last_name'), __('guests.email'), __('guests.handicap'), __('guests.rfeg'), __('guests.comment'), '', ''],
             $guestList,
             fn($guest) => [
-                $guest->firstName,
+                new Div(
+                    content: [
+                        new Div($guest->firstName, ),
+                        new Small(content: $guest->ago, style: 'font-size:0.8em'),
+                    ]
+                ),
                 $guest->lastName,
                 $guest->email,
                 $guest->handicap,
@@ -188,7 +195,7 @@ assert(is_int($id));
         if ($event->mixed) {
             yield new Card($guestHeader, count($guests) > 0 ? $guestTable($guests) : '');
         } else {
-            $maleGuests   = array_values(array_filter($guests, fn($g) => $g->male));
+            $maleGuests = array_values(array_filter($guests, fn($g) => $g->male));
             $femaleGuests = array_values(array_filter($guests, fn($g) => !$g->male));
             yield new Card(
                 array_merge([new Span(content: __('events.male') . ' – ' . __('guests.title'), style: 'flex-grow:1')], [

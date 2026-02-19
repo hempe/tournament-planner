@@ -22,5 +22,4 @@ final class EventRegistration
     ) {
         $this->ago = DateTimeHelper::ago($timestamp);
     }
-
 }
