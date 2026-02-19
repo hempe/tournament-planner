@@ -19,13 +19,5 @@ final class ValidationResult
         return array_map(fn(ValidationError $error) => $error->message, $this->errors);
     }
 
-    /** @return array<string, string[]> */
-    public function getErrorsByField(): array
-    {
-        $result = [];
-        foreach ($this->errors as $error) {
-            $result[$error->field][] = $error->message;
-        }
-        return $result;
-    }
+
 }

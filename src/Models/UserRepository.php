@@ -14,20 +14,6 @@ final class UserRepository
     {
     }
 
-    public function exists(string $userId): bool
-    {
-        $stmt = $this->conn->prepare("SELECT id FROM users WHERE id = ?");
-        if (!$stmt) {
-            throw new Exception("Prepare statement failed: " . $this->conn->error);
-        }
-        $stmt->bind_param("s", $userId);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $exists = $result->num_rows > 0;
-        $stmt->close();
-        return $exists;
-    }
-
     public function userNameAlreadyTaken(string $username): bool
     {
         $stmt = $this->conn->prepare("SELECT id FROM users WHERE username = ?");

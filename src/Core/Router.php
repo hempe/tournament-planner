@@ -22,16 +22,6 @@ final class Router
         $this->addRoute('POST', $pattern, $handler, $middleware, $name);
     }
 
-    public function put(string $pattern, callable|array $handler, array $middleware = [], string $name = ''): void
-    {
-        $this->addRoute('PUT', $pattern, $handler, $middleware, $name);
-    }
-
-    public function delete(string $pattern, callable|array $handler, array $middleware = [], string $name = ''): void
-    {
-        $this->addRoute('DELETE', $pattern, $handler, $middleware, $name);
-    }
-
     /**
      * Load pre-scanned route definitions from attributes.
      *
