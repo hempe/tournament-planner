@@ -233,14 +233,20 @@ final class EventController
         $rows = [];
         $rows[] = implode(',', [
             $csvField(__('events.export_col_name')),
+            $csvField(__('events.export_col_gender')),
             $csvField(__('events.export_col_is_guest')),
+            $csvField(__('users.member_number')),
+            $csvField(__('users.rfeg')),
             $csvField(__('events.export_col_timestamp')),
         ]);
 
         foreach ($registrations as $reg) {
             $rows[] = implode(',', [
                 $csvField($reg->name),
+                $csvField($reg->male ? __('users.mr') : __('users.mrs')),
                 $csvField(__('events.export_no')),
+                $csvField($reg->memberNumber ?? ''),
+                $csvField($reg->rfeg ?? ''),
                 $csvField($isoDate($reg->timestamp)),
             ]);
         }
@@ -248,7 +254,10 @@ final class EventController
         foreach ($guests as $guest) {
             $rows[] = implode(',', [
                 $csvField($guest->firstName . ' ' . $guest->lastName),
+                $csvField($guest->male ? __('users.mr') : __('users.mrs')),
                 $csvField(__('events.export_yes')),
+                $csvField(''),
+                $csvField($guest->rfeg ?? ''),
                 $csvField($isoDate($guest->timestamp)),
             ]);
         }

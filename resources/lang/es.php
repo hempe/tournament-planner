@@ -117,8 +117,12 @@ return [
         'mixed' => 'Mixto',
         'separate' => 'Separado',
         'play_together' => 'Damas y caballeros juntos',
+        'participants' => 'Participantes',
+        'male' => 'Caballeros',
+        'female' => 'Damas',
         'export' => 'Exportar',
         'export_col_name' => 'Nombre',
+        'export_col_gender' => 'Tratamiento',
         'export_col_is_guest' => 'Invitado',
         'export_col_timestamp' => 'Fecha de registro',
         'export_yes' => 'Sí',
@@ -156,6 +160,10 @@ return [
         'username_taken' => 'El nombre de usuario ":username" ya está en uso',
         'admin_update_success' => 'Estado de administrador actualizado',
         'password_update_success' => 'Contraseña cambiada correctamente',
+        'rfeg' => 'RFeg',
+        'rfeg_update_success' => 'RFeg actualizado',
+        'member_number' => 'Número de socio',
+        'member_number_update_success' => 'Número de socio actualizado',
     ],
 
     // Validation

@@ -65,13 +65,15 @@ final class UserController
             $data = $request->getValidatedData();
             $username = trim($data['username']);
             $password = trim($data['password']);
+            $rfeg = isset($data['rfeg']) && $data['rfeg'] !== '' ? trim($data['rfeg']) : null;
+            $memberNumber = isset($data['member_number']) && $data['member_number'] !== '' ? trim($data['member_number']) : null;
 
             if (DB::$users->userNameAlreadyTaken($username)) {
                 flash('error', __('users.username_taken', ['username' => $username]));
                 return Response::redirect('/users/new');
             }
 
-            $userId = DB::$users->create($username, $password, (bool) $data['male']);
+            $userId = DB::$users->create($username, $password, (bool) $data['male'], $rfeg, $memberNumber);
             flash('success', __('users.create_success'));
             return Response::redirect('/users');
 
@@ -105,6 +107,40 @@ final class UserController
         try {
             DB::$users->setAdmin($userId, $isAdmin);
             flash('success', __('users.admin_update_success'));
+            return Response::redirect('/users');
+        } catch (Exception $e) {
+            flash('error', $e->getMessage());
+            return Response::redirect('/users');
+        }
+    }
+
+    #[Post('/{id}/rfeg')]
+    public function updateRfeg(Request $request, array $params): Response
+    {
+        $userId = (int) $params['id'];
+        $rfeg = $request->getString('rfeg');
+        $rfeg = $rfeg !== '' ? $rfeg : null;
+
+        try {
+            DB::$users->setRfeg($userId, $rfeg);
+            flash('success', __('users.rfeg_update_success'));
+            return Response::redirect('/users');
+        } catch (Exception $e) {
+            flash('error', $e->getMessage());
+            return Response::redirect('/users');
+        }
+    }
+
+    #[Post('/{id}/member_number')]
+    public function updateMemberNumber(Request $request, array $params): Response
+    {
+        $userId = (int) $params['id'];
+        $memberNumber = $request->getString('member_number');
+        $memberNumber = $memberNumber !== '' ? $memberNumber : null;
+
+        try {
+            DB::$users->setMemberNumber($userId, $memberNumber);
+            flash('success', __('users.member_number_update_success'));
             return Response::redirect('/users');
         } catch (Exception $e) {
             flash('error', $e->getMessage());

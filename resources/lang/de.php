@@ -117,8 +117,12 @@ return [
         'mixed' => 'Gemischt',
         'separate' => 'Getrennt',
         'play_together' => 'Damen & Herren gemeinsam',
+        'participants' => 'Teilnehmer',
+        'male' => 'Herren',
+        'female' => 'Damen',
         'export' => 'Exportieren',
         'export_col_name' => 'Name',
+        'export_col_gender' => 'Anrede',
         'export_col_is_guest' => 'Gast',
         'export_col_timestamp' => 'Anmeldedatum',
         'export_yes' => 'Ja',
@@ -156,6 +160,10 @@ return [
         'username_taken' => 'Benutzername ":username" ist bereits vergeben',
         'admin_update_success' => 'Administrator-Status aktualisiert',
         'password_update_success' => 'Passwort erfolgreich geändert',
+        'rfeg' => 'RFeg',
+        'rfeg_update_success' => 'RFeg aktualisiert',
+        'member_number' => 'Mitgliedernummer',
+        'member_number_update_success' => 'Mitgliedernummer aktualisiert',
     ],
 
     // Validation

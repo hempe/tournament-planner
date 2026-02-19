@@ -13,6 +13,8 @@ final class User
         public readonly string $username,
         public readonly bool $isAdmin,
         public readonly bool $male = true,
+        public readonly ?string $rfeg = null,
+        public readonly ?string $memberNumber = null,
     ) {
     }
 

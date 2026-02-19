@@ -16,6 +16,9 @@ final class EventRegistration
         public readonly string $comment,
         public readonly string $timestamp,
         public readonly int $state,
+        public readonly bool $male = true,
+        public readonly ?string $rfeg = null,
+        public readonly ?string $memberNumber = null,
     ) {
         $this->ago = DateTimeHelper::ago($timestamp);
     }

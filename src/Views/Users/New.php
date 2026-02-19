@@ -16,9 +16,9 @@ use TP\Components\Form;
         content: new Card(
             __('users.create_user'),
             new Table(
-                ['', '', '', ''],
+                ['', '', '', '', '', ''],
                 items: [null],
-                widths: [1, null, null, 1],
+                widths: [1, null, null, null, null, 1],
                 projection: fn() => [
                     new Select(
                         name: 'male',
@@ -36,6 +36,16 @@ use TP\Components\Form;
                         name: 'password',
                         placeholder: __('users.password'),
                         required: true
+                    ),
+                    new Input(
+                        type: 'text',
+                        name: 'member_number',
+                        placeholder: __('users.member_number'),
+                    ),
+                    new Input(
+                        type: 'text',
+                        name: 'rfeg',
+                        placeholder: __('users.rfeg'),
                     ),
                     new IconButton(
                         title: __('users.register'),

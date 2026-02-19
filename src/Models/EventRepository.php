@@ -138,17 +138,20 @@ final class EventRepository extends BaseRepository
     /** @return EventRegistration[] */
     public function registrations(int $eventId): array
     {
-        $query = "SELECT 
-                r.id, 
-                r.comment, 
-                r.timestamp, 
+        $query = "SELECT
+                r.id,
+                r.comment,
+                r.timestamp,
                 r.state,
-                u.id AS user_id, 
-                u.username 
-            FROM event_users AS r 
-            JOIN users AS u ON r.userId = u.id 
-            WHERE r.eventId = ? 
-            ORDER BY r.state, u.username";
+                u.id AS user_id,
+                u.username,
+                u.male,
+                u.rfeg,
+                u.member_number
+            FROM event_users AS r
+            JOIN users AS u ON r.userId = u.id
+            WHERE r.eventId = ?
+            ORDER BY r.state, u.male DESC, u.username";
 
         return $this->fetchMappedRows(
             $query,
@@ -160,7 +163,10 @@ final class EventRepository extends BaseRepository
                     $row['username'],
                     $row['comment'] ?? '',
                     $row['timestamp'],
-                    (int) $row['state']
+                    (int) $row['state'],
+                    (bool) $row['male'],
+                    $row['rfeg'] ?? null,
+                    $row['member_number'] ?? null,
                 );
             }
         );

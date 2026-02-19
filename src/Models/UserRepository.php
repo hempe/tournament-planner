@@ -42,15 +42,15 @@ final class UserRepository
         return $taken;
     }
 
-    public function create(string $username, string $password, bool $male = true): int
+    public function create(string $username, string $password, bool $male = true, ?string $rfeg = null, ?string $memberNumber = null): int
     {
         $hashedPassword = Security::getInstance()->hashPassword($password);
         $maleInt = $male ? 1 : 0;
-        $stmt = $this->conn->prepare("INSERT INTO users (username, password, admin, male) VALUES (?, ?, 0, ?)");
+        $stmt = $this->conn->prepare("INSERT INTO users (username, password, admin, male, rfeg, member_number) VALUES (?, ?, 0, ?, ?, ?)");
         if (!$stmt) {
             throw new Exception("Prepare statement failed: " . $this->conn->error);
         }
-        $stmt->bind_param("ssi", $username, $hashedPassword, $maleInt);
+        $stmt->bind_param("ssiss", $username, $hashedPassword, $maleInt, $rfeg, $memberNumber);
         $success = $stmt->execute();
         if (!$success) {
             $stmt->close();
@@ -59,6 +59,28 @@ final class UserRepository
         $userId = $this->conn->insert_id;
         $stmt->close();
         return $userId;
+    }
+
+    public function setRfeg(int $userId, ?string $rfeg): void
+    {
+        $stmt = $this->conn->prepare("UPDATE users SET rfeg = ? WHERE id = ?");
+        if (!$stmt) {
+            throw new Exception("Prepare statement failed: " . $this->conn->error);
+        }
+        $stmt->bind_param("si", $rfeg, $userId);
+        $stmt->execute();
+        $stmt->close();
+    }
+
+    public function setMemberNumber(int $userId, ?string $memberNumber): void
+    {
+        $stmt = $this->conn->prepare("UPDATE users SET member_number = ? WHERE id = ?");
+        if (!$stmt) {
+            throw new Exception("Prepare statement failed: " . $this->conn->error);
+        }
+        $stmt->bind_param("si", $memberNumber, $userId);
+        $stmt->execute();
+        $stmt->close();
     }
 
     public function setPassword(int $userId, string $password): void
@@ -99,7 +121,7 @@ final class UserRepository
     /** @return User[] */
     public function all(): array
     {
-        $stmt = $this->conn->prepare("SELECT id, username, admin, male FROM users");
+        $stmt = $this->conn->prepare("SELECT id, username, admin, male, rfeg, member_number FROM users ORDER BY username");
         if (!$stmt) {
             throw new Exception("Prepare statement failed: " . $this->conn->error);
         }
@@ -108,7 +130,7 @@ final class UserRepository
         $users = [];
 
         while ($row = $result->fetch_assoc()) {
-            $users[] = new User((int) $row['id'], $row['username'], (bool) $row['admin'], (bool) $row['male']);
+            $users[] = new User((int) $row['id'], $row['username'], (bool) $row['admin'], (bool) $row['male'], $row['rfeg'], $row['member_number']);
         }
 
         $stmt->close();
@@ -118,7 +140,7 @@ final class UserRepository
     /** @return array{0: User|null, 1: string|null} */
     public function getWithPassword(string $username): array
     {
-        $stmt = $this->conn->prepare("SELECT id, password, admin, male FROM users WHERE username = ?");
+        $stmt = $this->conn->prepare("SELECT id, password, admin, male, rfeg, member_number FROM users WHERE username = ?");
         if (!$stmt) {
             throw new Exception("Prepare statement failed: " . $this->conn->error);
         }
@@ -127,7 +149,7 @@ final class UserRepository
         $result = $stmt->get_result();
 
         if ($row = $result->fetch_assoc()) {
-            $user = new User((int) $row['id'], $username, (bool) $row['admin'], (bool) $row['male']);
+            $user = new User((int) $row['id'], $username, (bool) $row['admin'], (bool) $row['male'], $row['rfeg'], $row['member_number']);
             $stmt->close();
             return [$user, $row['password']];
         }
