@@ -7,6 +7,7 @@ use TP\Components\Table;
 use TP\Components\InputAction;
 use TP\Components\IconActionButton;
 use TP\Components\Div;
+use TP\Components\Small;
 use TP\Models\Event;
 use TP\Models\EventRegistration;
 
@@ -41,7 +42,7 @@ class EventRegistrations extends Component
                     fn() => new Div(
                         content: [
                             new Div($user->name),
-                            "<small style=\"font-size:0.8em\">{$user->ago}</small>"
+                            new Small(content: $user->ago, style: 'font-size:0.8em'),
                         ]
                     ),
                     new InputAction(

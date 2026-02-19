@@ -143,19 +143,3 @@ final class Translator
         };
     }
 }
-
-// Global helper functions for convenience
-function __(string $key, array $parameters = []): string
-{
-    return Translator::getInstance()->translate($key, $parameters);
-}
-
-function trans(string $key, array $parameters = []): string
-{
-    return Translator::getInstance()->translate($key, $parameters);
-}
-
-function trans_choice(string $key, int $count, array $parameters = []): string
-{
-    return Translator::getInstance()->choice($key, $count, $parameters);
-}

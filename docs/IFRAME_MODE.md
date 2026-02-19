@@ -85,20 +85,6 @@ Use these selectors to style iframe mode:
 }
 ```
 
-## PHP Helpers
-
-Check iframe mode in PHP:
-
-```php
-if (is_iframe_mode()) {
-    // Running in iframe mode
-}
-
-if (is_compact_mode()) {
-    // Running in compact iframe mode
-}
-```
-
 ## Styling Customization
 
 Default iframe styles include:

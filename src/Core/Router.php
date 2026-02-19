@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace TP\Core;
 
+use Closure;
+
 final class Router
 {
     private array $routes = [];
@@ -162,7 +164,7 @@ final class Router
         return null;
     }
 
-    private function callHandler(callable|array $handler, Request $request, array $params): Response
+    private function callHandler(Closure|array $handler, Request $request, array $params): Response
     {
         if (is_array($handler)) {
             [$class, $method] = $handler;
@@ -175,9 +177,9 @@ final class Router
             // Call with params only if method accepts them
             if (count($parameters) >= 2) {
                 return $controller->$method($request, $params);
-            } else {
-                return $controller->$method($request);
             }
+
+            return $controller->$method($request);
         }
 
         // For closures, check signature

@@ -6,7 +6,6 @@ namespace TP\Components;
 
 use Closure;
 use Generator;
-use TP\Core\Security;
 
 abstract class Component
 {
@@ -51,30 +50,5 @@ abstract class Component
         }
 
         return ob_get_clean() . (string) $result;
-    }
-
-    protected function escapeHtml(string $value): string
-    {
-        return Security::getInstance()->escapeHtml($value);
-    }
-
-    protected function escapeAttr(string $value): string
-    {
-        return Security::getInstance()->escapeAttr($value);
-    }
-
-    protected function escapeUrl(string $value): string
-    {
-        return Security::getInstance()->escapeUrl($value);
-    }
-
-    protected function trans(string $key, array $parameters = []): string
-    {
-        return __($key, $parameters);
-    }
-
-    protected function transChoice(string $key, int $count, array $parameters = []): string
-    {
-        return trans_choice($key, $count, $parameters);
     }
 }

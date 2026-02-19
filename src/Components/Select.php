@@ -14,7 +14,8 @@ class Select extends Component
         private readonly string $onchange = '',
         private readonly string $style = '',
         private readonly string $title = '',
-    ) {}
+    ) {
+    }
 
     protected function template(): void
     {
