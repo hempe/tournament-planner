@@ -16,7 +16,6 @@ use TP\Middleware\AdminMiddleware;
 use TP\Models\User;
 use TP\Models\DB;
 use Exception;
-use function PHPUnit\Framework\returnArgument;
 
 #[RoutePrefix('/events')]
 #[Middleware(AuthMiddleware::class)]

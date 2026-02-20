@@ -95,7 +95,7 @@ assert(is_int($id));
                             icon: 'fa-trash',
                             confirmMessage: __('events.delete_confirm_short'),
                         ),
-                        $event->locked
+                        $event->isLocked
                         ? new IconActionButton(
                             actionUrl: "/events/$id/unlock",
                             title: __('events.unlock'),

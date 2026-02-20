@@ -14,9 +14,6 @@ final class AdminMiddleware implements MiddlewareInterface
     public function handle(Request $request, callable $next): Response
     {
         if (!User::admin()) {
-            if ($request->isAjax()) {
-                return Response::forbidden(__('errors.unauthorized'));
-            }
             return Response::forbidden(__('errors.unauthorized'));
         }
 

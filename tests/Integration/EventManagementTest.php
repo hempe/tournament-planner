@@ -45,7 +45,7 @@ class EventManagementTest extends IntegrationTestCase
         $this->assertEquals('Test Golf Event', $event->name);
         $this->assertEquals('2026-03-15', $event->date);
         $this->assertEquals(20, $event->capacity);
-        $this->assertFalse($event->locked, "New event should not be locked");
+        $this->assertFalse($event->isLocked, "New event should not be locked");
         echo "   ✓ Event created: {$event->name} on {$event->date}\n";
 
         // Step 3: Bulk create events
@@ -64,7 +64,7 @@ class EventManagementTest extends IntegrationTestCase
         // Verify bulk events are locked
         foreach ($bulkEventIds as $id) {
             $bulkEvent = DB::$events->get($id, 1);
-            $this->assertTrue($bulkEvent->locked, "Bulk created events should be locked");
+            $this->assertTrue($bulkEvent->isLocked, "Bulk created events should be locked");
         }
         echo "   ✓ All bulk events are locked\n";
 
@@ -72,12 +72,12 @@ class EventManagementTest extends IntegrationTestCase
         echo "\n4. Testing lock/unlock functionality...\n";
         DB::$events->lock($this->eventId);
         $lockedEvent = DB::$events->get($this->eventId, 1);
-        $this->assertTrue($lockedEvent->locked, "Event should be locked");
+        $this->assertTrue($lockedEvent->isLocked, "Event should be locked");
         echo "   ✓ Event locked successfully\n";
 
         DB::$events->unlock($this->eventId);
         $unlockedEvent = DB::$events->get($this->eventId, 1);
-        $this->assertFalse($unlockedEvent->locked, "Event should be unlocked");
+        $this->assertFalse($unlockedEvent->isLocked, "Event should be unlocked");
         echo "   ✓ Event unlocked successfully\n";
 
         // Step 5: Register regular user for event

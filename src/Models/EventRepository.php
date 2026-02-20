@@ -11,7 +11,6 @@ final class EventRepository extends BaseRepository
 {
     private const QUERY_EVENT = "SELECT
                 e.id,
-                e.locked,
                 (e.locked = 1 OR e.date < NOW()) AS isLocked,
                 e.name,
                 e.date,
@@ -36,7 +35,6 @@ final class EventRepository extends BaseRepository
     {
         return new Event(
             (int) $row['id'],
-            (bool) $row['locked'],
             (bool) $row['isLocked'],
             $row['date'],
             $row['name'],

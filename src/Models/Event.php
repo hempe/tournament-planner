@@ -10,7 +10,6 @@ final class Event
 
     public function __construct(
         public readonly int $id,
-        public readonly bool $locked,
         public readonly bool $isLocked,
         public readonly string $date,
         public readonly string $name,

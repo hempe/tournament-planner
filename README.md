@@ -34,14 +34,14 @@ That's it! 🚀
 ## Documentation
 
 ### Getting Started
-- **[INSTALLATION.md](INSTALLATION.md)** - Complete installation guide
-- **[DEPLOYMENT.md](DEPLOYMENT.md)** - Production deployment instructions
+- **[docs/INSTALLATION.md](docs/INSTALLATION.md)** - Complete installation guide
+- **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)** - Production deployment instructions
 
 ### For Developers
-- **[DEVELOPMENT.md](DEVELOPMENT.md)** - How to add routes, views, and features
-- **[APPLICATION.md](APPLICATION.md)** - Application overview and architecture
-- **[TESTING.md](docs/TESTING.md)** - Testing guide and code coverage
-- **[MIGRATION.md](MIGRATION.md)** - Historical changes and migration guide
+- **[docs/TESTING.md](docs/TESTING.md)** - Testing guide and code coverage
+- **[docs/ROUTING.md](docs/ROUTING.md)** - Routing and middleware system
+- **[docs/COMPONENTS.md](docs/COMPONENTS.md)** - UI component system
+- **[docs/IFRAME_MODE.md](docs/IFRAME_MODE.md)** - Iframe embedding support
 
 ### For AI Assistants
 - **[CLAUDE.md](CLAUDE.md)** - Development guide for Claude Code
@@ -89,10 +89,9 @@ See [TESTING.md](docs/TESTING.md) for detailed testing documentation.
 
 ## Quick Links
 
-- Need help? → See [INSTALLATION.md](INSTALLATION.md#troubleshooting)
-- Deploying to production? → See [DEPLOYMENT.md](DEPLOYMENT.md)
-- Want to add features? → See [DEVELOPMENT.md](DEVELOPMENT.md)
-- Running tests? → See [TESTING.md](docs/TESTING.md)
+- Need help? → See [docs/INSTALLATION.md](docs/INSTALLATION.md)
+- Deploying to production? → See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)
+- Running tests? → See [docs/TESTING.md](docs/TESTING.md)
 
 ## License
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

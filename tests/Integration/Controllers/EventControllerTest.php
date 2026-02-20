@@ -189,7 +189,7 @@ class EventControllerTest extends IntegrationTestCase
         $this->assertEquals(303, $response->statusCode);
 
         $event = DB::$events->get($eventId, 1);
-        $this->assertTrue($event->locked);
+        $this->assertTrue($event->isLocked);
     }
 
     public function testUnlockUnlocksEvent(): void
@@ -203,7 +203,7 @@ class EventControllerTest extends IntegrationTestCase
         $this->assertEquals(303, $response->statusCode);
 
         $event = DB::$events->get($eventId, 1);
-        $this->assertFalse($event->locked);
+        $this->assertFalse($event->isLocked);
     }
 
     public function testRegisterAddsUserToEvent(): void
