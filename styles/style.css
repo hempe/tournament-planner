@@ -48,6 +48,10 @@
   --bg-filter: blur(1px);
   /* Keeps the backdrop effect consistent */
   --theme-toggle-dark: block;
+
+  option {
+    color: black;
+  }
 }
 
 [data-theme="dark"] {
@@ -93,6 +97,10 @@
   --bg-filter: blur(1px);
   /*This makes the backdrop invisible.*/
   --theme-toggle-light: block;
+
+  option {
+    color: white;
+  }
 }
 
 /**
@@ -435,10 +443,6 @@ textarea {
 .language-selector {
   /* Not sure what to do with the language selection */
   display: none;
-}
-
-option {
-  color: black;
 }
 
 input[type="checkbox"] {

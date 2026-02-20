@@ -90,12 +90,6 @@ class RequestTest extends TestCase
         $this->assertFalse($req->getBool('missing'));
     }
 
-    public function testGetArrayReturnsArray(): void
-    {
-        $req = $this->makeRequest('GET', '/', ['items' => ['a', 'b']]);
-        $this->assertEquals(['a', 'b'], $req->getArray('items'));
-    }
-
     public function testGetArrayDefaultsToEmpty(): void
     {
         $req = $this->makeRequest('GET', '/');

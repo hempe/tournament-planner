@@ -46,7 +46,7 @@ final class Table extends Component
         ), $items);
     }
 
-    private function onclick(callable $href, TableRow $item): string
+    private function onclick(callable $href, mixed $item): string
     {
         $url = Url::build($href($item));
         return "window.location.href='{$url}'";

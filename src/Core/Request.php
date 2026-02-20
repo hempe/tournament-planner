@@ -149,8 +149,8 @@ final class Request
 
     public function isSecure(): bool
     {
-        return $this->server['HTTPS'] ?? false ||
-            $this->server['HTTP_X_FORWARDED_PROTO'] ?? '' === 'https';
+        return !empty($this->server['HTTPS']) ||
+            ($this->server['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https';
     }
 
     public function getUserAgent(): string

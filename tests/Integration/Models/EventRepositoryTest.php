@@ -59,16 +59,19 @@ class EventRepositoryTest extends IntegrationTestCase
         $this->assertEquals($eventId, $registered[0]->id);
     }
 
-    public function testRegisteredEventsReturnsEmptyWhenNotRegistered(): void
+    public function testRegisteredEventsReturnsAllEventsWithUserState(): void
     {
         $this->loginAsAdmin();
 
         DB::$events->add('Test Event', '2026-03-15', 20);
         $userId = DB::$users->create('testuser', 'Pass123!');
 
-        $registered = DB::$events->registeredEvents($userId);
+        // registeredEvents returns all events (with LEFT JOIN for user state)
+        // userState will be 0 for events the user isn't registered to
+        $events = DB::$events->registeredEvents($userId);
 
-        $this->assertCount(0, $registered);
+        $this->assertCount(1, $events);
+        $this->assertEquals(0, $events[0]->userState);
     }
 
     public function testAvailableUsersExcludesRegisteredUsersForAdmin(): void

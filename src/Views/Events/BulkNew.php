@@ -1,7 +1,9 @@
 <?php
 
+use TP\Components\Checkbox;
 use TP\Components\Color;
 use TP\Components\Input;
+use TP\Components\Label;
 use TP\Components\Page;
 use TP\Components\Select;
 use TP\Components\Table;
@@ -16,21 +18,20 @@ use TP\Components\Form;
         content: new Card(
             __('events.bulk_create'),
             new Table(
-                columns: ['', '', ''],
+                columns: ['', ''],
                 items: [0, 1, 2, 3, 4, 5],
+                widths: [180, null],
                 projection: fn($index) => match ($index) {
                     0 => [
-                        '<label for="start_date">' . __('events.bulk_start_date') . '</label>',
+                        new Label(for: 'start_date', text: __('events.bulk_start_date')),
                         new Input(type: 'date', name: 'start_date', id: 'start_date', required: true),
-                        ''
                     ],
                     1 => [
-                        '<label for="end_date">' . __('events.bulk_end_date') . '</label>',
+                        new Label(for: 'end_date', text: __('events.bulk_end_date')),
                         new Input(type: 'date', name: 'end_date', id: 'end_date', required: true),
-                        ''
                     ],
                     2 => [
-                        '<label for="day_of_week">' . __('events.bulk_day_of_week') . '</label>',
+                        new Label(for: 'day_of_week', text: __('events.bulk_day_of_week')),
                         new Select(
                             options: [
                                 '' => __('events.bulk_select_day'),
@@ -46,23 +47,24 @@ use TP\Components\Form;
                             id: 'day_of_week',
                             required: true,
                         ),
-                        ''
                     ],
                     3 => [
-                        '<label for="name">' . __('events.name') . '</label>',
+                        new Label(for: 'name', text: __('events.name')),
                         new Input(name: 'name', id: 'name', placeholder: __('events.name'), required: true),
-                        ''
                     ],
                     4 => [
-                        '<label for="capacity">' . __('events.max_participants') . '</label>',
+                        new Label(for: 'capacity', text: __('events.max_participants')),
                         new Input(type: 'number', name: 'capacity', id: 'capacity', placeholder: __('events.max_participants'), required: true),
-                        ''
                     ],
                     5 => [
-                        __('events.play_together'),
-                        '<input type="hidden" name="mixed" value="0"><input type="checkbox" name="mixed" value="1" checked>',
+                        new Checkbox(
+                            name: 'mixed',
+                            label: __('events.play_together'),
+                            checked: true
+                        ),
                         new IconButton(
                             title: __('events.bulk_preview'),
+                            title_inline: true,
                             type: 'submit',
                             icon: 'fa-eye',
                             color: Color::Primary,
