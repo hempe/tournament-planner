@@ -18,7 +18,7 @@ use TP\Components\Form;
             new Table(
                 columns: ['', '', ''],
                 items: [0, 1, 2, 3, 4, 5],
-                projection: fn($index) => match($index) {
+                projection: fn($index) => match ($index) {
                     0 => [
                         '<label for="start_date">' . __('events.bulk_start_date') . '</label>',
                         new Input(type: 'date', name: 'start_date', id: 'start_date', required: true),
@@ -33,7 +33,7 @@ use TP\Components\Form;
                         '<label for="day_of_week">' . __('events.bulk_day_of_week') . '</label>',
                         new Select(
                             options: [
-                                ''  => __('events.bulk_select_day'),
+                                '' => __('events.bulk_select_day'),
                                 '1' => __('calendar.weekdays.monday'),
                                 '2' => __('calendar.weekdays.tuesday'),
                                 '3' => __('calendar.weekdays.wednesday'),

@@ -188,7 +188,7 @@ class Calendar extends Component
         $loginButton = (!User::loggedIn() && $isIframeMode)
             ? new IconButton(
                 title: __('auth.login'),
-                onClick: "window.location.href='" . Url::build('/login') . "'",
+                href: "/login",
                 icon: 'fa-sign-in',
                 type: 'button',
                 color: Color::Primary,
@@ -199,7 +199,6 @@ class Calendar extends Component
 
         // Preserve iframe parameter in navigation
         $isIframeMode = isset($_GET['iframe']) && $_GET['iframe'] === '1';
-        $iframeParam = $isIframeMode ? '&iframe=1' : '';
 
         echo new Div(
             class: 'calendar',
@@ -207,7 +206,7 @@ class Calendar extends Component
                 title: [
                     new IconButton(
                         title: __('calendar.previous_month'),
-                        onClick: "window.location.href='./?date={$this->prevMonth()}{$iframeParam}'",
+                        href: "./?date={$this->prevMonth()}",
                         icon: 'fa-chevron-left',
                         type: 'button',
                         color: Color::None,
@@ -215,7 +214,7 @@ class Calendar extends Component
                     new Span($this->formattedDate()),
                     new IconButton(
                         title: __('calendar.next_month'),
-                        onClick: "window.location.href='./?date={$this->nextMonth()}{$iframeParam}'",
+                        href: "./?date={$this->nextMonth()}",
                         icon: 'fa-chevron-right',
                         type: 'button',
                         color: Color::None,
@@ -269,11 +268,10 @@ class Calendar extends Component
                                                     yield ($this->eventRenderer)($event);
                                                 }
 
-                                                $href = Url::build("/events/new?date={$day->str}&b={$day->year}-{$day->month}-1");
                                                 if (User::admin() && $day->active)
                                                     yield new IconButton(
                                                         title: __('events.add'),
-                                                        onClick: "window.location.href='{$href}",
+                                                        href: "/events/new?date={$day->str}&b={$day->year}-{$day->month}-1",
                                                         icon: 'fa-plus',
                                                         type: 'button',
                                                         color: Color::None,

@@ -6,6 +6,7 @@ class Input extends Component
 {
     public readonly string $class;
     public readonly string $style;
+    public readonly string $content;
 
     /**
      * @param Closure|string|Component|array<Closure|string|Component> $class
@@ -21,9 +22,11 @@ class Input extends Component
         \Closure|string|Component|array $style = '',
         private readonly string $step = '',
         private readonly string $id = '',
+        \Closure|string|Component|array $content = '',
     ) {
         $this->class = $this->captureOutput($class);
         $this->style = $this->captureOutput($style);
+        $this->content = $this->captureOutput($content);
     }
 
     protected function template(): void
@@ -41,7 +44,7 @@ class Input extends Component
                 style="{$this->style}"
                 {$id}
                 {$step}
-                {$required}>
+                {$required}>{$this->content}
         HTML;
     }
 }

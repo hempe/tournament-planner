@@ -64,15 +64,6 @@ projection: fn($rowIndex) => match($rowIndex) {
 }
 ```
 
-### `$onclick` (optional)
-Function that generates JavaScript for row click events.
-
-**Signature:** `fn($item) => string`
-
-```php
-onclick: fn($event) => "window.location.href='/events/{$event->id}'"
-```
-
 ### `$widths` (optional)
 Array of column widths. Index corresponds to column index.
 
@@ -119,7 +110,7 @@ new Table(
             color: Color::Accent
         )
     ],
-    onclick: fn($event) => "window.location.href='/events/{$event->id}'",
+    href: fn($event) => "/events/{$event->id}",
     widths: [null, null, 1]  // Action column minimal width
 )
 ```

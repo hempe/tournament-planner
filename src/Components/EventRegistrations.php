@@ -35,9 +35,9 @@ class EventRegistrations extends Component
         $queryString = !empty($queryParams) ? '?' . implode('&', $queryParams) : '';
 
         echo new Table(
-            [__('events.user'), __('events.comment'), ''],
-            $this->eventUsers,
-            function ($user) use ($queryString) {
+            columns: [__('events.user'), __('events.comment'), ''],
+            items: $this->eventUsers,
+            projection: function ($user) use ($queryString) {
                 return [
                     fn() => new Div(
                         content: [

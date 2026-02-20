@@ -1,6 +1,7 @@
 <?php
 
 use TP\Models\DB;
+use TP\Components\Checkbox;
 use TP\Components\Div;
 use TP\Components\Small;
 use TP\Components\Span;
@@ -56,9 +57,9 @@ assert(is_int($id));
             content: new Card(
                 title: $formattedDate . ': ' . $event->name . ' · ' . ($event->mixed ? __('events.mixed') : __('events.separate')),
                 content: new Table(
-                    [__('events.name'), __('events.max_participants'), '', '', '', '', ''],
-                    [$event],
-                    fn($event) => [
+                    columns: [__('events.name'), __('events.max_participants'), '', '', '', '', ''],
+                    items: [$event],
+                    projection: fn($event) => [
                         new Input(
                             type: 'text',
                             value: $event->name,
@@ -75,7 +76,11 @@ assert(is_int($id));
                             style: 'flex-grow:1;',
                             required: true
                         ),
-                        '<input type="hidden" name="mixed" value="0"><label style="display:flex;align-items:center;gap:.4rem;white-space:nowrap;margin-top:5px;"><input type="checkbox" name="mixed" value="1"' . ($event->mixed ? ' checked' : '') . '> ' . __('events.play_together') . '</label>',
+                        new Checkbox(
+                            name: 'mixed',
+                            label: __('events.play_together'),
+                            checked: $event->mixed,
+                        ),
                         new IconButton(
                             title: __('events.save'),
                             type: 'submit',
@@ -106,7 +111,7 @@ assert(is_int($id));
                         ),
                         new IconButton(
                             title: __('events.export'),
-                            onClick: "window.location.href='/events/$id/export'",
+                            href: "'/events/$id/export",
                             icon: 'fa-download',
                             type: 'button',
                             color: Color::Light,
@@ -165,7 +170,7 @@ assert(is_int($id));
                 $guest->comment ?? '',
                 new IconButton(
                     title: __('events.edit'),
-                    onClick: "window.location.href='/events/$id/guests/{$guest->id}/edit'",
+                    href: "/events/$id/guests/{$guest->id}/edit",
                     icon: 'fa-edit',
                     type: 'button',
                     color: Color::Light,
@@ -185,7 +190,7 @@ assert(is_int($id));
             new Span(content: __('guests.title'), style: 'flex-grow:1'),
             new IconButton(
                 title: __('guests.add'),
-                onClick: "window.location.href='/events/$id/guests/new'",
+                href: "/events/$id/guests/new",
                 icon: 'fa-user-plus',
                 type: 'button',
                 color: Color::Primary,
@@ -193,7 +198,10 @@ assert(is_int($id));
         ];
 
         if ($event->mixed) {
-            yield new Card($guestHeader, count($guests) > 0 ? $guestTable($guests) : '');
+            yield new Card(
+                title: $guestHeader,
+                content: count($guests) > 0 ? $guestTable($guests) : ''
+            );
         } else {
             $maleGuests = array_values(array_filter($guests, fn($g) => $g->male));
             $femaleGuests = array_values(array_filter($guests, fn($g) => !$g->male));
@@ -201,7 +209,7 @@ assert(is_int($id));
                 array_merge([new Span(content: __('events.male') . ' – ' . __('guests.title'), style: 'flex-grow:1')], [
                     new IconButton(
                         title: __('guests.add'),
-                        onClick: "window.location.href='/events/$id/guests/new'",
+                        href: "/events/$id/guests/new",
                         icon: 'fa-user-plus',
                         type: 'button',
                         color: Color::Primary,
@@ -219,11 +227,11 @@ assert(is_int($id));
 
         if (count($users) && !$event->isLocked) {
             yield new Card(
-                __('auth.not_registered'),
-                new Table(
-                    [__('events.user'), __('events.comment')],
-                    $users,
-                    function ($user) use ($id, $eventFull, $queryString) {
+                title: __('auth.not_registered'),
+                content: new Table(
+                    columns: [__('events.user'), __('events.comment')],
+                    items: $users,
+                    projection: function ($user) use ($id, $eventFull, $queryString) {
                         return [
                             $user->username,
                             new InputAction(

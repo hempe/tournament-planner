@@ -28,12 +28,11 @@ assert($event instanceof Event);
     );
 
     $isIframeMode = isset($_GET['iframe']) && $_GET['iframe'] === '1';
-    $backUrl = Url::build(isset($_GET['b']) ? '/guest?date=' . $_GET['b'] : '/guest');
     $cardTitle = $isIframeMode
         ? [
             new IconButton(
                 title: __('nav.back'),
-                onClick: "window.location.href='{$backUrl}'",
+                href: isset($_GET['b']) ? '/guest?date=' . $_GET['b'] : '/guest',
                 icon: 'fa-chevron-left',
                 type: 'button',
                 color: Color::None,
@@ -45,9 +44,8 @@ assert($event instanceof Event);
         ]
         : "{$formattedDate}: {$event->name}";
 
-    $action = Url::build("/events/{$event->id}/guests/new");
     yield new Form(
-        action: $action,
+        action: "/events/{$event->id}/guests/new",
         content: new Card(
             title: $cardTitle,
             content: new Table(

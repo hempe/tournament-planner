@@ -66,7 +66,7 @@ assert(is_int($id));
         ? [
             new IconButton(
                 title: __('nav.back'),
-                onClick: "window.location.href='$backUrl'",
+                href: $backUrl,
                 icon: 'fa-chevron-left',
                 type: 'button',
                 color: Color::None,

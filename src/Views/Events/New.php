@@ -1,6 +1,8 @@
 <?php
 
+use TP\Components\Checkbox;
 use TP\Components\Color;
+use TP\Components\Input;
 use TP\Components\Page;
 use TP\Components\Table;
 use TP\Components\Card;
@@ -20,23 +22,25 @@ use TP\Core\Translator;
                 columns: ['', '', '', ''],
                 items: [null],
                 projection: fn() => [
-                    <<<HTML
-                        <input
-                            type="text"
-                            name="name"
-                            class="input"
-                            placeholder="Name"
-                            required>
-                    HTML,
-                    <<<HTML
-                        <input
-                            type="number"
-                            name="capacity"
-                            class="input"
-                            placeholder="Max. Teilnehmer"
-                            required>
-                    HTML,
-                    '<input type="hidden" name="mixed" value="0"><label style="display:flex;align-items:center;gap:.4rem;white-space:nowrap"><input type="checkbox" name="mixed" value="1" checked> ' . __('events.play_together') . '</label>',
+                    new Input(
+                        type: 'text',
+                        name: 'name',
+                        class: 'input',
+                        placeholder: __('events.name'),
+                        required: true
+                    ),
+                    new Input(
+                        type: 'number',
+                        name: 'capacity',
+                        class: 'input',
+                        placeholder: __('events.capacity'),
+                        required: true
+                    ),
+                    new Checkbox(
+                        name: 'mixed',
+                        label: __('events.play_together'),
+                        checked: true,
+                    ),
                     new IconButton(
                         title: 'Speichern',
                         type: 'submit',

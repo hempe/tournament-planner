@@ -20,6 +20,7 @@ class IconButton extends Component
         public readonly string $icon,
         public readonly Color $color,
         public readonly bool $title_inline = false,
+        public readonly string|null $href = null,
         public readonly string|null $onClick = null,
         public readonly bool $required = false,
         \Closure|string|Component|array $class = '',
@@ -33,7 +34,13 @@ class IconButton extends Component
     protected function template(): void
     {
         $required = $this->required ? 'required' : '';
-        $onClick = $this->onClick ? $this->onClick : 'event.stopPropagation();';
+        $onClick =
+            $this->onClick
+            ? $this->onClick
+            : $this->href
+            ? "window.location.href='{$this->href}'"
+            : 'event.stopPropagation();';
+
         $title = $this->title;
         $titleInline = $this->title_inline ? new Span($title) : '';
         $icon = new Icon($this->icon, $this->title);

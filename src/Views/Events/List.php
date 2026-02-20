@@ -34,9 +34,9 @@ use TP\Models\User;
     yield new Card(
         __('events.title'),
         new Table(
-            $columns,
-            DB::$events->all(),
-            function($event) use ($isAdmin) {
+            columns: $columns,
+            items: DB::$events->all(),
+            projection: function ($event) use ($isAdmin) {
                 $row = [
                     $event->date,
                     $event->name,
@@ -57,7 +57,7 @@ use TP\Models\User;
 
                 return $row;
             },
-            fn($event) => "window.location.href='/events/{$event->id}'",
+            href: fn($event) => "/events/{$event->id}",
             widths: $widths
         )
     );

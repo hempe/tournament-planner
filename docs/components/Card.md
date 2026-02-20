@@ -87,7 +87,7 @@ new Card(
         type: 'button',
         icon: 'fa-user-plus',
         color: Color::None,
-        onClick: "window.location.href='/users/new'"
+        href: "/users/new"
     ),
     new Table([...])
 )

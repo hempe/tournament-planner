@@ -1,5 +1,6 @@
 <?php
 
+use TP\Core\Url;
 use TP\Components\Color;
 use TP\Components\Page;
 use TP\Components\Table;
@@ -23,7 +24,6 @@ $count = count($events);
             HTML
         );
     }
-
     yield new Form(
         action: "/events/bulk/store",
         content: new Card(
@@ -32,7 +32,7 @@ $count = count($events);
                 type: 'button',
                 icon: 'fa-arrow-left',
                 color: Color::None,
-                onClick: "window.location.href='/events/bulk/new'"
+                href: "/events/bulk/new"
             ) .
             __('events.bulk_preview_title', ['count' => $count]) .
             new IconButton(
