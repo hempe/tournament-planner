@@ -34,12 +34,12 @@ class IconButton extends Component
     protected function template(): void
     {
         $required = $this->required ? 'required' : '';
-        $onClick =
-            $this->onClick
-            ? $this->onClick
-            : $this->href
-            ? "window.location.href='{$this->href}'"
-            : 'event.stopPropagation();';
+        $onClick = $this->onClick ? $this->onClick
+            : (
+                $this->href
+                ? "window.location.href='{$this->href}'"
+                : 'event.stopPropagation();'
+            );
 
         $title = $this->title;
         $titleInline = $this->title_inline ? new Span($title) : '';

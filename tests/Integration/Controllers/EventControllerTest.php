@@ -546,4 +546,87 @@ class EventControllerTest extends IntegrationTestCase
 
         $this->assertEquals(403, $response->statusCode);
     }
+
+    public function testRegisterForbidsNonAdminRegisteringForOtherUser(): void
+    {
+        $this->loginAsAdmin();
+        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $otherUserId = DB::$users->create('otheruser', 'Pass123!');
+        DB::$users->create('regularuser', 'Pass123!');
+
+        $this->loginAs('regularuser', 'Pass123!');
+
+        // Try to register on behalf of another user
+        $response = $this->request('POST', "/events/$eventId/register", [
+            'userId' => (string) $otherUserId,
+            'comment' => 'Sneaky registration',
+        ]);
+
+        $this->assertEquals(403, $response->statusCode);
+
+        // Verify other user was NOT registered
+        $registrations = DB::$events->registrations($eventId);
+        $this->assertCount(0, $registrations);
+    }
+
+    public function testUnregisterForbidsNonAdminUnregisteringOtherUser(): void
+    {
+        $this->loginAsAdmin();
+        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $otherUserId = DB::$users->create('otheruser', 'Pass123!');
+        DB::$users->create('regularuser', 'Pass123!');
+
+        DB::$events->register($eventId, $otherUserId, '');
+
+        $this->loginAs('regularuser', 'Pass123!');
+
+        // Try to unregister another user
+        $response = $this->request('POST', "/events/$eventId/unregister", [
+            'userId' => (string) $otherUserId,
+        ]);
+
+        $this->assertEquals(403, $response->statusCode);
+
+        // Verify other user is still registered
+        $registrations = DB::$events->registrations($eventId);
+        $this->assertCount(1, $registrations);
+    }
+
+    public function testUpdateCommentForbidsNonAdminEditingOtherUsersComment(): void
+    {
+        $this->loginAsAdmin();
+        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $otherUserId = DB::$users->create('otheruser', 'Pass123!');
+        DB::$users->create('regularuser', 'Pass123!');
+
+        DB::$events->register($eventId, $otherUserId, 'Original');
+
+        $this->loginAs('regularuser', 'Pass123!');
+
+        $response = $this->request('POST', "/events/$eventId/comment", [
+            'userId' => (string) $otherUserId,
+            'comment' => 'Hacked comment',
+        ]);
+
+        $this->assertEquals(403, $response->statusCode);
+
+        // Verify comment was not changed
+        $registrations = DB::$events->registrations($eventId);
+        $this->assertEquals('Original', $registrations[0]->comment);
+    }
+
+    public function testRegisterWithBackDatePreservesRedirectParam(): void
+    {
+        $this->loginAsAdmin();
+        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        DB::$users->create('testuser', 'Pass123!');
+        $this->loginAs('testuser', 'Pass123!');
+
+        // POST with back-date query parameter
+        $response = $this->request('POST', "/events/$eventId/register?b=2026-03-01", [
+            'comment' => 'Test',
+        ]);
+
+        $this->assertEquals(303, $response->statusCode);
+    }
 }

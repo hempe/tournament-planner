@@ -34,14 +34,13 @@ final class Table extends Component
         $this->header = new TableHead($columns);
         $this->rows = array_map(fn($item): TableRow => new TableRow(
             columns: array_map(
-                /** @param int $index @param callable|string|Component $value */
-                callback: fn($index, $value) => new TableCell(
+                fn($index, $value) => new TableCell(
                     title: $this->columns[$index],
                     content: $value,
                     width: array_key_exists($index, $widths ?? []) ? $widths[$index] : null
                 ),
-                array: array_keys($this->columns),
-                arrays: $projection($item)
+                array_keys($this->columns),
+                $projection($item)
             ),
             onclick: $href ? $this->onclick($href, $item) : null
         ), $items);

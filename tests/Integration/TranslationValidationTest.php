@@ -206,6 +206,36 @@ class TranslationValidationTest extends IntegrationTestCase
     }
 
     /**
+     * Test that the union of all keys across all locales is present in every locale.
+     * This catches keys that exist in en or es but are missing from de (reference check alone misses this).
+     */
+    public function testAllLocalesHaveUnionOfAllKeys(): void
+    {
+        echo "\n=== Testing Union of All Translation Keys ===\n";
+
+        $localeData = [];
+        foreach (self::LOCALES as $locale) {
+            $filePath = __DIR__ . "/../../resources/lang/{$locale}.php";
+            $localeData[$locale] = $this->extractKeys(require $filePath);
+        }
+
+        // Compute union of all keys
+        $unionKeys = array_unique(array_merge(...array_values($localeData)));
+        sort($unionKeys);
+
+        foreach (self::LOCALES as $locale) {
+            $missing = array_diff($unionKeys, $localeData[$locale]);
+            $this->assertEmpty(
+                $missing,
+                "Locale '{$locale}' is missing keys from the union set: " . implode(', ', $missing)
+            );
+            echo "   ✓ Locale '{$locale}' has all " . count($unionKeys) . " union keys\n";
+        }
+
+        echo "\n=== Union Key Tests Passed! ===\n\n";
+    }
+
+    /**
      * Extract all translation keys from nested array
      */
     private function extractKeys(array $array, string $prefix = ''): array

@@ -1,6 +1,7 @@
 <?php
 
 use TP\Models\DB;
+use TP\Models\Event;
 use TP\Components\Checkbox;
 use TP\Components\Div;
 use TP\Components\Small;
@@ -59,7 +60,7 @@ assert(is_int($id));
                 content: new Table(
                     columns: [__('events.name'), __('events.max_participants'), '', '', '', '', ''],
                     items: [$event],
-                    projection: fn($event) => [
+                    projection: fn(Event $event) => [
                         new Input(
                             type: 'text',
                             value: $event->name,
@@ -117,6 +118,7 @@ assert(is_int($id));
                             color: Color::Light,
                         ),
                     ],
+                    href: null,
                     widths: [null, null, 1, 1, 1, 1, 1]
                 )
             )
