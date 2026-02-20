@@ -107,4 +107,26 @@ class AuthControllerTest extends IntegrationTestCase
         // Should redirect (middleware redirects unauthenticated users)
         $this->assertEquals(303, $response->statusCode);
     }
+
+    public function testLoginFormRedirectsWhenLoggedInAsRegularUser(): void
+    {
+        $this->loginAsAdmin();
+        DB::$users->create('regularuser', 'Pass123!');
+        $this->loginAs('regularuser', 'Pass123!');
+
+        $response = $this->request('GET', '/login');
+
+        $this->assertEquals(303, $response->statusCode);
+    }
+
+    public function testLogoutAsRegularUser(): void
+    {
+        $this->loginAsAdmin();
+        DB::$users->create('regularuser', 'Pass123!');
+        $this->loginAs('regularuser', 'Pass123!');
+
+        $response = $this->request('POST', '/logout');
+
+        $this->assertEquals(303, $response->statusCode);
+    }
 }

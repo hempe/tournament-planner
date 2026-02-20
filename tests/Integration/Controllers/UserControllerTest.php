@@ -404,4 +404,76 @@ class UserControllerTest extends IntegrationTestCase
         $user = array_values(array_filter($users, fn($u) => $u->id === $userId))[0] ?? null;
         $this->assertNull($user->memberNumber);
     }
+
+    // ===== Anonymous access — all /users routes redirect to login =====
+
+    public function testIndexAsAnonymous(): void
+    {
+        $response = $this->request('GET', '/users');
+        $this->assertEquals(303, $response->statusCode);
+    }
+
+    public function testCreateFormAsAnonymous(): void
+    {
+        $response = $this->request('GET', '/users/new');
+        $this->assertEquals(303, $response->statusCode);
+    }
+
+    public function testStoreAsAnonymous(): void
+    {
+        $response = $this->request('POST', '/users', [
+            'male' => '1', 'username' => 'anonuser', 'password' => 'Pass123!',
+        ]);
+        $this->assertEquals(303, $response->statusCode);
+    }
+
+    public function testDeleteAsAnonymous(): void
+    {
+        $this->loginAsAdmin();
+        $userId = DB::$users->create('targetuser', 'Pass123!');
+        $_SESSION = [];
+
+        $response = $this->request('POST', "/users/$userId/delete");
+        $this->assertEquals(303, $response->statusCode);
+    }
+
+    public function testToggleAdminAsAnonymous(): void
+    {
+        $this->loginAsAdmin();
+        $userId = DB::$users->create('targetuser', 'Pass123!');
+        $_SESSION = [];
+
+        $response = $this->request('POST', "/users/$userId/admin", ['admin' => '1']);
+        $this->assertEquals(303, $response->statusCode);
+    }
+
+    public function testUpdateRfegAsAnonymous(): void
+    {
+        $this->loginAsAdmin();
+        $userId = DB::$users->create('targetuser', 'Pass123!');
+        $_SESSION = [];
+
+        $response = $this->request('POST', "/users/$userId/rfeg", ['rfeg' => 'RF999']);
+        $this->assertEquals(303, $response->statusCode);
+    }
+
+    public function testUpdateMemberNumberAsAnonymous(): void
+    {
+        $this->loginAsAdmin();
+        $userId = DB::$users->create('targetuser', 'Pass123!');
+        $_SESSION = [];
+
+        $response = $this->request('POST', "/users/$userId/member_number", ['member_number' => 'M99']);
+        $this->assertEquals(303, $response->statusCode);
+    }
+
+    public function testChangePasswordAsAnonymous(): void
+    {
+        $this->loginAsAdmin();
+        $userId = DB::$users->create('targetuser', 'Pass123!');
+        $_SESSION = [];
+
+        $response = $this->request('POST', "/users/$userId/password", ['password' => 'NewPass123!']);
+        $this->assertEquals(303, $response->statusCode);
+    }
 }

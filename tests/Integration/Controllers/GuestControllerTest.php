@@ -306,4 +306,106 @@ class GuestControllerTest extends IntegrationTestCase
         $this->assertCount(1, $guests2);
         $this->assertEquals('Anna', $guests2[0]->firstName);
     }
+
+    // ===== GET /events/{id}/guests/new — regular user and admin =====
+
+    public function testGuestRegistrationFormAsRegularUser(): void
+    {
+        $this->loginAsAdmin();
+        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        DB::$users->create('regularuser', 'Pass123!');
+        $this->loginAs('regularuser', 'Pass123!');
+
+        $response = $this->request('GET', "/events/$eventId/guests/new");
+
+        $this->assertNotEquals(403, $response->statusCode);
+        $this->assertNotEquals(404, $response->statusCode);
+    }
+
+    public function testGuestRegistrationFormAsAdmin(): void
+    {
+        $this->loginAsAdmin();
+        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+
+        $response = $this->request('GET', "/events/$eventId/guests/new");
+
+        $this->assertNotEquals(403, $response->statusCode);
+        $this->assertNotEquals(404, $response->statusCode);
+    }
+
+    // ===== POST /events/{id}/guests/new — admin (optional validation fields) =====
+
+    public function testStoreGuestAsAdminWithOptionalFields(): void
+    {
+        $this->loginAsAdmin();
+        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+
+        // Admin can omit email and handicap
+        $response = $this->request('POST', "/events/$eventId/guests/new", [
+            'male' => '1',
+            'first_name' => 'AdminGuest',
+            'last_name' => 'Tester',
+        ]);
+
+        $this->assertEquals(303, $response->statusCode);
+
+        $guests = DB::$guests->allForEvent($eventId);
+        $this->assertCount(1, $guests);
+        $this->assertEquals('AdminGuest', $guests[0]->firstName);
+    }
+
+    // ===== GET /events/{id}/guests/{guestId}/edit — anonymous and not found event =====
+
+    public function testEditGuestFormAsAnonymous(): void
+    {
+        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $guestId = DB::$guests->add($eventId, true, 'Hans', 'Müller', null, null, null, null);
+
+        $response = $this->request('GET', "/events/$eventId/guests/$guestId/edit");
+
+        // AdminMiddleware returns 403 for non-admin (including anonymous)
+        $this->assertEquals(403, $response->statusCode);
+    }
+
+    public function testEditGuestFormReturns404ForNonexistentEvent(): void
+    {
+        $this->loginAsAdmin();
+        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $guestId = DB::$guests->add($eventId, true, 'Hans', 'Müller', null, null, null, null);
+
+        $response = $this->request('GET', "/events/99999/guests/$guestId/edit");
+
+        $this->assertEquals(404, $response->statusCode);
+    }
+
+    // ===== POST /events/{id}/guests/{guestId}/update — anonymous =====
+
+    public function testUpdateGuestAsAnonymous(): void
+    {
+        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $guestId = DB::$guests->add($eventId, true, 'Hans', 'Müller', null, null, null, null);
+
+        $response = $this->request('POST', "/events/$eventId/guests/$guestId/update", [
+            'first_name' => 'Anon', 'last_name' => 'Hacker',
+        ]);
+
+        // AdminMiddleware returns 403 for non-admin
+        $this->assertEquals(403, $response->statusCode);
+    }
+
+    // ===== POST /events/{id}/guests/{guestId}/delete — anonymous =====
+
+    public function testDeleteGuestAsAnonymous(): void
+    {
+        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $guestId = DB::$guests->add($eventId, true, 'Hans', 'Müller', null, null, null, null);
+
+        $response = $this->request('POST', "/events/$eventId/guests/$guestId/delete");
+
+        // AdminMiddleware returns 403 for non-admin
+        $this->assertEquals(403, $response->statusCode);
+
+        $guest = DB::$guests->get($guestId);
+        $this->assertNotNull($guest);
+    }
 }

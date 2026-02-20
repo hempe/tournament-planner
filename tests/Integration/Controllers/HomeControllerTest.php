@@ -75,4 +75,35 @@ class HomeControllerTest extends IntegrationTestCase
         $this->assertStringContainsString('username', strtolower($response->body));
         $this->assertStringContainsString('password', strtolower($response->body));
     }
+
+    public function testIndexAsRegularUser(): void
+    {
+        $this->loginAsAdmin();
+        DB::$users->create('regularuser', 'Pass123!');
+        $this->loginAs('regularuser', 'Pass123!');
+
+        $response = $this->request('GET', '/');
+
+        $this->assertEquals(200, $response->statusCode);
+    }
+
+    public function testGuestAsRegularUser(): void
+    {
+        $this->loginAsAdmin();
+        DB::$users->create('regularuser', 'Pass123!');
+        $this->loginAs('regularuser', 'Pass123!');
+
+        $response = $this->request('GET', '/guest');
+
+        $this->assertEquals(303, $response->statusCode);
+    }
+
+    public function testGuestAsAdmin(): void
+    {
+        $this->loginAsAdmin();
+
+        $response = $this->request('GET', '/guest');
+
+        $this->assertEquals(303, $response->statusCode);
+    }
 }

@@ -12,12 +12,13 @@ use TP\Core\Translator;
 
 ?>
 <?= new Page(function () {
+    $date = $_GET['date'] ?? date('Y-m-d');
     $formatter = new IntlDateFormatter(Translator::getInstance()->getLocale(), IntlDateFormatter::FULL, IntlDateFormatter::NONE);
     return new Form(
         action: "/events/new",
-        hiddenInputs: ['date' => $_GET['date']],
+        hiddenInputs: ['date' => $date],
         content: new Card(
-            "Neuer Termin: " . $formatter->format(strtotime($_GET['date'])),
+            "Neuer Termin: " . $formatter->format(strtotime($date)),
             new Table(
                 columns: ['', '', '', ''],
                 items: [null],

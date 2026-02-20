@@ -629,4 +629,347 @@ class EventControllerTest extends IntegrationTestCase
 
         $this->assertEquals(303, $response->statusCode);
     }
+
+    // ===== GET /events — regular user =====
+
+    public function testIndexAsRegularUser(): void
+    {
+        $this->loginAsAdmin();
+        DB::$users->create('regularuser', 'Pass123!');
+        $this->loginAs('regularuser', 'Pass123!');
+
+        $response = $this->request('GET', '/events');
+
+        $this->assertEquals(200, $response->statusCode);
+    }
+
+    // ===== GET /events/new — anonymous =====
+
+    public function testCreateFormAsAnonymous(): void
+    {
+        $response = $this->request('GET', '/events/new');
+
+        $this->assertEquals(303, $response->statusCode);
+    }
+
+    // ===== POST /events/new — anonymous =====
+
+    public function testStoreAsAnonymous(): void
+    {
+        $response = $this->request('POST', '/events/new', [
+            'name' => 'Event', 'date' => '2026-04-01', 'capacity' => '20',
+        ]);
+
+        $this->assertEquals(303, $response->statusCode);
+    }
+
+    // ===== GET /events/{id} — anonymous =====
+
+    public function testDetailAsAnonymous(): void
+    {
+        $this->loginAsAdmin();
+        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $_SESSION = [];
+
+        $response = $this->request('GET', "/events/$eventId");
+
+        $this->assertEquals(303, $response->statusCode);
+    }
+
+    // ===== GET /events/{id}/admin — anonymous and not found =====
+
+    public function testAdminViewAsAnonymous(): void
+    {
+        $this->loginAsAdmin();
+        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $_SESSION = [];
+
+        $response = $this->request('GET', "/events/$eventId/admin");
+
+        $this->assertEquals(303, $response->statusCode);
+    }
+
+    public function testAdminViewReturns404ForNonexistentEvent(): void
+    {
+        $this->loginAsAdmin();
+
+        $response = $this->request('GET', '/events/99999/admin');
+
+        $this->assertEquals(404, $response->statusCode);
+    }
+
+    // ===== POST /events/{id} (update) — anonymous and regular user =====
+
+    public function testUpdateAsAnonymous(): void
+    {
+        $this->loginAsAdmin();
+        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $_SESSION = [];
+
+        $response = $this->request('POST', "/events/$eventId", [
+            'name' => 'Changed', 'capacity' => '10',
+        ]);
+
+        $this->assertEquals(303, $response->statusCode);
+    }
+
+    public function testUpdateAsRegularUser(): void
+    {
+        $this->loginAsAdmin();
+        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        DB::$users->create('regularuser', 'Pass123!');
+        $this->loginAs('regularuser', 'Pass123!');
+
+        $response = $this->request('POST', "/events/$eventId", [
+            'name' => 'Changed', 'capacity' => '10',
+        ]);
+
+        $this->assertEquals(403, $response->statusCode);
+    }
+
+    // ===== POST /events/{id}/delete — anonymous and regular user =====
+
+    public function testDeleteAsAnonymous(): void
+    {
+        $this->loginAsAdmin();
+        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $_SESSION = [];
+
+        $response = $this->request('POST', "/events/$eventId/delete");
+
+        $this->assertEquals(303, $response->statusCode);
+    }
+
+    public function testDeleteAsRegularUser(): void
+    {
+        $this->loginAsAdmin();
+        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        DB::$users->create('regularuser', 'Pass123!');
+        $this->loginAs('regularuser', 'Pass123!');
+
+        $response = $this->request('POST', "/events/$eventId/delete");
+
+        $this->assertEquals(403, $response->statusCode);
+    }
+
+    // ===== GET /events/{id}/export — anonymous =====
+
+    public function testExportAsAnonymous(): void
+    {
+        $this->loginAsAdmin();
+        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $_SESSION = [];
+
+        $response = $this->request('GET', "/events/$eventId/export");
+
+        $this->assertEquals(303, $response->statusCode);
+    }
+
+    // ===== POST /events/{id}/lock — anonymous and regular user =====
+
+    public function testLockAsAnonymous(): void
+    {
+        $this->loginAsAdmin();
+        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $_SESSION = [];
+
+        $response = $this->request('POST', "/events/$eventId/lock");
+
+        $this->assertEquals(303, $response->statusCode);
+    }
+
+    public function testLockAsRegularUser(): void
+    {
+        $this->loginAsAdmin();
+        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        DB::$users->create('regularuser', 'Pass123!');
+        $this->loginAs('regularuser', 'Pass123!');
+
+        $response = $this->request('POST', "/events/$eventId/lock");
+
+        $this->assertEquals(403, $response->statusCode);
+    }
+
+    // ===== POST /events/{id}/unlock — anonymous and regular user =====
+
+    public function testUnlockAsAnonymous(): void
+    {
+        $this->loginAsAdmin();
+        $eventId = DB::$events->add('Test Event', '2026-03-15', 20, true);
+        $_SESSION = [];
+
+        $response = $this->request('POST', "/events/$eventId/unlock");
+
+        $this->assertEquals(303, $response->statusCode);
+    }
+
+    public function testUnlockAsRegularUser(): void
+    {
+        $this->loginAsAdmin();
+        $eventId = DB::$events->add('Test Event', '2026-03-15', 20, true);
+        DB::$users->create('regularuser', 'Pass123!');
+        $this->loginAs('regularuser', 'Pass123!');
+
+        $response = $this->request('POST', "/events/$eventId/unlock");
+
+        $this->assertEquals(403, $response->statusCode);
+    }
+
+    // ===== POST /events/{id}/register — anonymous and admin registering another user =====
+
+    public function testRegisterAsAnonymous(): void
+    {
+        $this->loginAsAdmin();
+        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $_SESSION = [];
+
+        $response = $this->request('POST', "/events/$eventId/register", ['comment' => 'Test']);
+
+        $this->assertEquals(303, $response->statusCode);
+    }
+
+    public function testAdminCanRegisterAnotherUser(): void
+    {
+        $this->loginAsAdmin();
+        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $userId = DB::$users->create('targetuser', 'Pass123!');
+
+        $response = $this->request('POST', "/events/$eventId/register", [
+            'userId' => (string) $userId,
+            'comment' => 'Admin registered',
+        ]);
+
+        $this->assertEquals(303, $response->statusCode);
+
+        $registrations = DB::$events->registrations($eventId);
+        $this->assertCount(1, $registrations);
+        $this->assertEquals($userId, $registrations[0]->userId);
+    }
+
+    // ===== POST /events/{id}/unregister — anonymous and admin unregistering another user =====
+
+    public function testUnregisterAsAnonymous(): void
+    {
+        $this->loginAsAdmin();
+        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $_SESSION = [];
+
+        $response = $this->request('POST', "/events/$eventId/unregister");
+
+        $this->assertEquals(303, $response->statusCode);
+    }
+
+    public function testAdminCanUnregisterAnotherUser(): void
+    {
+        $this->loginAsAdmin();
+        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $userId = DB::$users->create('targetuser', 'Pass123!');
+        DB::$events->register($eventId, $userId, '');
+
+        $response = $this->request('POST', "/events/$eventId/unregister", [
+            'userId' => (string) $userId,
+        ]);
+
+        $this->assertEquals(303, $response->statusCode);
+
+        $registrations = DB::$events->registrations($eventId);
+        $this->assertCount(0, $registrations);
+    }
+
+    // ===== POST /events/{id}/comment — anonymous and admin updating another's comment =====
+
+    public function testUpdateCommentAsAnonymous(): void
+    {
+        $this->loginAsAdmin();
+        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $_SESSION = [];
+
+        $response = $this->request('POST', "/events/$eventId/comment", ['comment' => 'Test']);
+
+        $this->assertEquals(303, $response->statusCode);
+    }
+
+    public function testAdminCanUpdateAnotherUsersComment(): void
+    {
+        $this->loginAsAdmin();
+        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $userId = DB::$users->create('targetuser', 'Pass123!');
+        DB::$events->register($eventId, $userId, 'Original');
+
+        $response = $this->request('POST', "/events/$eventId/comment", [
+            'userId' => (string) $userId,
+            'comment' => 'Admin updated',
+        ]);
+
+        $this->assertEquals(303, $response->statusCode);
+
+        $registrations = DB::$events->registrations($eventId);
+        $this->assertEquals('Admin updated', $registrations[0]->comment);
+    }
+
+    // ===== GET /events/bulk/new — anonymous and regular user =====
+
+    public function testBulkCreateAsAnonymous(): void
+    {
+        $response = $this->request('GET', '/events/bulk/new');
+
+        $this->assertEquals(303, $response->statusCode);
+    }
+
+    public function testBulkCreateAsRegularUser(): void
+    {
+        $this->loginAsAdmin();
+        DB::$users->create('regularuser', 'Pass123!');
+        $this->loginAs('regularuser', 'Pass123!');
+
+        $response = $this->request('GET', '/events/bulk/new');
+
+        $this->assertEquals(403, $response->statusCode);
+    }
+
+    // ===== POST /events/bulk/preview — anonymous and regular user =====
+
+    public function testBulkPreviewAsAnonymous(): void
+    {
+        $response = $this->request('POST', '/events/bulk/preview', [
+            'start_date' => '2026-04-01', 'end_date' => '2026-04-30',
+            'day_of_week' => '3', 'name' => 'Event', 'capacity' => '10',
+        ]);
+
+        $this->assertEquals(303, $response->statusCode);
+    }
+
+    public function testBulkPreviewAsRegularUser(): void
+    {
+        $this->loginAsAdmin();
+        DB::$users->create('regularuser', 'Pass123!');
+        $this->loginAs('regularuser', 'Pass123!');
+
+        $response = $this->request('POST', '/events/bulk/preview', [
+            'start_date' => '2026-04-01', 'end_date' => '2026-04-30',
+            'day_of_week' => '3', 'name' => 'Event', 'capacity' => '10',
+        ]);
+
+        $this->assertEquals(403, $response->statusCode);
+    }
+
+    // ===== POST /events/bulk/store — anonymous and regular user =====
+
+    public function testBulkStoreAsAnonymous(): void
+    {
+        $response = $this->request('POST', '/events/bulk/store');
+
+        $this->assertEquals(303, $response->statusCode);
+    }
+
+    public function testBulkStoreAsRegularUser(): void
+    {
+        $this->loginAsAdmin();
+        DB::$users->create('regularuser', 'Pass123!');
+        $this->loginAs('regularuser', 'Pass123!');
+
+        $response = $this->request('POST', '/events/bulk/store');
+
+        $this->assertEquals(403, $response->statusCode);
+    }
 }
