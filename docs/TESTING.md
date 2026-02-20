@@ -107,11 +107,12 @@ The project uses PCOV for fast code coverage analysis. Current coverage:
 
 **Controller Coverage (Line Coverage):**
 - AuthController: **89.66%**
-- HomeController: **80.00%**
+- HomeController: **100.00%**
 - LanguageController: **100.00%**
-- UserController: **80.33%**
-- EventController: **74.09%**
-- **Overall Project: ~59%**
+- UserController: **75.61%**
+- EventController: **83.96%**
+- GuestController: **88.37%**
+- **Overall Project: 83.6% lines**
 
 To view detailed coverage:
 
@@ -151,20 +152,33 @@ vendor/bin/phpunit --filter testLoginWithValidCredentials
 
 ```
 tests/
-├── bootstrap.php                    # Test bootstrapper
-├── init-test-db.sh                 # Database initialization script
-├── cleanup-test-db.sh              # Database cleanup script
+├── bootstrap.php                        # Test bootstrapper
+├── init-test-db.sh                      # Database initialization script
+├── cleanup-test-db.sh                   # Database cleanup script
+├── grant-test-permissions.sh            # DB permission setup
 └── Integration/
-    ├── IntegrationTestCase.php     # Base test class
-    ├── EventManagementTest.php     # Event management tests
-    ├── LocalizationTest.php        # Translation and locale tests
-    ├── TranslationValidationTest.php  # Translation consistency tests
-    └── Controllers/
-        ├── AuthControllerTest.php      # Authentication tests
-        ├── HomeControllerTest.php      # Home page tests
-        ├── EventControllerTest.php     # Event controller tests
-        ├── UserControllerTest.php      # User management tests
-        └── LanguageControllerTest.php  # Language switching tests
+    ├── IntegrationTestCase.php          # Base test class
+    ├── EventManagementTest.php          # Event workflow (DB-level)
+    ├── LocalizationTest.php             # Translation and locale tests
+    ├── TranslationValidationTest.php    # Translation key completeness
+    ├── Controllers/
+    │   ├── AuthControllerTest.php       # Authentication endpoints
+    │   ├── EventControllerTest.php      # Event CRUD, register, lock, bulk
+    │   ├── GuestControllerTest.php      # Guest registration and management
+    │   ├── HomeControllerTest.php       # Home page and guest redirect
+    │   ├── LanguageControllerTest.php   # Language switching
+    │   └── UserControllerTest.php       # User CRUD, admin toggle, password
+    ├── Core/
+    │   ├── ConfigTest.php               # Config singleton and env access
+    │   ├── DateTimeHelperTest.php       # Date formatting helpers
+    │   ├── RequestTest.php              # Request parsing and sanitization
+    │   ├── ResponseTest.php             # Response status, redirect, json
+    │   ├── RouteCacheTest.php           # Route cache read/write/invalidate
+    │   └── ValidatorTest.php            # All validation rules
+    ├── Models/
+    │   └── EventRepositoryTest.php      # Repository-level tests
+    └── Security/
+        └── SecurityTest.php             # CSRF, hashing, escaping, rate limit
 ```
 
 ### Test Files
@@ -414,7 +428,8 @@ Step 2: Running integration tests...
 
 === All Integration Tests Passed! ===
 
-OK (3 tests, 42 assertions)
+OK, but there were issues!
+Tests: 325, Assertions: 820, Warnings: 3, Deprecations: 9.
 
 Step 3: Cleaning up test database...
 ✓ Test database removed successfully!
@@ -428,9 +443,8 @@ Step 3: Cleaning up test database...
 
 Typical test execution time:
 - Database initialization: ~1 second
-- Test suite execution: ~2-3 seconds
-- Database cleanup: ~0.5 seconds
-- **Total: ~4 seconds**
+- Test suite execution: ~28-30 seconds (325 tests)
+- **Total: ~30 seconds**
 
 ## Best Practices
 
@@ -446,42 +460,46 @@ Typical test execution time:
 ### Controller Tests
 
 **AuthController** (89.66% coverage):
-- ✅ Login form display
+- ✅ Login form display (anonymous, logged in)
 - ✅ Login with valid/invalid credentials
 - ✅ Missing username/password validation
-- ✅ Logout functionality
-- ✅ Authentication redirects
+- ✅ Logout functionality (admin, regular user, anonymous)
 
-**HomeController** (80.00% coverage):
-- ✅ Login form for unauthenticated users
-- ✅ Home page for authenticated users
+**HomeController** (100.00% coverage):
+- ✅ Home page for all three roles (anonymous, regular user, admin)
 - ✅ Date parameter handling
+- ✅ `/guest` redirect with and without query params
 
 **LanguageController** (100.00% coverage):
 - ✅ Switch between all languages (de, en, es)
 - ✅ Invalid locale rejection
 - ✅ Custom redirect handling
-- ✅ Current language API
+- ✅ Current language API endpoint
 
-**UserController** (80.33% coverage):
-- ✅ User list display
-- ✅ User creation with validation
+**UserController** (75.61% coverage):
+- ✅ User list, create form, user creation with validation
 - ✅ Duplicate username prevention
-- ✅ User deletion
-- ✅ Admin toggle functionality
-- ✅ Password changes
-- ✅ Admin permission checks
+- ✅ User deletion, admin toggle, password change
+- ✅ RFEG and member number updates
+- ✅ Anonymous access redirects (all routes)
+- ✅ Regular user forbidden (all routes)
 
-**EventController** (74.09% coverage):
-- ✅ Event listing
-- ✅ Event detail views
-- ✅ Event creation and validation
-- ✅ Event updates and deletion
-- ✅ Lock/unlock functionality
-- ✅ User registration/unregistration
-- ✅ Comment updates
-- ✅ Bulk event creation
-- ✅ Waitlist handling
+**EventController** (83.96% coverage):
+- ✅ Event listing, detail views, create/update/delete
+- ✅ Lock/unlock, registration/unregistration, comment updates
+- ✅ Bulk event creation (preview → store)
+- ✅ CSV export with registrations and guests
+- ✅ Admin-on-behalf-of-user operations
+- ✅ Anonymous access redirects (all routes)
+- ✅ Regular user forbidden (all admin-only routes)
+- ✅ Not found (404) for all ID-based routes
+
+**GuestController** (88.37% coverage):
+- ✅ Public guest registration form (anonymous, user, admin)
+- ✅ Guest creation with full and optional fields
+- ✅ Admin edit/update/delete of guests
+- ✅ Not found for event and guest IDs
+- ✅ Anonymous returns 403 on admin-only routes
 
 ### Localization Tests
 
@@ -515,13 +533,10 @@ User-friendly error pages with navigation:
 
 Potential additions to the test suite:
 
-- [ ] Increase EventController coverage to 80%+
-- [ ] CSRF token tests
-- [ ] API endpoint tests (if API added)
-- [ ] Performance/load tests
+- [ ] CSRF token validation tests
 - [ ] Browser automation tests (Selenium/Playwright)
-- [ ] Unit tests for components
-- [ ] Security vulnerability tests
+- [ ] Component unit tests
+- [ ] Performance/load tests
 
 ## Support
 

@@ -51,11 +51,12 @@ This is a PHP web application for golf event management with a modern MVC archit
 
 ### Key Patterns
 
-**Routing**: Routes are defined in `index.php` using modern API:
-- `$router->get('/path', [Controller::class, 'method'])` - Register routes
-- `$router->group(new RouteGroup('/prefix', [middleware]), callback)` - Group routes with middleware
-- Routes support URL parameters like `/{id}` which are passed to controller methods
-- Middleware can be applied at route or group level (e.g., AuthMiddleware, AdminMiddleware)
+**Routing**: Routes are defined via PHP 8 attributes on controller classes/methods, loaded by `RouteLoader`:
+- `#[Get('/path')]`, `#[Post('/path')]` on methods — register GET/POST routes
+- `#[RoutePrefix('/prefix')]` on class — prefix all routes in that class
+- `#[Middleware(SomeMiddleware::class)]` on class or method — attach middleware
+- Routes support URL parameters like `/{id}` which are passed as `$params` array
+- `index.php` bootstraps the app and calls `$routeLoader->load($router)` to discover all attribute-based routes
 
 **Authentication**: Session-based authentication with `User` class providing static methods:
 - `User::loggedIn()` - Check if user is authenticated
@@ -72,7 +73,7 @@ This is a PHP web application for golf event management with a modern MVC archit
 
 **Database**: Repository pattern with static instances accessible via `DB::$events` and `DB::$users`. Database connection configured in `.env` file.
 
-**Testing**: Comprehensive test suite with 86 tests covering controllers, localization, and event management. Code coverage: ~59% overall, with controller coverage at 80%+. Tests use PCOV for fast coverage analysis.
+**Testing**: Comprehensive test suite with 325 tests covering controllers, localization, core classes, and event management. Code coverage: 83.6% lines overall. Tests use PCOV for fast coverage analysis. All routes have tests for anonymous, regular user, and admin access.
 
 **Error Handling**: User-friendly error pages for 404 (Not Found), 403 (Forbidden), and 500 (Server Error) with navigation buttons to help users get back to safety.
 
