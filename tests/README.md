@@ -3,29 +3,39 @@
 ## Running Tests
 
 ```bash
-# All tests
-composer test
+./run-tests.sh
+```
 
-# With detailed output
-composer test -- --testdox
+This script:
+1. Initialises the test database (`TP_test`)
+2. Runs all tests with testdox output
+3. Generates a text coverage summary (stdout) and HTML report (`coverage/index.html`) if PCOV is available
+4. Drops the test database
 
+Open the HTML report after a run:
+```bash
+xdg-open coverage/index.html
+```
+
+### Running individual tests
+
+```bash
 # Specific file
 vendor/bin/phpunit tests/Integration/Controllers/EventControllerTest.php
+
+# Without coverage
+vendor/bin/phpunit --testsuite integration --testdox
 ```
 
 ## Code Coverage
 
-PCOV is required (install via your package manager, e.g. `yay -S php-pcov` on Arch).
+PCOV is required. Install on Arch/Manjaro:
 
 ```bash
-# Text summary
-composer test:coverage
-
-# HTML report (opens coverage/)
-composer test:coverage-html
+yay -S php-pcov
 ```
 
-PCOV must be enabled at runtime via `-d pcov.enabled=1` (included in the composer scripts).
+PCOV must be enabled at runtime via `-d pcov.enabled=1` — `run-tests.sh` handles this automatically.
 
 ## Test Structure
 
@@ -62,7 +72,7 @@ tests/
 
 ## Database Setup
 
-Tests use a separate database configured in `phpunit.xml` (`TP_test`).
+Tests use a separate database (`TP_test`) configured in `phpunit.xml`.
 
 ```bash
 ./tests/init-test-db.sh           # Create test DB and schema

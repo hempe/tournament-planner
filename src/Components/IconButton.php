@@ -4,11 +4,13 @@ namespace TP\Components;
 
 use TP\Components\Icon;
 use TP\Components\Color;
+use TP\Core\Url;
 
 class IconButton extends Component
 {
     public readonly string $class;
     public readonly string $style;
+    public readonly string $href;
 
     /**
      * @param Closure|string|Component|array<Closure|string|Component> $class
@@ -20,7 +22,7 @@ class IconButton extends Component
         public readonly string $icon,
         public readonly Color $color,
         public readonly bool $title_inline = false,
-        public readonly string|null $href = null,
+        string|null $href = null,
         public readonly string|null $onClick = null,
         public readonly bool $required = false,
         \Closure|string|Component|array $class = '',
@@ -29,6 +31,7 @@ class IconButton extends Component
         $styles = "flex-grow:0;" . $this->title_inline ? '' : 'min-width:16px; display:block;';
         $this->class = $this->captureOutput($class);
         $this->style = $styles . " " . $this->captureOutput($style);
+        $this->href = Url::build($href);
     }
 
     protected function template(): void

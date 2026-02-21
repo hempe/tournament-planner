@@ -8,8 +8,9 @@ use function PHPUnit\Framework\returnArgument;
 
 final class Url
 {
-    public static function build(string $url): string
+    public static function build(string|null $url): string
     {
+        $url = $url ?? '';
         // Preserve iframe parameter
         if (strpos($url, "iframe=") !== false)
             return $url;

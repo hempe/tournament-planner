@@ -4,6 +4,9 @@ logs/
 
 # Private credentials
 private/
+database/seed_members.sql
+Members.csv
+*.xlsx
 
 # IDE files
 .idea/
@@ -28,6 +31,7 @@ storage/cache/
 .phpunit.cache/
 .phpunit.result.cache
 coverage-report/
+coverage/
 coverage.xml
 coverage-cobertura.xml
 .phpunit.cache/

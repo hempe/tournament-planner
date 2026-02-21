@@ -46,12 +46,12 @@ echo "Step 2: Running integration tests..."
 echo ""
 
 if [ "$COVERAGE_AVAILABLE" = true ]; then
-    # Run with coverage
-    vendor/bin/phpunit \
+    # Run with coverage (pcov.enabled=1 required to activate PCOV at runtime)
+    php -d pcov.enabled=1 vendor/bin/phpunit \
         --testsuite integration \
         --colors=always \
         --testdox \
-        --coverage-html coverage-report \
+        --coverage-html coverage \
         --coverage-text
 
     TEST_EXIT_CODE=$?
@@ -81,13 +81,10 @@ if [ $TEST_EXIT_CODE -eq 0 ]; then
     if [ "$COVERAGE_AVAILABLE" = true ]; then
         echo ""
         echo "Code Coverage Report:"
-        echo "  HTML: coverage-report/index.html"
-        echo "  Open with: open coverage-report/index.html"
+        echo "  HTML: coverage/index.html"
         echo ""
         echo "To view coverage:"
-        echo "  xdg-open coverage-report/index.html  # Linux"
-        echo "  open coverage-report/index.html      # macOS"
-        echo "  start coverage-report/index.html     # Windows"
+        echo "  xdg-open coverage/index.html"
     fi
     echo ""
     exit 0
