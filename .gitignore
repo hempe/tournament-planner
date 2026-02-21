@@ -24,6 +24,9 @@ Thumbs.db
 /vendor/
 composer.lock
 
+# Build output
+dist/
+
 # Generated cache
 storage/cache/
 

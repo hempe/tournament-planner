@@ -55,9 +55,10 @@ class Page extends Component
             : '';
 
         $loginButton = !User::loggedIn()
-            ? new IconActionButton(
-                actionUrl: Url::build('/login'),
+            ? new IconButton(
+                href: '/login',
                 title: __('auth.login'),
+                type: 'button',
                 icon: 'fa-sign-in',
                 color: Color::None,
                 class: 'nav-button',
@@ -92,12 +93,14 @@ class Page extends Component
                     {$backButton}
                     <h1>{$title}</h1>
                     {$adminButtons}
+                    <!--
                     <div class="language-selector" style="position: relative; display: inline-block;">
                         {$languageSelect}
                         <span style="position: absolute; right: 0px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--fg-navtop);">
                             <i class="fa fa-globe"></i>
                         </span>
                     </div>
+                    -->
                     <a class="button nav-button theme-toggle" style="display: var(--theme-toggle-dark); color: var(--fg-navtop);" onclick="setTheme('dark')">
                         {$moonIcon}
                     </a>
