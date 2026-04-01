@@ -29,11 +29,6 @@ final class EventController
         $url = "/events/{$eventId}";
         $params = [];
 
-        // Preserve iframe parameter
-        if ($request->get('iframe') === '1') {
-            $params[] = 'iframe=1';
-        }
-
         // Preserve back date parameter
         if ($backDate = $request->getString('b')) {
             $params[] = 'b=' . urlencode($backDate);
@@ -258,7 +253,7 @@ final class EventController
                 $csvField($guest->male ? __('users.mr') : __('users.mrs')),
                 $csvField(__('events.export_yes')),
                 $csvField(''),
-                $csvField($guest->rfeg ?? ''),
+                $csvField(''),
                 $csvField($isoDate($guest->timestamp)),
             ]);
         }

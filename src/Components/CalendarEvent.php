@@ -41,7 +41,6 @@ class CalendarEvent extends Component
 
     protected function template(): void
     {
-        // Preserve iframe parameter if present
         echo new Div(
             class: 'event',
             content: new Link(

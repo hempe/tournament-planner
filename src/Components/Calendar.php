@@ -13,7 +13,6 @@ use TP\Components\IconActionButton;
 use TP\Models\Event;
 use TP\Models\User;
 use TP\Core\Translator;
-use TP\Core\Url;
 
 class Calendar extends Component
 {
@@ -170,36 +169,6 @@ class Calendar extends Component
 
     protected function template(): void
     {
-        // Build iframe-specific controls
-        $isIframeMode = isset($_GET['iframe']) && $_GET['iframe'] === '1';
-
-        $logoutButton = (User::loggedIn() && $isIframeMode)
-            ? new IconActionButton(
-                "/logout",
-                __('nav.logout'),
-                Color::Primary,
-                'fa-sign-out',
-                confirmMessage: '',
-                style: 'padding: 6px 10px; font-size: 0.9rem;',
-                title_inline: true
-            )
-            : '';
-
-        $loginButton = (!User::loggedIn() && $isIframeMode)
-            ? new IconButton(
-                title: __('auth.login'),
-                href: "/login",
-                icon: 'fa-sign-in',
-                type: 'button',
-                color: Color::Primary,
-                style: 'padding: 6px 10px; font-size: 0.9rem;',
-                title_inline: true
-            )
-            : '';
-
-        // Preserve iframe parameter in navigation
-        $isIframeMode = isset($_GET['iframe']) && $_GET['iframe'] === '1';
-
         echo new Div(
             class: 'calendar',
             content: new Card(
@@ -219,8 +188,6 @@ class Calendar extends Component
                         type: 'button',
                         color: Color::None,
                     ),
-                    $logoutButton,
-                    $loginButton
                 ],
                 content: new Div(
                     class: 'view',

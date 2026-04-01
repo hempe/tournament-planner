@@ -19,11 +19,31 @@ use TP\Models\DB;
         href: "/users/new"
     ),
     new Table(
-        ['', '', '', '', '', ''],
+        ['', '', '', '', '', '', '', ''],
         DB::$users->all(),
         function ($user) {
             return [
                 htmlspecialchars($user->username),
+                new InputAction(
+                    title: __('users.first_name'),
+                    actionUrl: "/users/{$user->id}/first_name",
+                    color: Color::Light,
+                    inputName: 'first_name',
+                    inputValue: $user->firstName ?? '',
+                    inputPlaceholder: __('users.first_name'),
+                    icon: 'fa-save',
+                    confirmMessage: '',
+                ),
+                new InputAction(
+                    title: __('users.last_name'),
+                    actionUrl: "/users/{$user->id}/last_name",
+                    color: Color::Light,
+                    inputName: 'last_name',
+                    inputValue: $user->lastName ?? '',
+                    inputPlaceholder: __('users.last_name'),
+                    icon: 'fa-save',
+                    confirmMessage: '',
+                ),
                 new InputAction(
                     title: __('users.set_new_password'),
                     actionUrl: "/users/{$user->id}/password",
@@ -74,6 +94,6 @@ use TP\Models\DB;
                 )
             ];
         },
-        widths: [null, null, null, null, 1, 1]
+        widths: [null, null, null, null, null, null, 1, 1]
     )
 ));

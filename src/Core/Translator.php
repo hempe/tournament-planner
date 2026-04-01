@@ -22,12 +22,45 @@ final class Translator
     {
         if (self::$instance === null) {
             $config = Config::getInstance();
+            $configured = $config->get('app.locale', 'de');
             self::$instance = new Translator(
-                $config->get('app.locale', 'de'),
+                self::negotiateLocale($configured),
                 $config->get('app.fallback_locale', 'en')
             );
         }
         return self::$instance;
+    }
+
+    private static function negotiateLocale(string $fallback): string
+    {
+        $header = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '';
+        if ($header === '') {
+            return $fallback;
+        }
+
+        $available = array_map(
+            fn($f) => basename($f, '.php'),
+            glob(__DIR__ . '/../../resources/lang/*.php') ?: []
+        );
+
+        // Parse "de-CH,de;q=0.9,en-US;q=0.8,en;q=0.7" into [(lang => q), ...]
+        $preferences = [];
+        foreach (explode(',', $header) as $item) {
+            $parts = explode(';q=', trim($item));
+            $lang = trim($parts[0]);
+            $q = isset($parts[1]) ? (float) $parts[1] : 1.0;
+            $preferences[$lang] = $q;
+        }
+        arsort($preferences);
+
+        foreach (array_keys($preferences) as $lang) {
+            $primary = strtolower(substr($lang, 0, 2));
+            if (in_array($primary, $available, true)) {
+                return $primary;
+            }
+        }
+
+        return $fallback;
     }
 
     public function setLocale(string $locale): void

@@ -522,7 +522,6 @@ User-friendly error pages with navigation:
 **403 - Access Denied** (`src/Views/Errors/403.php`):
 - "Access denied" message
 - Navigation back to safe pages
-- Consistent styling with app theme
 
 **500 - Server Error** (`src/Views/Errors/500.php`):
 - Friendly error message

@@ -105,6 +105,13 @@ Requires MySQL with extensions `pdo_mysql` and `mysqli` enabled. Database schema
 
 ## Important Reminders
 
+### Testing Policy
+
+**Every change must be tested:**
+- Run `composer test` after every code change
+- Add or update tests to cover any modified or new behavior
+- All tests must pass (pre-existing failures are acceptable, but do not introduce new ones)
+
 ### Component Usage
 
 **✅ DO:**

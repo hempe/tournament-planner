@@ -1,6 +1,6 @@
 # Page Component
 
-The `Page` component is the top-level layout wrapper that includes navigation, theme toggle, and user authentication UI.
+The `Page` component is the top-level layout wrapper that includes navigation, and user authentication UI.
 
 ## Constructor Signature
 
@@ -23,7 +23,6 @@ The main page content. Can be:
 The Page component automatically provides:
 - Navigation bar with back button
 - Admin-only navigation (Events, Users)
-- Theme toggle (dark/light mode)
 - Logout button (if authenticated)
 - Responsive layout
 
@@ -151,13 +150,6 @@ The Page component provides different navigation based on context:
 - **Authenticated users**: Can access all pages
 - **Admin users**: See additional "Events" and "Users" nav buttons
 - **Non-authenticated**: Only see login page
-
-## Theme Support
-
-The Page component includes automatic dark/light theme toggle:
-- Theme preference stored in `localStorage`
-- Falls back to system preference
-- Theme persists across sessions
 
 ## See Also
 

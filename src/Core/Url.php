@@ -11,14 +11,6 @@ final class Url
     public static function build(string|null $url): string
     {
         $url = $url ?? '';
-        // Preserve iframe parameter
-        if (strpos($url, "iframe=") !== false)
-            return $url;
-
-        if (isset($_GET['iframe']) && $_GET['iframe'] === '1') {
-            $url .= (strpos($url, '?') !== false ? '&' : '?') . 'iframe=1';
-        }
-
         return $url;
     }
 }

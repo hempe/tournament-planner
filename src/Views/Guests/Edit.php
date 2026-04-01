@@ -28,7 +28,7 @@ assert($guest instanceof EventGuest);
             title: __('guests.edit'),
             content: new Table(
                 columns: ['', ''],
-                items: [0, 1, 2, 3, 4, 5, 6, 7],
+                items: [0, 1, 2, 3, 4, 5, 6],
                 projection: fn($i) => match ($i) {
                     0 => [
                         __('users.salutation') . $req,
@@ -76,16 +76,8 @@ assert($guest instanceof EventGuest);
                             step: '0.1',
                         )
                     ],
-                    5 => [
-                        __('guests.rfeg'),
-                        new Input(
-                            name: 'rfeg',
-                            value: $guest->rfeg ?? '',
-                            placeholder: __('guests.rfeg'),
-                        )
-                    ],
-                    6 => [__('guests.comment'), '<textarea name="comment" class="input" placeholder="' . __('guests.comment') . '">' . htmlspecialchars($guest->comment ?? '') . '</textarea>'],
-                    7 => [
+                    5 => [__('guests.comment'), '<textarea name="comment" class="input" placeholder="' . __('guests.comment') . '">' . htmlspecialchars($guest->comment ?? '') . '</textarea>'],
+                    6 => [
                         '',
                         new IconButton(
                             type: 'submit',

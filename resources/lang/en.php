@@ -3,8 +3,8 @@
 return [
     // Common
     'app' => [
-        'name' => 'Golf El Faro',
-        'welcome' => 'Welcome to Golf El Faro',
+        'name' => 'GOLF EL FARO',
+        'welcome' => 'Welcome to GOLF EL FARO',
     ],
 
     // Navigation
@@ -32,16 +32,10 @@ return [
         'es' => 'Español',
     ],
 
-    // Theme
-    'theme' => [
-        'dark' => 'Dark theme',
-        'light' => 'Light theme',
-    ],
-
     // Authentication
     'auth' => [
         'login' => 'Login',
-        'welcome' => 'Welcome to Golf el Faro',
+        'welcome' => 'Welcome to GOLF EL FARO',
         'username' => 'Username',
         'password' => 'Password',
         'login_failed' => 'Login failed',
@@ -164,6 +158,9 @@ return [
         'rfeg_update_success' => 'RFeg updated',
         'member_number' => 'Member number',
         'member_number_update_success' => 'Member number updated',
+        'first_name' => 'First name',
+        'last_name' => 'Last name',
+        'name_update_success' => 'Name updated',
     ],
 
     // Validation
@@ -251,10 +248,13 @@ return [
         'last_name' => 'Last Name',
         'email' => 'Email',
         'handicap' => 'Handicap',
-        'rfeg' => 'Fed. Española',
         'comment' => 'Comment',
         'register' => 'Register as Guest',
-        'register_success' => 'Successfully registered as guest',
+        'register_success' => 'You have been successfully placed on the waiting list.
+
+Should a starting spot become available, you will be informed no later than three days before the start of the tournament.
+
+Please note that club members are given priority when allocating available starting spots.',
         'update_success' => 'Guest updated successfully',
         'delete_success' => 'Guest deleted successfully',
         'delete_confirm' => 'Permanently delete guest?',

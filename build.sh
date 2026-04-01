@@ -28,7 +28,6 @@ cp -r src "$DIST/src"
 echo "Copying assets..."
 cp -r styles "$DIST/styles"
 cp -r resources "$DIST/resources"
-cp -r examples "$DIST/examples"
 
 # Images & web manifests
 echo "Copying images and manifests..."

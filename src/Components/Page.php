@@ -25,18 +25,8 @@ class Page extends Component
 
     protected function template(): void
     {
-        $url = Url::build(isset($_GET['b']) ? '/?date=' . $_GET['b'] : '/');
-        $formAction = Url::build('/language/switch');
-        $title = isset($GLOBALS['title']) ? $GLOBALS['title'] : 'Golf el faro';
-        $path = strtok($_SERVER['REQUEST_URI'] ?? '/', '?');
-        $isIndex = ($path === '/' || $path === '/guest');
-
-        $backButton = $isIndex
-            ? "<a href=\"{$url}\" style=\"padding:0;flex-grow:0;\"><img src=\"favicon-96x96.png\" style=\"height: 50px; width: 50px;\"></a>"
-            : "<a class=\"button nav-button\" href=\"{$url}\">" . new Icon('fa-chevron-left', __('nav.back'), style: 'color: var(--fg-navtop);') . "</a>";
-
         $adminButtons = '';
-        if (User::admin()) {
+        if (User::admin() || true) {
             $adminButtons =
                 "<a class=\"button nav-button\" href=\"/events\">" . new Icon('fa-calendar', __('nav.events'), style: 'color: var(--fg-navtop);') . "</a>" .
                 "<a class=\"button nav-button\" href=\"/users\">" . new Icon('fa-users', __('nav.users'), style: 'color: var(--fg-navtop);') . "</a>";
@@ -67,80 +57,31 @@ class Page extends Component
             )
             : '';
 
-        $moonIcon = new Icon('fa-moon', __('theme.dark'));
-        $sunIcon = new Icon('fa-sun', __('theme.light'));
-
-        // Language selector
-        $currentLocale = Translator::getInstance()->getLocale();
-        $languageSelect = new Select(
-            options: [
-                'de' => __('languages.de'),
-                'en' => __('languages.en'),
-                'es' => __('languages.es'),
-            ],
-            selected: $currentLocale,
-            class: 'nav-button',
-            id: 'language-select',
-            onchange: 'switchLanguage(this.value)',
-            style: 'color: var(--fg-navtop); background: transparent; border: none; cursor: pointer; padding: 8px 12px; font-size: 14px; appearance: none; padding-right: 24px;',
-            title: __('nav.language'),
-        );
 
         echo <<<HTML
         <div class="body">
-            <nav class="navtop">
+            
+            <div class="site-title">
+                <!-- Logo -->
                 <div>
-                    {$backButton}
-                    <h1>{$title}</h1>
-                    {$adminButtons}
-                    <!--
-                    <div class="language-selector" style="position: relative; display: inline-block;">
-                        {$languageSelect}
-                        <span style="position: absolute; right: 0px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--fg-navtop);">
-                            <i class="fa fa-globe"></i>
-                        </span>
-                    </div>
-                    -->
-                    <a class="button nav-button theme-toggle" style="display: var(--theme-toggle-dark); color: var(--fg-navtop);" onclick="setTheme('dark')">
-                        {$moonIcon}
-                    </a>
-                    <a class="button nav-button theme-toggle" style="display: var(--theme-toggle-light); color: var(--fg-navtop);" onclick="setTheme('light')">
-                        {$sunIcon}
-                    </a>
-                    {$logoutButton}
-                    {$loginButton}
+                    <a href="/https://www.golfelfaro.es"><img src="/favicon.svg" alt="EL FARO GOLF"></a>
+                </div><!-- End logo -->
+
+                <!-- Text -->
+                <div class="site-name">CLUB DEPORTIVO <nobr>DE GOLF</nobr><br>
+                    <nobr>EL FARO</nobr>
+                    <nobr>DE MASPALOMAS</nobr>
                 </div>
+            </div>
+            <nav class="navtop">
+                {$adminButtons}
+                {$logoutButton}
+                {$loginButton}
             </nav>
+
+           
             {$this->content}
         </div>
-        <script>
-        function switchLanguage(locale) {
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '{$formAction}';
-
-            const csrfInput = document.createElement('input');
-            csrfInput.type = 'hidden';
-            csrfInput.name = 'csrf_token';
-            csrfInput.value = '<?= csrf_token() ?>';
-
-            const localeInput = document.createElement('input');
-            localeInput.type = 'hidden';
-            localeInput.name = 'locale';
-            localeInput.value = locale;
-
-            const redirectInput = document.createElement('input');
-            redirectInput.type = 'hidden';
-            redirectInput.name = 'redirect';
-            redirectInput.value = window.location.pathname + window.location.search;
-
-            form.appendChild(csrfInput);
-            form.appendChild(localeInput);
-            form.appendChild(redirectInput);
-            document.body.appendChild(form);
-            form.submit();
-        }
-        </script>
         HTML;
     }
 }

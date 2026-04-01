@@ -26,9 +26,6 @@ class EventRegistrations extends Component
     {
         // Build query string for preserving parameters
         $queryParams = [];
-        if (isset($_GET['iframe']) && $_GET['iframe'] === '1') {
-            $queryParams[] = 'iframe=1';
-        }
         if ($backDate = $_GET['b'] ?? null) {
             $queryParams[] = 'b=' . urlencode($backDate);
         }

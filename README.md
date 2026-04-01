@@ -1,4 +1,4 @@
-# Golf El Faro - Tournament Planner
+# GOLF EL FARO - Tournament Planner
 
 A modern PHP web application for managing golf event registrations.
 
@@ -41,7 +41,6 @@ That's it! 🚀
 - **[docs/TESTING.md](docs/TESTING.md)** - Testing guide and code coverage
 - **[docs/ROUTING.md](docs/ROUTING.md)** - Routing and middleware system
 - **[docs/COMPONENTS.md](docs/COMPONENTS.md)** - UI component system
-- **[docs/IFRAME_MODE.md](docs/IFRAME_MODE.md)** - Iframe embedding support
 
 ### For AI Assistants
 - **[CLAUDE.md](CLAUDE.md)** - Development guide for Claude Code
@@ -96,3 +95,47 @@ See [TESTING.md](docs/TESTING.md) for detailed testing documentation.
 ## License
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
+
+### NOTES
+
+login button is weg?
+zurrück?
+
+
+--> Anmeldeschluss
+ -> 
+-> Bulk: vie viele Tage voher, und uhrzeit.
+
+Preise für Mitglieder,
+Preis für Gäste.
+
+-> Turnier Beschreibung.
+
+--> Anlass nicht wirklich turnier.
+
+-->
+--> Mit abend veranstaltung
+	-> mit tisch auswahlt
+	-> mit menu auswahll
+	-> tisch grösse.
+	-> anzahl tische.
+
+
+Veranstaltung
+[JA/NEIN],
+--->
+
+--> Essen (3)
+Text was es gibt
+(Fleisch/Fisch/Vegetarish...)
+
+Tisch 
+[      X]
+[       ]
+[       ]
+[       ]
+
+
+export braucht es.
+
+und export klappt aktuell nicht.

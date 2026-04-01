@@ -255,7 +255,7 @@ class EventControllerTest extends IntegrationTestCase
 
         $this->loginAs('testuser', 'Pass123!');
 
-        $response = $this->request('POST', "/events/$eventId/register?iframe=1", [
+        $response = $this->request('POST', "/events/$eventId/register", [
             'comment' => 'Test'
         ]);
 
@@ -516,14 +516,13 @@ class EventControllerTest extends IntegrationTestCase
         $this->loginAsAdmin();
 
         $eventId = DB::$events->add('Export Event', '2026-03-15', 20);
-        DB::$guests->add($eventId, true, 'Jane', 'Doe', null, null, 'RFG456', null);
+        DB::$guests->add($eventId, true, 'Jane', 'Doe', null, null, null);
 
         $response = $this->request('GET', "/events/$eventId/export");
 
         $this->assertEquals(200, $response->statusCode);
         $this->assertStringContainsString('Jane', $response->body);
         $this->assertStringContainsString('Doe', $response->body);
-        $this->assertStringContainsString('RFG456', $response->body);
     }
 
     public function testExportReturns404ForUnknownEvent(): void
@@ -657,7 +656,9 @@ class EventControllerTest extends IntegrationTestCase
     public function testStoreAsAnonymous(): void
     {
         $response = $this->request('POST', '/events/new', [
-            'name' => 'Event', 'date' => '2026-04-01', 'capacity' => '20',
+            'name' => 'Event',
+            'date' => '2026-04-01',
+            'capacity' => '20',
         ]);
 
         $this->assertEquals(303, $response->statusCode);
@@ -707,7 +708,8 @@ class EventControllerTest extends IntegrationTestCase
         $_SESSION = [];
 
         $response = $this->request('POST', "/events/$eventId", [
-            'name' => 'Changed', 'capacity' => '10',
+            'name' => 'Changed',
+            'capacity' => '10',
         ]);
 
         $this->assertEquals(303, $response->statusCode);
@@ -721,7 +723,8 @@ class EventControllerTest extends IntegrationTestCase
         $this->loginAs('regularuser', 'Pass123!');
 
         $response = $this->request('POST', "/events/$eventId", [
-            'name' => 'Changed', 'capacity' => '10',
+            'name' => 'Changed',
+            'capacity' => '10',
         ]);
 
         $this->assertEquals(403, $response->statusCode);
@@ -932,8 +935,11 @@ class EventControllerTest extends IntegrationTestCase
     public function testBulkPreviewAsAnonymous(): void
     {
         $response = $this->request('POST', '/events/bulk/preview', [
-            'start_date' => '2026-04-01', 'end_date' => '2026-04-30',
-            'day_of_week' => '3', 'name' => 'Event', 'capacity' => '10',
+            'start_date' => '2026-04-01',
+            'end_date' => '2026-04-30',
+            'day_of_week' => '3',
+            'name' => 'Event',
+            'capacity' => '10',
         ]);
 
         $this->assertEquals(303, $response->statusCode);
@@ -946,8 +952,11 @@ class EventControllerTest extends IntegrationTestCase
         $this->loginAs('regularuser', 'Pass123!');
 
         $response = $this->request('POST', '/events/bulk/preview', [
-            'start_date' => '2026-04-01', 'end_date' => '2026-04-30',
-            'day_of_week' => '3', 'name' => 'Event', 'capacity' => '10',
+            'start_date' => '2026-04-01',
+            'end_date' => '2026-04-30',
+            'day_of_week' => '3',
+            'name' => 'Event',
+            'capacity' => '10',
         ]);
 
         $this->assertEquals(403, $response->statusCode);

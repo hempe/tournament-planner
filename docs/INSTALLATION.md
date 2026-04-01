@@ -49,7 +49,7 @@ Create environment configuration file (copy the template below into `.env`):
 ```env
 # Application
 APP_ENV=development
-APP_NAME="Golf El Faro"
+APP_NAME="GOLF EL FARO"
 APP_URL=http://localhost:5000
 APP_TIMEZONE=Europe/Zurich
 APP_LOCALE=de

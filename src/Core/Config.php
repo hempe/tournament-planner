@@ -67,7 +67,7 @@ final class Config
         // Default configuration
         $this->config = [
             'app' => [
-                'name' => $_ENV['APP_NAME'] ?? 'Golf El Faro',
+                'name' => $_ENV['APP_NAME'] ?? 'GOLF EL FARO',
                 'url' => $_ENV['APP_URL'] ?? 'http://localhost:5000',
                 'timezone' => $_ENV['APP_TIMEZONE'] ?? 'Europe/Zurich',
                 'locale' => $_ENV['APP_LOCALE'] ?? 'de',

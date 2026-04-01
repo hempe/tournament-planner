@@ -3,8 +3,8 @@
 return [
     // Common
     'app' => [
-        'name' => 'Golf El Faro',
-        'welcome' => 'Willkommen bei Golf El Faro',
+        'name' => 'GOLF EL FARO',
+        'welcome' => 'Willkommen bei GOLF EL FARO',
     ],
 
     // Navigation
@@ -32,16 +32,10 @@ return [
         'es' => 'Español',
     ],
 
-    // Theme
-    'theme' => [
-        'dark' => 'Dunkles Design',
-        'light' => 'Helles Design',
-    ],
-
     // Authentication
     'auth' => [
         'login' => 'Anmelden',
-        'welcome' => 'Willkomen bei Golf el Faro',
+        'welcome' => 'Willkomen bei GOLF EL FARO',
         'username' => 'Benutzername',
         'password' => 'Passwort',
         'login_failed' => 'Anmeldung fehlgeschlagen',
@@ -164,6 +158,9 @@ return [
         'rfeg_update_success' => 'RFeg aktualisiert',
         'member_number' => 'Mitgliedernummer',
         'member_number_update_success' => 'Mitgliedernummer aktualisiert',
+        'first_name' => 'Vorname',
+        'last_name' => 'Nachname',
+        'name_update_success' => 'Name aktualisiert',
     ],
 
     // Validation
@@ -251,10 +248,13 @@ return [
         'last_name' => 'Nachname',
         'email' => 'eMail',
         'handicap' => 'Handicap',
-        'rfeg' => 'RFeg',
         'comment' => 'Kommentar',
         'register' => 'Als Gast anmelden',
-        'register_success' => 'Erfolgreich als Gast angemeldet',
+        'register_success' => 'Sie wurden erfolgreich auf die Warteliste gesetzt.
+
+Sollte ein Startplatz frei werden, werden Sie spätestens drei Tage vor Turnierbeginn darüber informiert.
+
+Bitte beachten Sie, dass Clubmitglieder bei der Vergabe freier Startplätze grundsätzlich Vorrang haben.',
         'update_success' => 'Gast erfolgreich aktualisiert',
         'delete_success' => 'Gast erfolgreich gelöscht',
         'delete_confirm' => 'Gast definitiv löschen?',

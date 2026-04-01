@@ -30,7 +30,6 @@ final class GuestController
             new ValidationRule('last_name', ['required', 'string', 'max' => 255]),
             new ValidationRule('email', $emailRules),
             new ValidationRule('handicap', $handicapRules),
-            new ValidationRule('rfeg', ['string', 'max' => 255]),
             new ValidationRule('comment', ['string', 'max' => 2048]),
         ];
     }
@@ -75,7 +74,6 @@ final class GuestController
                 $data['last_name'],
                 $data['email'] !== '' ? $data['email'] : null,
                 isset($data['handicap']) && $data['handicap'] !== '' ? (float) $data['handicap'] : null,
-                $data['rfeg'] ?? null,
                 $data['comment'] ?? null,
             );
 
@@ -136,7 +134,6 @@ final class GuestController
                 $data['last_name'],
                 $data['email'] !== '' ? $data['email'] : null,
                 isset($data['handicap']) && $data['handicap'] !== '' ? (float) $data['handicap'] : null,
-                $data['rfeg'] ?? null,
                 $data['comment'] ?? null,
             );
 

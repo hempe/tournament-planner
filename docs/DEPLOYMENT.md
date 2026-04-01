@@ -18,7 +18,7 @@ Production deployment guide for Tournament Planner.
 
 ```env
 APP_ENV=production
-APP_NAME="Golf El Faro"
+APP_NAME="GOLF EL FARO"
 APP_URL=https://yourdomain.com
 APP_TIMEZONE=Europe/Zurich
 APP_LOCALE=de
@@ -335,7 +335,7 @@ iptables-save > /etc/iptables/rules.v4
 
 Add to cron (`/etc/cron.d/golf-el-faro-health`):
 ```
-*/5 * * * * www-data curl -sf https://yourdomain.com/health > /dev/null || echo "Health check failed" | mail -s "Golf El Faro Down" admin@example.com
+*/5 * * * * www-data curl -sf https://yourdomain.com/health > /dev/null || echo "Health check failed" | mail -s "GOLF EL FARO Down" admin@example.com
 ```
 
 #### Log Monitoring

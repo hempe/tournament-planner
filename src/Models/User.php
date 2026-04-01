@@ -15,6 +15,8 @@ final class User
         public readonly bool $male = true,
         public readonly ?string $rfeg = null,
         public readonly ?string $memberNumber = null,
+        public readonly ?string $firstName = null,
+        public readonly ?string $lastName = null,
     ) {
     }
 
@@ -25,11 +27,6 @@ final class User
 
     public static function admin(): bool
     {
-        // No admin rights in iframe mode
-        if (isset($_GET['iframe']) && $_GET['iframe'] === '1') {
-            return false;
-        }
-
         return (isset($_SESSION['is_admin']) && $_SESSION['is_admin'] == 1);
     }
 

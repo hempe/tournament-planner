@@ -17,7 +17,6 @@ final class EventGuest
         public readonly string $lastName,
         public readonly ?string $email,
         public readonly ?float $handicap,
-        public readonly ?string $rfeg,
         public readonly ?string $comment,
         public readonly string $timestamp,
     ) {

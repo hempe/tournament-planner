@@ -27,22 +27,19 @@ assert($event instanceof Event);
         style: 'color:var(--color-accent)'
     );
 
-    $isIframeMode = isset($_GET['iframe']) && $_GET['iframe'] === '1';
-    $cardTitle = $isIframeMode
-        ? [
-            new IconButton(
-                title: __('nav.back'),
-                href: isset($_GET['b']) ? '/guest?date=' . $_GET['b'] : '/guest',
-                icon: 'fa-chevron-left',
-                type: 'button',
-                color: Color::None,
-            ),
-            new Span(
-                content: "{$formattedDate}: {$event->name}",
-                style: 'flex-grow:1'
-            )
-        ]
-        : "{$formattedDate}: {$event->name}";
+    $cardTitle = [
+        new IconButton(
+            title: __('nav.back'),
+            href: isset($_GET['b']) ? '/guest?date=' . $_GET['b'] : '/guest',
+            icon: 'fa-chevron-left',
+            type: 'button',
+            color: Color::None,
+        ),
+        new Span(
+            content: "{$formattedDate}: {$event->name}",
+            style: 'flex-grow:1'
+        )
+    ];
 
     yield new Form(
         action: "/events/{$event->id}/guests/new",
@@ -50,7 +47,7 @@ assert($event instanceof Event);
             title: $cardTitle,
             content: new Table(
                 columns: ['', ''],
-                items: [0, 1, 2, 3, 4, 5, 6, 7],
+                items: [0, 1, 2, 3, 4, 5, 6],
                 projection: fn($i) => match ($i) {
                     0 => [
                         __('users.salutation') . $req,
@@ -95,15 +92,8 @@ assert($event instanceof Event);
                             step: '0.1',
                         )
                     ],
-                    5 => [
-                        __('guests.rfeg'),
-                        new Input(
-                            name: 'rfeg',
-                            placeholder: __('guests.rfeg'),
-                        )
-                    ],
-                    6 => [__('guests.comment'), '<textarea name="comment" class="input" placeholder="' . __('guests.comment') . '"></textarea>'],
-                    7 => [
+                    5 => [__('guests.comment'), '<textarea name="comment" class="input" placeholder="' . __('guests.comment') . '"></textarea>'],
+                    6 => [
                         '',
                         new IconButton(
                             type: 'submit',

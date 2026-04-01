@@ -63,7 +63,7 @@ class LocalizationTest extends IntegrationTestCase
         $this->assertEquals('Anlässe', __('nav.events'));
         $this->assertEquals('Benutzer', __('nav.users'));
         $this->assertEquals('Abmelden', __('nav.logout'));
-        $this->assertEquals('Willkommen bei Golf El Faro', __('app.welcome'));
+        $this->assertEquals('Willkommen bei GOLF EL FARO', __('app.welcome'));
         echo "   ✓ German translations loaded correctly\n";
 
         // Test English translations
@@ -72,7 +72,7 @@ class LocalizationTest extends IntegrationTestCase
         $this->assertEquals('Events', __('nav.events'));
         $this->assertEquals('Users', __('nav.users'));
         $this->assertEquals('Logout', __('nav.logout'));
-        $this->assertEquals('Welcome to Golf El Faro', __('app.welcome'));
+        $this->assertEquals('Welcome to GOLF EL FARO', __('app.welcome'));
         echo "   ✓ English translations loaded correctly\n";
 
         // Test Spanish translations
@@ -81,7 +81,7 @@ class LocalizationTest extends IntegrationTestCase
         $this->assertEquals('Eventos', __('nav.events'));
         $this->assertEquals('Usuarios', __('nav.users'));
         $this->assertEquals('Cerrar sesión', __('nav.logout'));
-        $this->assertEquals('Bienvenido a Golf El Faro', __('app.welcome'));
+        $this->assertEquals('Bienvenido a GOLF EL FARO', __('app.welcome'));
         echo "   ✓ Spanish translations loaded correctly\n";
 
         echo "\n=== Translation Loading Tests Passed! ===\n\n";
@@ -193,39 +193,6 @@ class LocalizationTest extends IntegrationTestCase
     }
 
     /**
-     * Test theme translations in all locales
-     */
-    public function testThemeTranslations(): void
-    {
-        echo "\n=== Testing Theme Translations ===\n";
-
-        $translator = Translator::getInstance();
-
-        // Test German
-        echo "\n1. Testing German theme translations...\n";
-        $translator->setLocale('de');
-        $this->assertEquals('Dunkles Design', __('theme.dark'));
-        $this->assertEquals('Helles Design', __('theme.light'));
-        echo "   ✓ German theme translations correct\n";
-
-        // Test English
-        echo "\n2. Testing English theme translations...\n";
-        $translator->setLocale('en');
-        $this->assertEquals('Dark theme', __('theme.dark'));
-        $this->assertEquals('Light theme', __('theme.light'));
-        echo "   ✓ English theme translations correct\n";
-
-        // Test Spanish
-        echo "\n3. Testing Spanish theme translations...\n";
-        $translator->setLocale('es');
-        $this->assertEquals('Tema oscuro', __('theme.dark'));
-        $this->assertEquals('Tema claro', __('theme.light'));
-        echo "   ✓ Spanish theme translations correct\n";
-
-        echo "\n=== Theme Translation Tests Passed! ===\n\n";
-    }
-
-    /**
      * Test that all three locales have consistent translation keys
      */
     public function testAllLocalesHaveConsistentKeys(): void
@@ -247,8 +214,6 @@ class LocalizationTest extends IntegrationTestCase
             'languages.de',
             'languages.en',
             'languages.es',
-            'theme.dark',
-            'theme.light',
             'auth.login',
             'auth.username',
             'auth.password',

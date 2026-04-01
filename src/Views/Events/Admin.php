@@ -43,9 +43,6 @@ assert(is_int($id));
 
         // Build query string for preserving parameters
         $queryParams = [];
-        if (isset($_GET['iframe']) && $_GET['iframe'] === '1') {
-            $queryParams[] = 'iframe=1';
-        }
         if ($backDate = $_GET['b'] ?? null) {
             $queryParams[] = 'b=' . urlencode($backDate);
         }
@@ -156,7 +153,7 @@ assert(is_int($id));
         $guests = DB::$guests->allForEvent($id);
 
         $guestTable = fn(array $guestList) => new Table(
-            [__('guests.first_name'), __('guests.last_name'), __('guests.email'), __('guests.handicap'), __('guests.rfeg'), __('guests.comment'), '', ''],
+            [__('guests.first_name'), __('guests.last_name'), __('guests.email'), __('guests.handicap'), __('guests.comment'), '', ''],
             $guestList,
             fn($guest) => [
                 new Div(
@@ -168,7 +165,6 @@ assert(is_int($id));
                 $guest->lastName,
                 $guest->email,
                 $guest->handicap,
-                $guest->rfeg ?? '',
                 $guest->comment ?? '',
                 new IconButton(
                     title: __('events.edit'),
@@ -185,7 +181,7 @@ assert(is_int($id));
                     confirmMessage: __('guests.delete_confirm'),
                 ),
             ],
-            widths: [null, null, null, 1, null, null, 1, 1]
+            widths: [null, null, null, 1, null, 1, 1]
         );
 
         $guestHeader = [

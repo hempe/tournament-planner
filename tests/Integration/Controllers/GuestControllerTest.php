@@ -48,7 +48,6 @@ class GuestControllerTest extends IntegrationTestCase
             'last_name' => 'Müller',
             'email' => 'hans@example.com',
             'handicap' => '18.0',
-            'rfeg' => 'ES12345',
             'comment' => 'Looking forward to it',
         ]);
 
@@ -60,7 +59,6 @@ class GuestControllerTest extends IntegrationTestCase
         $this->assertEquals('Müller', $guests[0]->lastName);
         $this->assertEquals('hans@example.com', $guests[0]->email);
         $this->assertEquals(18.0, $guests[0]->handicap);
-        $this->assertEquals('ES12345', $guests[0]->rfeg);
         $this->assertEquals('Looking forward to it', $guests[0]->comment);
     }
 
@@ -80,7 +78,6 @@ class GuestControllerTest extends IntegrationTestCase
 
         $guests = DB::$guests->allForEvent($eventId);
         $this->assertCount(1, $guests);
-        $this->assertNull($guests[0]->rfeg);
         $this->assertNull($guests[0]->comment);
     }
 
@@ -138,7 +135,7 @@ class GuestControllerTest extends IntegrationTestCase
     public function testEditGuestFormRequiresAdmin(): void
     {
         $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
-        $guestId = DB::$guests->add($eventId, true, 'Hans', 'Müller', 'hans@example.com', 18.0, null, null);
+        $guestId = DB::$guests->add($eventId, true, 'Hans', 'Müller', 'hans@example.com', 18.0, null);
 
         DB::$users->create('regularuser', 'Pass123!');
         $this->loginAs('regularuser', 'Pass123!');
@@ -153,7 +150,7 @@ class GuestControllerTest extends IntegrationTestCase
         $this->loginAsAdmin();
 
         $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
-        $guestId = DB::$guests->add($eventId, true, 'Hans', 'Müller', 'hans@example.com', 18.0, 'ES123', 'A note');
+        $guestId = DB::$guests->add($eventId, true, 'Hans', 'Müller', 'hans@example.com', 18.0, 'A note');
 
         $response = $this->request('GET', "/events/$eventId/guests/$guestId/edit");
 
@@ -179,7 +176,7 @@ class GuestControllerTest extends IntegrationTestCase
         $this->loginAsAdmin();
 
         $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
-        $guestId = DB::$guests->add($eventId, true, 'Hans', 'Müller', 'hans@example.com', 18.0, null, null);
+        $guestId = DB::$guests->add($eventId, true, 'Hans', 'Müller', 'hans@example.com', 18.0, null);
 
         $response = $this->request('POST', "/events/$eventId/guests/$guestId/update", [
             'male' => '1',
@@ -187,7 +184,6 @@ class GuestControllerTest extends IntegrationTestCase
             'last_name' => 'Müller',
             'email' => 'johann@example.com',
             'handicap' => '15.0',
-            'rfeg' => 'ES999',
             'comment' => 'Updated comment',
         ]);
 
@@ -197,14 +193,13 @@ class GuestControllerTest extends IntegrationTestCase
         $this->assertEquals('Johann', $guest->firstName);
         $this->assertEquals('johann@example.com', $guest->email);
         $this->assertEquals(15.0, $guest->handicap);
-        $this->assertEquals('ES999', $guest->rfeg);
         $this->assertEquals('Updated comment', $guest->comment);
     }
 
     public function testUpdateGuestRequiresAdmin(): void
     {
         $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
-        $guestId = DB::$guests->add($eventId, true, 'Hans', 'Müller', 'hans@example.com', 18.0, null, null);
+        $guestId = DB::$guests->add($eventId, true, 'Hans', 'Müller', 'hans@example.com', 18.0, null);
 
         DB::$users->create('regularuser', 'Pass123!');
         $this->loginAs('regularuser', 'Pass123!');
@@ -228,7 +223,7 @@ class GuestControllerTest extends IntegrationTestCase
         $this->loginAsAdmin();
 
         $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
-        $guestId = DB::$guests->add($eventId, true, 'Hans', 'Müller', 'hans@example.com', 18.0, null, null);
+        $guestId = DB::$guests->add($eventId, true, 'Hans', 'Müller', 'hans@example.com', 18.0, null);
 
         $response = $this->request('POST', "/events/$eventId/guests/$guestId/update", [
             'first_name' => '',
@@ -249,7 +244,7 @@ class GuestControllerTest extends IntegrationTestCase
         $this->loginAsAdmin();
 
         $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
-        $guestId = DB::$guests->add($eventId, true, 'Hans', 'Müller', 'hans@example.com', 18.0, null, null);
+        $guestId = DB::$guests->add($eventId, true, 'Hans', 'Müller', 'hans@example.com', 18.0, null);
 
         $response = $this->request('POST', "/events/$eventId/guests/$guestId/delete");
 
@@ -262,7 +257,7 @@ class GuestControllerTest extends IntegrationTestCase
     public function testDeleteGuestRequiresAdmin(): void
     {
         $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
-        $guestId = DB::$guests->add($eventId, true, 'Hans', 'Müller', 'hans@example.com', 18.0, null, null);
+        $guestId = DB::$guests->add($eventId, true, 'Hans', 'Müller', 'hans@example.com', 18.0, null);
 
         DB::$users->create('regularuser', 'Pass123!');
         $this->loginAs('regularuser', 'Pass123!');
@@ -281,7 +276,7 @@ class GuestControllerTest extends IntegrationTestCase
         $this->loginAsAdmin();
 
         $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
-        DB::$guests->add($eventId, true, 'Hans', 'Müller', 'hans@example.com', 18.0, null, null);
+        DB::$guests->add($eventId, true, 'Hans', 'Müller', 'hans@example.com', 18.0, null);
 
         DB::$events->delete($eventId);
 
@@ -294,8 +289,8 @@ class GuestControllerTest extends IntegrationTestCase
         $eventId1 = DB::$events->add('Event 1', '2026-03-15', 20);
         $eventId2 = DB::$events->add('Event 2', '2026-03-16', 20);
 
-        DB::$guests->add($eventId1, true, 'Hans', 'Müller', 'hans@example.com', 18.0, null, null);
-        DB::$guests->add($eventId2, false, 'Anna', 'Schmidt', 'anna@example.com', 12.0, null, null);
+        DB::$guests->add($eventId1, true, 'Hans', 'Müller', 'hans@example.com', 18.0, null);
+        DB::$guests->add($eventId2, false, 'Anna', 'Schmidt', 'anna@example.com', 12.0, null);
 
         $guests1 = DB::$guests->allForEvent($eventId1);
         $guests2 = DB::$guests->allForEvent($eventId2);
@@ -359,7 +354,7 @@ class GuestControllerTest extends IntegrationTestCase
     public function testEditGuestFormAsAnonymous(): void
     {
         $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
-        $guestId = DB::$guests->add($eventId, true, 'Hans', 'Müller', null, null, null, null);
+        $guestId = DB::$guests->add($eventId, true, 'Hans', 'Müller', null, null, null);
 
         $response = $this->request('GET', "/events/$eventId/guests/$guestId/edit");
 
@@ -371,7 +366,7 @@ class GuestControllerTest extends IntegrationTestCase
     {
         $this->loginAsAdmin();
         $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
-        $guestId = DB::$guests->add($eventId, true, 'Hans', 'Müller', null, null, null, null);
+        $guestId = DB::$guests->add($eventId, true, 'Hans', 'Müller', null, null, null);
 
         $response = $this->request('GET', "/events/99999/guests/$guestId/edit");
 
@@ -383,10 +378,11 @@ class GuestControllerTest extends IntegrationTestCase
     public function testUpdateGuestAsAnonymous(): void
     {
         $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
-        $guestId = DB::$guests->add($eventId, true, 'Hans', 'Müller', null, null, null, null);
+        $guestId = DB::$guests->add($eventId, true, 'Hans', 'Müller', null, null, null);
 
         $response = $this->request('POST', "/events/$eventId/guests/$guestId/update", [
-            'first_name' => 'Anon', 'last_name' => 'Hacker',
+            'first_name' => 'Anon',
+            'last_name' => 'Hacker',
         ]);
 
         // AdminMiddleware returns 403 for non-admin
@@ -398,7 +394,7 @@ class GuestControllerTest extends IntegrationTestCase
     public function testDeleteGuestAsAnonymous(): void
     {
         $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
-        $guestId = DB::$guests->add($eventId, true, 'Hans', 'Müller', null, null, null, null);
+        $guestId = DB::$guests->add($eventId, true, 'Hans', 'Müller', null, null, null);
 
         $response = $this->request('POST', "/events/$eventId/guests/$guestId/delete");
 

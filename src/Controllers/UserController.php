@@ -67,13 +67,15 @@ final class UserController
             $password = trim($data['password']);
             $rfeg = $request->getString('rfeg') ?: null;
             $memberNumber = $request->getString('member_number') ?: null;
+            $firstName = $request->getString('first_name') ?: null;
+            $lastName = $request->getString('last_name') ?: null;
 
             if (DB::$users->userNameAlreadyTaken($username)) {
                 flash('error', __('users.username_taken', ['username' => $username]));
                 return Response::redirect('/users/new');
             }
 
-            $userId = DB::$users->create($username, $password, (bool) $data['male'], $rfeg, $memberNumber);
+            $userId = DB::$users->create($username, $password, (bool) $data['male'], $rfeg, $memberNumber, $firstName, $lastName);
             flash('success', __('users.create_success'));
             return Response::redirect('/users');
 
@@ -124,6 +126,38 @@ final class UserController
         try {
             DB::$users->setRfeg($userId, $rfeg);
             flash('success', __('users.rfeg_update_success'));
+            return Response::redirect('/users');
+        } catch (Exception $e) {
+            flash('error', $e->getMessage());
+            return Response::redirect('/users');
+        }
+    }
+
+    #[Post('/{id}/first_name')]
+    public function updateFirstName(Request $request, array $params): Response
+    {
+        $userId = (int) $params['id'];
+        $firstName = $request->getString('first_name') ?: null;
+
+        try {
+            DB::$users->setFirstName($userId, $firstName);
+            flash('success', __('users.name_update_success'));
+            return Response::redirect('/users');
+        } catch (Exception $e) {
+            flash('error', $e->getMessage());
+            return Response::redirect('/users');
+        }
+    }
+
+    #[Post('/{id}/last_name')]
+    public function updateLastName(Request $request, array $params): Response
+    {
+        $userId = (int) $params['id'];
+        $lastName = $request->getString('last_name') ?: null;
+
+        try {
+            DB::$users->setLastName($userId, $lastName);
+            flash('success', __('users.name_update_success'));
             return Response::redirect('/users');
         } catch (Exception $e) {
             flash('error', $e->getMessage());

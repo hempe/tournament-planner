@@ -16,7 +16,6 @@ final class GuestRepository extends BaseRepository
             $row['last_name'],
             $row['email'] ?? null,
             isset($row['handicap']) ? (float) $row['handicap'] : null,
-            $row['rfeg'] ?? null,
             $row['comment'] ?? null,
             $row['timestamp'],
         );
@@ -51,14 +50,13 @@ final class GuestRepository extends BaseRepository
         string $lastName,
         ?string $email,
         ?float $handicap,
-        ?string $rfeg,
         ?string $comment
     ): int {
         $maleInt = $male ? 1 : 0;
         $stmt = $this->prepareAndExecute(
-            'INSERT INTO event_guests (event_id, male, first_name, last_name, email, handicap, rfeg, comment) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-            'iisssdss',
-            [$eventId, $maleInt, $firstName, $lastName, $email, $handicap, $rfeg, $comment]
+            'INSERT INTO event_guests (event_id, male, first_name, last_name, email, handicap, comment) VALUES (?, ?, ?, ?, ?, ?, ?)',
+            'iisssds',
+            [$eventId, $maleInt, $firstName, $lastName, $email, $handicap, $comment]
         );
         $insertId = $this->conn->insert_id;
         $stmt->close();
@@ -72,14 +70,13 @@ final class GuestRepository extends BaseRepository
         string $lastName,
         ?string $email,
         ?float $handicap,
-        ?string $rfeg,
         ?string $comment
     ): void {
         $maleInt = $male ? 1 : 0;
         $this->executeUpdateQuery(
-            'UPDATE event_guests SET male = ?, first_name = ?, last_name = ?, email = ?, handicap = ?, rfeg = ?, comment = ? WHERE id = ?',
-            'isssdssi',
-            [$maleInt, $firstName, $lastName, $email, $handicap, $rfeg, $comment, $id]
+            'UPDATE event_guests SET male = ?, first_name = ?, last_name = ?, email = ?, handicap = ?, comment = ? WHERE id = ?',
+            'isssdsi',
+            [$maleInt, $firstName, $lastName, $email, $handicap, $comment, $id]
         );
     }
 

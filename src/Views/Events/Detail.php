@@ -47,40 +47,31 @@ assert(is_int($id));
         );
 
     // Build URLs with preserved query parameters
-    $isIframeMode = isset($_GET['iframe']) && $_GET['iframe'] === '1';
     $backUrl = isset($_GET['b']) ? '/?date=' . $_GET['b'] : '/';
     $queryParams = [];
-
-    if ($isIframeMode) {
-        $queryParams[] = 'iframe=1';
-        $backUrl .= (strpos($backUrl, '?') !== false ? '&' : '?') . 'iframe=1';
-    }
 
     if ($backDate = $_GET['b'] ?? null) {
         $queryParams[] = 'b=' . urlencode($backDate);
     }
 
     $queryString = !empty($queryParams) ? '?' . implode('&', $queryParams) : '';
-
-    $cardTitle = $isIframeMode
-        ? [
-            new IconButton(
-                title: __('nav.back'),
-                href: $backUrl,
-                icon: 'fa-chevron-left',
-                type: 'button',
-                color: Color::None,
-            ),
-            new Span(
-                content: "$formattedDate: {$event->name} {$regState}",
-                style: "flex-grow:1"
-            )
-        ]
-        : "$formattedDate: {$event->name} {$regState}";
+    $cardTitle = [
+        new IconButton(
+            title: __('nav.back'),
+            href: $backUrl,
+            icon: 'fa-chevron-left',
+            type: 'button',
+            color: Color::None,
+        ),
+        new Span(
+            content: "$formattedDate: {$event->name} {$regState}",
+            style: "flex-grow:1"
+        )
+    ];
 
     yield new Card(
         $cardTitle,
-        function () use ($id, $event, $eventFull, $reg, $queryString, $isIframeMode) {
+        function () use ($id, $event, $eventFull, $reg, $queryString) {
             if (!$reg) {
                 if (!$event->isLocked) {
                     yield new Table(
@@ -97,7 +88,7 @@ assert(is_int($id));
                                 color: $eventFull ? Color::Accent : Color::Primary,
                                 confirmMessage: $eventFull ? __('events.join_waitlist') : __('events.register_confirm'),
                                 hiddenInputs: ['userId' => $user->id],
-                                title_inline: $isIframeMode
+                                title_inline: true
                             ),
                         ],
                         widths: [null]
@@ -119,7 +110,7 @@ assert(is_int($id));
                         color: $event->isLocked ? Color::None : Color::Primary,
                         confirmMessage: $event->isLocked ? '' : __('events.comment_update_confirm'),
                         hiddenInputs: ['userId' => $user->id],
-                        title_inline: $isIframeMode
+                        title_inline: true
                     ),
                     new IconActionButton(
                         actionUrl: "/events/$event->id/unregister{$queryString}",
@@ -128,7 +119,7 @@ assert(is_int($id));
                         icon: 'fa-user-minus',
                         confirmMessage: $event->isLocked ? '' : __('events.unregister_confirm'),
                         hiddenInputs: ['userId' => $user->id],
-                        title_inline: $isIframeMode
+                        title_inline: true
                     )
                 ],
                 widths: [null, 1]
@@ -139,7 +130,7 @@ assert(is_int($id));
     if ($eventRegistrations) {
         $registeredTitle = __('events.registered');
         yield new Card(
-            $isIframeMode ? new Span(content: $registeredTitle, style: 'flex-grow:1') : $registeredTitle,
+            new Span(content: $registeredTitle, style: 'flex-grow:1'),
             new Table(
                 [''],
                 $eventRegistrations,

@@ -3,8 +3,8 @@
 return [
     // Common
     'app' => [
-        'name' => 'Golf El Faro',
-        'welcome' => 'Bienvenido a Golf El Faro',
+        'name' => 'GOLF EL FARO',
+        'welcome' => 'Bienvenido a GOLF EL FARO',
     ],
 
     // Navigation
@@ -32,16 +32,10 @@ return [
         'es' => 'Español',
     ],
 
-    // Theme
-    'theme' => [
-        'dark' => 'Tema oscuro',
-        'light' => 'Tema claro',
-    ],
-
     // Authentication
     'auth' => [
         'login' => 'Iniciar sesión',
-        'welcome' => 'Bienvenido a Golf el Faro',
+        'welcome' => 'Bienvenido a GOLF EL FARO',
         'username' => 'Usuario',
         'password' => 'Contraseña',
         'login_failed' => 'Error de inicio de sesión',
@@ -164,6 +158,9 @@ return [
         'rfeg_update_success' => 'RFeg actualizado',
         'member_number' => 'Número de socio',
         'member_number_update_success' => 'Número de socio actualizado',
+        'first_name' => 'Nombre',
+        'last_name' => 'Apellido',
+        'name_update_success' => 'Nombre actualizado',
     ],
 
     // Validation
@@ -251,10 +248,13 @@ return [
         'last_name' => 'Apellido',
         'email' => 'Correo electrónico',
         'handicap' => 'Handicap',
-        'rfeg' => 'RFeg',
         'comment' => 'Comentario',
         'register' => 'Registrarse como invitado',
-        'register_success' => 'Registrado correctamente como invitado',
+        'register_success' => 'Ha sido añadido correctamente a la lista de espera.
+
+En caso de que se libere una plaza, se le informará a más tardar tres días antes del inicio del torneo.
+
+Tenga en cuenta que los socios del club tienen prioridad en la asignación de las plazas disponibles.',
         'update_success' => 'Invitado actualizado correctamente',
         'delete_success' => 'Invitado eliminado correctamente',
         'delete_confirm' => '¿Eliminar invitado permanentemente?',
