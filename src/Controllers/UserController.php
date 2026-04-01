@@ -24,8 +24,6 @@ final class UserController
     #[Get('/')]
     public function index(Request $request): Response
     {
-        $users = DB::$users->all();
-
         ob_start();
         require __DIR__ . '/../Layout/header.php';
         require __DIR__ . '/../Views/Users/List.php';
@@ -75,7 +73,7 @@ final class UserController
                 return Response::redirect('/users/new');
             }
 
-            $userId = DB::$users->create($username, $password, (bool) $data['male'], $rfeg, $memberNumber, $firstName, $lastName);
+            DB::$users->create($username, $password, (bool) $data['male'], $rfeg, $memberNumber, $firstName, $lastName);
             flash('success', __('users.create_success'));
             return Response::redirect('/users');
 
@@ -85,18 +83,74 @@ final class UserController
         }
     }
 
-    #[Post('/{id}/delete')]
-    public function delete(Request $request, array $params): Response
+    #[Get('/{id}/edit')]
+    public function edit(Request $request, array $params): Response
+    {
+        $userId = (int) $params['id'];
+        $user = DB::$users->get($userId);
+
+        if (!$user) {
+            return Response::notFound(__('users.not_found'));
+        }
+
+        ob_start();
+        require __DIR__ . '/../Layout/header.php';
+        require __DIR__ . '/../Views/Users/Edit.php';
+        require __DIR__ . '/../Layout/footer.php';
+        $content = ob_get_clean();
+
+        return Response::ok($content);
+    }
+
+    #[Post('/{id}/update')]
+    public function update(Request $request, array $params): Response
     {
         $userId = (int) $params['id'];
 
+        $user = DB::$users->get($userId);
+        if (!$user) {
+            return Response::notFound(__('users.not_found'));
+        }
+
+        $validation = $request->validate([
+            new ValidationRule('male', ['required', 'boolean']),
+            new ValidationRule('username', ['required', 'string', 'min' => 3, 'max' => 255]),
+        ]);
+
+        if (!$validation->isValid) {
+            flash('error', $validation->getErrorMessages());
+            return Response::redirect("/users/$userId/edit");
+        }
+
         try {
-            DB::$users->delete($userId);
-            flash('success', __('users.delete_success'));
+            $data = $request->getValidatedData();
+            $username = trim($data['username']);
+
+            if ($username !== $user->username && DB::$users->userNameAlreadyTaken($username)) {
+                flash('error', __('users.username_taken', ['username' => $username]));
+                return Response::redirect("/users/$userId/edit");
+            }
+
+            DB::$users->update(
+                $userId,
+                (bool) $data['male'],
+                $username,
+                $request->getString('rfeg') ?: null,
+                $request->getString('member_number') ?: null,
+                $request->getString('first_name') ?: null,
+                $request->getString('last_name') ?: null,
+            );
+
+            $password = $request->getString('password');
+            if ($password !== '') {
+                DB::$users->setPassword($userId, $password);
+            }
+
+            flash('success', __('users.update_success'));
             return Response::redirect('/users');
         } catch (Exception $e) {
             flash('error', $e->getMessage());
-            return Response::redirect('/users');
+            return Response::redirect("/users/$userId/edit");
         }
     }
 
@@ -116,90 +170,14 @@ final class UserController
         }
     }
 
-    #[Post('/{id}/rfeg')]
-    public function updateRfeg(Request $request, array $params): Response
-    {
-        $userId = (int) $params['id'];
-        $rfeg = $request->getString('rfeg');
-        $rfeg = $rfeg !== '' ? $rfeg : null;
-
-        try {
-            DB::$users->setRfeg($userId, $rfeg);
-            flash('success', __('users.rfeg_update_success'));
-            return Response::redirect('/users');
-        } catch (Exception $e) {
-            flash('error', $e->getMessage());
-            return Response::redirect('/users');
-        }
-    }
-
-    #[Post('/{id}/first_name')]
-    public function updateFirstName(Request $request, array $params): Response
-    {
-        $userId = (int) $params['id'];
-        $firstName = $request->getString('first_name') ?: null;
-
-        try {
-            DB::$users->setFirstName($userId, $firstName);
-            flash('success', __('users.name_update_success'));
-            return Response::redirect('/users');
-        } catch (Exception $e) {
-            flash('error', $e->getMessage());
-            return Response::redirect('/users');
-        }
-    }
-
-    #[Post('/{id}/last_name')]
-    public function updateLastName(Request $request, array $params): Response
-    {
-        $userId = (int) $params['id'];
-        $lastName = $request->getString('last_name') ?: null;
-
-        try {
-            DB::$users->setLastName($userId, $lastName);
-            flash('success', __('users.name_update_success'));
-            return Response::redirect('/users');
-        } catch (Exception $e) {
-            flash('error', $e->getMessage());
-            return Response::redirect('/users');
-        }
-    }
-
-    #[Post('/{id}/member_number')]
-    public function updateMemberNumber(Request $request, array $params): Response
-    {
-        $userId = (int) $params['id'];
-        $memberNumber = $request->getString('member_number');
-        $memberNumber = $memberNumber !== '' ? $memberNumber : null;
-
-        try {
-            DB::$users->setMemberNumber($userId, $memberNumber);
-            flash('success', __('users.member_number_update_success'));
-            return Response::redirect('/users');
-        } catch (Exception $e) {
-            flash('error', $e->getMessage());
-            return Response::redirect('/users');
-        }
-    }
-
-    #[Post('/{id}/password')]
-    public function changePassword(Request $request, array $params): Response
+    #[Post('/{id}/delete')]
+    public function delete(Request $request, array $params): Response
     {
         $userId = (int) $params['id'];
 
-        $validation = $request->validate([
-            new ValidationRule('password', ['required', 'string' /*, 'min' => 6 */]),
-        ]);
-
-        if (!$validation->isValid) {
-            flash('error', $validation->getErrorMessages());
-            return Response::redirect('/users');
-        }
-
         try {
-            $data = $request->getValidatedData();
-            DB::$users->setPassword($userId, $data['password']);
-            flash('success', __('users.password_update_success'));
+            DB::$users->delete($userId);
+            flash('success', __('users.delete_success'));
             return Response::redirect('/users');
         } catch (Exception $e) {
             flash('error', $e->getMessage());

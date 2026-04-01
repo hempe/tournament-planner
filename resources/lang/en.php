@@ -161,6 +161,8 @@ return [
         'first_name' => 'First name',
         'last_name' => 'Last name',
         'name_update_success' => 'Name updated',
+        'edit' => 'Edit',
+        'not_found' => 'User not found',
     ],
 
     // Validation

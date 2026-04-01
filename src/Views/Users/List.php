@@ -3,7 +3,6 @@
 use TP\Components\Page;
 use TP\Components\Table;
 use TP\Components\Card;
-use TP\Components\InputAction;
 use TP\Components\IconButton;
 use TP\Components\IconActionButton;
 use TP\Components\Color;
@@ -19,62 +18,11 @@ use TP\Models\DB;
         href: "/users/new"
     ),
     new Table(
-        ['', '', '', '', '', '', '', ''],
+        ['', '', '', ''],
         DB::$users->all(),
         function ($user) {
             return [
                 htmlspecialchars($user->username),
-                new InputAction(
-                    title: __('users.first_name'),
-                    actionUrl: "/users/{$user->id}/first_name",
-                    color: Color::Light,
-                    inputName: 'first_name',
-                    inputValue: $user->firstName ?? '',
-                    inputPlaceholder: __('users.first_name'),
-                    icon: 'fa-save',
-                    confirmMessage: '',
-                ),
-                new InputAction(
-                    title: __('users.last_name'),
-                    actionUrl: "/users/{$user->id}/last_name",
-                    color: Color::Light,
-                    inputName: 'last_name',
-                    inputValue: $user->lastName ?? '',
-                    inputPlaceholder: __('users.last_name'),
-                    icon: 'fa-save',
-                    confirmMessage: '',
-                ),
-                new InputAction(
-                    title: __('users.set_new_password'),
-                    actionUrl: "/users/{$user->id}/password",
-                    color: Color::Light,
-                    inputName: 'password',
-                    inputValue: '',
-                    inputPlaceholder: __('users.new_password'),
-                    icon: 'fa-save',
-                    confirmMessage: __('users.set_new_password_confirm'),
-                    type: 'password',
-                ),
-                new InputAction(
-                    title: __('users.member_number'),
-                    actionUrl: "/users/{$user->id}/member_number",
-                    color: Color::Light,
-                    inputName: 'member_number',
-                    inputValue: $user->memberNumber ?? '',
-                    inputPlaceholder: __('users.member_number'),
-                    icon: 'fa-save',
-                    confirmMessage: '',
-                ),
-                new InputAction(
-                    title: __('users.rfeg'),
-                    actionUrl: "/users/{$user->id}/rfeg",
-                    color: Color::Light,
-                    inputName: 'rfeg',
-                    inputValue: $user->rfeg ?? '',
-                    inputPlaceholder: __('users.rfeg'),
-                    icon: 'fa-save',
-                    confirmMessage: '',
-                ),
                 new IconActionButton(
                     actionUrl: "/users/{$user->id}/admin",
                     title: $user->isAdmin ? __('users.remove_admin_rights') : __('users.give_admin_rights'),
@@ -85,6 +33,13 @@ use TP\Models\DB;
                         'admin' => $user->isAdmin ? 0 : 1,
                     ],
                 ),
+                new IconButton(
+                    title: __('users.edit'),
+                    type: 'button',
+                    icon: 'fa-edit',
+                    color: Color::Light,
+                    href: "/users/{$user->id}/edit"
+                ),
                 new IconActionButton(
                     actionUrl: "/users/{$user->id}/delete",
                     title: __('users.delete'),
@@ -94,6 +49,6 @@ use TP\Models\DB;
                 )
             ];
         },
-        widths: [null, null, null, null, null, null, 1, 1]
+        widths: [null, 1, 1, 1]
     )
 ));

@@ -47,46 +47,31 @@ final class UserRepository
         return $userId;
     }
 
-    public function setFirstName(int $userId, ?string $firstName): void
+    public function get(int $id): ?User
     {
-        $stmt = $this->conn->prepare("UPDATE users SET first_name = ? WHERE id = ?");
+        $stmt = $this->conn->prepare("SELECT id, username, admin, male, rfeg, member_number, first_name, last_name FROM users WHERE id = ?");
         if (!$stmt) {
             throw new Exception("Prepare statement failed: " . $this->conn->error);
         }
-        $stmt->bind_param("si", $firstName, $userId);
+        $stmt->bind_param("i", $id);
         $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
         $stmt->close();
+        if (!$row) {
+            return null;
+        }
+        return new User((int) $row['id'], $row['username'], (bool) $row['admin'], (bool) $row['male'], $row['rfeg'], $row['member_number'], $row['first_name'] ?? null, $row['last_name'] ?? null);
     }
 
-    public function setLastName(int $userId, ?string $lastName): void
+    public function update(int $id, bool $male, string $username, ?string $rfeg, ?string $memberNumber, ?string $firstName, ?string $lastName): void
     {
-        $stmt = $this->conn->prepare("UPDATE users SET last_name = ? WHERE id = ?");
+        $maleInt = $male ? 1 : 0;
+        $stmt = $this->conn->prepare("UPDATE users SET male = ?, username = ?, rfeg = ?, member_number = ?, first_name = ?, last_name = ? WHERE id = ?");
         if (!$stmt) {
             throw new Exception("Prepare statement failed: " . $this->conn->error);
         }
-        $stmt->bind_param("si", $lastName, $userId);
-        $stmt->execute();
-        $stmt->close();
-    }
-
-    public function setRfeg(int $userId, ?string $rfeg): void
-    {
-        $stmt = $this->conn->prepare("UPDATE users SET rfeg = ? WHERE id = ?");
-        if (!$stmt) {
-            throw new Exception("Prepare statement failed: " . $this->conn->error);
-        }
-        $stmt->bind_param("si", $rfeg, $userId);
-        $stmt->execute();
-        $stmt->close();
-    }
-
-    public function setMemberNumber(int $userId, ?string $memberNumber): void
-    {
-        $stmt = $this->conn->prepare("UPDATE users SET member_number = ? WHERE id = ?");
-        if (!$stmt) {
-            throw new Exception("Prepare statement failed: " . $this->conn->error);
-        }
-        $stmt->bind_param("si", $memberNumber, $userId);
+        $stmt->bind_param("isssssi", $maleInt, $username, $rfeg, $memberNumber, $firstName, $lastName, $id);
         $stmt->execute();
         $stmt->close();
     }
