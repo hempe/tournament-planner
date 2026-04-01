@@ -22,11 +22,11 @@ class EventRepositoryTest extends IntegrationTestCase
     {
         $this->loginAsAdmin();
 
-        DB::$events->add('March Event', '2026-03-15', 20);
-        DB::$events->add('April Event', '2026-04-10', 20);
+        DB::$events->add('March Event', '2099-03-15', 20);
+        DB::$events->add('April Event', '2099-04-10', 20);
 
         // Trigger all() with a date via the home page
-        $response = $this->request('GET', '/', ['date' => '2026-03-01']);
+        $response = $this->request('GET', '/', ['date' => '2099-03-01']);
 
         $this->assertEquals(200, $response->statusCode);
         $this->assertStringContainsString('March Event', $response->body);
@@ -35,10 +35,10 @@ class EventRepositoryTest extends IntegrationTestCase
     public function testAllForGuestWithDateReturnsEventsForThatMonth(): void
     {
         // Not logged in — guest view uses allForGuest($date)
-        DB::$events->add('March Event', '2026-03-15', 20);
-        DB::$events->add('April Event', '2026-04-10', 20);
+        DB::$events->add('March Event', '2099-03-15', 20);
+        DB::$events->add('April Event', '2099-04-10', 20);
 
-        $response = $this->request('GET', '/', ['date' => '2026-03-01']);
+        $response = $this->request('GET', '/', ['date' => '2099-03-01']);
 
         $this->assertEquals(200, $response->statusCode);
         $this->assertStringContainsString('March Event', $response->body);
@@ -48,7 +48,7 @@ class EventRepositoryTest extends IntegrationTestCase
     {
         $this->loginAsAdmin();
 
-        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20);
         $userId = DB::$users->create('testuser', 'Pass123!');
 
         DB::$events->register($eventId, $userId, '');
@@ -63,7 +63,7 @@ class EventRepositoryTest extends IntegrationTestCase
     {
         $this->loginAsAdmin();
 
-        DB::$events->add('Test Event', '2026-03-15', 20);
+        DB::$events->add('Test Event', '2099-03-15', 20);
         $userId = DB::$users->create('testuser', 'Pass123!');
 
         // registeredEvents returns all events (with LEFT JOIN for user state)
@@ -78,7 +78,7 @@ class EventRepositoryTest extends IntegrationTestCase
     {
         $this->loginAsAdmin();
 
-        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20);
         $userId = DB::$users->create('testuser', 'Pass123!');
 
         DB::$events->register($eventId, $userId, '');
@@ -93,7 +93,7 @@ class EventRepositoryTest extends IntegrationTestCase
     {
         $this->loginAsAdmin();
 
-        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20);
         $userId = DB::$users->create('testuser', 'Pass123!');
 
         $available = DB::$events->availableUsers($eventId);
@@ -105,7 +105,7 @@ class EventRepositoryTest extends IntegrationTestCase
     public function testAvailableUsersAsNonAdmin(): void
     {
         $this->loginAsAdmin();
-        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20);
         $userId = DB::$users->create('testuser', 'Pass123!');
 
         $this->loginAs('testuser', 'Pass123!');
@@ -120,7 +120,7 @@ class EventRepositoryTest extends IntegrationTestCase
     public function testAvailableUsersAsNonAdminExcludesIfRegistered(): void
     {
         $this->loginAsAdmin();
-        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20);
         $userId = DB::$users->create('testuser', 'Pass123!');
 
         DB::$events->register($eventId, $userId, '');
@@ -139,7 +139,7 @@ class EventRepositoryTest extends IntegrationTestCase
         $this->loginAsAdmin();
 
         // Create event with capacity 1
-        $eventId = DB::$events->add('Small Event', '2026-03-15', 1);
+        $eventId = DB::$events->add('Small Event', '2099-03-15', 1);
         $userId1 = DB::$users->create('user1', 'Pass123!');
         $userId2 = DB::$users->create('user2', 'Pass123!');
 
@@ -169,7 +169,7 @@ class EventRepositoryTest extends IntegrationTestCase
         $this->loginAsAdmin();
 
         // Create event with capacity 2
-        $eventId = DB::$events->add('Medium Event', '2026-03-15', 2);
+        $eventId = DB::$events->add('Medium Event', '2099-03-15', 2);
         $userId1 = DB::$users->create('user1', 'Pass123!');
         $userId2 = DB::$users->create('user2', 'Pass123!');
 

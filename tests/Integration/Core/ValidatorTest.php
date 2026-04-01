@@ -124,7 +124,7 @@ class ValidatorTest extends TestCase
     public function testValidateDatePassesForValidDate(): void
     {
         $rules = [new ValidationRule('date', ['date'])];
-        $result = $this->validator->validate(['date' => '2026-03-15'], $rules);
+        $result = $this->validator->validate(['date' => '2099-03-15'], $rules);
         $this->assertTrue($result->isValid);
     }
 

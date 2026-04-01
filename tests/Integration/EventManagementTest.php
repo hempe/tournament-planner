@@ -37,13 +37,13 @@ class EventManagementTest extends IntegrationTestCase
 
         // Step 2: Create a single event
         echo "\n2. Creating single event...\n";
-        $this->eventId = $this->createEvent('Test Golf Event', '2026-03-15', 20);
+        $this->eventId = $this->createEvent('Test Golf Event', '2099-03-15', 20);
         $this->assertGreaterThan(0, $this->eventId, "Event should be created with valid ID");
 
         $event = DB::$events->get($this->eventId, 1);
         $this->assertNotNull($event, "Event should exist");
         $this->assertEquals('Test Golf Event', $event->name);
-        $this->assertEquals('2026-03-15', $event->date);
+        $this->assertEquals('2099-03-15', $event->date);
         $this->assertEquals(20, $event->capacity);
         $this->assertFalse($event->isLocked, "New event should not be locked");
         echo "   ✓ Event created: {$event->name} on {$event->date}\n";
@@ -51,8 +51,8 @@ class EventManagementTest extends IntegrationTestCase
         // Step 3: Bulk create events
         echo "\n3. Bulk creating weekly events...\n";
         $bulkEventIds = $this->bulkCreateEvents(
-            startDate: '2026-04-01',
-            endDate: '2026-06-30',
+            startDate: '2099-04-01',
+            endDate: '2099-06-30',
             dayOfWeek: 3, // Wednesday
             name: 'Weekly Wednesday Tournament',
             capacity: 16
@@ -110,7 +110,7 @@ class EventManagementTest extends IntegrationTestCase
 
         // Step 8: Test waitlist functionality
         echo "\n8. Testing waitlist functionality...\n";
-        $smallEventId = $this->createEvent('Small Event', '2026-05-01', 2);
+        $smallEventId = $this->createEvent('Small Event', '2099-05-01', 2);
 
         // Register 3 users (capacity is 2, so third should be waitlisted)
         $user1 = $this->createRegularUser('user1', 'Pass123!');
@@ -192,7 +192,7 @@ class EventManagementTest extends IntegrationTestCase
         $this->loginAsAdmin();
 
         // Create event
-        $eventId = $this->createEvent('Original Event', '2026-06-01', 10);
+        $eventId = $this->createEvent('Original Event', '2099-06-01', 10);
         echo "\n1. Event created: Original Event\n";
 
         // Update event

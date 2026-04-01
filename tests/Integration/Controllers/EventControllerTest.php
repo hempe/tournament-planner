@@ -23,8 +23,8 @@ class EventControllerTest extends IntegrationTestCase
         $this->loginAsAdmin();
 
         // Create test events
-        DB::$events->add('Event 1', '2026-03-15', 20);
-        DB::$events->add('Event 2', '2026-03-16', 15);
+        DB::$events->add('Event 1', '2099-03-15', 20);
+        DB::$events->add('Event 2', '2099-03-16', 15);
 
         $response = $this->request('GET', '/events');
 
@@ -44,7 +44,7 @@ class EventControllerTest extends IntegrationTestCase
     {
         $this->loginAsAdmin();
 
-        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20);
 
         $response = $this->request('GET', "/events/$eventId");
 
@@ -57,7 +57,7 @@ class EventControllerTest extends IntegrationTestCase
     public function testDetailShowsEventAsRegularUser(): void
     {
         $this->loginAsAdmin();
-        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20);
         $userId = DB::$users->create('regularuser', 'Pass123!');
 
         // Login as regular user
@@ -88,7 +88,7 @@ class EventControllerTest extends IntegrationTestCase
 
         $response = $this->request('POST', '/events/new', [
             'name' => 'New Event',
-            'date' => '2026-04-01',
+            'date' => '2099-04-01',
             'capacity' => '25'
         ]);
 
@@ -121,7 +121,7 @@ class EventControllerTest extends IntegrationTestCase
 
         $response = $this->request('POST', '/events/new', [
             'name' => 'New Event',
-            'date' => '2026-04-01',
+            'date' => '2099-04-01',
             'capacity' => '25'
         ]);
 
@@ -132,7 +132,7 @@ class EventControllerTest extends IntegrationTestCase
     {
         $this->loginAsAdmin();
 
-        $eventId = DB::$events->add('Original Name', '2026-03-15', 20);
+        $eventId = DB::$events->add('Original Name', '2099-03-15', 20);
 
         $response = $this->request('POST', "/events/$eventId", [
             'name' => 'Updated Name',
@@ -150,7 +150,7 @@ class EventControllerTest extends IntegrationTestCase
     {
         $this->loginAsAdmin();
 
-        $eventId = DB::$events->add('Original Name', '2026-03-15', 20);
+        $eventId = DB::$events->add('Original Name', '2099-03-15', 20);
 
         $response = $this->request('POST', "/events/$eventId", [
             'name' => '',
@@ -168,7 +168,7 @@ class EventControllerTest extends IntegrationTestCase
     {
         $this->loginAsAdmin();
 
-        $eventId = DB::$events->add('To Delete', '2026-03-15', 20);
+        $eventId = DB::$events->add('To Delete', '2099-03-15', 20);
 
         $response = $this->request('POST', "/events/$eventId/delete");
 
@@ -182,7 +182,7 @@ class EventControllerTest extends IntegrationTestCase
     {
         $this->loginAsAdmin();
 
-        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20);
 
         $response = $this->request('POST', "/events/$eventId/lock");
 
@@ -196,7 +196,7 @@ class EventControllerTest extends IntegrationTestCase
     {
         $this->loginAsAdmin();
 
-        $eventId = DB::$events->add('Test Event', '2026-03-15', 20, true);
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20, true);
 
         $response = $this->request('POST', "/events/$eventId/unlock");
 
@@ -210,7 +210,7 @@ class EventControllerTest extends IntegrationTestCase
     {
         $this->loginAsAdmin();
 
-        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20);
         $userId = DB::$users->create('testuser', 'Pass123!');
 
         $this->loginAs('testuser', 'Pass123!');
@@ -231,7 +231,7 @@ class EventControllerTest extends IntegrationTestCase
     {
         $this->loginAsAdmin();
 
-        $eventId = DB::$events->add('Test Event', '2026-03-15', 20, true);
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20, true);
         $userId = DB::$users->create('testuser', 'Pass123!');
 
         $this->loginAs('testuser', 'Pass123!');
@@ -250,7 +250,7 @@ class EventControllerTest extends IntegrationTestCase
     {
         $this->loginAsAdmin();
 
-        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20);
         $userId = DB::$users->create('testuser', 'Pass123!');
 
         $this->loginAs('testuser', 'Pass123!');
@@ -266,7 +266,7 @@ class EventControllerTest extends IntegrationTestCase
     {
         $this->loginAsAdmin();
 
-        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20);
         $userId = DB::$users->create('testuser', 'Pass123!');
 
         DB::$events->register($eventId, $userId, 'Test');
@@ -285,7 +285,7 @@ class EventControllerTest extends IntegrationTestCase
     {
         $this->loginAsAdmin();
 
-        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20);
         $userId = DB::$users->create('testuser', 'Pass123!');
 
         DB::$events->register($eventId, $userId, 'Test');
@@ -305,7 +305,7 @@ class EventControllerTest extends IntegrationTestCase
     {
         $this->loginAsAdmin();
 
-        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20);
         $userId = DB::$users->create('testuser', 'Pass123!');
 
         DB::$events->register($eventId, $userId, 'Original comment');
@@ -326,7 +326,7 @@ class EventControllerTest extends IntegrationTestCase
     {
         $this->loginAsAdmin();
 
-        $eventId = DB::$events->add('Test Event', '2026-03-15', 20, true);
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20, true);
         $userId = DB::$users->create('testuser', 'Pass123!');
 
         // Unlock temporarily to register
@@ -362,8 +362,8 @@ class EventControllerTest extends IntegrationTestCase
         $this->loginAsAdmin();
 
         $response = $this->request('POST', '/events/bulk/preview', [
-            'start_date' => '2026-04-01',
-            'end_date' => '2026-04-30',
+            'start_date' => '2099-04-01',
+            'end_date' => '2099-04-30',
             'day_of_week' => '3', // Wednesday
             'name' => 'Weekly Event',
             'capacity' => '16'
@@ -394,8 +394,8 @@ class EventControllerTest extends IntegrationTestCase
 
         // First preview to set session
         $this->request('POST', '/events/bulk/preview', [
-            'start_date' => '2026-04-01',
-            'end_date' => '2026-04-15',
+            'start_date' => '2099-04-01',
+            'end_date' => '2099-04-15',
             'day_of_week' => '3', // Wednesday
             'name' => 'Bulk Event',
             'capacity' => '12'
@@ -424,7 +424,7 @@ class EventControllerTest extends IntegrationTestCase
     public function testAdminViewRequiresAdmin(): void
     {
         $this->loginAsAdmin();
-        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20);
 
         $userId = DB::$users->create('regularuser', 'Pass123!');
         $this->loginAs('regularuser', 'Pass123!');
@@ -437,7 +437,7 @@ class EventControllerTest extends IntegrationTestCase
     public function testAdminViewShowsForAdmin(): void
     {
         $this->loginAsAdmin();
-        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20);
 
         $response = $this->request('GET', "/events/$eventId/admin");
 
@@ -468,7 +468,7 @@ class EventControllerTest extends IntegrationTestCase
     {
         $this->loginAsAdmin();
 
-        $eventId = DB::$events->add('Test Event', '2026-03-15', 20, false, true);
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20, false, true);
 
         $response = $this->request('POST', "/events/$eventId", [
             'name' => 'Test Event',
@@ -486,7 +486,7 @@ class EventControllerTest extends IntegrationTestCase
     {
         $this->loginAsAdmin();
 
-        $eventId = DB::$events->add('Export Event', '2026-03-15', 20);
+        $eventId = DB::$events->add('Export Event', '2099-03-15', 20);
 
         $response = $this->request('GET', "/events/$eventId/export");
 
@@ -499,7 +499,7 @@ class EventControllerTest extends IntegrationTestCase
     {
         $this->loginAsAdmin();
 
-        $eventId = DB::$events->add('Export Event', '2026-03-15', 20);
+        $eventId = DB::$events->add('Export Event', '2099-03-15', 20);
         $userId = DB::$users->create('csvuser', 'Pass123!', true, 'RF123', 'M001');
         DB::$events->register($eventId, $userId, '');
 
@@ -515,7 +515,7 @@ class EventControllerTest extends IntegrationTestCase
     {
         $this->loginAsAdmin();
 
-        $eventId = DB::$events->add('Export Event', '2026-03-15', 20);
+        $eventId = DB::$events->add('Export Event', '2099-03-15', 20);
         DB::$guests->add($eventId, true, 'Jane', 'Doe', null, null, null);
 
         $response = $this->request('GET', "/events/$eventId/export");
@@ -537,7 +537,7 @@ class EventControllerTest extends IntegrationTestCase
     public function testExportRequiresAdmin(): void
     {
         $this->loginAsAdmin();
-        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20);
         DB::$users->create('regularuser', 'Pass123!');
         $this->loginAs('regularuser', 'Pass123!');
 
@@ -549,7 +549,7 @@ class EventControllerTest extends IntegrationTestCase
     public function testRegisterForbidsNonAdminRegisteringForOtherUser(): void
     {
         $this->loginAsAdmin();
-        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20);
         $otherUserId = DB::$users->create('otheruser', 'Pass123!');
         DB::$users->create('regularuser', 'Pass123!');
 
@@ -571,7 +571,7 @@ class EventControllerTest extends IntegrationTestCase
     public function testUnregisterForbidsNonAdminUnregisteringOtherUser(): void
     {
         $this->loginAsAdmin();
-        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20);
         $otherUserId = DB::$users->create('otheruser', 'Pass123!');
         DB::$users->create('regularuser', 'Pass123!');
 
@@ -594,7 +594,7 @@ class EventControllerTest extends IntegrationTestCase
     public function testUpdateCommentForbidsNonAdminEditingOtherUsersComment(): void
     {
         $this->loginAsAdmin();
-        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20);
         $otherUserId = DB::$users->create('otheruser', 'Pass123!');
         DB::$users->create('regularuser', 'Pass123!');
 
@@ -617,7 +617,7 @@ class EventControllerTest extends IntegrationTestCase
     public function testRegisterWithBackDatePreservesRedirectParam(): void
     {
         $this->loginAsAdmin();
-        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20);
         DB::$users->create('testuser', 'Pass123!');
         $this->loginAs('testuser', 'Pass123!');
 
@@ -657,7 +657,7 @@ class EventControllerTest extends IntegrationTestCase
     {
         $response = $this->request('POST', '/events/new', [
             'name' => 'Event',
-            'date' => '2026-04-01',
+            'date' => '2099-04-01',
             'capacity' => '20',
         ]);
 
@@ -669,7 +669,7 @@ class EventControllerTest extends IntegrationTestCase
     public function testDetailAsAnonymous(): void
     {
         $this->loginAsAdmin();
-        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20);
         $_SESSION = [];
 
         $response = $this->request('GET', "/events/$eventId");
@@ -682,7 +682,7 @@ class EventControllerTest extends IntegrationTestCase
     public function testAdminViewAsAnonymous(): void
     {
         $this->loginAsAdmin();
-        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20);
         $_SESSION = [];
 
         $response = $this->request('GET', "/events/$eventId/admin");
@@ -704,7 +704,7 @@ class EventControllerTest extends IntegrationTestCase
     public function testUpdateAsAnonymous(): void
     {
         $this->loginAsAdmin();
-        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20);
         $_SESSION = [];
 
         $response = $this->request('POST', "/events/$eventId", [
@@ -718,7 +718,7 @@ class EventControllerTest extends IntegrationTestCase
     public function testUpdateAsRegularUser(): void
     {
         $this->loginAsAdmin();
-        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20);
         DB::$users->create('regularuser', 'Pass123!');
         $this->loginAs('regularuser', 'Pass123!');
 
@@ -735,7 +735,7 @@ class EventControllerTest extends IntegrationTestCase
     public function testDeleteAsAnonymous(): void
     {
         $this->loginAsAdmin();
-        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20);
         $_SESSION = [];
 
         $response = $this->request('POST', "/events/$eventId/delete");
@@ -746,7 +746,7 @@ class EventControllerTest extends IntegrationTestCase
     public function testDeleteAsRegularUser(): void
     {
         $this->loginAsAdmin();
-        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20);
         DB::$users->create('regularuser', 'Pass123!');
         $this->loginAs('regularuser', 'Pass123!');
 
@@ -760,7 +760,7 @@ class EventControllerTest extends IntegrationTestCase
     public function testExportAsAnonymous(): void
     {
         $this->loginAsAdmin();
-        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20);
         $_SESSION = [];
 
         $response = $this->request('GET', "/events/$eventId/export");
@@ -773,7 +773,7 @@ class EventControllerTest extends IntegrationTestCase
     public function testLockAsAnonymous(): void
     {
         $this->loginAsAdmin();
-        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20);
         $_SESSION = [];
 
         $response = $this->request('POST', "/events/$eventId/lock");
@@ -784,7 +784,7 @@ class EventControllerTest extends IntegrationTestCase
     public function testLockAsRegularUser(): void
     {
         $this->loginAsAdmin();
-        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20);
         DB::$users->create('regularuser', 'Pass123!');
         $this->loginAs('regularuser', 'Pass123!');
 
@@ -798,7 +798,7 @@ class EventControllerTest extends IntegrationTestCase
     public function testUnlockAsAnonymous(): void
     {
         $this->loginAsAdmin();
-        $eventId = DB::$events->add('Test Event', '2026-03-15', 20, true);
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20, true);
         $_SESSION = [];
 
         $response = $this->request('POST', "/events/$eventId/unlock");
@@ -809,7 +809,7 @@ class EventControllerTest extends IntegrationTestCase
     public function testUnlockAsRegularUser(): void
     {
         $this->loginAsAdmin();
-        $eventId = DB::$events->add('Test Event', '2026-03-15', 20, true);
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20, true);
         DB::$users->create('regularuser', 'Pass123!');
         $this->loginAs('regularuser', 'Pass123!');
 
@@ -823,7 +823,7 @@ class EventControllerTest extends IntegrationTestCase
     public function testRegisterAsAnonymous(): void
     {
         $this->loginAsAdmin();
-        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20);
         $_SESSION = [];
 
         $response = $this->request('POST', "/events/$eventId/register", ['comment' => 'Test']);
@@ -834,7 +834,7 @@ class EventControllerTest extends IntegrationTestCase
     public function testAdminCanRegisterAnotherUser(): void
     {
         $this->loginAsAdmin();
-        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20);
         $userId = DB::$users->create('targetuser', 'Pass123!');
 
         $response = $this->request('POST', "/events/$eventId/register", [
@@ -854,7 +854,7 @@ class EventControllerTest extends IntegrationTestCase
     public function testUnregisterAsAnonymous(): void
     {
         $this->loginAsAdmin();
-        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20);
         $_SESSION = [];
 
         $response = $this->request('POST', "/events/$eventId/unregister");
@@ -865,7 +865,7 @@ class EventControllerTest extends IntegrationTestCase
     public function testAdminCanUnregisterAnotherUser(): void
     {
         $this->loginAsAdmin();
-        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20);
         $userId = DB::$users->create('targetuser', 'Pass123!');
         DB::$events->register($eventId, $userId, '');
 
@@ -884,7 +884,7 @@ class EventControllerTest extends IntegrationTestCase
     public function testUpdateCommentAsAnonymous(): void
     {
         $this->loginAsAdmin();
-        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20);
         $_SESSION = [];
 
         $response = $this->request('POST', "/events/$eventId/comment", ['comment' => 'Test']);
@@ -895,7 +895,7 @@ class EventControllerTest extends IntegrationTestCase
     public function testAdminCanUpdateAnotherUsersComment(): void
     {
         $this->loginAsAdmin();
-        $eventId = DB::$events->add('Test Event', '2026-03-15', 20);
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20);
         $userId = DB::$users->create('targetuser', 'Pass123!');
         DB::$events->register($eventId, $userId, 'Original');
 
@@ -935,8 +935,8 @@ class EventControllerTest extends IntegrationTestCase
     public function testBulkPreviewAsAnonymous(): void
     {
         $response = $this->request('POST', '/events/bulk/preview', [
-            'start_date' => '2026-04-01',
-            'end_date' => '2026-04-30',
+            'start_date' => '2099-04-01',
+            'end_date' => '2099-04-30',
             'day_of_week' => '3',
             'name' => 'Event',
             'capacity' => '10',
@@ -952,8 +952,8 @@ class EventControllerTest extends IntegrationTestCase
         $this->loginAs('regularuser', 'Pass123!');
 
         $response = $this->request('POST', '/events/bulk/preview', [
-            'start_date' => '2026-04-01',
-            'end_date' => '2026-04-30',
+            'start_date' => '2099-04-01',
+            'end_date' => '2099-04-30',
             'day_of_week' => '3',
             'name' => 'Event',
             'capacity' => '10',

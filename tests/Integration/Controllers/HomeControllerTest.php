@@ -31,7 +31,7 @@ class HomeControllerTest extends IntegrationTestCase
         $this->loginAsAdmin();
 
         // Create a test event
-        DB::$events->add('Test Event', '2026-03-15', 20);
+        DB::$events->add('Test Event', '2099-03-15', 20);
 
         $response = $this->request('GET', '/');
 
@@ -46,7 +46,7 @@ class HomeControllerTest extends IntegrationTestCase
         $this->loginAsAdmin();
 
         // Must pass date in data array for $_GET to be set correctly
-        $response = $this->request('GET', '/', ['date' => '2026-03-01']);
+        $response = $this->request('GET', '/', ['date' => '2099-03-01']);
 
         // Just verify it's accessible
         $this->assertNotEquals(404, $response->statusCode);
@@ -62,7 +62,7 @@ class HomeControllerTest extends IntegrationTestCase
 
     public function testGuestWithQueryParamsRedirects(): void
     {
-        $response = $this->request('GET', '/guest', ['date' => '2026-03-01']);
+        $response = $this->request('GET', '/guest', ['date' => '2099-03-01']);
 
         $this->assertEquals(303, $response->statusCode);
     }

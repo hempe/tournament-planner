@@ -98,18 +98,13 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ### NOTES
 
-login button is weg?
-zurrück?
-
-
 --> Anmeldeschluss
- -> 
--> Bulk: vie viele Tage voher, und uhrzeit.
+	-> Bulk: vie viele Tage voher, und uhrzeit.
 
-Preise für Mitglieder,
-Preis für Gäste.
-
+-> Preise für Mitglieder,
+-> Preis für Gäste.
 -> Turnier Beschreibung.
+
 
 --> Anlass nicht wirklich turnier.
 
