@@ -11,11 +11,15 @@ final class EventRepository extends BaseRepository
 {
     private const QUERY_EVENT = "SELECT
                 e.id,
-                (e.locked = 1 OR e.date < NOW()) AS isLocked,
+                (e.locked = 1 OR e.date < NOW() OR (e.registration_close IS NOT NULL AND e.registration_close < NOW())) AS isLocked,
                 e.name,
                 e.date,
                 e.capacity,
                 e.mixed,
+                e.description,
+                e.price_members,
+                e.price_guests,
+                e.registration_close,
                 (SELECT COUNT(*)
                     FROM event_users
                     WHERE state = 1 AND eventId = e.id) AS joined,
@@ -43,6 +47,10 @@ final class EventRepository extends BaseRepository
             (int) $row['waitList'],
             (int) $row['userState'],
             (bool) $row['mixed'],
+            $row['description'] ?? null,
+            isset($row['price_members']) ? (float) $row['price_members'] : null,
+            isset($row['price_guests']) ? (float) $row['price_guests'] : null,
+            $row['registration_close'] ?? null,
         );
     }
 
@@ -76,23 +84,23 @@ final class EventRepository extends BaseRepository
         $this->executeUpdateQuery("DELETE FROM events WHERE id = ?", "i", [$id]);
     }
 
-    public function update(int $id, string $name, int $capacity, bool $mixed = true): void
+    public function update(int $id, string $name, int $capacity, bool $mixed = true, ?string $description = null, ?float $priceMembers = null, ?float $priceGuests = null, ?string $registrationClose = null): void
     {
         $this->executeUpdateQuery(
-            "UPDATE events SET name = ?, capacity = ?, mixed = ? WHERE id = ?",
-            "siii",
-            [$name, $capacity, $mixed ? 1 : 0, $id]
+            "UPDATE events SET name = ?, capacity = ?, mixed = ?, description = ?, price_members = ?, price_guests = ?, registration_close = ? WHERE id = ?",
+            "siisddsi",
+            [$name, $capacity, $mixed ? 1 : 0, $description, $priceMembers, $priceGuests, $registrationClose, $id]
         );
         $this->fix($id);
     }
 
-    public function add(string $name, string $date, int $capacity, bool $locked = false, bool $mixed = true): int
+    public function add(string $name, string $date, int $capacity, bool $locked = false, bool $mixed = true, ?string $description = null, ?float $priceMembers = null, ?float $priceGuests = null, ?string $registrationClose = null): int
     {
         $now = (new DateTime())->format('Y-m-d H:i:s');
         $this->executeUpdateQuery(
-            "INSERT INTO events (name, date, capacity, locked, mixed, timestamp) VALUES (?, ?, ?, ?, ?, ?)",
-            "sssiis",
-            [$name, $date, $capacity, $locked ? 1 : 0, $mixed ? 1 : 0, $now]
+            "INSERT INTO events (name, date, capacity, locked, mixed, timestamp, description, price_members, price_guests, registration_close) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "ssiiissdds",
+            [$name, $date, $capacity, $locked ? 1 : 0, $mixed ? 1 : 0, $now, $description, $priceMembers, $priceGuests, $registrationClose]
         );
 
         $eventId = $this->fetchSingleValue("SELECT LAST_INSERT_ID()", "", []);
@@ -258,7 +266,7 @@ final class EventRepository extends BaseRepository
     public function isLocked(int $eventId): bool
     {
         return (bool) $this->fetchSingleValue(
-            "SELECT (locked = 1 OR date < NOW()) as isLocked FROM events WHERE id = ?",
+            "SELECT (locked = 1 OR date < NOW() OR (registration_close IS NOT NULL AND registration_close < NOW())) as isLocked FROM events WHERE id = ?",
             "i",
             [$eventId]
         );

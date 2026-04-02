@@ -121,6 +121,12 @@ return [
         'export_col_timestamp' => 'Fecha de registro',
         'export_yes' => 'Sí',
         'export_no' => 'No',
+        'description' => 'Descripción',
+        'price_members' => 'Precio Socios',
+        'price_guests' => 'Precio Invitados',
+        'registration_close' => 'Cierre de Inscripción',
+        'bulk_registration_close_days' => 'Cierre de inscripción (días antes)',
+        'bulk_registration_close_time' => 'Cierre de inscripción (hora)',
     ],
 
     // Users

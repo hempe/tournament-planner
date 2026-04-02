@@ -18,6 +18,10 @@ final class Event
         public readonly int $onWaitList,
         public readonly int $userState,
         public readonly bool $mixed = true,
+        public readonly ?string $description = null,
+        public readonly ?float $priceMembers = null,
+        public readonly ?float $priceGuests = null,
+        public readonly ?string $registrationClose = null,
     ) {
         $this->available = $capacity - $joined;
     }

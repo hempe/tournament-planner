@@ -22,6 +22,8 @@ class Input extends Component
         \Closure|string|Component|array $style = '',
         private readonly string $step = '',
         private readonly string $id = '',
+        private readonly string $min = '',
+        private readonly string $max = '',
         \Closure|string|Component|array $content = '',
     ) {
         $this->class = $this->captureOutput($class);
@@ -34,6 +36,8 @@ class Input extends Component
         $required = $this->required ? 'required' : '';
         $step = $this->step !== '' ? "step=\"{$this->step}\"" : '';
         $id = $this->id !== '' ? "id=\"{$this->id}\"" : '';
+        $min = $this->min !== '' ? "min=\"{$this->min}\"" : '';
+        $max = $this->max !== '' ? "max=\"{$this->max}\"" : '';
         $value = htmlspecialchars($this->value);
         echo <<<HTML
             <input type="{$this->type}"
@@ -44,6 +48,8 @@ class Input extends Component
                 style="{$this->style}"
                 {$id}
                 {$step}
+                {$min}
+                {$max}
                 {$required}>{$this->content}
         HTML;
     }

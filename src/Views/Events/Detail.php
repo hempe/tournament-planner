@@ -127,6 +127,29 @@ assert(is_int($id));
         }
     );
 
+    if ($event->description || $event->priceMembers !== null || $event->priceGuests !== null || $event->registrationClose) {
+        $details = [];
+        if ($event->description) {
+            $details[] = [__('events.description'), nl2br(htmlspecialchars($event->description))];
+        }
+        if ($event->priceMembers !== null) {
+            $details[] = [__('events.price_members'), number_format($event->priceMembers, 2)];
+        }
+        if ($event->priceGuests !== null) {
+            $details[] = [__('events.price_guests'), number_format($event->priceGuests, 2)];
+        }
+        if ($event->registrationClose) {
+            $closeFormatter = new \IntlDateFormatter(Translator::getInstance()->getLocale(), \IntlDateFormatter::FULL, \IntlDateFormatter::SHORT);
+            $details[] = [__('events.registration_close'), $closeFormatter->format(strtotime($event->registrationClose))];
+        }
+        yield new Card('', new Table(
+            ['', ''],
+            $details,
+            fn($row) => $row,
+            widths: [1, null]
+        ));
+    }
+
     if ($eventRegistrations) {
         $registeredTitle = __('events.registered');
         yield new Card(

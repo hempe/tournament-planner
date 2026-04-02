@@ -121,6 +121,12 @@ return [
         'export_col_timestamp' => 'Anmeldedatum',
         'export_yes' => 'Ja',
         'export_no' => 'Nein',
+        'description' => 'Beschreibung',
+        'price_members' => 'Preis Mitglieder',
+        'price_guests' => 'Preis Gäste',
+        'registration_close' => 'Anmeldeschluss',
+        'bulk_registration_close_days' => 'Anmeldeschluss (Tage vorher)',
+        'bulk_registration_close_time' => 'Anmeldeschluss (Uhrzeit)',
     ],
 
     // Users

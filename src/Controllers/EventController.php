@@ -120,7 +120,11 @@ final class EventController
         try {
             $data = $request->getValidatedData();
             $mixed = ($data['mixed'] ?? '0') === '1';
-            $eventId = DB::$events->add($data['name'], $data['date'], (int) $data['capacity'], false, $mixed);
+            $description = $request->getString('description') ?: null;
+            $priceMembers = $request->getString('price_members') !== '' ? (float) $request->getString('price_members') : null;
+            $priceGuests = $request->getString('price_guests') !== '' ? (float) $request->getString('price_guests') : null;
+            $registrationClose = $request->getString('registration_close') ?: null;
+            $eventId = DB::$events->add($data['name'], $data['date'], (int) $data['capacity'], false, $mixed, $description, $priceMembers, $priceGuests, $registrationClose);
 
             return Response::redirect("/events/{$eventId}");
         } catch (Exception $e) {
@@ -176,7 +180,11 @@ final class EventController
         try {
             $data = $request->getValidatedData();
             $mixed = ($data['mixed'] ?? '0') === '1';
-            DB::$events->update($eventId, $data['name'], (int) $data['capacity'], $mixed);
+            $description = $request->getString('description') ?: null;
+            $priceMembers = $request->getString('price_members') !== '' ? (float) $request->getString('price_members') : null;
+            $priceGuests = $request->getString('price_guests') !== '' ? (float) $request->getString('price_guests') : null;
+            $registrationClose = $request->getString('registration_close') ?: null;
+            DB::$events->update($eventId, $data['name'], (int) $data['capacity'], $mixed, $description, $priceMembers, $priceGuests, $registrationClose);
 
             flash('success', __('events.update_success'));
             return Response::redirect("/events/{$eventId}");
@@ -425,13 +433,21 @@ final class EventController
         try {
             $data = $request->getValidatedData();
             $mixed = ($data['mixed'] ?? '0') === '1';
+            $priceMembers = $request->getString('price_members') !== '' ? (float) $request->getString('price_members') : null;
+            $priceGuests = $request->getString('price_guests') !== '' ? (float) $request->getString('price_guests') : null;
+            $registrationCloseDays = $request->getString('registration_close_days') !== '' ? (int) $request->getString('registration_close_days') : null;
+            $registrationCloseTime = $request->getString('registration_close_time') ?: null;
             $events = $this->calculateRecurringDates(
                 $data['start_date'],
                 $data['end_date'],
                 (int) $data['day_of_week'],
                 $data['name'],
                 (int) $data['capacity'],
-                $mixed
+                $mixed,
+                $priceMembers,
+                $priceGuests,
+                $registrationCloseDays,
+                $registrationCloseTime,
             );
 
             $_SESSION['bulk_events'] = $events;
@@ -464,7 +480,17 @@ final class EventController
 
         foreach ($events as $event) {
             try {
-                DB::$events->add($event['name'], $event['date'], $event['capacity'], true, (bool) ($event['mixed'] ?? true));
+                DB::$events->add(
+                    $event['name'],
+                    $event['date'],
+                    $event['capacity'],
+                    true,
+                    (bool) ($event['mixed'] ?? true),
+                    null,
+                    isset($event['price_members']) ? (float) $event['price_members'] : null,
+                    isset($event['price_guests']) ? (float) $event['price_guests'] : null,
+                    $event['registration_close'] ?? null,
+                );
                 $successCount++;
             } catch (Exception $e) {
                 $failures[] = "Failed to create event on {$event['date']}: " . $e->getMessage();
@@ -490,7 +516,11 @@ final class EventController
         int $dayOfWeek,
         string $name,
         int $capacity,
-        bool $mixed = true
+        bool $mixed = true,
+        ?float $priceMembers = null,
+        ?float $priceGuests = null,
+        ?int $registrationCloseDays = null,
+        ?string $registrationCloseTime = null,
     ): array {
         $start = new \DateTime($startDate);
         $end = new \DateTime($endDate);
@@ -507,12 +537,23 @@ final class EventController
 
         // Loop with +7 days increment until end date exceeded
         while ($current <= $end) {
-            $events[] = [
+            $event = [
                 'name' => $name,
                 'date' => $current->format('Y-m-d'),
                 'capacity' => $capacity,
                 'mixed' => $mixed,
+                'price_members' => $priceMembers,
+                'price_guests' => $priceGuests,
+                'registration_close' => null,
             ];
+
+            if ($registrationCloseDays !== null && $registrationCloseTime !== null) {
+                $closeDate = clone $current;
+                $closeDate->modify("-{$registrationCloseDays} days");
+                $event['registration_close'] = $closeDate->format('Y-m-d') . ' ' . $registrationCloseTime . ':00';
+            }
+
+            $events[] = $event;
             $current->modify('+7 days');
         }
 

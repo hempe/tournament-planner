@@ -42,13 +42,14 @@ $count = count($events);
                 color: Color::Primary
             ),
             new Table(
-                columns: [__('events.date'), __('events.name'), __('events.capacity'), __('events.play_together')],
+                columns: [__('events.date'), __('events.name'), __('events.capacity'), __('events.play_together'), __('events.registration_close')],
                 items: $events,
                 projection: fn($event) => [
                     $event['date'],
                     $event['name'],
                     $event['capacity'],
                     ($event['mixed'] ?? true) ? '✓' : '✗',
+                    $event['registration_close'] ?? '',
                 ]
             )
         )

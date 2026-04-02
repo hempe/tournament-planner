@@ -26,7 +26,7 @@ class Page extends Component
     protected function template(): void
     {
         $adminButtons = '';
-        if (User::admin() || true) {
+        if (User::admin()) {
             $adminButtons =
                 "<a class=\"button nav-button\" href=\"/events\">" . new Icon('fa-calendar', __('nav.events'), style: 'color: var(--fg-navtop);') . "</a>" .
                 "<a class=\"button nav-button\" href=\"/users\">" . new Icon('fa-users', __('nav.users'), style: 'color: var(--fg-navtop);') . "</a>";

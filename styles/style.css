@@ -203,7 +203,8 @@ table td {
 }
 
 .table-cell>form,
-.table-cell>fieldset {
+.table-cell>fieldset,
+.table-cell>button {
   height: 100%;
   box-sizing: border-box;
   display: flex;
@@ -241,6 +242,7 @@ fieldset>button {
 .nav-button {
   background-color: transparent;
   border-color: transparent;
+  align-self: anchor-center;
 }
 
 .language-selector {
@@ -311,6 +313,7 @@ input[type="checkbox"]:disabled {
   align-items: start;
   flex-grow: 1;
   justify-content: end;
+  margin-top: -30px;
 }
 
 .site-name {

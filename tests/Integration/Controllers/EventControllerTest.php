@@ -981,4 +981,138 @@ class EventControllerTest extends IntegrationTestCase
 
         $this->assertEquals(403, $response->statusCode);
     }
+
+    // ===== New event fields: description, prices, registration_close =====
+
+    public function testStoreCreatesEventWithNewFields(): void
+    {
+        $this->loginAsAdmin();
+
+        $response = $this->request('POST', '/events/new', [
+            'name' => 'Rich Event',
+            'date' => '2099-06-01',
+            'capacity' => '20',
+            'description' => 'A great tournament',
+            'price_members' => '15.50',
+            'price_guests' => '25.00',
+            'registration_close' => '2099-05-25T18:00',
+        ]);
+
+        $this->assertEquals(303, $response->statusCode);
+
+        $events = DB::$events->all();
+        $event = array_values(array_filter($events, fn($e) => $e->name === 'Rich Event'))[0] ?? null;
+        $this->assertNotNull($event);
+        $this->assertEquals('A great tournament', $event->description);
+        $this->assertEquals(15.50, $event->priceMembers);
+        $this->assertEquals(25.00, $event->priceGuests);
+        $this->assertNotNull($event->registrationClose);
+    }
+
+    public function testUpdateSavesNewFields(): void
+    {
+        $this->loginAsAdmin();
+
+        $eventId = DB::$events->add('Event', '2099-06-01', 20);
+
+        $response = $this->request('POST', "/events/$eventId", [
+            'name' => 'Event',
+            'capacity' => '20',
+            'description' => 'Updated description',
+            'price_members' => '10.00',
+            'price_guests' => '20.00',
+            'registration_close' => '2099-05-30T12:00',
+        ]);
+
+        $this->assertEquals(303, $response->statusCode);
+
+        $event = DB::$events->get($eventId, 1);
+        $this->assertEquals('Updated description', $event->description);
+        $this->assertEquals(10.00, $event->priceMembers);
+        $this->assertEquals(20.00, $event->priceGuests);
+        $this->assertNotNull($event->registrationClose);
+    }
+
+    public function testUpdateClearsNewFields(): void
+    {
+        $this->loginAsAdmin();
+
+        $eventId = DB::$events->add('Event', '2099-06-01', 20, false, true, 'desc', 10.0, 20.0, '2099-05-01 00:00:00');
+
+        $response = $this->request('POST', "/events/$eventId", [
+            'name' => 'Event',
+            'capacity' => '20',
+        ]);
+
+        $this->assertEquals(303, $response->statusCode);
+
+        $event = DB::$events->get($eventId, 1);
+        $this->assertNull($event->description);
+        $this->assertNull($event->priceMembers);
+        $this->assertNull($event->priceGuests);
+        $this->assertNull($event->registrationClose);
+    }
+
+    public function testRegistrationCloseLocksEvent(): void
+    {
+        $this->loginAsAdmin();
+
+        // Create event with registration_close in the past
+        $eventId = DB::$events->add('Closed Event', '2099-06-01', 20, false, true, null, null, null, '2000-01-01 00:00:00');
+
+        $event = DB::$events->get($eventId, 1);
+        $this->assertTrue($event->isLocked);
+    }
+
+    public function testBulkStoreCreatesEventsWithPricesAndRegistrationClose(): void
+    {
+        $this->loginAsAdmin();
+
+        // Use a full month range to guarantee at least one Monday (day_of_week=1) is found
+        $this->request('POST', '/events/bulk/preview', [
+            'start_date' => '2099-06-01',
+            'end_date' => '2099-06-07',
+            'day_of_week' => '1', // Monday
+            'name' => 'Priced Event',
+            'capacity' => '10',
+            'price_members' => '15.00',
+            'price_guests' => '25.00',
+            'registration_close_days' => '3',
+            'registration_close_time' => '18:00',
+        ]);
+
+        $this->request('POST', '/events/bulk/store');
+
+        $events = DB::$events->all();
+        $event = array_values(array_filter($events, fn($e) => $e->name === 'Priced Event'))[0] ?? null;
+        $this->assertNotNull($event);
+        $this->assertEquals(15.00, $event->priceMembers);
+        $this->assertEquals(25.00, $event->priceGuests);
+        // registration_close should be 3 days before event date at 18:00
+        $this->assertNotNull($event->registrationClose);
+        $this->assertStringContainsString('18:00', $event->registrationClose);
+    }
+
+    public function testBulkStoreCreatesEventsWithoutOptionalFields(): void
+    {
+        $this->loginAsAdmin();
+
+        // Use a full week range to guarantee at least one Monday is found
+        $this->request('POST', '/events/bulk/preview', [
+            'start_date' => '2099-06-01',
+            'end_date' => '2099-06-07',
+            'day_of_week' => '1',
+            'name' => 'Plain Event',
+            'capacity' => '10',
+        ]);
+
+        $this->request('POST', '/events/bulk/store');
+
+        $events = DB::$events->all();
+        $event = array_values(array_filter($events, fn($e) => $e->name === 'Plain Event'))[0] ?? null;
+        $this->assertNotNull($event);
+        $this->assertNull($event->priceMembers);
+        $this->assertNull($event->priceGuests);
+        $this->assertNull($event->registrationClose);
+    }
 }

@@ -121,6 +121,12 @@ return [
         'export_col_timestamp' => 'Registration date',
         'export_yes' => 'Yes',
         'export_no' => 'No',
+        'description' => 'Description',
+        'price_members' => 'Price Members',
+        'price_guests' => 'Price Guests',
+        'registration_close' => 'Registration Close',
+        'bulk_registration_close_days' => 'Registration Close (days before)',
+        'bulk_registration_close_time' => 'Registration Close (time)',
     ],
 
     // Users

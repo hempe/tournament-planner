@@ -10,6 +10,7 @@ use TP\Components\Table;
 use TP\Components\Card;
 use TP\Components\IconButton;
 use TP\Components\Form;
+use TP\Components\Textarea;
 
 ?>
 <?= new Page(function () {
@@ -19,7 +20,7 @@ use TP\Components\Form;
             __('events.bulk_create'),
             new Table(
                 columns: ['', ''],
-                items: [0, 1, 2, 3, 4, 5],
+                items: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
                 widths: [180, null],
                 projection: fn($index) => match ($index) {
                     0 => [
@@ -57,6 +58,22 @@ use TP\Components\Form;
                         new Input(type: 'number', name: 'capacity', id: 'capacity', placeholder: __('events.max_participants'), required: true),
                     ],
                     5 => [
+                        new Label(for: 'price_members', text: __('events.price_members')),
+                        new Input(type: 'number', name: 'price_members', id: 'price_members', placeholder: __('events.price_members'), step: '0.01'),
+                    ],
+                    6 => [
+                        new Label(for: 'price_guests', text: __('events.price_guests')),
+                        new Input(type: 'number', name: 'price_guests', id: 'price_guests', placeholder: __('events.price_guests'), step: '0.01'),
+                    ],
+                    7 => [
+                        new Label(for: 'registration_close_days', text: __('events.bulk_registration_close_days')),
+                        new Input(type: 'number', name: 'registration_close_days', id: 'registration_close_days', placeholder: __('events.bulk_registration_close_days'), min: '1', max: '7'),
+                    ],
+                    8 => [
+                        new Label(for: 'registration_close_time', text: __('events.bulk_registration_close_time')),
+                        new Input(type: 'time', name: 'registration_close_time', id: 'registration_close_time'),
+                    ],
+                    9 => [
                         new Checkbox(
                             name: 'mixed',
                             label: __('events.play_together'),
