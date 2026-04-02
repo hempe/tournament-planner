@@ -389,6 +389,36 @@ class GuestControllerTest extends IntegrationTestCase
         $this->assertEquals(403, $response->statusCode);
     }
 
+    // ===== GET /events/{id}/guests/new — event detail fields =====
+
+    public function testGuestNewFormShowsEventDetailsWhenPresent(): void
+    {
+        $eventId = DB::$events->add(
+            'Rich Event', '2099-03-15', 20, false, true,
+            'Bring sunscreen', 15.50, 25.00, '2099-03-10 18:00:00'
+        );
+
+        $response = $this->request('GET', "/events/$eventId/guests/new");
+
+        $this->assertEquals(200, $response->statusCode);
+        $this->assertStringContainsString('Bring sunscreen', $response->body);
+        $this->assertStringContainsString('15.50', $response->body);
+        $this->assertStringContainsString('25.00', $response->body);
+    }
+
+    public function testGuestNewFormHidesEventDetailsWhenAbsent(): void
+    {
+        $eventId = DB::$events->add('Plain Event', '2099-03-15', 20);
+
+        $response = $this->request('GET', "/events/$eventId/guests/new");
+
+        $this->assertEquals(200, $response->statusCode);
+        $this->assertStringNotContainsString('events.description', $response->body);
+        $this->assertStringNotContainsString('events.price_members', $response->body);
+        $this->assertStringNotContainsString('events.price_guests', $response->body);
+        $this->assertStringNotContainsString('events.registration_close', $response->body);
+    }
+
     // ===== POST /events/{id}/guests/{guestId}/delete — anonymous =====
 
     public function testDeleteGuestAsAnonymous(): void

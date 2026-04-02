@@ -133,7 +133,7 @@ button[light],
 
 .card {
   position: relative;
-  background-color: #fff;
+  background-color: transparent;
   margin: 0;
   overflow-y: auto;
 }
@@ -154,7 +154,7 @@ button[light],
   font-size: 1.8em;
   font-weight: lighter;
   text-transform: uppercase;
-  background-color: #fff;
+  background-color: transparent;
 }
 
 .card-title>span {
@@ -314,6 +314,7 @@ input[type="checkbox"]:disabled {
   flex-grow: 1;
   justify-content: end;
   margin-top: -30px;
+  margin-bottom: -25px;
 }
 
 .site-name {
