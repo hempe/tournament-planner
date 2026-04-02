@@ -1,5 +1,6 @@
 <?php
 
+use TP\Components\Div;
 use TP\Components\Span;
 use TP\Components\Color;
 use TP\Components\IconButton;
@@ -70,6 +71,7 @@ assert($event instanceof Event);
                     fn($row) => $row,
                     widths: [150, null]
                 ));
+                yield new Div(__('events.register'), class: 'card-title');
                 yield new Table(
                     columns: ['', ''],
                     items: [0, 1, 2, 3, 4, 5, 6],

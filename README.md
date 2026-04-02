@@ -98,12 +98,10 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ### NOTES
 
---> Anmeldeschluss
-	-> Bulk: vie viele Tage voher, und uhrzeit.
-
--> Preise für Mitglieder,
--> Preis für Gäste.
--> Turnier Beschreibung.
+We now need a second kind of event.
+our current "event" is the tournament.
+the seconds kind of event is a "social event"
+It shares a lot of things but differs in a lot of others.
 
 
 --> Anlass nicht wirklich turnier.

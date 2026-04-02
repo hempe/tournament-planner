@@ -51,70 +51,41 @@ assert(is_int($id));
 
         $eventFull = $event->available <= 0;
 
+        $cardTitle = [
+            new IconButton(
+                title: __('nav.back'),
+                href: "/events/$id{$queryString}",
+                icon: 'fa-chevron-left',
+                type: 'button',
+                color: Color::None,
+            ),
+            new Span(
+                content: $formattedDate,
+                style: 'flex-grow:1'
+            )
+        ];
+
         yield new Form(
             action: "/events/$id",
             content: new Card(
-                title: $formattedDate . ': ' . $event->name . ' · ' . ($event->mixed ? __('events.mixed') : __('events.separate')),
-                content: new Table(
-                    columns: [__('events.name'), __('events.max_participants'), '', '', '', '', '', '', '', ''],
-                    items: [0, 1],
-                    projection: fn($row) => match($row) {
-                        0 => [
-                            new Input(
-                                type: 'text',
-                                value: $event->name,
-                                name: 'name',
-                                placeholder: __('events.name'),
-                                style: 'flex-grow:1;',
-                                required: true
-                            ),
-                            new Input(
-                                type: 'text',
-                                value: (string) $event->capacity,
-                                name: 'capacity',
-                                placeholder: __('events.max_participants'),
-                                style: 'flex-grow:1;',
-                                required: true
-                            ),
-                            new Checkbox(
-                                name: 'mixed',
-                                label: __('events.play_together'),
-                                checked: $event->mixed,
-                            ),
-                            new Input(
-                                type: 'number',
-                                name: 'price_members',
-                                value: $event->priceMembers !== null ? (string) $event->priceMembers : '',
-                                placeholder: __('events.price_members'),
-                                step: '0.01',
-                            ),
-                            new Input(
-                                type: 'number',
-                                name: 'price_guests',
-                                value: $event->priceGuests !== null ? (string) $event->priceGuests : '',
-                                placeholder: __('events.price_guests'),
-                                step: '0.01',
-                            ),
-                            new Input(
-                                type: 'datetime-local',
-                                name: 'registration_close',
-                                value: $event->registrationClose ? substr(str_replace(' ', 'T', $event->registrationClose), 0, 16) : '',
-                                placeholder: __('events.registration_close'),
-                            ),
-                            new IconButton(
-                                title: __('events.save'),
-                                type: 'submit',
-                                icon: 'fa-save',
-                                color: Color::Primary,
-                            ),
-                            new IconActionButton(
-                                actionUrl: "/events/$id/delete",
-                                title: __('events.delete'),
-                                color: Color::Accent,
-                                icon: 'fa-trash',
-                                confirmMessage: __('events.delete_confirm_short'),
-                            ),
-                            $event->isLocked
+                title: $cardTitle,
+                content: new Card(
+                    title: [
+                        new Span(content: $event->name, style: 'flex-grow:1'),
+                        new IconButton(
+                            title: __('events.save'),
+                            type: 'submit',
+                            icon: 'fa-save',
+                            color: Color::Primary,
+                        ),
+                        new IconActionButton(
+                            actionUrl: "/events/$id/delete",
+                            title: __('events.delete'),
+                            color: Color::Accent,
+                            icon: 'fa-trash',
+                            confirmMessage: __('events.delete_confirm_short'),
+                        ),
+                        $event->isLocked
                             ? new IconActionButton(
                                 actionUrl: "/events/$id/unlock",
                                 title: __('events.unlock'),
@@ -129,26 +100,66 @@ assert(is_int($id));
                                 icon: 'fa-unlock',
                                 confirmMessage: __('events.lock_confirm'),
                             ),
-                            new IconButton(
-                                title: __('events.export'),
-                                href: "/events/$id/export",
-                                icon: 'fa-download',
-                                type: 'button',
-                                color: Color::Light,
-                            ),
-                        ],
-                        1 => [
-                            new Textarea(
+                        new IconButton(
+                            title: __('events.export'),
+                            href: "/events/$id/export",
+                            icon: 'fa-download',
+                            type: 'button',
+                            color: Color::Light,
+                        ),
+                    ],
+                    content: new Table(
+                        columns: ['', ''],
+                        items: [0, 1, 2, 3, 4, 5, 6],
+                        projection: fn($i) => match ($i) {
+                            0 => [__('events.name'), new Input(
+                                type: 'text',
+                                value: $event->name,
+                                name: 'name',
+                                placeholder: __('events.name'),
+                                required: true,
+                            )],
+                            1 => [__('events.max_participants'), new Input(
+                                type: 'number',
+                                value: (string) $event->capacity,
+                                name: 'capacity',
+                                placeholder: __('events.max_participants'),
+                                required: true,
+                            )],
+                            2 => [__('events.play_together'), new Checkbox(
+                                name: 'mixed',
+                                label: '',
+                                checked: $event->mixed,
+                            )],
+                            3 => [__('events.description'), new Textarea(
                                 name: 'description',
                                 value: $event->description ?? '',
                                 placeholder: __('events.description'),
                                 style: 'width:100%',
-                            ),
-                            '', '', '', '', '', '', '', '', ''
-                        ],
-                    },
-                    href: null,
-                    widths: [null, null, 1, null, null, null, 1, 1, 1, 1]
+                            )],
+                            4 => [__('events.price_members'), new Input(
+                                type: 'number',
+                                name: 'price_members',
+                                value: $event->priceMembers !== null ? (string) $event->priceMembers : '',
+                                placeholder: __('events.price_members'),
+                                step: '0.01',
+                            )],
+                            5 => [__('events.price_guests'), new Input(
+                                type: 'number',
+                                name: 'price_guests',
+                                value: $event->priceGuests !== null ? (string) $event->priceGuests : '',
+                                placeholder: __('events.price_guests'),
+                                step: '0.01',
+                            )],
+                            6 => [__('events.registration_close'), new Input(
+                                type: 'datetime-local',
+                                name: 'registration_close',
+                                value: $event->registrationClose ? substr(str_replace(' ', 'T', $event->registrationClose), 0, 16) : '',
+                                placeholder: __('events.registration_close'),
+                            )],
+                        },
+                        widths: [150, null]
+                    )
                 )
             )
         );

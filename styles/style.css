@@ -243,6 +243,7 @@ fieldset>button {
   background-color: transparent;
   border-color: transparent;
   align-self: anchor-center;
+  z-index: 100;
 }
 
 .language-selector {

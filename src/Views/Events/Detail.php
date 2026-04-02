@@ -14,6 +14,7 @@ use TP\Core\Translator;
 use TP\Models\EventRegistration;
 use TP\Models\User;
 use TP\Models\EventGuest;
+use TP\Components\Div;
 
 assert(is_int($id));
 
@@ -86,16 +87,27 @@ assert(is_int($id));
                 $closeFormatter = new \IntlDateFormatter(Translator::getInstance()->getLocale(), \IntlDateFormatter::FULL, \IntlDateFormatter::SHORT);
                 $details[] = [__('events.registration_close'), $closeFormatter->format(strtotime($event->registrationClose))];
             }
+            $innerTitle = [new Span(content: $event->name, style: 'flex-grow:1'), $regState];
+            if (User::admin()) {
+                $innerTitle[] = new IconButton(
+                    title: __('events.edit'),
+                    href: "/events/$id/admin{$queryString}",
+                    icon: 'fa-edit',
+                    type: 'button',
+                    color: Color::Light,
+                );
+            }
             yield new Card(
-                [new Span(content: $event->name, style: 'flex-grow:1'), $regState],
+                $innerTitle,
                 new Table(['', ''], $details, fn($row) => $row, widths: [150, null])
             );
             yield '<br>';
 
             if (!$reg) {
                 if (!$event->isLocked) {
+                    yield new Div(__('events.register'), class: 'card-title');
                     yield new Table(
-                        columns: [__('events.register')],
+                        columns: [''],
                         items: [User::current()],
                         projection: fn($user) => [
                             $event->isLocked ? '' : new InputAction(
