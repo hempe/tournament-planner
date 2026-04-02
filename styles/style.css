@@ -145,7 +145,7 @@ button[light],
 
 .card-title {
   display: inline-flex;
-  align-items: center;
+  align-items: stretch;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 8px;
@@ -155,6 +155,11 @@ button[light],
   font-weight: lighter;
   text-transform: uppercase;
   background-color: transparent;
+}
+
+.card-title>*,
+.card-title>*>* {
+  --_--padding: 0 !important;
 }
 
 .card-title>span {
