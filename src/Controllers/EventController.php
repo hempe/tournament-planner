@@ -58,10 +58,6 @@ final class EventController
     #[Get('/{id}')]
     public function detail(Request $request, array $params): Response
     {
-        if (User::admin()) {
-            return $this->admin($request, $params);
-        }
-
         $eventId = (int) $params['id'];
         $userId = User::id();
 

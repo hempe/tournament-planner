@@ -135,6 +135,10 @@ abstract class IntegrationTestCase extends TestCase
         $conn->query("TRUNCATE TABLE event_guests");
         $conn->query("TRUNCATE TABLE event_users");
         $conn->query("TRUNCATE TABLE events");
+        $conn->query("TRUNCATE TABLE social_registrations");
+        $conn->query("TRUNCATE TABLE social_tables");
+        $conn->query("TRUNCATE TABLE social_menus");
+        $conn->query("TRUNCATE TABLE social_events");
         $conn->query("TRUNCATE TABLE users");
         $conn->query("SET FOREIGN_KEY_CHECKS = 1");
 
@@ -159,6 +163,9 @@ abstract class IntegrationTestCase extends TestCase
         foreach ($headers as $key => $value) {
             $_SERVER['HTTP_' . strtoupper(str_replace('-', '_', $key))] = $value;
         }
+
+        $_GET = [];
+        $_POST = [];
 
         if ($method === 'POST' || $method === 'PUT' || $method === 'PATCH') {
             $_POST = $data;

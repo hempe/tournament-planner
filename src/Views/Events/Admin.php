@@ -292,5 +292,37 @@ assert(is_int($id));
                 )
             );
         }
+
+        $socialEvent = DB::$socialEvents->getForTournament($id);
+        if ($socialEvent) {
+            $socialFormatter = new IntlDateFormatter(Translator::getInstance()->getLocale(), IntlDateFormatter::FULL, IntlDateFormatter::NONE);
+            yield new Card(
+                [
+                    new Span(content: __('social_events.title') . ' – ' . $socialFormatter->format(strtotime($socialEvent->date)), style: 'flex-grow:1'),
+                    new IconButton(
+                        title: __('social_events.edit'),
+                        href: "/social-events/{$socialEvent->id}/admin",
+                        icon: 'fa-edit',
+                        type: 'button',
+                        color: Color::Light,
+                    ),
+                ],
+                ''
+            );
+        } else {
+            yield new Card(
+                [
+                    new Span(content: __('social_events.title'), style: 'flex-grow:1'),
+                    new IconButton(
+                        title: __('social_events.new'),
+                        href: "/social-events/new?tournamentId=$id",
+                        icon: 'fa-plus',
+                        type: 'button',
+                        color: Color::Primary,
+                    ),
+                ],
+                ''
+            );
+        }
     }
 );

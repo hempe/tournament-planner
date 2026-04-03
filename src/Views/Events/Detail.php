@@ -185,4 +185,24 @@ assert(is_int($id));
             )
         );
     }
+
+    $socialEvent = DB::$socialEvents->getForTournament($event->id);
+    if ($socialEvent) {
+        $socialFormatter = new \IntlDateFormatter(Translator::getInstance()->getLocale(), \IntlDateFormatter::FULL, \IntlDateFormatter::NONE);
+        $socialDate = $socialFormatter->format(strtotime($socialEvent->date));
+        $socialTitle = [
+            new Span(content: $socialEvent->name . ' – ' . $socialDate, style: 'flex-grow:1'),
+        ];
+        if ($socialEvent->userRegistered) {
+            $socialTitle[] = new Icon('fa-user-check', __('social_events.registered'));
+        }
+        $socialTitle[] = new IconButton(
+            title: $socialEvent->userRegistered ? __('social_events.registered') : __('social_events.register'),
+            href: "/social-events/{$socialEvent->id}",
+            icon: $socialEvent->userRegistered ? 'fa-user-check' : 'fa-user-plus',
+            type: 'button',
+            color: $socialEvent->userRegistered ? Color::None : Color::Primary,
+        );
+        yield new Card($socialTitle, '');
+    }
 });

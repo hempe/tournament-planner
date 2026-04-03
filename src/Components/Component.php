@@ -29,7 +29,7 @@ abstract class Component
         }
 
         return match (true) {
-            is_callable($content) => $this->captureOutputFromCallback($content),
+            $content instanceof \Closure => $this->captureOutputFromCallback($content),
             $content instanceof Component => (string) $content,
             default => (string) $content
         };
