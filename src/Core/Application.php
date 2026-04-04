@@ -152,11 +152,9 @@ final class Application
 
     private function configureLocale(): void
     {
-        // Get locale from session or fall back to config
-        $locale = $_SESSION['locale'] ?? $this->config->get('app.locale', 'de');
-
-        // Set the locale in the translator
-        Translator::getInstance()->setLocale($locale);
+        // Locale is determined from the Accept-Language header on every request.
+        // negotiateLocale() runs inside getInstance() on first call.
+        Translator::getInstance();
     }
 
     private function handleError(Throwable $e): void

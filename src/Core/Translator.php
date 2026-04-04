@@ -33,15 +33,20 @@ final class Translator
 
     private static function negotiateLocale(string $fallback): string
     {
-        $header = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '';
-        if ($header === '') {
-            return $fallback;
-        }
-
         $available = array_map(
             fn($f) => basename($f, '.php'),
             glob(__DIR__ . '/../../resources/lang/*.php') ?: []
         );
+
+        // Normalize the configured fallback to an available locale (e.g. de_CH → de)
+        $normalizedFallback = in_array($fallback, $available, true)
+            ? $fallback
+            : strtolower(substr($fallback, 0, 2));
+
+        $header = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '';
+        if ($header === '') {
+            return $normalizedFallback;
+        }
 
         // Parse "de-CH,de;q=0.9,en-US;q=0.8,en;q=0.7" into [(lang => q), ...]
         $preferences = [];
@@ -60,7 +65,7 @@ final class Translator
             }
         }
 
-        return $fallback;
+        return $normalizedFallback;
     }
 
     public function setLocale(string $locale): void

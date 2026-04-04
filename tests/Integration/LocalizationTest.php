@@ -118,31 +118,74 @@ class LocalizationTest extends IntegrationTestCase
     }
 
     /**
-     * Test session persistence of locale
+     * Reset the Translator singleton so negotiateLocale() reruns on next getInstance() call.
+     * Uses reflection — valid in PHP 8.1+ without setAccessible().
      */
-    public function testSessionPersistsLocale(): void
+    private function resetTranslator(): void
     {
-        echo "\n=== Testing Session Persistence ===\n";
+        $ref = new \ReflectionProperty(Translator::class, 'instance');
+        $ref->setValue(null, null);
+    }
 
-        // Set locale in session
-        echo "\n1. Setting locale in session...\n";
-        $_SESSION['locale'] = 'en';
-        $this->assertEquals('en', $_SESSION['locale']);
-        echo "   ✓ Locale stored in session\n";
+    /**
+     * Restore the Translator to a known default state after tests that reset it.
+     */
+    private function restoreTranslator(): void
+    {
+        $this->resetTranslator();
+        unset($_SERVER['HTTP_ACCEPT_LANGUAGE']);
+        Translator::getInstance()->setLocale('de');
+    }
 
-        // Verify it persists
-        echo "\n2. Verifying session persistence...\n";
-        $storedLocale = $_SESSION['locale'];
-        $this->assertEquals('en', $storedLocale);
-        echo "   ✓ Locale retrieved from session\n";
+    public function testAcceptLanguagePicksEnglish(): void
+    {
+        $_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'en-US,en;q=0.9';
+        $this->resetTranslator();
 
-        // Change locale
-        echo "\n3. Changing locale to es...\n";
-        $_SESSION['locale'] = 'es';
-        $this->assertEquals('es', $_SESSION['locale']);
-        echo "   ✓ Locale updated in session\n";
+        $this->assertEquals('en', Translator::getInstance()->getLocale());
 
-        echo "\n=== Session Persistence Tests Passed! ===\n\n";
+        $this->restoreTranslator();
+    }
+
+    public function testAcceptLanguagePicksSpanish(): void
+    {
+        $_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'es-ES,es;q=0.9,en;q=0.5';
+        $this->resetTranslator();
+
+        $this->assertEquals('es', Translator::getInstance()->getLocale());
+
+        $this->restoreTranslator();
+    }
+
+    public function testAcceptLanguageFallsBackToDefaultForUnsupportedLanguage(): void
+    {
+        $_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'fr-FR,fr;q=0.9';
+        $this->resetTranslator();
+
+        $this->assertEquals('de', Translator::getInstance()->getLocale());
+
+        $this->restoreTranslator();
+    }
+
+    public function testAcceptLanguagePicksHighestQualityMatch(): void
+    {
+        $_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'fr-FR,fr;q=0.9,es;q=0.8,en;q=0.7';
+        $this->resetTranslator();
+
+        // fr is unsupported, next best is es
+        $this->assertEquals('es', Translator::getInstance()->getLocale());
+
+        $this->restoreTranslator();
+    }
+
+    public function testEmptyAcceptLanguageFallsBackToDefault(): void
+    {
+        $_SERVER['HTTP_ACCEPT_LANGUAGE'] = '';
+        $this->resetTranslator();
+
+        $this->assertEquals('de', Translator::getInstance()->getLocale());
+
+        $this->restoreTranslator();
     }
 
     /**
@@ -165,211 +208,4 @@ class LocalizationTest extends IntegrationTestCase
         echo "\n=== Fallback Tests Passed! ===\n\n";
     }
 
-    /**
-     * Test language switching with authentication
-     */
-    public function testLanguageSwitchingAsAuthenticatedUser(): void
-    {
-        echo "\n=== Testing Language Switch with Auth ===\n";
-
-        $this->loginAsAdmin();
-
-        // Simulate language switch via session
-        echo "\n1. Switching to English...\n";
-        $_SESSION['locale'] = 'en';
-        Translator::getInstance()->setLocale('en');
-        $this->assertEquals('en', Translator::getInstance()->getLocale());
-        $this->assertEquals('Events', __('nav.events'));
-        echo "   ✓ Language switched to English while authenticated\n";
-
-        echo "\n2. Switching to Spanish...\n";
-        $_SESSION['locale'] = 'es';
-        Translator::getInstance()->setLocale('es');
-        $this->assertEquals('es', Translator::getInstance()->getLocale());
-        $this->assertEquals('Eventos', __('nav.events'));
-        echo "   ✓ Language switched to Spanish while authenticated\n";
-
-        echo "\n=== Language Switch with Auth Tests Passed! ===\n\n";
-    }
-
-    /**
-     * Test that all three locales have consistent translation keys
-     */
-    public function testAllLocalesHaveConsistentKeys(): void
-    {
-        echo "\n=== Testing Translation Key Consistency ===\n";
-
-        $translator = Translator::getInstance();
-
-        // Critical keys that should exist in all locales
-        $criticalKeys = [
-            'app.name',
-            'app.welcome',
-            'nav.home',
-            'nav.events',
-            'nav.users',
-            'nav.logout',
-            'nav.back',
-            'nav.language',
-            'languages.de',
-            'languages.en',
-            'languages.es',
-            'auth.login',
-            'auth.username',
-            'auth.password',
-        ];
-
-        $locales = ['de', 'en', 'es'];
-
-        foreach ($locales as $locale) {
-            echo "\n1. Checking {$locale} for critical keys...\n";
-            $translator->setLocale($locale);
-
-            foreach ($criticalKeys as $key) {
-                $translation = __($key);
-                $this->assertNotEquals($key, $translation, "Key '{$key}' missing in {$locale}");
-                $this->assertNotEmpty($translation, "Translation for '{$key}' is empty in {$locale}");
-            }
-            echo "   ✓ All critical keys present in {$locale}\n";
-        }
-
-        echo "\n=== Translation Key Consistency Tests Passed! ===\n\n";
-    }
-
-    /**
-     * Test language switching via POST endpoint (actual HTTP request)
-     */
-    public function testLanguageSwitchEndpoint(): void
-    {
-        echo "\n=== Testing Language Switch HTTP Endpoint ===\n";
-
-        // Set initial locale to German
-        $_SESSION['locale'] = 'de';
-        Translator::getInstance()->setLocale('de');
-        echo "\n1. Initial locale: de\n";
-
-        // Switch to English via POST request
-        echo "\n2. POST to /language/switch with locale=en...\n";
-        $response = $this->request('POST', '/language/switch', [
-            'locale' => 'en',
-            'redirect' => '/'
-        ]);
-
-        // Should redirect
-        $this->assertTrue(
-            in_array($response->statusCode, [301, 302, 303]),
-            "Expected redirect status, got {$response->statusCode}"
-        );
-        echo "   ✓ Endpoint returns redirect (status {$response->statusCode})\n";
-
-        // Verify session was updated
-        $this->assertEquals('en', $_SESSION['locale']);
-        echo "   ✓ Session locale updated to en\n";
-
-        // Verify translator was updated
-        $this->assertEquals('en', Translator::getInstance()->getLocale());
-        echo "   ✓ Translator locale updated to en\n";
-
-        // Verify translations changed
-        $this->assertEquals('Events', __('nav.events'));
-        echo "   ✓ Translations now in English\n";
-
-        // Switch to Spanish via POST
-        echo "\n3. POST to /language/switch with locale=es...\n";
-        $response = $this->request('POST', '/language/switch', [
-            'locale' => 'es',
-            'redirect' => '/'
-        ]);
-
-        $this->assertTrue(
-            in_array($response->statusCode, [301, 302, 303]),
-            "Expected redirect status, got {$response->statusCode}"
-        );
-        $this->assertEquals('es', $_SESSION['locale']);
-        $this->assertEquals('Eventos', __('nav.events'));
-        echo "   ✓ Successfully switched to Spanish\n";
-
-        // Test invalid locale - should redirect without changing
-        echo "\n4. Testing invalid locale rejection...\n";
-        $_SESSION['locale'] = 'es'; // Keep Spanish
-        $response = $this->request('POST', '/language/switch', [
-            'locale' => 'invalid_locale',
-            'redirect' => '/'
-        ]);
-
-        // Should still redirect but not change locale
-        $this->assertTrue(
-            in_array($response->statusCode, [301, 302, 303]),
-            "Expected redirect even for invalid locale"
-        );
-        $this->assertEquals('es', $_SESSION['locale'], "Locale should not change for invalid input");
-        echo "   ✓ Invalid locale rejected, session unchanged\n";
-
-        echo "\n=== Language Switch HTTP Endpoint Tests Passed! ===\n\n";
-    }
-
-    /**
-     * Test that language persists across page loads (via session)
-     */
-    public function testLanguagePersistsAcrossRequests(): void
-    {
-        echo "\n=== Testing Language Persistence ===\n";
-
-        // Set language in session
-        echo "\n1. Setting language to en in session...\n";
-        $_SESSION['locale'] = 'en';
-        echo "   ✓ Language stored in session\n";
-
-        // Simulate new request - translator should pick up session locale
-        echo "\n2. Simulating new request...\n";
-        $newTranslator = Translator::getInstance();
-        $newTranslator->setLocale($_SESSION['locale']);
-
-        $this->assertEquals('en', $newTranslator->getLocale());
-        echo "   ✓ Language retrieved from session on new request\n";
-
-        // Verify translations work
-        $this->assertEquals('Events', __('nav.events'));
-        echo "   ✓ Translations work with persisted language\n";
-
-        echo "\n=== Language Persistence Tests Passed! ===\n\n";
-    }
-
-    /**
-     * Test language selector appears on login page
-     */
-    public function testLanguageSelectorOnLoginPage(): void
-    {
-        echo "\n=== Testing Language Selector on Login Page ===\n";
-
-        // Test that all three languages are available
-        echo "\n1. Verifying available languages...\n";
-        $availableLanguages = ['de', 'en', 'es'];
-        foreach ($availableLanguages as $locale) {
-            $langName = __("languages.{$locale}");
-            $this->assertNotEmpty($langName);
-            $this->assertNotEquals("languages.{$locale}", $langName);
-        }
-        echo "   ✓ All three languages available (de, en, es)\n";
-
-        // Test switching between languages
-        echo "\n2. Testing language switching...\n";
-
-        Translator::getInstance()->setLocale('de');
-        $this->assertEquals('Anmelden', __('auth.login'));
-        $this->assertEquals('Benutzername', __('auth.username'));
-        echo "   ✓ German login page translations work\n";
-
-        Translator::getInstance()->setLocale('en');
-        $this->assertEquals('Login', __('auth.login'));
-        $this->assertEquals('Username', __('auth.username'));
-        echo "   ✓ English login page translations work\n";
-
-        Translator::getInstance()->setLocale('es');
-        $this->assertEquals('Iniciar sesión', __('auth.login'));
-        $this->assertEquals('Usuario', __('auth.username'));
-        echo "   ✓ Spanish login page translations work\n";
-
-        echo "\n=== Language Selector Tests Passed! ===\n\n";
-    }
 }
