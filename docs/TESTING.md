@@ -7,12 +7,11 @@ This document describes the integration testing setup for the Tournament Planner
 The test suite provides comprehensive integration tests that verify the complete application workflow including:
 
 - User creation and management
-- Single event creation
+- Tournament event creation, editing, locking, registration, waitlist, export
+- Social event creation, menu/table setup, registration, guest registration
 - Bulk event creation (recurring weekly events)
-- Event locking and unlocking
-- User registration and unregistration
-- Waitlist functionality and automatic promotion
-- Event updates and deletion
+- Guest registration for both event types
+- Multi-language support validation
 
 ## Requirements
 
@@ -103,16 +102,7 @@ composer test:coverage-html
 
 ### Code Coverage
 
-The project uses PCOV for fast code coverage analysis. Current coverage:
-
-**Controller Coverage (Line Coverage):**
-- AuthController: **89.66%**
-- HomeController: **100.00%**
-- LanguageController: **100.00%**
-- UserController: **75.61%**
-- EventController: **83.96%**
-- GuestController: **88.37%**
-- **Overall Project: 83.6% lines**
+The project uses PCOV for fast code coverage analysis.
 
 To view detailed coverage:
 
@@ -162,12 +152,13 @@ tests/
     ├── LocalizationTest.php             # Translation and locale tests
     ├── TranslationValidationTest.php    # Translation key completeness
     ├── Controllers/
-    │   ├── AuthControllerTest.php       # Authentication endpoints
-    │   ├── EventControllerTest.php      # Event CRUD, register, lock, bulk
-    │   ├── GuestControllerTest.php      # Guest registration and management
-    │   ├── HomeControllerTest.php       # Home page and guest redirect
-    │   ├── LanguageControllerTest.php   # Language switching
-    │   └── UserControllerTest.php       # User CRUD, admin toggle, password
+    │   ├── AuthControllerTest.php            # Authentication endpoints
+    │   ├── EventControllerTest.php           # Event CRUD, register, lock, bulk
+    │   ├── GuestControllerTest.php           # Guest registration and management
+    │   ├── HomeControllerTest.php            # Home page and guest redirect
+    │   ├── LanguageControllerTest.php        # Language switching
+    │   ├── SocialEventControllerTest.php     # Social event CRUD, register, guests
+    │   └── UserControllerTest.php            # User CRUD, admin toggle, password
     ├── Core/
     │   ├── ConfigTest.php               # Config singleton and env access
     │   ├── DateTimeHelperTest.php       # Date formatting helpers
@@ -429,7 +420,7 @@ Step 2: Running integration tests...
 === All Integration Tests Passed! ===
 
 OK, but there were issues!
-Tests: 325, Assertions: 820, Warnings: 3, Deprecations: 9.
+Tests: 390, Assertions: 956, Warnings: 3, Deprecations: 9.
 
 Step 3: Cleaning up test database...
 ✓ Test database removed successfully!
@@ -443,8 +434,8 @@ Step 3: Cleaning up test database...
 
 Typical test execution time:
 - Database initialization: ~1 second
-- Test suite execution: ~28-30 seconds (325 tests)
-- **Total: ~30 seconds**
+- Test suite execution: ~40-45 seconds (390 tests)
+- **Total: ~45 seconds**
 
 ## Best Practices
 
@@ -500,6 +491,20 @@ Typical test execution time:
 - ✅ Admin edit/update/delete of guests
 - ✅ Not found for event and guest IDs
 - ✅ Anonymous returns 403 on admin-only routes
+
+**SocialEventController** (56 tests):
+- ✅ Create/update/delete social events (admin only)
+- ✅ Menu and table creation from comma-separated strings
+- ✅ Linking social event to a tournament
+- ✅ Detail view (auth required), admin view
+- ✅ Member registration with menu + table selection
+- ✅ Capacity enforcement (full = no more registrations)
+- ✅ Table capacity enforcement
+- ✅ Menu/table validation (must belong to event)
+- ✅ Lock/unlock
+- ✅ Guest registration (public, no auth)
+- ✅ Admin deletion of individual registrations
+- ✅ Calendar integration (event appears for correct month/year)
 
 ### Localization Tests
 

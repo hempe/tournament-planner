@@ -61,15 +61,17 @@ That's it! 🚀
 
 ## Features
 
-✅ Event management (create, edit, delete)
+✅ Tournament event management (create, edit, delete, lock/unlock)
+✅ Social events linked to tournaments (menu + table selection, no waitlist)
 ✅ User authentication and admin roles
 ✅ Event registration with waitlist support
-✅ Calendar view
+✅ Guest registration (no account required)
+✅ Calendar view showing both event types
 ✅ Multi-language support (German/English/Spanish)
 ✅ Responsive design
 ✅ User-friendly error pages (404, 403, 500)
 ✅ Health monitoring endpoint
-✅ Comprehensive test suite with 83.6% line coverage (325 tests)
+✅ Comprehensive test suite (390 tests)
 
 ## Testing
 
@@ -96,39 +98,3 @@ See [TESTING.md](docs/TESTING.md) for detailed testing documentation.
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 
-### NOTES
-
-We now need a second kind of event.
-our current "event" is the tournament.
-the seconds kind of event is a "social event"
-It shares a lot of things but differs in a lot of others.
-
-
---> Anlass nicht wirklich turnier.
-
--->
---> Mit abend veranstaltung
-	-> mit tisch auswahlt
-	-> mit menu auswahll
-	-> tisch grösse.
-	-> anzahl tische.
-
-
-Veranstaltung
-[JA/NEIN],
---->
-
---> Essen (3)
-Text was es gibt
-(Fleisch/Fisch/Vegetarish...)
-
-Tisch 
-[      X]
-[       ]
-[       ]
-[       ]
-
-
-export braucht es.
-
-und export klappt aktuell nicht.

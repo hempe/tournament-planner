@@ -199,3 +199,25 @@ Response::forbidden(): Response                       // 403 with error page
 | POST | `/users/{id}/delete` | UserController::delete | Auth, Admin |
 | POST | `/users/{id}/admin` | UserController::toggleAdmin | Auth, Admin |
 | POST | `/users/{id}/password` | UserController::changePassword | Auth, Admin |
+| GET | `/events/{id}/export` | EventController::export | Auth, Admin |
+| POST | `/events/{id}/register` | EventController::register | Auth |
+| POST | `/events/{id}/unregister` | EventController::unregister | Auth |
+| POST | `/events/{id}/comment` | EventController::updateComment | Auth |
+| GET | `/events/{id}/guests/new` | GuestController::create | - |
+| POST | `/events/{id}/guests/new` | GuestController::store | - |
+| GET | `/events/{id}/guests/{gid}/edit` | GuestController::edit | Admin |
+| POST | `/events/{id}/guests/{gid}` | GuestController::update | Admin |
+| POST | `/events/{id}/guests/{gid}/delete` | GuestController::delete | Admin |
+| GET | `/social-events/new` | SocialEventController::create | Admin |
+| POST | `/social-events/new` | SocialEventController::store | Admin |
+| GET | `/social-events/{id}` | SocialEventController::detail | Auth |
+| GET | `/social-events/{id}/admin` | SocialEventController::admin | Admin |
+| POST | `/social-events/{id}` | SocialEventController::update | Admin |
+| POST | `/social-events/{id}/delete` | SocialEventController::delete | Admin |
+| POST | `/social-events/{id}/lock` | SocialEventController::lock | Admin |
+| POST | `/social-events/{id}/unlock` | SocialEventController::unlock | Admin |
+| POST | `/social-events/{id}/register` | SocialEventController::register | Auth |
+| POST | `/social-events/{id}/unregister` | SocialEventController::unregister | Auth |
+| GET | `/social-events/{id}/guests/new` | SocialEventController::createGuest | - |
+| POST | `/social-events/{id}/guests/new` | SocialEventController::storeGuest | - |
+| POST | `/social-events/{id}/registrations/{rid}/delete` | SocialEventController::deleteRegistration | Admin |
