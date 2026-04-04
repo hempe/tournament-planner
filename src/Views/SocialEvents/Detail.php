@@ -43,36 +43,42 @@ assert(is_array($registrations));
         new Span(content: $formattedDate, style: 'flex-grow:1'),
     ];
 
+    // Event info card
+    $innerTitle = [new Span(content: $socialEvent->name, style: 'flex-grow:1'), $regState];
+    if (User::admin()) {
+        $innerTitle[] = new IconButton(
+            title: __('social_events.edit'),
+            href: "/social-events/{$socialEvent->id}/admin",
+            icon: 'fa-edit',
+            type: 'button',
+            color: Color::Light,
+        );
+    }
+    $details = [];
+    if ($socialEvent->description) {
+        $details[] = [__('social_events.description'), nl2br(htmlspecialchars($socialEvent->description))];
+    }
+    if ($socialEvent->registrationClose) {
+        $closeFormatter = new \IntlDateFormatter(Translator::getInstance()->getLocale(), \IntlDateFormatter::FULL, \IntlDateFormatter::SHORT);
+        $details[] = [__('social_events.registration_close'), $closeFormatter->format(strtotime($socialEvent->registrationClose))];
+    }
     yield new Card(
         $cardTitle,
-        function () use ($socialEvent, $menus, $tables, $registration, $regState) {
-            $details = [];
-            if ($socialEvent->description) {
-                $details[] = [__('social_events.description'), nl2br(htmlspecialchars($socialEvent->description))];
-            }
-            if ($socialEvent->registrationClose) {
-                $closeFormatter = new \IntlDateFormatter(Translator::getInstance()->getLocale(), \IntlDateFormatter::FULL, \IntlDateFormatter::SHORT);
-                $details[] = [__('social_events.registration_close'), $closeFormatter->format(strtotime($socialEvent->registrationClose))];
-            }
+        new Card(
+            $innerTitle,
+            new Table(['', ''], $details, fn($row) => $row, widths: [150, null])
+        )
+    );
 
-            $innerTitle = [new Span(content: $socialEvent->name, style: 'flex-grow:1'), $regState];
-            if (User::admin()) {
-                $innerTitle[] = new IconButton(
-                    title: __('social_events.edit'),
-                    href: "/social-events/{$socialEvent->id}/admin",
-                    icon: 'fa-edit',
-                    type: 'button',
-                    color: Color::Light,
-                );
-            }
-            yield new Card(
-                $innerTitle,
-                new Table(['', ''], $details, fn($row) => $row, widths: [150, null])
-            );
-            yield '<br>';
+    // Registration card
+    $regCardTitle = $registration
+        ? [new Span(content: __('social_events.registered'), style: 'flex-grow:1'), new Icon('fa-user-check', '')]
+        : __('social_events.register');
 
+    yield new Card(
+        $regCardTitle,
+        function () use ($socialEvent, $menus, $tables, $registration) {
             if ($registration) {
-                // Already registered: show current selection + unregister
                 $regDetails = [
                     [__('social_events.menu'), $registration->menuName],
                     [__('social_events.table'), $registration->tableNumber !== null
@@ -97,26 +103,15 @@ assert(is_array($registrations));
             }
 
             if ($socialEvent->isLocked) {
-                yield new Table(
-                    [''],
-                    [0],
-                    fn($i) => [__('social_events.locked_message')],
-                    widths: [null]
-                );
+                yield new Table([''], [0], fn($i) => [__('social_events.locked_message')], widths: [null]);
                 return;
             }
 
             if ($socialEvent->available <= 0) {
-                yield new Table(
-                    [''],
-                    [0],
-                    fn($i) => [__('social_events.full')],
-                    widths: [null]
-                );
+                yield new Table([''], [0], fn($i) => [__('social_events.full')], widths: [null]);
                 return;
             }
 
-            // Registration form
             $menuOptions = [];
             foreach ($menus as $menu) {
                 /** @var SocialMenu $menu */
@@ -140,18 +135,11 @@ assert(is_array($registrations));
                     projection: fn($i) => match ($i) {
                         0 => [
                             __('social_events.menu') . new Span(content: ' *', style: 'color:var(--color-accent)'),
-                            new Select(
-                                options: $menuOptions,
-                                name: 'menu_id',
-                                required: true,
-                            ),
+                            new Select(options: $menuOptions, name: 'menu_id', required: true),
                         ],
                         1 => [
                             __('social_events.table'),
-                            new Select(
-                                options: $tableOptions,
-                                name: 'table_id',
-                            ),
+                            new Select(options: $tableOptions, name: 'table_id'),
                         ],
                         2 => ['', new IconButton(
                             type: 'submit',
