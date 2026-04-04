@@ -262,6 +262,59 @@ class EventControllerTest extends IntegrationTestCase
         $this->assertEquals(303, $response->statusCode);
     }
 
+    public function testRegisterRedirectsToSocialEventWhenLinked(): void
+    {
+        $this->loginAsAdmin();
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20);
+        $socialId = DB::$socialEvents->add('Dinner', '2099-03-15', $eventId, null, null, 'Meat,Fish', '10');
+        DB::$users->create('testuser', 'Pass123!');
+        $this->loginAs('testuser', 'Pass123!');
+
+        $response = $this->request('POST', "/events/$eventId/register", ['comment' => '']);
+
+        // Registered for tournament, then redirected to social event detail page
+        $this->assertEquals(303, $response->statusCode);
+        $this->assertCount(1, DB::$events->registrations($eventId));
+        // Follow the redirect — should land on the social event detail page
+        $socialResponse = $this->request('GET', "/social-events/$socialId");
+        $this->assertEquals(200, $socialResponse->statusCode);
+    }
+
+    public function testRegisterDoesNotRedirectToSocialEventWhenAlreadyRegistered(): void
+    {
+        $this->loginAsAdmin();
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20);
+        $socialId = DB::$socialEvents->add('Dinner', '2099-03-15', $eventId, null, null, 'Meat,Fish', '10');
+        $userId = DB::$users->create('testuser', 'Pass123!');
+        $menus = DB::$socialEvents->menus($socialId);
+        DB::$socialEvents->register($socialId, $userId, $menus[0]->id, null);
+        $this->loginAs('testuser', 'Pass123!');
+
+        $response = $this->request('POST', "/events/$eventId/register", ['comment' => '']);
+
+        // Already registered for social event — stays on tournament event page
+        $this->assertEquals(303, $response->statusCode);
+        $this->assertCount(1, DB::$events->registrations($eventId));
+        // Social event registration unchanged
+        $this->assertEquals(1, DB::$socialEvents->getForTournament($eventId)->userRegistered);
+    }
+
+    public function testRegisterDoesNotRedirectToLockedSocialEvent(): void
+    {
+        $this->loginAsAdmin();
+        $eventId = DB::$events->add('Test Event', '2099-03-15', 20);
+        $socialId = DB::$socialEvents->add('Dinner', '2099-03-15', $eventId, null, null, 'Meat,Fish', '10');
+        DB::$socialEvents->lock($socialId);
+        DB::$users->create('testuser', 'Pass123!');
+        $this->loginAs('testuser', 'Pass123!');
+
+        $response = $this->request('POST', "/events/$eventId/register", ['comment' => '']);
+
+        // Social event is locked — stays on tournament event page
+        $this->assertEquals(303, $response->statusCode);
+        $this->assertCount(1, DB::$events->registrations($eventId));
+    }
+
     public function testUnregisterRemovesUserFromEvent(): void
     {
         $this->loginAsAdmin();

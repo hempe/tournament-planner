@@ -21,9 +21,10 @@ assert($socialEvent instanceof SocialEvent);
 assert(is_array($menus));
 assert(is_array($tables));
 assert($registration === null || $registration instanceof SocialRegistration);
+assert(is_array($registrations));
 
 ?>
-<?= new Page(function () use ($socialEvent, $menus, $tables, $registration) {
+<?= new Page(function () use ($socialEvent, $menus, $tables, $registration, $registrations) {
     $formatter = new \IntlDateFormatter(Translator::getInstance()->getLocale(), \IntlDateFormatter::FULL, \IntlDateFormatter::NONE);
     $formattedDate = $formatter->format(strtotime($socialEvent->date));
 
@@ -166,4 +167,21 @@ assert($registration === null || $registration instanceof SocialRegistration);
             );
         }
     );
+
+    if (count($registrations) > 0) {
+        yield new Card(
+            __('social_events.participants'),
+            new Table(
+                columns: [__('social_events.table'), __('events.name'), __('social_events.menu')],
+                items: $registrations,
+                projection: fn(SocialRegistration $reg) => [
+                    $reg->tableNumber !== null
+                        ? __('social_events.table_number', ['number' => $reg->tableNumber])
+                        : __('social_events.libero'),
+                    htmlspecialchars($reg->displayName),
+                    htmlspecialchars($reg->menuName),
+                ],
+            )
+        );
+    }
 });

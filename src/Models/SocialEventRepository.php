@@ -209,7 +209,7 @@ final class SocialEventRepository extends BaseRepository
              JOIN social_menus sm ON sr.menuId = sm.id
              LEFT JOIN users u ON sr.userId = u.id
              WHERE sr.socialEventId = ?
-             ORDER BY sr.timestamp",
+             ORDER BY st.number IS NULL, st.number, sr.timestamp",
             'i',
             [$socialEventId],
             fn($row) => new SocialRegistration(

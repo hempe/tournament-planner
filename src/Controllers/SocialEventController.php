@@ -91,6 +91,7 @@ final class SocialEventController
         $menus = DB::$socialEvents->menus($socialEventId);
         $tables = DB::$socialEvents->tables($socialEventId);
         $registration = DB::$socialEvents->getUserRegistration($socialEventId, $userId);
+        $registrations = DB::$socialEvents->registrations($socialEventId);
 
         ob_start();
         require __DIR__ . '/../Layout/header.php';

@@ -325,6 +325,12 @@ final class EventController
 
             DB::$events->register($eventId, $userId, $comment);
             flash('success', __('events.registration_success'));
+
+            $socialEvent = DB::$socialEvents->getForTournament($eventId);
+            if ($socialEvent !== null && !$socialEvent->userRegistered && !$socialEvent->isLocked && $socialEvent->available > 0) {
+                return Response::redirect("/social-events/{$socialEvent->id}");
+            }
+
             return Response::redirect($this->buildEventUrl($eventId, $request));
         } catch (Exception $e) {
             flash('error', $e->getMessage());
