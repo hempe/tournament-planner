@@ -150,11 +150,12 @@ button[light],
   flex-wrap: wrap;
   gap: 8px;
   width: calc(100% - 24px);
-  padding: 12px;
+  padding: 16px 0px 8px 16px;
   font-size: 1.8em;
   font-weight: lighter;
   text-transform: uppercase;
   background-color: transparent;
+  overflow: hidden;
 }
 
 .card-title>*,
@@ -164,6 +165,13 @@ button[light],
 
 .card-title>span {
   margin-top: 10px;
+}
+
+@media (max-width: 768px) {
+  .card-title {
+    font-size: 1.5em;
+
+  }
 }
 
 small {
@@ -314,13 +322,15 @@ input[type="checkbox"]:disabled {
 }
 
 .navtop {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 30px;
+  padding: 8px;
+  align-items: center;
   display: flex;
-  flex-direction: row;
-  align-items: start;
   flex-grow: 1;
-  justify-content: end;
-  margin-top: -30px;
-  margin-bottom: -25px;
+  z-index: 100;
 }
 
 .site-name {
@@ -329,6 +339,17 @@ input[type="checkbox"]:disabled {
   float: left;
   width: 300px;
   padding-top: 35px;
+}
+
+@media (max-width: 768px) {
+  .site-name {
+    font-size: 13px;
+    padding-top: 27px;
+  }
+
+  .site-title img {
+    width: 75px;
+  }
 }
 
 .calendar {

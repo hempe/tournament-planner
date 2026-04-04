@@ -64,7 +64,7 @@ class Page extends Component
             <div class="site-title">
                 <!-- Logo -->
                 <div>
-                    <a href="/https://www.golfelfaro.es"><img src="/favicon.svg" alt="EL FARO GOLF"></a>
+                    <a href="https://www.golfelfaro.es"><img src="/favicon.svg" alt="EL FARO GOLF"></a>
                 </div><!-- End logo -->
 
                 <!-- Text -->

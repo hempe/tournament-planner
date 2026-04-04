@@ -86,20 +86,20 @@ assert(is_int($id));
                             confirmMessage: __('events.delete_confirm_short'),
                         ),
                         $event->isLocked
-                            ? new IconActionButton(
-                                actionUrl: "/events/$id/unlock",
-                                title: __('events.unlock'),
-                                color: Color::Light,
-                                icon: 'fa-lock',
-                                confirmMessage: __('events.unlock_confirm'),
-                            )
-                            : new IconActionButton(
-                                actionUrl: "/events/$id/lock",
-                                title: __('events.lock'),
-                                color: Color::Light,
-                                icon: 'fa-unlock',
-                                confirmMessage: __('events.lock_confirm'),
-                            ),
+                        ? new IconActionButton(
+                            actionUrl: "/events/$id/unlock",
+                            title: __('events.unlock'),
+                            color: Color::Light,
+                            icon: 'fa-lock',
+                            confirmMessage: __('events.unlock_confirm'),
+                        )
+                        : new IconActionButton(
+                            actionUrl: "/events/$id/lock",
+                            title: __('events.lock'),
+                            color: Color::Light,
+                            icon: 'fa-unlock',
+                            confirmMessage: __('events.lock_confirm'),
+                        ),
                         new IconButton(
                             title: __('events.export'),
                             href: "/events/$id/export",
@@ -112,51 +112,72 @@ assert(is_int($id));
                         columns: ['', ''],
                         items: [0, 1, 2, 3, 4, 5, 6],
                         projection: fn($i) => match ($i) {
-                            0 => [__('events.name'), new Input(
-                                type: 'text',
-                                value: $event->name,
-                                name: 'name',
-                                placeholder: __('events.name'),
-                                required: true,
-                            )],
-                            1 => [__('events.max_participants'), new Input(
-                                type: 'number',
-                                value: (string) $event->capacity,
-                                name: 'capacity',
-                                placeholder: __('events.max_participants'),
-                                required: true,
-                            )],
-                            2 => [__('events.play_together'), new Checkbox(
-                                name: 'mixed',
-                                label: '',
-                                checked: $event->mixed,
-                            )],
-                            3 => [__('events.description'), new Textarea(
-                                name: 'description',
-                                value: $event->description ?? '',
-                                placeholder: __('events.description'),
-                                style: 'width:100%',
-                            )],
-                            4 => [__('events.price_members'), new Input(
-                                type: 'number',
-                                name: 'price_members',
-                                value: $event->priceMembers !== null ? (string) $event->priceMembers : '',
-                                placeholder: __('events.price_members'),
-                                step: '0.01',
-                            )],
-                            5 => [__('events.price_guests'), new Input(
-                                type: 'number',
-                                name: 'price_guests',
-                                value: $event->priceGuests !== null ? (string) $event->priceGuests : '',
-                                placeholder: __('events.price_guests'),
-                                step: '0.01',
-                            )],
-                            6 => [__('events.registration_close'), new Input(
-                                type: 'datetime-local',
-                                name: 'registration_close',
-                                value: $event->registrationClose ? substr(str_replace(' ', 'T', $event->registrationClose), 0, 16) : '',
-                                placeholder: __('events.registration_close'),
-                            )],
+                            0 => [
+                                __('events.name'),
+                                new Input(
+                                    type: 'text',
+                                    value: $event->name,
+                                    name: 'name',
+                                    placeholder: __('events.name'),
+                                    required: true,
+                                )
+                            ],
+                            1 => [
+                                __('events.max_participants'),
+                                new Input(
+                                    type: 'number',
+                                    value: (string) $event->capacity,
+                                    name: 'capacity',
+                                    placeholder: __('events.max_participants'),
+                                    required: true,
+                                )
+                            ],
+                            2 => [
+                                __('events.play_together'),
+                                new Checkbox(
+                                    name: 'mixed',
+                                    label: '',
+                                    checked: $event->mixed,
+                                )
+                            ],
+                            3 => [
+                                __('events.description'),
+                                new Textarea(
+                                    name: 'description',
+                                    value: $event->description ?? '',
+                                    placeholder: __('events.description'),
+                                    style: 'width:100%',
+                                )
+                            ],
+                            4 => [
+                                __('events.price_members'),
+                                new Input(
+                                    type: 'number',
+                                    name: 'price_members',
+                                    value: $event->priceMembers !== null ? (string) $event->priceMembers : '',
+                                    placeholder: __('events.price_members'),
+                                    step: '0.01',
+                                )
+                            ],
+                            5 => [
+                                __('events.price_guests'),
+                                new Input(
+                                    type: 'number',
+                                    name: 'price_guests',
+                                    value: $event->priceGuests !== null ? (string) $event->priceGuests : '',
+                                    placeholder: __('events.price_guests'),
+                                    step: '0.01',
+                                )
+                            ],
+                            6 => [
+                                __('events.registration_close'),
+                                new Input(
+                                    type: 'datetime-local',
+                                    name: 'registration_close',
+                                    value: $event->registrationClose ? substr(str_replace(' ', 'T', $event->registrationClose), 0, 16) : '',
+                                    placeholder: __('events.registration_close'),
+                                )
+                            ],
                         },
                         widths: [150, null]
                     )
@@ -191,6 +212,38 @@ assert(is_int($id));
             if (count($waitlistFemales)) {
                 yield new Card(__('events.female') . ' – ' . __('events.waitlist'), new EventRegistrations($waitlistFemales, $event));
             }
+        }
+
+        $socialEvent = DB::$socialEvents->getForTournament($id);
+        if ($socialEvent) {
+            $socialFormatter = new IntlDateFormatter(Translator::getInstance()->getLocale(), IntlDateFormatter::FULL, IntlDateFormatter::NONE);
+            yield new Card(
+                [
+                    new Span(content: __('social_events.title') . ' – ' . $socialFormatter->format(strtotime($socialEvent->date)), style: 'flex-grow:1'),
+                    new IconButton(
+                        title: __('social_events.edit'),
+                        href: "/social-events/{$socialEvent->id}/admin",
+                        icon: 'fa-edit',
+                        type: 'button',
+                        color: Color::Light,
+                    ),
+                ],
+                ''
+            );
+        } else {
+            yield new Card(
+                [
+                    new Span(content: __('social_events.title'), style: 'flex-grow:1'),
+                    new IconButton(
+                        title: __('social_events.new'),
+                        href: "/social-events/new?tournamentId=$id",
+                        icon: 'fa-plus',
+                        type: 'button',
+                        color: Color::Primary,
+                    ),
+                ],
+                ''
+            );
         }
 
         $guests = DB::$guests->allForEvent($id);
@@ -290,38 +343,6 @@ assert(is_int($id));
                     },
                     widths: [200, null]
                 )
-            );
-        }
-
-        $socialEvent = DB::$socialEvents->getForTournament($id);
-        if ($socialEvent) {
-            $socialFormatter = new IntlDateFormatter(Translator::getInstance()->getLocale(), IntlDateFormatter::FULL, IntlDateFormatter::NONE);
-            yield new Card(
-                [
-                    new Span(content: __('social_events.title') . ' – ' . $socialFormatter->format(strtotime($socialEvent->date)), style: 'flex-grow:1'),
-                    new IconButton(
-                        title: __('social_events.edit'),
-                        href: "/social-events/{$socialEvent->id}/admin",
-                        icon: 'fa-edit',
-                        type: 'button',
-                        color: Color::Light,
-                    ),
-                ],
-                ''
-            );
-        } else {
-            yield new Card(
-                [
-                    new Span(content: __('social_events.title'), style: 'flex-grow:1'),
-                    new IconButton(
-                        title: __('social_events.new'),
-                        href: "/social-events/new?tournamentId=$id",
-                        icon: 'fa-plus',
-                        type: 'button',
-                        color: Color::Primary,
-                    ),
-                ],
-                ''
             );
         }
     }

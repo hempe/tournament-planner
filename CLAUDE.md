@@ -71,9 +71,9 @@ This is a PHP web application for golf event management with a modern MVC archit
 
 **Translation System**: All user-facing text uses `__('key')` function for internationalization. Translations defined in `resources/lang/de_CH.php`. Never hardcode German text in views.
 
-**Database**: Repository pattern with static instances accessible via `DB::$events` and `DB::$users`. Database connection configured in `.env` file.
+**Database**: Repository pattern with static instances accessible via `DB::$events`, `DB::$users`, `DB::$guests`, and `DB::$socialEvents`. Database connection configured in `.env` file.
 
-**Testing**: Comprehensive test suite with 325 tests covering controllers, localization, core classes, and event management. Code coverage: 83.6% lines overall. Tests use PCOV for fast coverage analysis. All routes have tests for anonymous, regular user, and admin access.
+**Testing**: Comprehensive test suite with 390 tests covering controllers, localization, core classes, and event management. Tests use PCOV for fast coverage analysis. All routes have tests for anonymous, regular user, and admin access.
 
 **Error Handling**: User-friendly error pages for 404 (Not Found), 403 (Forbidden), and 500 (Server Error) with navigation buttons to help users get back to safety.
 
@@ -83,7 +83,7 @@ This is a PHP web application for golf event management with a modern MVC archit
 - `src/Controllers/` - HTTP controllers handling requests
 - `src/Models/` - Database models and repositories
 - `src/Middleware/` - Route middleware (AuthMiddleware, AdminMiddleware)
-- `src/Views/` - View templates organized by feature (Events, Users, Home)
+- `src/Views/` - View templates organized by feature (Events, Users, Home, SocialEvents)
 - `src/Components/` - Reusable UI Components
 - `src/Layout/` - Header and footer templates
 - `styles/` - CSS files
@@ -91,7 +91,7 @@ This is a PHP web application for golf event management with a modern MVC archit
 
 ### Database Setup
 
-Requires MySQL with extensions `pdo_mysql` and `mysqli` enabled. Database schema defined in `database/init.sql` with tables for users, events, and event registrations. Configure database credentials in `.env` file.
+Requires MySQL with extensions `pdo_mysql` and `mysqli` enabled. Database schema defined in `database/init.sql` with tables for users, events, event registrations, and social events. Configure database credentials in `.env` file.
 
 ## Documentation
 
@@ -125,6 +125,7 @@ Requires MySQL with extensions `pdo_mysql` and `mysqli` enabled. Database schema
 - Assume Table projection receives index parameter (only receives item)
 - Add parameters that don't exist (e.g., `footer` on Table)
 - Hardcode German text in views
+- Pass translated strings directly as Table cell labels without checking — `is_callable('Date')` returns `true` in PHP because `date()` is a built-in. `Component::captureOutput` uses `instanceof \Closure` (not `is_callable`) to avoid this, but any similar pattern outside Component must also avoid `is_callable` on arbitrary strings.
 
 ### Common Patterns
 
