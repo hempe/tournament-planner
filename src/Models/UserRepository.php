@@ -100,6 +100,62 @@ final class UserRepository
         $stmt->close();
     }
 
+    public function countWithoutNames(): int
+    {
+        $result = $this->conn->query("SELECT COUNT(*) AS cnt FROM users WHERE first_name IS NULL OR first_name = ''");
+        if (!$result) {
+            return 0;
+        }
+        $row = $result->fetch_assoc();
+        return (int) ($row['cnt'] ?? 0);
+    }
+
+    /** @return array<array{id:int, username:string, first:string, last:string, status:string}> */
+    public function seedNamesFromUsernames(): array
+    {
+        $result = $this->conn->query("SELECT id, username FROM users WHERE first_name IS NULL OR first_name = ''");
+        if (!$result) {
+            return [];
+        }
+
+        $results = [];
+        while ($row = $result->fetch_assoc()) {
+            $raw = $row['username'];
+
+            // Strip title suffixes: ", Dr.", ", Dr", ", Prof.", ", Prof"
+            $cleaned = preg_replace('/,\s*(Dr\.|Dr|Prof\.|Prof)\b/i', '', $raw) ?? $raw;
+            // Strip leading titles
+            $cleaned = preg_replace('/^(Dr\.|Dr|Prof\.|Prof)\s+/i', '', $cleaned) ?? $cleaned;
+            $cleaned = trim($cleaned);
+
+            if ($cleaned === '') {
+                $cleaned = $raw;
+            }
+
+            $parts    = preg_split('/\s+/', $cleaned, -1, PREG_SPLIT_NO_EMPTY) ?: [$raw];
+            $lastName  = array_pop($parts);
+            $firstName = implode(' ', $parts);
+
+            $stmt = $this->conn->prepare("UPDATE users SET first_name = ?, last_name = ? WHERE id = ?");
+            if (!$stmt) {
+                continue;
+            }
+            $stmt->bind_param('ssi', $firstName, $lastName, $row['id']);
+            $stmt->execute();
+            $stmt->close();
+
+            $results[] = [
+                'id'       => (int) $row['id'],
+                'username' => $raw,
+                'first'    => $firstName,
+                'last'     => $lastName,
+                'status'   => 'updated',
+            ];
+        }
+
+        return $results;
+    }
+
     public function delete(int $userId): void
     {
         $stmt = $this->conn->prepare("DELETE FROM users WHERE id = ?");
