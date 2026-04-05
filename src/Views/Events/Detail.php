@@ -147,9 +147,9 @@ assert(is_int($id));
                     new IconActionButton(
                         actionUrl: "/events/$event->id/unregister{$queryString}",
                         title: __('events.unregister'),
-                        color: $event->isLocked ? Color::None : Color::Accent,
+                        color: Color::Accent,
                         icon: 'fa-user-minus',
-                        confirmMessage: $event->isLocked ? '' : __('events.unregister_confirm'),
+                        confirmMessage: __('events.unregister_confirm'),
                         hiddenInputs: ['userId' => $user->id],
                         title_inline: true
                     )

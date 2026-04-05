@@ -15,6 +15,8 @@ final class Table extends Component
 
     /** @var TableRow[] */
     public readonly array $rows;
+    public readonly string $class;
+    public readonly string $style;
 
     /**
      * Constructor for the component.
@@ -30,6 +32,8 @@ final class Table extends Component
         callable $projection,
         callable|null $href = null,
         array $widths = [],
+        \Closure|string|Component|array $class = '',
+        \Closure|string|Component|array $style = '',
     ) {
         $this->header = new TableHead($columns);
         $this->rows = array_map(fn($item): TableRow => new TableRow(
@@ -44,6 +48,8 @@ final class Table extends Component
             ),
             onclick: $href ? $this->onclick($href, $item) : null
         ), $items);
+        $this->class = 'table ' . $this->captureOutput($class);
+        $this->style = 'display:table;' . $this->captureOutput($style);
     }
 
     private function onclick(callable $href, mixed $item): string
@@ -54,7 +60,7 @@ final class Table extends Component
 
     protected function template(): void
     { ?>
-        <div style="display:table;" class="table">
+        <div class="<?= $this->class ?>" style="<?= $this->style ?>">
             <?= $this->header ?>
             <?php foreach ($this->rows as $row): ?>
                 <?= $row ?>

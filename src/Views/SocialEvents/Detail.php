@@ -28,10 +28,6 @@ assert(is_array($registrations));
     $formatter = new \IntlDateFormatter(Translator::getInstance()->getLocale(), \IntlDateFormatter::FULL, \IntlDateFormatter::NONE);
     $formattedDate = $formatter->format(strtotime($socialEvent->date));
 
-    $regState = $registration
-        ? new Icon('fa-user-check', __('social_events.registered'))
-        : '';
-
     $cardTitle = [
         new IconButton(
             title: __('nav.back'),
@@ -44,7 +40,7 @@ assert(is_array($registrations));
     ];
 
     // Event info card
-    $innerTitle = [new Span(content: $socialEvent->name, style: 'flex-grow:1'), $regState];
+    $innerTitle = [new Span(content: $socialEvent->name, style: 'flex-grow:1')];
     if (User::admin()) {
         $innerTitle[] = new IconButton(
             title: __('social_events.edit'),
@@ -81,21 +77,24 @@ assert(is_array($registrations));
             if ($registration) {
                 $regDetails = [
                     [__('social_events.menu'), $registration->menuName],
-                    [__('social_events.table'), $registration->tableNumber !== null
+                    [
+                        __('social_events.table'),
+                        $registration->tableNumber !== null
                         ? __('social_events.table_number', ['number' => $registration->tableNumber])
-                        : __('social_events.libero')],
+                        : __('social_events.libero')
+                    ],
                 ];
                 yield new Table(['', ''], $regDetails, fn($row) => $row, widths: [150, null]);
                 if (!$socialEvent->isLocked) {
                     yield new Form(
                         action: "/social-events/{$socialEvent->id}/unregister",
+                        style: 'display:flex; flex-direction:column; align-items:end',
                         content: new IconButton(
                             type: 'submit',
                             title: __('social_events.unregister'),
                             title_inline: true,
                             icon: 'fa-user-minus',
                             color: Color::Accent,
-                            style: 'width:100%',
                         )
                     );
                 }
@@ -141,17 +140,21 @@ assert(is_array($registrations));
                             __('social_events.table'),
                             new Select(options: $tableOptions, name: 'table_id'),
                         ],
-                        2 => ['', new IconButton(
-                            type: 'submit',
-                            title: __('social_events.register'),
-                            title_inline: true,
-                            icon: 'fa-user-plus',
-                            color: Color::Primary,
-                            style: 'width:100%',
-                        )],
+                        2 => [
+                            '',
+                            new IconButton(
+                                type: 'submit',
+                                title: __('social_events.register'),
+                                title_inline: true,
+                                icon: 'fa-user-plus',
+                                color: Color::Primary,
+                                style: 'width:100%',
+                            )
+                        ],
                     },
-                    widths: [150, null]
-                )
+                    widths: [150, null],
+                    style: 'width:100%'
+                ),
             );
         }
     );
@@ -160,14 +163,13 @@ assert(is_array($registrations));
         yield new Card(
             __('social_events.participants'),
             new Table(
-                columns: [__('social_events.table'), __('events.name'), __('social_events.menu')],
+                columns: [__('social_events.table'), __('events.name')],
                 items: $registrations,
                 projection: fn(SocialRegistration $reg) => [
                     $reg->tableNumber !== null
-                        ? __('social_events.table_number', ['number' => $reg->tableNumber])
-                        : __('social_events.libero'),
-                    htmlspecialchars($reg->displayName),
-                    htmlspecialchars($reg->menuName),
+                    ? __('social_events.table_number', ['number' => $reg->tableNumber])
+                    : __('social_events.libero'),
+                    htmlspecialchars($reg->displayName)
                 ],
             )
         );

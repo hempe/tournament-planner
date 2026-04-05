@@ -203,16 +203,8 @@ table td {
 .table-cell {
   vertical-align: top;
   height: 100%;
-  padding: 12px 6px;
+  padding: 12px;
   border: none;
-}
-
-.table-cell:first-child {
-  padding-left: 12px;
-}
-
-.table-cell:last-child {
-  padding-right: 12px;
 }
 
 .table-cell>form,

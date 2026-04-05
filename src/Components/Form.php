@@ -7,6 +7,9 @@ class Form extends Component
 {
     public readonly string $content;
     private readonly string $action;
+    public readonly string $class;
+    public readonly string $style;
+
     /**
      * @param Closure|string|Component|array<Closure|string|Component> $content The card's content
      */
@@ -15,9 +18,13 @@ class Form extends Component
         \Closure|string|Component|array $content,
         private readonly string $method = 'post',
         public readonly array $hiddenInputs = [],
+        \Closure|string|Component|array $class = '',
+        \Closure|string|Component|array $style = '',
     ) {
         $this->action = Url::build($action);
         $this->content = $this->captureOutput($content);
+        $this->class = $this->captureOutput($class);
+        $this->style = $this->captureOutput($style);
     }
 
     protected function template(): void
@@ -41,7 +48,11 @@ class Form extends Component
         }
 
         echo <<<HTML
-        <form action="{$this->action}" method="{$this->method}">
+        <form 
+            action="{$this->action}" 
+            method="{$this->method}"
+            class="{$this->class}"
+            style="{$this->style}">
             {$this->content}
             {$hiddenFields}
         </form>
