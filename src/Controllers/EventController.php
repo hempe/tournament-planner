@@ -328,7 +328,10 @@ final class EventController
 
             $socialEvent = DB::$socialEvents->getForTournament($eventId);
             if ($socialEvent !== null && !$socialEvent->userRegistered && !$socialEvent->isLocked && $socialEvent->available > 0) {
-                return Response::redirect("/social-events/{$socialEvent->id}");
+                flash('social_prompt', [
+                    'id' => $socialEvent->id,
+                    'message' => __('events.social_prompt_message', ['name' => $socialEvent->name]),
+                ]);
             }
 
             return Response::redirect($this->buildEventUrl($eventId, $request));

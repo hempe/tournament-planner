@@ -42,9 +42,18 @@
             },
             success: {
                 title: <?= json_encode(__('success.title')) ?>
-            }
+            },
+            social: {
+                prompt_yes: <?= json_encode(__('events.social_prompt_yes')) ?>,
+                prompt_no: <?= json_encode(__('events.social_prompt_no')) ?>,
+                unregister_title: <?= json_encode(__('events.unregister_choice_title')) ?>,
+                unregister_message: <?= json_encode(__('events.unregister_choice_message')) ?>,
+                tournament_only: <?= json_encode(__('events.unregister_tournament_only')) ?>,
+                both: <?= json_encode(__('events.unregister_both')) ?>,
+            },
         };
     </script>
+    <script src="/src/scripts/social-prompt.js"></script>
     <script src="/src/scripts/confirm.js"></script>
     <script src="/src/scripts/error.js"></script>
     <script src="/src/scripts/success.js"></script>

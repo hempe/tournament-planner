@@ -47,6 +47,8 @@ assert(is_int($id));
             : new Icon('fa-user-clock', __('events.on_waitlist'))
         );
 
+    $socialEvent = DB::$socialEvents->getForTournament($event->id);
+
     // Build URLs with preserved query parameters
     $backUrl = isset($_GET['b']) ? '/?date=' . $_GET['b'] : '/';
     $queryParams = [];
@@ -72,7 +74,7 @@ assert(is_int($id));
 
     yield new Card(
         $cardTitle,
-        function () use ($id, $event, $eventFull, $reg, $regState, $queryString) {
+        function () use ($id, $event, $eventFull, $reg, $regState, $queryString, $socialEvent) {
             $details = [];
             if ($event->description) {
                 $details[] = [__('events.description'), nl2br(htmlspecialchars($event->description))];
@@ -149,9 +151,10 @@ assert(is_int($id));
                         title: __('events.unregister'),
                         color: Color::Accent,
                         icon: 'fa-user-minus',
-                        confirmMessage: __('events.unregister_confirm'),
+                        confirmMessage: $socialEvent?->userRegistered ? '' : __('events.unregister_confirm'),
                         hiddenInputs: ['userId' => $user->id],
-                        title_inline: true
+                        title_inline: true,
+                        socialActionUrl: $socialEvent?->userRegistered ? "/social-events/{$socialEvent->id}/unregister" : '',
                     )
                 ],
                 widths: [null, 1]
@@ -159,7 +162,6 @@ assert(is_int($id));
         }
     );
 
-    $socialEvent = DB::$socialEvents->getForTournament($event->id);
     if ($socialEvent) {
         $socialFormatter = new \IntlDateFormatter(Translator::getInstance()->getLocale(), \IntlDateFormatter::FULL, \IntlDateFormatter::NONE);
         $socialDate = $socialFormatter->format(strtotime($socialEvent->date));

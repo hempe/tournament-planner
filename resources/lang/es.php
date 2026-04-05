@@ -127,6 +127,13 @@ return [
         'registration_close' => 'Cierre de Inscripción',
         'bulk_registration_close_days' => 'Cierre de inscripción (días antes)',
         'bulk_registration_close_time' => 'Cierre de inscripción (hora)',
+        'social_prompt_message' => '¿También quieres asistir a \':name\'?',
+        'social_prompt_yes' => 'Sí, inscribirme',
+        'social_prompt_no' => 'No, gracias',
+        'unregister_choice_title' => 'Cancelar inscripción',
+        'unregister_choice_message' => '¿De qué evento quieres cancelar la inscripción?',
+        'unregister_tournament_only' => 'Solo torneo',
+        'unregister_both' => 'Torneo y cena',
     ],
 
     // Users

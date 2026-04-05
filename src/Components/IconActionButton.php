@@ -25,6 +25,7 @@ class IconActionButton extends Component
         private readonly bool $title_inline = false,
         private readonly \Closure|string|Component|array $class = '',
         private readonly \Closure|string|Component|array $style = '',
+        private readonly string $socialActionUrl = '',
     ) {
         $this->actionUrl = Url::build($actionUrl);
     }
@@ -32,9 +33,16 @@ class IconActionButton extends Component
     protected function template(): void
     {
         $warn = $this->color == Color::Accent ? 'true' : 'false';
+        $onClick = $this->socialActionUrl !== ''
+            ? "fieldsetSubmitChoice(this, event, { warn: {$warn} })"
+            : "fieldsetSubmit(this, event, { warn: {$warn} })";
+        $socialAttr = $this->socialActionUrl !== ''
+            ? 'data-social-action="' . htmlspecialchars($this->socialActionUrl, ENT_QUOTES, 'UTF-8') . '"'
+            : '';
         ?>
         <fieldset data-action="<?= htmlspecialchars($this->actionUrl, ENT_QUOTES, 'UTF-8') ?>"
-            data-confirm="<?= htmlspecialchars($this->confirmMessage, ENT_QUOTES, 'UTF-8') ?>">
+            data-confirm="<?= htmlspecialchars($this->confirmMessage, ENT_QUOTES, 'UTF-8') ?>"
+            <?= $socialAttr ?>>
             <?php foreach ($this->hiddenInputs as $name => $value): ?>
                 <input type="hidden" name="<?= htmlspecialchars($name) ?>" value="<?= htmlspecialchars($value) ?>">
             <?php endforeach; ?>
@@ -44,7 +52,7 @@ class IconActionButton extends Component
                 color: $this->color,
                 title: $this->title,
                 icon: $this->icon,
-                onClick: "fieldsetSubmit(this, event, { warn: {$warn} } )",
+                onClick: $onClick,
                 title_inline: $this->title_inline,
                 class: $this->class,
                 style: $this->style,

@@ -127,6 +127,13 @@ return [
         'registration_close' => 'Anmeldeschluss',
         'bulk_registration_close_days' => 'Anmeldeschluss (Tage vorher)',
         'bulk_registration_close_time' => 'Anmeldeschluss (Uhrzeit)',
+        'social_prompt_message' => 'Möchtest du auch an \':name\' teilnehmen?',
+        'social_prompt_yes' => 'Ja, anmelden',
+        'social_prompt_no' => 'Nein danke',
+        'unregister_choice_title' => 'Abmelden',
+        'unregister_choice_message' => 'Von welchem Anlass möchtest du dich abmelden?',
+        'unregister_tournament_only' => 'Nur Turnier',
+        'unregister_both' => 'Turnier & Abendessen',
     ],
 
     // Users

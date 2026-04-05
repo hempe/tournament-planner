@@ -127,6 +127,13 @@ return [
         'registration_close' => 'Registration Close',
         'bulk_registration_close_days' => 'Registration Close (days before)',
         'bulk_registration_close_time' => 'Registration Close (time)',
+        'social_prompt_message' => 'Do you also want to attend \':name\'?',
+        'social_prompt_yes' => 'Yes, register',
+        'social_prompt_no' => 'No thanks',
+        'unregister_choice_title' => 'Unregister',
+        'unregister_choice_message' => 'Which event do you want to unregister from?',
+        'unregister_tournament_only' => 'Tournament only',
+        'unregister_both' => 'Tournament & Dinner',
     ],
 
     // Users

@@ -15,3 +15,26 @@ async function fieldsetSubmit(button, event, options) {
     form.submit();
     form.remove();
 }
+
+async function fieldsetSubmitChoice(button, event, options) {
+    event?.stopPropagation();
+    var fieldset = button.closest('fieldset');
+    var actionUrl = fieldset.getAttribute('data-action');
+    var socialUrl = fieldset.getAttribute('data-social-action');
+    var userId = fieldset.querySelector('input[name="userId"]')?.value;
+
+    var choice = await customUnregisterChoice();
+    if (!choice) return;
+
+    var post = (url, body) => fetch(url, { method: 'POST', body });
+
+    var formData = new FormData();
+    if (userId) formData.append('userId', userId);
+    await post(actionUrl, formData);
+
+    if (choice === 'both') {
+        await post(socialUrl, new FormData());
+    }
+
+    window.location.reload();
+}
