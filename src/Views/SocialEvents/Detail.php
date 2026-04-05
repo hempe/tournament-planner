@@ -8,7 +8,6 @@ use TP\Components\IconActionButton;
 use TP\Components\IconButton;
 use TP\Components\Page;
 use TP\Components\Select;
-use TP\Components\Link;
 use TP\Components\Span;
 use TP\Components\Table;
 use TP\Core\Translator;
@@ -185,10 +184,14 @@ assert(is_array($registrations));
         $tournament = DB::$events->get($socialEvent->tournamentId, User::id() ?? 0);
         if ($tournament) {
             yield new Card(
-                new Link(
+                new IconButton(
+                    title: $tournament->name,
                     href: "/events/{$tournament->id}",
-                    content: [new Icon('fa-chevron-right', ''), new Span(content: $tournament->name)],
-                    style: 'display:flex; align-items:center; gap:8px; flex-grow:1;',
+                    icon: 'fa-chevron-right',
+                    type: 'button',
+                    color: Color::None,
+                    title_inline: true,
+                    style: 'flex-grow:1',
                 ),
                 '',
             );

@@ -15,7 +15,6 @@ use TP\Models\EventRegistration;
 use TP\Models\User;
 use TP\Models\EventGuest;
 use TP\Components\Div;
-use TP\Components\Link;
 
 assert(is_int($id));
 
@@ -173,10 +172,14 @@ assert(is_int($id));
 
     if ($socialEvent) {
         yield new Card(
-            new Link(
+            new IconButton(
+                title: $socialEvent->name,
                 href: "/social-events/{$socialEvent->id}",
-                content: [new Icon('fa-chevron-right', ''), new Span(content: $socialEvent->name)],
-                style: 'display:flex; align-items:center; gap:8px; flex-grow:1;',
+                icon: 'fa-chevron-right',
+                type: 'button',
+                color: Color::None,
+                title_inline: true,
+                style: 'flex-grow:1',
             ),
             '',
             class: 'social',
