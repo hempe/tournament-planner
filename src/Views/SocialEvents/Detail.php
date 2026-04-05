@@ -88,7 +88,7 @@ assert(is_array($registrations));
                 if (!$socialEvent->isLocked) {
                     yield new Form(
                         action: "/social-events/{$socialEvent->id}/unregister",
-                        style: 'display:flex; flex-direction:column; align-items:end',
+                        style: 'display:flex; flex-direction:column; align-items:end; padding:12px;',
                         content: new IconButton(
                             type: 'submit',
                             title: __('social_events.unregister'),

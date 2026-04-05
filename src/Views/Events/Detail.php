@@ -131,7 +131,7 @@ assert(is_int($id));
                 return;
             }
             yield new Table(
-                columns: [$event->isLocked ? __('events.locked_message') : __('events.comment_update'), ''],
+                columns: [$event->isLocked ? __('events.locked_message') : __('events.comment_update')],
                 items: [User::current()],
                 projection: fn($user) => [
                     new InputAction(
@@ -146,18 +146,26 @@ assert(is_int($id));
                         hiddenInputs: ['userId' => $user->id],
                         title_inline: true
                     ),
-                    new IconActionButton(
-                        actionUrl: "/events/$event->id/unregister{$queryString}",
-                        title: __('events.unregister'),
-                        color: Color::Accent,
-                        icon: 'fa-user-minus',
-                        confirmMessage: $socialEvent?->userRegistered ? '' : __('events.unregister_confirm'),
-                        hiddenInputs: ['userId' => $user->id],
-                        title_inline: true,
-                        socialActionUrl: $socialEvent?->userRegistered ? "/social-events/{$socialEvent->id}/unregister" : '',
-                    )
                 ],
-                widths: [null, 1]
+                widths: [null]
+            );
+            yield new Div(
+                content: new IconActionButton(
+                    actionUrl: "/events/$event->id/unregister{$queryString}",
+                    title: __('events.unregister'),
+                    color: Color::Accent,
+                    icon: 'fa-user-minus',
+                    confirmMessage: $socialEvent?->userRegistered ? '' : __('events.unregister_confirm'),
+                    hiddenInputs: ['userId' => User::id()],
+                    title_inline: true,
+                    socialActionUrl: $socialEvent?->userRegistered ? "/social-events/{$socialEvent->id}/unregister" : '',
+                ),
+                style: [
+                    'padding:12px;',
+                    'display:flex;',
+                    'flex-direction:column;',
+                    'align-items:end;'
+                ]
             );
         }
     );
