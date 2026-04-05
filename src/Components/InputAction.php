@@ -38,11 +38,11 @@ class InputAction extends Component
             <?php endforeach; ?>
 
             <?php if ($this->type == 'textarea'): ?>
-                <textarea style="display: flex; flex-grow: 1;" name="<?= $this->inputName ?>" class="input"
-                    placeholder="<?= $this->inputPlaceholder ?>"><?= $this->inputValue ?></textarea>
+                <textarea style="display: flex; flex-grow: 1;" name="<?= htmlspecialchars($this->inputName, ENT_QUOTES, 'UTF-8') ?>" class="input"
+                    placeholder="<?= htmlspecialchars($this->inputPlaceholder, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($this->inputValue, ENT_QUOTES, 'UTF-8') ?></textarea>
             <?php else: ?>
-                <input style="display: flex; flex-grow: 1;" type="<?= $this->type ?>" value="<?= $this->inputValue ?>"
-                    name="<?= $this->inputName ?>" class="input" placeholder="<?= $this->inputPlaceholder ?>" />
+                <input style="display: flex; flex-grow: 1;" type="<?= $this->type ?>" value="<?= htmlspecialchars($this->inputValue, ENT_QUOTES, 'UTF-8') ?>"
+                    name="<?= htmlspecialchars($this->inputName, ENT_QUOTES, 'UTF-8') ?>" class="input" placeholder="<?= htmlspecialchars($this->inputPlaceholder, ENT_QUOTES, 'UTF-8') ?>" />
             <?php endif; ?>
 
             <?= new IconButton(

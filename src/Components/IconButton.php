@@ -44,7 +44,7 @@ class IconButton extends Component
                 : 'event.stopPropagation();'
             );
 
-        $title = $this->title;
+        $title = htmlspecialchars($this->title, ENT_QUOTES | ENT_HTML5, 'UTF-8');
         $titleInline = $this->title_inline ? new Span($title) : '';
         $icon = new Icon($this->icon, $this->title);
 
@@ -54,7 +54,7 @@ class IconButton extends Component
             type="{$this->type}"
             {$this->color->value}
             {$required}
-            title="{$this->title}"
+            title="{$title}"
             style="{$this->style}"
             onclick="{$onClick}">
             {$icon}

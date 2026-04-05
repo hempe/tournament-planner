@@ -39,7 +39,7 @@ use TP\Models\User;
             projection: function ($event) use ($isAdmin) {
                 $row = [
                     $event->date,
-                    $event->name,
+                    htmlspecialchars($event->name),
                     $event->capacity,
                     $event->joined,
                     $event->onWaitList,

@@ -42,7 +42,7 @@ assert(is_array($registrations));
     ];
 
     // Event info card
-    $innerTitle = [new Span(content: $socialEvent->name, style: 'flex-grow:1')];
+    $innerTitle = [new Span(content: htmlspecialchars($socialEvent->name), style: 'flex-grow:1')];
     if (User::admin()) {
         $innerTitle[] = new IconButton(
             title: __('social_events.edit'),
@@ -80,7 +80,7 @@ assert(is_array($registrations));
         function () use ($socialEvent, $menus, $tables, $registration) {
             if ($registration) {
                 $regDetails = [
-                    [__('social_events.menu'), $registration->menuName],
+                    [__('social_events.menu'), htmlspecialchars($registration->menuName)],
                     [
                         __('social_events.table'),
                         $registration->tableNumber !== null

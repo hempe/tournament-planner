@@ -18,11 +18,12 @@ class Icon extends Component
 
     protected function template(): void
     {
+        $title = htmlspecialchars($this->title, ENT_QUOTES | ENT_HTML5, 'UTF-8');
         echo <<<HTML
-            <i 
+            <i
                 style="{$this->style}"
-                class="fas {$this->icon} {$this->class}" 
-                title="{$this->title}">
+                class="fas {$this->icon} {$this->class}"
+                title="{$title}">
             </i>
         HTML;
     }

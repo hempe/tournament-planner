@@ -47,7 +47,7 @@ assert(is_array($menus));
             title: $cardTitle,
             content: new Card(
                 title: [
-                    new Span(content: $socialEvent->name, style: 'flex-grow:1'),
+                    new Span(content: htmlspecialchars($socialEvent->name), style: 'flex-grow:1'),
                     new IconButton(
                         title: __('social_events.save'),
                         type: 'submit',
@@ -152,11 +152,11 @@ assert(is_array($menus));
                 columns: [__('guests.first_name') . ' ' . __('guests.last_name'), __('social_events.table'), __('social_events.menu'), ''],
                 items: $registrations,
                 projection: fn(SocialRegistration $reg) => [
-                    $reg->displayName,
+                    htmlspecialchars($reg->displayName),
                     $reg->tableNumber !== null
                         ? __('social_events.table_number', ['number' => $reg->tableNumber])
                         : __('social_events.libero'),
-                    $reg->menuName,
+                    htmlspecialchars($reg->menuName),
                     new IconActionButton(
                         actionUrl: "/social-events/{$socialEvent->id}/registrations/{$reg->id}/delete",
                         title: __('events.delete'),

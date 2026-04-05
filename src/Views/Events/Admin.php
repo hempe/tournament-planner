@@ -71,7 +71,7 @@ assert(is_int($id));
                 title: $cardTitle,
                 content: new Card(
                     title: [
-                        new Span(content: $event->name, style: 'flex-grow:1'),
+                        new Span(content: htmlspecialchars($event->name), style: 'flex-grow:1'),
                         new IconButton(
                             title: __('events.save'),
                             type: 'submit',

@@ -89,7 +89,7 @@ assert(is_int($id));
                 $closeFormatter = new \IntlDateFormatter(Translator::getInstance()->getLocale(), \IntlDateFormatter::FULL, \IntlDateFormatter::SHORT);
                 $details[] = [__('events.registration_close'), $closeFormatter->format(strtotime($event->registrationClose))];
             }
-            $innerTitle = [new Span(content: $event->name, style: 'flex-grow:1'), $regState];
+            $innerTitle = [new Span(content: htmlspecialchars($event->name), style: 'flex-grow:1'), $regState];
             if (User::admin()) {
                 $innerTitle[] = new IconButton(
                     title: __('events.edit'),
@@ -194,7 +194,7 @@ assert(is_int($id));
                 [''],
                 $eventRegistrations,
                 fn(EventRegistration $user) => [
-                    $user->name . ($user->state == 1 ? '' : ' (' . __('events.waitlist') . ')'),
+                    htmlspecialchars($user->name) . ($user->state == 1 ? '' : ' (' . __('events.waitlist') . ')'),
                 ],
 
             )
@@ -208,7 +208,7 @@ assert(is_int($id));
             new Table(
                 [''],
                 $guests,
-                fn(EventGuest $guest) => [$guest->firstName . ' ' . $guest->lastName],
+                fn(EventGuest $guest) => [htmlspecialchars($guest->firstName) . ' ' . htmlspecialchars($guest->lastName)],
             )
         );
     }

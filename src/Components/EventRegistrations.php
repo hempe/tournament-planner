@@ -38,7 +38,7 @@ class EventRegistrations extends Component
                 return [
                     fn() => new Div(
                         content: [
-                            new Div($user->name),
+                            new Div(htmlspecialchars($user->name)),
                             new Small(content: $user->ago, style: 'font-size:0.8em'),
                         ]
                     ),
