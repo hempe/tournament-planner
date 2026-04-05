@@ -22,7 +22,7 @@ use TP\Models\DB;
         DB::$users->all(),
         function ($user) {
             return [
-                htmlspecialchars($user->username),
+                htmlspecialchars($user->displayName()),
                 new IconActionButton(
                     actionUrl: "/users/{$user->id}/admin",
                     title: $user->isAdmin ? __('users.remove_admin_rights') : __('users.give_admin_rights'),

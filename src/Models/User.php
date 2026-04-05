@@ -20,6 +20,12 @@ final class User
     ) {
     }
 
+    public function displayName(): string
+    {
+        $name = trim(($this->firstName ?? '') . ' ' . ($this->lastName ?? ''));
+        return $name ?: $this->username;
+    }
+
     public static function loggedIn(): bool
     {
         return isset($_SESSION['user_id']);

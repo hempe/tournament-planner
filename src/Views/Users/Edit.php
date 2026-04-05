@@ -25,7 +25,7 @@ assert(isset($user));
                     type: 'button',
                     color: Color::None,
                 ),
-                new Span(content: htmlspecialchars($user->username), style: 'flex-grow:1'),
+                new Span(content: htmlspecialchars($user->displayName()), style: 'flex-grow:1'),
             ],
             new Table(
                 ['', '', '', '', '', '', '', ''],

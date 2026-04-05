@@ -68,14 +68,14 @@ final class EventRepository extends BaseRepository
     {
         $isAdmin = User::admin();
         $query = $isAdmin
-            ? "SELECT u.id, u.username, u.admin FROM users AS u WHERE u.id NOT IN (SELECT r.userId FROM event_users AS r WHERE r.eventId = ?) ORDER BY u.username"
-            : "SELECT u.id, u.username, u.admin FROM users AS u WHERE u.id = ? AND u.id NOT IN (SELECT r.userId FROM event_users AS r WHERE r.eventId = ?) ORDER BY u.username";
+            ? "SELECT u.id, u.username, u.admin, u.first_name, u.last_name FROM users AS u WHERE u.id NOT IN (SELECT r.userId FROM event_users AS r WHERE r.eventId = ?) ORDER BY u.last_name, u.first_name"
+            : "SELECT u.id, u.username, u.admin, u.first_name, u.last_name FROM users AS u WHERE u.id = ? AND u.id NOT IN (SELECT r.userId FROM event_users AS r WHERE r.eventId = ?) ORDER BY u.last_name, u.first_name";
 
         $params = $isAdmin ? [$eventId] : [User::id(), $eventId];
         $types = $isAdmin ? "i" : "ii";
 
         return $this->fetchMappedRows($query, $types, $params, function ($row) {
-            return new User((int) $row['id'], $row['username'], (bool) $row['admin']);
+            return new User((int) $row['id'], $row['username'], (bool) $row['admin'], firstName: $row['first_name'] ?? null, lastName: $row['last_name'] ?? null);
         });
     }
 
@@ -151,22 +151,26 @@ final class EventRepository extends BaseRepository
                 r.state,
                 u.id AS user_id,
                 u.username,
+                u.first_name,
+                u.last_name,
                 u.male,
                 u.rfeg,
                 u.member_number
             FROM event_users AS r
             JOIN users AS u ON r.userId = u.id
             WHERE r.eventId = ?
-            ORDER BY r.state, u.male DESC, u.username";
+            ORDER BY r.state, u.male DESC, u.last_name, u.first_name";
 
         return $this->fetchMappedRows(
             $query,
             "i",
             [$eventId],
             function ($row) {
+                $displayName = trim(($row['first_name'] ?? '') . ' ' . ($row['last_name'] ?? ''))
+                    ?: $row['username'];
                 return new EventRegistration(
                     (int) $row['user_id'],
-                    $row['username'],
+                    $displayName,
                     $row['comment'] ?? '',
                     $row['timestamp'],
                     (int) $row['state'],

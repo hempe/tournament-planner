@@ -114,7 +114,7 @@ final class UserRepository
     /** @return User[] */
     public function all(): array
     {
-        $stmt = $this->conn->prepare("SELECT id, username, admin, male, rfeg, member_number, first_name, last_name FROM users ORDER BY username");
+        $stmt = $this->conn->prepare("SELECT id, username, admin, male, rfeg, member_number, first_name, last_name FROM users ORDER BY last_name, first_name, username");
         if (!$stmt) {
             throw new Exception("Prepare statement failed: " . $this->conn->error);
         }

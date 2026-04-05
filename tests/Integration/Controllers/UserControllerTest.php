@@ -524,4 +524,51 @@ class UserControllerTest extends IntegrationTestCase
         $response = $this->request('POST', "/users/$userId/admin", ['admin' => '1']);
         $this->assertEquals(303, $response->statusCode);
     }
+
+    // ===== displayName: first+last shown instead of username =====
+
+    public function testUserListShowsFirstLastName(): void
+    {
+        $this->loginAsAdmin();
+        DB::$users->create('hburri', 'Pass123!', firstName: 'Hansruedi', lastName: 'Burri');
+
+        $response = $this->request('GET', '/users');
+
+        $this->assertEquals(200, $response->statusCode);
+        $this->assertStringContainsString('Hansruedi Burri', $response->body);
+    }
+
+    public function testUserListFallsBackToUsernameWhenNoName(): void
+    {
+        $this->loginAsAdmin();
+        DB::$users->create('fallbackuser', 'Pass123!');
+
+        $response = $this->request('GET', '/users');
+
+        $this->assertEquals(200, $response->statusCode);
+        $this->assertStringContainsString('fallbackuser', $response->body);
+    }
+
+    public function testUserEditShowsFirstLastNameInTitle(): void
+    {
+        $this->loginAsAdmin();
+        $userId = DB::$users->create('kbecker', 'Pass123!', firstName: 'Karl-Uwe', lastName: 'Bäcker');
+
+        $response = $this->request('GET', "/users/$userId/edit");
+
+        $this->assertEquals(200, $response->statusCode);
+        $this->assertStringContainsString('Karl-Uwe Bäcker', $response->body);
+    }
+
+    public function testEventAdminShowsFirstLastNameForAvailableUsers(): void
+    {
+        $this->loginAsAdmin();
+        DB::$users->create('hburri', 'Pass123!', firstName: 'Hansruedi', lastName: 'Burri');
+        $eventId = DB::$events->add('Championship', '2099-08-10', 50);
+
+        $response = $this->request('GET', "/events/$eventId/admin");
+
+        $this->assertEquals(200, $response->statusCode);
+        $this->assertStringContainsString('Hansruedi Burri', $response->body);
+    }
 }

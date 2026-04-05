@@ -327,7 +327,7 @@ assert(is_int($id));
                     items: $users,
                     projection: function ($user) use ($id, $eventFull, $queryString) {
                         return [
-                            $user->username,
+                            $user->displayName(),
                             new InputAction(
                                 actionUrl: "/events/$id/register{$queryString}",
                                 inputName: 'comment',
@@ -336,7 +336,7 @@ assert(is_int($id));
                                 icon: 'fa-user-plus',
                                 inputPlaceholder: __('events.comment'),
                                 color: $eventFull ? Color::Accent : Color::Primary,
-                                confirmMessage: $eventFull ? __('auth.register_user_waitlist', ['username' => $user->username]) : __('auth.register_user', ['username' => $user->username]),
+                                confirmMessage: $eventFull ? __('auth.register_user_waitlist', ['username' => $user->displayName()]) : __('auth.register_user', ['username' => $user->displayName()]),
                                 hiddenInputs: ['userId' => $user->id]
                             ),
                         ];
