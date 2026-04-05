@@ -15,6 +15,7 @@ use TP\Models\SocialEvent;
 use TP\Models\SocialMenu;
 use TP\Models\SocialRegistration;
 use TP\Models\SocialTable;
+use TP\Models\DB;
 use TP\Models\User;
 
 assert($socialEvent instanceof SocialEvent);
@@ -177,5 +178,26 @@ assert(is_array($registrations));
             ),
             class: 'social',
         );
+    }
+
+    if ($socialEvent->tournamentId) {
+        $tournament = DB::$events->get($socialEvent->tournamentId, User::id() ?? 0);
+        if ($tournament) {
+            $tournamentFormatter = new \IntlDateFormatter(Translator::getInstance()->getLocale(), \IntlDateFormatter::FULL, \IntlDateFormatter::NONE);
+            $tournamentDate = $tournamentFormatter->format(strtotime($tournament->date));
+            yield new Card(
+                [
+                    new Span(content: $tournament->name . ' – ' . $tournamentDate, style: 'flex-grow:1'),
+                    new IconButton(
+                        title: $tournament->name,
+                        href: "/events/{$tournament->id}",
+                        icon: 'fa-chevron-right',
+                        type: 'button',
+                        color: Color::None,
+                    ),
+                ],
+                '',
+            );
+        }
     }
 });
