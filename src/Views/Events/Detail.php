@@ -184,7 +184,7 @@ assert(is_int($id));
             href: "/social-events/{$socialEvent->id}",
             icon: $socialEvent->userRegistered ? 'fa-user-check' : 'fa-user-plus',
             type: 'button',
-            color: $socialEvent->userRegistered ? Color::None : Color::Primary,
+            color: $socialEvent->userRegistered ? Color::None : Color::Social,
         );
         yield new Card($socialTitle, '');
     }

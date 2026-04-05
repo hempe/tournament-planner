@@ -7,5 +7,6 @@ enum Color: string
     case Primary = 'primary';
     case Accent = 'accent';
     case Light = 'light';
+    case Social = 'social';
     case None = '';
 }

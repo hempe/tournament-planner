@@ -19,6 +19,9 @@
   --button-accent-text: #ffffff;
   --button-light-bg: #dcdcdc;
   --button-light-text: #333;
+  --button-social-bg: #2272b6;
+  --button-social-light-bg: #cce0f5;
+  --button-social-text: #ffffff;
   --bg-darken: rgba(0, 0, 0, 0.03);
   --bg-darken-2: rgba(0, 0, 0, 0.05);
 }
@@ -129,6 +132,13 @@ button[light],
   background: var(--button-light-bg);
   color: var(--button-light-text);
   border-color: var(--button-light-bg);
+}
+
+button[social],
+.button[social] {
+  background: var(--button-social-bg);
+  color: var(--button-social-text);
+  border-color: var(--button-social-bg);
 }
 
 .card {

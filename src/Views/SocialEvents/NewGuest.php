@@ -100,7 +100,7 @@ assert(is_array($tables));
                     title: __('guests.register'),
                     title_inline: true,
                     icon: 'fa-user-plus',
-                    color: Color::Primary,
+                    color: Color::Social,
                     style: 'width:100%',
                 );
             }

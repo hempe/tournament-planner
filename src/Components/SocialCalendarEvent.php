@@ -38,6 +38,7 @@ class SocialCalendarEvent extends Component
                     ],
                     class: [
                         'event-date',
+                        'social-event',
                         $this->event->isLocked ? 'locked' : '',
                         $this->event->userRegistered ? 'joined' : ($this->canJoin() ? 'can-join' : 'cant-join'),
                     ],
@@ -59,7 +60,7 @@ class SocialCalendarEvent extends Component
                                         title: __('social_events.register'),
                                         type: '',
                                         icon: 'fa-user-plus',
-                                        color: Color::Primary,
+                                        color: Color::Social,
                                     );
                                 }
                             }

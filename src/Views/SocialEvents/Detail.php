@@ -147,7 +147,7 @@ assert(is_array($registrations));
                                 title: __('social_events.register'),
                                 title_inline: true,
                                 icon: 'fa-user-plus',
-                                color: Color::Primary,
+                                color: Color::Social,
                                 style: 'width:100%',
                             )
                         ],

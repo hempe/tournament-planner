@@ -52,7 +52,7 @@ assert(is_array($menus));
                         title: __('social_events.save'),
                         type: 'submit',
                         icon: 'fa-save',
-                        color: Color::Primary,
+                        color: Color::Social,
                     ),
                     new IconActionButton(
                         actionUrl: "/social-events/{$socialEvent->id}/delete",
@@ -143,7 +143,7 @@ assert(is_array($menus));
                 href: "/social-events/{$socialEvent->id}/guests/new",
                 icon: 'fa-user-plus',
                 type: 'button',
-                color: Color::Primary,
+                color: Color::Social,
             ),
         ];
         yield new Card(
@@ -176,7 +176,7 @@ assert(is_array($menus));
                 href: "/social-events/{$socialEvent->id}/guests/new",
                 icon: 'fa-user-plus',
                 type: 'button',
-                color: Color::Primary,
+                color: Color::Social,
             ),
         ];
         yield new Card($guestHeader, '');

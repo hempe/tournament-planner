@@ -82,7 +82,7 @@ assert(!isset($tournament) || $tournament instanceof Event || $tournament === nu
                         title: __('social_events.create'),
                         title_inline: true,
                         icon: 'fa-plus',
-                        color: Color::Primary,
+                        color: Color::Social,
                         style: 'width:100%',
                     )],
                 },

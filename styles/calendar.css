@@ -116,6 +116,14 @@ a {
   opacity: 0.5;
 }
 
+.event-date.social-event {
+  border-color: var(--button-social-bg);
+}
+
+.event-date.social-event.joined {
+  background-color: var(--button-social-light-bg);
+}
+
 .event.joined {
   background-color: var(--button-primary-light-bg);
 }
