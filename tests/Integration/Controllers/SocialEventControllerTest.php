@@ -802,6 +802,48 @@ class SocialEventControllerTest extends IntegrationTestCase
         $this->assertStringContainsString("/social-events/$socialId/admin", $response->body);
     }
 
+    // ===== Social event detail links back to linked tournament =====
+
+    public function testSocialEventDetailShowsTournamentLink(): void
+    {
+        $this->addUser();
+        $this->loginAs('member', 'Pass123!');
+        $tournamentId = DB::$events->add('Club Championship', '2099-07-20', 50);
+        $socialId = $this->addSocialEvent(name: 'Gala Dinner', tournamentId: $tournamentId);
+
+        $response = $this->request('GET', "/social-events/$socialId");
+
+        $this->assertEquals(200, $response->statusCode);
+        $this->assertStringContainsString("/events/$tournamentId", $response->body);
+        $this->assertStringContainsString('Club Championship', $response->body);
+    }
+
+    public function testSocialEventDetailNoTournamentLinkWhenUnlinked(): void
+    {
+        $this->addUser();
+        $this->loginAs('member', 'Pass123!');
+        $socialId = $this->addSocialEvent(name: 'Standalone Dinner');
+
+        $response = $this->request('GET', "/social-events/$socialId");
+
+        $this->assertEquals(200, $response->statusCode);
+        $this->assertStringNotContainsString('/events/', $response->body);
+    }
+
+    public function testTournamentDetailShowsSocialEventLink(): void
+    {
+        $this->addUser();
+        $this->loginAs('member', 'Pass123!');
+        $tournamentId = DB::$events->add('Club Championship', '2099-07-20', 50);
+        $socialId = $this->addSocialEvent(name: 'Gala Dinner', tournamentId: $tournamentId);
+
+        $response = $this->request('GET', "/events/$tournamentId");
+
+        $this->assertEquals(200, $response->statusCode);
+        $this->assertStringContainsString("/social-events/$socialId", $response->body);
+        $this->assertStringContainsString('Gala Dinner', $response->body);
+    }
+
     // ===== Home calendar shows social events =====
 
     public function testHomeCalendarShowsSocialEvents(): void

@@ -107,10 +107,20 @@ Requires MySQL with extensions `pdo_mysql` and `mysqli` enabled. Database schema
 
 ### Testing Policy
 
-**Every change must be tested:**
+**Every change must be tested — no exceptions:**
 - Run `composer test` after every code change
 - Add or update tests to cover any modified or new behavior
 - All tests must pass (pre-existing failures are acceptable, but do not introduce new ones)
+- New views/features: add integration tests verifying the page renders and contains key content
+- New cross-resource links: add tests verifying the link URL and linked name appear in both directions
+
+### Documentation Policy
+
+**Update docs alongside every change:**
+- New translation keys: they are self-documenting via `resources/lang/`
+- New `Color` cases: update `docs/COMPONENTS.md` if behavior differs from existing cases
+- New CSS version bumps: bump `?v=X` in `src/Layout/header.php` whenever a CSS file changes
+- After larger feature additions: update `README.md` feature list and `docs/TESTING.md` test count
 
 ### Component Usage
 
