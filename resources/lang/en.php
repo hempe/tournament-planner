@@ -51,6 +51,7 @@ return [
     'events' => [
         'title' => 'Events',
         'new' => 'New Event',
+        'new_for_date' => 'New Event: :date',
         'add' => 'Add Event',
         'name' => 'Name',
         'date' => 'Date',

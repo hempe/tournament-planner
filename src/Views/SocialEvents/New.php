@@ -40,23 +40,26 @@ assert(!isset($tournament) || $tournament instanceof Event || $tournament === nu
                     0 => [__('social_events.name'), new Input(
                         type: 'text',
                         name: 'name',
+                        value: old('name'),
                         placeholder: __('social_events.name'),
                         required: true,
                     )],
                     1 => [__('social_events.date'), new Input(
                         type: 'date',
                         name: 'date',
-                        value: $tournament ? $tournament->date : '',
+                        value: old('date', $tournament ? $tournament->date : ''),
                         required: true,
                     )],
                     2 => [__('social_events.description'), new Textarea(
                         name: 'description',
+                        value: old('description'),
                         placeholder: __('social_events.description'),
                         style: 'width:100%',
                     )],
                     3 => [__('social_events.registration_close'), new Input(
                         type: 'datetime-local',
                         name: 'registration_close',
+                        value: old('registration_close'),
                         placeholder: __('social_events.registration_close'),
                     )],
                     4 => [
@@ -64,6 +67,7 @@ assert(!isset($tournament) || $tournament instanceof Event || $tournament === nu
                         new Input(
                             type: 'text',
                             name: 'menus',
+                            value: old('menus'),
                             placeholder: __('social_events.menus_hint'),
                             required: true,
                         )
@@ -73,6 +77,7 @@ assert(!isset($tournament) || $tournament instanceof Event || $tournament === nu
                         new Input(
                             type: 'text',
                             name: 'tables',
+                            value: old('tables'),
                             placeholder: __('social_events.tables_hint'),
                             required: true,
                         )

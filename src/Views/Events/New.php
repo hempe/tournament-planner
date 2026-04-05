@@ -19,7 +19,7 @@ use TP\Core\Translator;
         action: "/events/new",
         hiddenInputs: ['date' => $date],
         content: new Card(
-            "Neuer Termin: " . $formatter->format(strtotime($date)),
+            __('events.new_for_date', ['date' => $formatter->format(strtotime($date))]),
             new Table(
                 columns: ['', '', '', '', '', '', '', ''],
                 items: [0, 1],
@@ -29,40 +29,45 @@ use TP\Core\Translator;
                         new Input(
                             type: 'text',
                             name: 'name',
+                            value: old('name'),
                             placeholder: __('events.name'),
                             required: true
                         ),
                         new Input(
                             type: 'number',
                             name: 'capacity',
+                            value: old('capacity'),
                             placeholder: __('events.capacity'),
                             required: true
                         ),
                         new Checkbox(
                             name: 'mixed',
                             label: __('events.play_together'),
-                            checked: true,
+                            checked: old('mixed', '1') === '1',
                         ),
                         new Input(
                             type: 'number',
                             name: 'price_members',
+                            value: old('price_members'),
                             placeholder: __('events.price_members'),
                             step: '0.01',
                         ),
                         new Input(
                             type: 'number',
                             name: 'price_guests',
+                            value: old('price_guests'),
                             placeholder: __('events.price_guests'),
                             step: '0.01',
                         ),
                         new Input(
                             type: 'datetime-local',
                             name: 'registration_close',
+                            value: old('registration_close'),
                             placeholder: __('events.registration_close'),
                         ),
                         '',
                         new IconButton(
-                            title: 'Speichern',
+                            title: __('events.save'),
                             type: 'submit',
                             icon: 'fa-save',
                             color: Color::Primary,
@@ -71,6 +76,7 @@ use TP\Core\Translator;
                     1 => [
                         new Textarea(
                             name: 'description',
+                            value: old('description'),
                             placeholder: __('events.description'),
                             style: 'width:100%',
                         ),

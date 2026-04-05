@@ -48,6 +48,7 @@ final class SocialEventController
         ]);
 
         if (!$validation->isValid) {
+            flash_input($request->getAllInput());
             flash('error', $validation->getErrorMessages());
             $qs = $request->getString('tournamentId') !== '' ? '?tournamentId=' . $request->getString('tournamentId') : '';
             return Response::redirect('/social-events/new' . $qs);
@@ -316,6 +317,7 @@ final class SocialEventController
         ]);
 
         if (!$validation->isValid) {
+            flash_input($request->getAllInput());
             flash('error', $validation->getErrorMessages());
             return Response::redirect("/social-events/$socialEventId/guests/new");
         }

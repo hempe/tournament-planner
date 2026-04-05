@@ -79,3 +79,33 @@ if (!function_exists('has_flash')) {
         return isset($_SESSION['flash_messages'][$key]);
     }
 }
+
+if (!function_exists('flash_input')) {
+    /**
+     * Store submitted form input in the flash session so it can be
+     * repopulated after a failed validation redirect.
+     *
+     * @param array<string, mixed> $data
+     */
+    function flash_input(array $data): void
+    {
+        flash('input', $data);
+    }
+}
+
+if (!function_exists('old')) {
+    /**
+     * Retrieve a previously-submitted field value for form repopulation.
+     * Reads from the flashed input stored by flash_input().
+     *
+     * Uses a session-level cache (_old_input_cache) so the flash entry is
+     * consumed exactly once per request, and cleared by setUp() between tests.
+     */
+    function old(string $field, string $default = ''): string
+    {
+        if (!isset($_SESSION['_old_input_cache'])) {
+            $_SESSION['_old_input_cache'] = get_flash('input') ?? [];
+        }
+        return (string) ($_SESSION['_old_input_cache'][$field] ?? $default);
+    }
+}

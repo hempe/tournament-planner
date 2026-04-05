@@ -502,6 +502,59 @@ class MonkeyTest extends IntegrationTestCase
         $this->assertNotEquals(500, $response->statusCode);
     }
 
+    // -------------------------------------------------------------------------
+    // Form repopulation — submitted values survive a failed validation redirect
+    // -------------------------------------------------------------------------
+
+    public function testFormRepopulationSocialEventNew(): void
+    {
+        $this->loginAsAdmin();
+        // Submit with missing tables (invalid)
+        $this->request('POST', '/social-events/new', [
+            'name' => 'My Dinner',
+            'date' => '2099-06-15',
+            'menus' => 'Meat,Fish',
+            'tables' => '', // invalid — triggers redirect with flash_input
+        ]);
+        // GET the form — should contain the previously submitted values
+        $response = $this->request('GET', '/social-events/new');
+        $this->assertEquals(200, $response->statusCode);
+        $this->assertStringContainsString('My Dinner', $response->body);
+        $this->assertStringContainsString('Meat,Fish', $response->body);
+    }
+
+    public function testFormRepopulationEventBulkNew(): void
+    {
+        $this->loginAsAdmin();
+        $this->request('POST', '/events/bulk/preview', [
+            'start_date' => '2099-01-01',
+            'end_date' => '2099-12-31',
+            'day_of_week' => '99', // invalid
+            'name' => 'Weekly Golf',
+            'capacity' => '20',
+        ]);
+        $response = $this->request('GET', '/events/bulk/new');
+        $this->assertEquals(200, $response->statusCode);
+        $this->assertStringContainsString('Weekly Golf', $response->body);
+    }
+
+    public function testFormRepopulationUsersNew(): void
+    {
+        $this->loginAsAdmin();
+        // Submit with missing password (invalid)
+        $this->request('POST', '/users', [
+            'male' => '1',
+            'username' => 'johndoe',
+            'password' => '',
+            'first_name' => 'John',
+            'last_name' => 'Doe',
+        ]);
+        $response = $this->request('GET', '/users/new');
+        $this->assertEquals(200, $response->statusCode);
+        $this->assertStringContainsString('johndoe', $response->body);
+        $this->assertStringContainsString('John', $response->body);
+    }
+
     public function testUxRegisterForLockedSocialEventShowsError(): void
     {
         $this->loginAsAdmin();

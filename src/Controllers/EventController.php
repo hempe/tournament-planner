@@ -109,6 +109,7 @@ final class EventController
         ]);
 
         if (!$validation->isValid) {
+            flash_input($request->getAllInput());
             flash('error', $validation->getErrorMessages());
             return Response::redirect('/events/new');
         }
@@ -431,6 +432,7 @@ final class EventController
         ]);
 
         if (!$validation->isValid) {
+            flash_input($request->getAllInput());
             flash('error', $validation->getErrorMessages());
             return Response::redirect('/events/bulk/new');
         }

@@ -25,11 +25,11 @@ use TP\Components\Textarea;
                 projection: fn($index) => match ($index) {
                     0 => [
                         new Label(for: 'start_date', text: __('events.bulk_start_date')),
-                        new Input(type: 'date', name: 'start_date', id: 'start_date', required: true),
+                        new Input(type: 'date', name: 'start_date', id: 'start_date', value: old('start_date'), required: true),
                     ],
                     1 => [
                         new Label(for: 'end_date', text: __('events.bulk_end_date')),
-                        new Input(type: 'date', name: 'end_date', id: 'end_date', required: true),
+                        new Input(type: 'date', name: 'end_date', id: 'end_date', value: old('end_date'), required: true),
                     ],
                     2 => [
                         new Label(for: 'day_of_week', text: __('events.bulk_day_of_week')),
@@ -46,38 +46,39 @@ use TP\Components\Textarea;
                             ],
                             name: 'day_of_week',
                             id: 'day_of_week',
+                            selected: old('day_of_week'),
                             required: true,
                         ),
                     ],
                     3 => [
                         new Label(for: 'name', text: __('events.name')),
-                        new Input(name: 'name', id: 'name', placeholder: __('events.name'), required: true),
+                        new Input(name: 'name', id: 'name', value: old('name'), placeholder: __('events.name'), required: true),
                     ],
                     4 => [
                         new Label(for: 'capacity', text: __('events.max_participants')),
-                        new Input(type: 'number', name: 'capacity', id: 'capacity', placeholder: __('events.max_participants'), required: true),
+                        new Input(type: 'number', name: 'capacity', id: 'capacity', value: old('capacity'), placeholder: __('events.max_participants'), required: true),
                     ],
                     5 => [
                         new Label(for: 'price_members', text: __('events.price_members')),
-                        new Input(type: 'number', name: 'price_members', id: 'price_members', placeholder: __('events.price_members'), step: '0.01'),
+                        new Input(type: 'number', name: 'price_members', id: 'price_members', value: old('price_members'), placeholder: __('events.price_members'), step: '0.01'),
                     ],
                     6 => [
                         new Label(for: 'price_guests', text: __('events.price_guests')),
-                        new Input(type: 'number', name: 'price_guests', id: 'price_guests', placeholder: __('events.price_guests'), step: '0.01'),
+                        new Input(type: 'number', name: 'price_guests', id: 'price_guests', value: old('price_guests'), placeholder: __('events.price_guests'), step: '0.01'),
                     ],
                     7 => [
                         new Label(for: 'registration_close_days', text: __('events.bulk_registration_close_days')),
-                        new Input(type: 'number', name: 'registration_close_days', id: 'registration_close_days', placeholder: __('events.bulk_registration_close_days'), min: '1', max: '7'),
+                        new Input(type: 'number', name: 'registration_close_days', id: 'registration_close_days', value: old('registration_close_days'), placeholder: __('events.bulk_registration_close_days'), min: '1', max: '7'),
                     ],
                     8 => [
                         new Label(for: 'registration_close_time', text: __('events.bulk_registration_close_time')),
-                        new Input(type: 'time', name: 'registration_close_time', id: 'registration_close_time'),
+                        new Input(type: 'time', name: 'registration_close_time', id: 'registration_close_time', value: old('registration_close_time')),
                     ],
                     9 => [
                         new Checkbox(
                             name: 'mixed',
                             label: __('events.play_together'),
-                            checked: true
+                            checked: old('mixed', '1') === '1',
                         ),
                         new IconButton(
                             title: __('events.bulk_preview'),

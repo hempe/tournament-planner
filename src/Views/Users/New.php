@@ -23,11 +23,13 @@ use TP\Components\Form;
                     new Select(
                         name: 'male',
                         options: ['1' => __('users.mr'), '0' => __('users.mrs')],
+                        selected: old('male', '1'),
                         required: true,
                     ),
                     new Input(
                         type: 'text',
                         name: 'username',
+                        value: old('username'),
                         placeholder: __('users.username'),
                         required: true
                     ),
@@ -40,21 +42,25 @@ use TP\Components\Form;
                     new Input(
                         type: 'text',
                         name: 'first_name',
+                        value: old('first_name'),
                         placeholder: __('users.first_name'),
                     ),
                     new Input(
                         type: 'text',
                         name: 'last_name',
+                        value: old('last_name'),
                         placeholder: __('users.last_name'),
                     ),
                     new Input(
                         type: 'text',
                         name: 'member_number',
+                        value: old('member_number'),
                         placeholder: __('users.member_number'),
                     ),
                     new Input(
                         type: 'text',
                         name: 'rfeg',
+                        value: old('rfeg'),
                         placeholder: __('users.rfeg'),
                     ),
                     new IconButton(

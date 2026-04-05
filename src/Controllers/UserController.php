@@ -55,6 +55,7 @@ final class UserController
         ]);
 
         if (!$validation->isValid) {
+            flash_input($request->getAllInput());
             flash('error', $validation->getErrorMessages());
             return Response::redirect('/users/new');
         }
@@ -69,6 +70,7 @@ final class UserController
             $lastName = $request->getString('last_name') ?: null;
 
             if (DB::$users->userNameAlreadyTaken($username)) {
+                flash_input($request->getAllInput());
                 flash('error', __('users.username_taken', ['username' => $username]));
                 return Response::redirect('/users/new');
             }
