@@ -62,8 +62,10 @@ assert(is_array($registrations));
         $cardTitle,
         new Card(
             $innerTitle,
-            new Table(['', ''], $details, fn($row) => $row, widths: [150, null])
-        )
+            new Table(['', ''], $details, fn($row) => $row, widths: [150, null]),
+            class: 'social',
+        ),
+        class: 'social',
     );
 
     // Registration card
@@ -156,7 +158,8 @@ assert(is_array($registrations));
                     style: 'width:100%'
                 ),
             );
-        }
+        },
+        class: 'social',
     );
 
     if (count($registrations) > 0) {
@@ -171,7 +174,8 @@ assert(is_array($registrations));
                     : __('social_events.libero'),
                     htmlspecialchars($reg->displayName)
                 ],
-            )
+            ),
+            class: 'social',
         );
     }
 });

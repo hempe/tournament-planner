@@ -153,6 +153,11 @@ button[social],
   color: #83BB41;
 }
 
+.card.social>.card-title,
+.card.social>.card-title>* {
+  color: var(--button-social-bg);
+}
+
 .card-title {
   display: inline-flex;
   align-items: stretch;
