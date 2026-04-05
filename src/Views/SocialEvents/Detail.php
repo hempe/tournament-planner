@@ -29,10 +29,11 @@ assert(is_array($registrations));
     $formatter = new \IntlDateFormatter(Translator::getInstance()->getLocale(), \IntlDateFormatter::FULL, \IntlDateFormatter::NONE);
     $formattedDate = $formatter->format(strtotime($socialEvent->date));
 
+    $backUrl = $socialEvent->tournamentId ? "/events/{$socialEvent->tournamentId}" : '/';
     $cardTitle = [
         new IconButton(
             title: __('nav.back'),
-            href: '/',
+            href: $backUrl,
             icon: 'fa-chevron-left',
             type: 'button',
             color: Color::None,
