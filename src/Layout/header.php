@@ -14,9 +14,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Hind+Guntur:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
 
-    <link href="/styles/style.css?v=3.0" rel="stylesheet" type="text/css">
+    <link href="/styles/style.css?v=4.0" rel="stylesheet" type="text/css">
 
-    <link href="/styles/calendar.css?v=2.0" rel="stylesheet" type="text/css">
+    <link href="/styles/calendar.css?v=3.0" rel="stylesheet" type="text/css">
     <link href="/styles/confirm.css?v=2.0" rel="stylesheet" type="text/css">
     <link href="/styles/error.css?v=2.0" rel="stylesheet" type="text/css">
     <link href="/styles/success.css?v=2.0" rel="stylesheet" type="text/css">
