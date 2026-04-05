@@ -22,7 +22,14 @@ final class AdminController
     #[Get('/migrate-names')]
     public function migrateNamesForm(Request $request): Response
     {
-        $pending = DB::$users->countWithoutNames();
+        // Columns may not exist yet — catch gracefully
+        try {
+            $pending = DB::$users->countWithoutNames();
+            $info = "<p><strong>$pending</strong> user(s) still need first/last name seeded from username.</p>";
+        } catch (\Exception $e) {
+            $info = "<p style='color:#b6334d'>Schema not yet migrated — columns <code>first_name</code> / <code>last_name</code> are missing. Running this migration will add them.</p>";
+        }
+
         $html = <<<HTML
         <html><head><meta charset="utf-8"><title>Migrate Names</title>
         <style>body{font-family:sans-serif;max-width:600px;margin:40px auto;padding:0 20px}
@@ -30,7 +37,7 @@ final class AdminController
         button:hover{background:#8f2238}</style></head>
         <body>
         <h2>Migrate Names</h2>
-        <p><strong>$pending</strong> user(s) still need first/last name seeded from username.</p>
+        $info
         <form method="POST" action="/admin/migrate-names">
             <button type="submit">Run migration</button>
         </form>
@@ -44,6 +51,11 @@ final class AdminController
     #[Post('/migrate-names')]
     public function migrateNames(Request $request): Response
     {
+        // Apply schema migration first
+        $conn = DB::getConnection();
+        $conn->query("ALTER TABLE users ADD COLUMN IF NOT EXISTS first_name VARCHAR(255) NULL");
+        $conn->query("ALTER TABLE users ADD COLUMN IF NOT EXISTS last_name VARCHAR(255) NULL");
+
         $results = DB::$users->seedNamesFromUsernames();
 
         $rows = '';

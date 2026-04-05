@@ -100,15 +100,8 @@ final class UserRepository
         $stmt->close();
     }
 
-    public function ensureNameColumns(): void
-    {
-        $this->conn->query("ALTER TABLE users ADD COLUMN IF NOT EXISTS first_name VARCHAR(255) NULL");
-        $this->conn->query("ALTER TABLE users ADD COLUMN IF NOT EXISTS last_name VARCHAR(255) NULL");
-    }
-
     public function countWithoutNames(): int
     {
-        $this->ensureNameColumns();
         $result = $this->conn->query("SELECT COUNT(*) AS cnt FROM users WHERE first_name IS NULL OR first_name = ''");
         if (!$result) {
             return 0;

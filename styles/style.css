@@ -37,6 +37,7 @@ body {
   color: var(--text);
   display: flex;
   flex-direction: column;
+  padding-bottom: 150px;
 }
 
 input,
@@ -430,6 +431,10 @@ input[type="checkbox"]:disabled {
   background-color: var(--button-primary-bg);
 }
 
+.event-date.social-event.can-join {
+  background-color: var(--button-social-bg);
+}
+
 .event-date.can-join>.event-desc {
   color: var(--button-primary-text);
 }
@@ -438,15 +443,8 @@ input[type="checkbox"]:disabled {
   background-color: #bbb;
 }
 
-.event-date.joined {
-  background-color: #0089d0;
-  color: var(--button-primary-text);
-}
-
-.event-date.joined>.event-desc {
-  color: var(--button-primary-text);
-}
-
+.event-date.joined,
+.event-date.joined>.event-desc,
 .event-date:not(.joined).locked>.event-desc {
   color: #333;
 }
