@@ -509,12 +509,12 @@ class MonkeyTest extends IntegrationTestCase
     public function testFormRepopulationSocialEventNew(): void
     {
         $this->loginAsAdmin();
-        // Submit with missing tables (invalid)
+        // Submit with missing date (invalid) — triggers redirect with flash_input
         $this->request('POST', '/social-events/new', [
             'name' => 'My Dinner',
-            'date' => '2099-06-15',
+            'date' => '', // invalid — required
             'menus' => 'Meat,Fish',
-            'tables' => '', // invalid — triggers redirect with flash_input
+            'tables' => '',
         ]);
         // GET the form — should contain the previously submitted values
         $response = $this->request('GET', '/social-events/new');

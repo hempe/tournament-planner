@@ -129,6 +129,22 @@ class SocialEventControllerTest extends IntegrationTestCase
         $this->assertEquals(8, $tables[3]->capacity);
     }
 
+    public function testStoreTablesAndMenusAreOptional(): void
+    {
+        $this->loginAsAdmin();
+
+        $response = $this->request('POST', '/social-events/new', [
+            'name' => 'No-Table Dinner',
+            'date' => '2099-06-15',
+        ]);
+
+        $this->assertEquals(303, $response->statusCode);
+        $events = DB::$socialEvents->all();
+        $this->assertCount(1, $events);
+        $this->assertCount(0, DB::$socialEvents->menus($events[0]->id));
+        $this->assertCount(0, DB::$socialEvents->tables($events[0]->id));
+    }
+
     public function testStoreLinksToTournament(): void
     {
         $this->loginAsAdmin();

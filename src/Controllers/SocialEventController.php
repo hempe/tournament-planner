@@ -43,8 +43,8 @@ final class SocialEventController
         $validation = $request->validate([
             new ValidationRule('name', ['required', 'string', 'max' => 255]),
             new ValidationRule('date', ['required', 'date']),
-            new ValidationRule('menus', ['required', 'string']),
-            new ValidationRule('tables', ['required', 'string']),
+            new ValidationRule('menus', ['string']),
+            new ValidationRule('tables', ['string']),
         ]);
 
         if (!$validation->isValid) {
@@ -63,8 +63,8 @@ final class SocialEventController
                 $tournamentId,
                 $request->getString('description') ?: null,
                 $request->getString('registration_close') ?: null,
-                $data['menus'],
-                $data['tables'],
+                $data['menus'] ?? '',
+                $data['tables'] ?? '',
             );
             return Response::redirect("/social-events/$id");
         } catch (Exception $e) {
@@ -141,8 +141,8 @@ final class SocialEventController
         $validation = $request->validate([
             new ValidationRule('name', ['required', 'string', 'max' => 255]),
             new ValidationRule('date', ['required', 'date']),
-            new ValidationRule('menus', ['required', 'string']),
-            new ValidationRule('tables', ['required', 'string']),
+            new ValidationRule('menus', ['string']),
+            new ValidationRule('tables', ['string']),
         ]);
 
         if (!$validation->isValid) {
@@ -158,8 +158,8 @@ final class SocialEventController
                 $data['date'],
                 $request->getString('description') ?: null,
                 $request->getString('registration_close') ?: null,
-                $data['menus'],
-                $data['tables'],
+                $data['menus'] ?? '',
+                $data['tables'] ?? '',
             );
             return Response::redirect("/social-events/$socialEventId/admin");
         } catch (Exception $e) {
