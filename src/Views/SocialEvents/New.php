@@ -69,7 +69,6 @@ assert(!isset($tournament) || $tournament instanceof Event || $tournament === nu
                             name: 'menus',
                             value: old('menus'),
                             placeholder: __('social_events.menus_hint'),
-                            required: true,
                         )
                     ],
                     5 => [
@@ -79,7 +78,6 @@ assert(!isset($tournament) || $tournament instanceof Event || $tournament === nu
                             name: 'tables',
                             value: old('tables'),
                             placeholder: __('social_events.tables_hint'),
-                            required: true,
                         )
                     ],
                     6 => ['', new IconButton(

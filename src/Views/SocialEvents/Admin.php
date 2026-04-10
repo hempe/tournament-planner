@@ -115,7 +115,6 @@ assert(is_array($menus));
                                 name: 'menus',
                                 value: $menusString,
                                 placeholder: __('social_events.menus_hint'),
-                                required: true,
                             )
                         ],
                         5 => [
@@ -125,7 +124,6 @@ assert(is_array($menus));
                                 name: 'tables',
                                 value: $tablesString,
                                 placeholder: __('social_events.tables_hint'),
-                                required: true,
                             )
                         ],
                     },
