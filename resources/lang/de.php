@@ -321,6 +321,9 @@ Bitte beachten Sie, dass Clubmitglieder bei der Vergabe freier Startplätze grun
         'participants' => 'Teilnehmer',
         'full' => 'Ausgebucht',
         'available' => ':count Plätze verfügbar',
+        'menu_in_use' => 'Die Menüoption ":menu" wurde von :count Teilnehmer(n) ausgewählt und kann nicht entfernt werden. Bitte aktualisieren Sie zuerst die entsprechenden Anmeldungen.',
+        'table_in_use' => 'Tisch :number hat :count angemeldete Teilnehmer und kann nicht entfernt werden. Bitte aktualisieren Sie zuerst die entsprechenden Anmeldungen.',
+        'table_capacity_too_low' => 'Tisch :number hat bereits :registered angemeldete Teilnehmer. Die neue Kapazität von :capacity ist zu gering.',
     ],
 
     // Time

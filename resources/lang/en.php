@@ -321,6 +321,9 @@ Please note that club members are given priority when allocating available start
         'participants' => 'Participants',
         'full' => 'Full',
         'available' => ':count spots available',
+        'menu_in_use' => 'Menu option ":menu" is selected by :count participant(s) and cannot be removed. Please update those registrations first.',
+        'table_in_use' => 'Table :number has :count registered participant(s) and cannot be removed. Please update those registrations first.',
+        'table_capacity_too_low' => 'Table :number already has :registered registered participant(s). The new capacity of :capacity is too low.',
     ],
 
     // Time

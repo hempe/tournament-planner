@@ -350,30 +350,102 @@ final class SocialEventRepository extends BaseRepository
 
     private function setMenus(int $socialEventId, string $menus): void
     {
-        $this->executeUpdateQuery("DELETE FROM social_menus WHERE socialEventId = ?", 'i', [$socialEventId]);
-        $names = array_filter(array_map('trim', explode(',', $menus)));
-        foreach ($names as $name) {
-            $this->executeUpdateQuery(
-                "INSERT INTO social_menus (socialEventId, name) VALUES (?, ?)",
-                'is',
-                [$socialEventId, $name]
+        $newNames = array_values(array_filter(array_map('trim', explode(',', $menus))));
+
+        $existing = $this->fetchMappedRows(
+            "SELECT id, name FROM social_menus WHERE socialEventId = ?",
+            'i',
+            [$socialEventId],
+            fn($row) => ['id' => (int) $row['id'], 'name' => $row['name']]
+        );
+
+        $toDelete = array_filter($existing, fn($m) => !in_array($m['name'], $newNames, true));
+        foreach ($toDelete as $menu) {
+            $count = (int) $this->fetchSingleValue(
+                "SELECT COUNT(*) FROM social_registrations WHERE menuId = ?",
+                'i',
+                [$menu['id']]
             );
+            if ($count > 0) {
+                throw new Exception(__('social_events.menu_in_use', ['menu' => $menu['name'], 'count' => $count]));
+            }
+            $this->executeUpdateQuery("DELETE FROM social_menus WHERE id = ?", 'i', [$menu['id']]);
+        }
+
+        $existingNames = array_column($existing, 'name');
+        foreach ($newNames as $name) {
+            if (!in_array($name, $existingNames, true)) {
+                $this->executeUpdateQuery(
+                    "INSERT INTO social_menus (socialEventId, name) VALUES (?, ?)",
+                    'is',
+                    [$socialEventId, $name]
+                );
+            }
         }
     }
 
     private function setTables(int $socialEventId, string $tables): void
     {
-        $this->executeUpdateQuery("DELETE FROM social_tables WHERE socialEventId = ?", 'i', [$socialEventId]);
-        $capacities = array_filter(array_map('trim', explode(',', $tables)));
-        $number = 1;
-        foreach ($capacities as $capacity) {
-            if (is_numeric($capacity) && (int) $capacity > 0) {
+        $newCapacities = [];
+        foreach (array_filter(array_map('trim', explode(',', $tables))) as $cap) {
+            if (is_numeric($cap) && (int) $cap > 0) {
+                $newCapacities[] = (int) $cap;
+            }
+        }
+
+        $existing = $this->fetchMappedRows(
+            "SELECT st.id, st.number, st.capacity,
+                COALESCE((SELECT COUNT(*) FROM social_registrations sr WHERE sr.tableId = st.id), 0) AS registered
+             FROM social_tables st WHERE st.socialEventId = ? ORDER BY st.number",
+            'i',
+            [$socialEventId],
+            fn($row) => [
+                'id'         => (int) $row['id'],
+                'number'     => (int) $row['number'],
+                'capacity'   => (int) $row['capacity'],
+                'registered' => (int) $row['registered'],
+            ]
+        );
+
+        $existingByNumber = [];
+        foreach ($existing as $t) {
+            $existingByNumber[$t['number']] = $t;
+        }
+
+        $newCount = count($newCapacities);
+        foreach ($existingByNumber as $number => $table) {
+            if ($number > $newCount) {
+                if ($table['registered'] > 0) {
+                    throw new Exception(__('social_events.table_in_use', ['number' => $number, 'count' => $table['registered']]));
+                }
+                $this->executeUpdateQuery("DELETE FROM social_tables WHERE id = ?", 'i', [$table['id']]);
+            }
+        }
+
+        foreach ($newCapacities as $index => $capacity) {
+            $number = $index + 1;
+            if (isset($existingByNumber[$number])) {
+                $table = $existingByNumber[$number];
+                if ($capacity < $table['registered']) {
+                    throw new Exception(__('social_events.table_capacity_too_low', [
+                        'number'     => $number,
+                        'registered' => $table['registered'],
+                        'capacity'   => $capacity,
+                    ]));
+                }
+                if ($capacity !== $table['capacity']) {
+                    $this->executeUpdateQuery(
+                        "UPDATE social_tables SET capacity = ? WHERE id = ?",
+                        'ii',
+                        [$capacity, $table['id']]
+                    );
+                }
+            } else {
                 $this->executeUpdateQuery(
                     "INSERT INTO social_tables (socialEventId, number, capacity) VALUES (?, ?, ?)",
                     'iii',
-                    [$socialEventId, $number, (int) $capacity]
+                    [$socialEventId, $number, $capacity]
                 );
-                $number++;
             }
         }
     }

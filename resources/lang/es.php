@@ -321,6 +321,9 @@ Tenga en cuenta que los socios del club tienen prioridad en la asignación de la
         'participants' => 'Participantes',
         'full' => 'Completo',
         'available' => ':count plazas disponibles',
+        'menu_in_use' => 'La opción de menú ":menu" está seleccionada por :count participante(s) y no se puede eliminar. Primero actualice esas inscripciones.',
+        'table_in_use' => 'La mesa :number tiene :count participante(s) inscrito(s) y no se puede eliminar. Primero actualice esas inscripciones.',
+        'table_capacity_too_low' => 'La mesa :number ya tiene :registered participante(s) inscrito(s). La nueva capacidad de :capacity es demasiado baja.',
     ],
 
     // Time

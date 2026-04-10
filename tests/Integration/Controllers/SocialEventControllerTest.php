@@ -310,6 +310,86 @@ class SocialEventControllerTest extends IntegrationTestCase
         $this->assertEquals(10, $tables[0]->capacity);
     }
 
+    public function testUpdateCannotRemoveMenuInUse(): void
+    {
+        $this->loginAsAdmin();
+        $id = $this->addSocialEvent(menus: 'Meat, Fish', tables: '10');
+        $userId = $this->addUser();
+        $menus = DB::$socialEvents->menus($id);
+        DB::$socialEvents->register($id, $userId, $menus[0]->id, null);
+
+        $response = $this->request('POST', "/social-events/$id", [
+            'name' => 'Summer Dinner',
+            'date' => '2099-06-15',
+            'menus' => 'Fish',
+            'tables' => '10',
+        ]);
+
+        $this->assertEquals(303, $response->statusCode);
+        $this->assertCount(2, DB::$socialEvents->menus($id));
+    }
+
+    public function testUpdateCannotRemoveTableInUse(): void
+    {
+        $this->loginAsAdmin();
+        $id = $this->addSocialEvent(menus: 'Meat', tables: '10, 10');
+        $userId = $this->addUser();
+        $menus = DB::$socialEvents->menus($id);
+        $tables = DB::$socialEvents->tables($id);
+        DB::$socialEvents->register($id, $userId, $menus[0]->id, $tables[1]->id);
+
+        $response = $this->request('POST', "/social-events/$id", [
+            'name' => 'Summer Dinner',
+            'date' => '2099-06-15',
+            'menus' => 'Meat',
+            'tables' => '10',
+        ]);
+
+        $this->assertEquals(303, $response->statusCode);
+        $this->assertCount(2, DB::$socialEvents->tables($id));
+    }
+
+    public function testUpdateCannotReduceTableCapacityBelowRegistered(): void
+    {
+        $this->loginAsAdmin();
+        $id = $this->addSocialEvent(menus: 'Meat', tables: '10');
+        $userId = $this->addUser();
+        $menus = DB::$socialEvents->menus($id);
+        $tables = DB::$socialEvents->tables($id);
+        DB::$socialEvents->register($id, $userId, $menus[0]->id, $tables[0]->id);
+
+        $response = $this->request('POST', "/social-events/$id", [
+            'name' => 'Summer Dinner',
+            'date' => '2099-06-15',
+            'menus' => 'Meat',
+            'tables' => '0',
+        ]);
+
+        $this->assertEquals(303, $response->statusCode);
+        $this->assertEquals(10, DB::$socialEvents->tables($id)[0]->capacity);
+    }
+
+    public function testUpdateCanExpandTablesWhenRegistrationsExist(): void
+    {
+        $this->loginAsAdmin();
+        $id = $this->addSocialEvent(menus: 'Meat', tables: '10, 10, 10');
+        $userId = $this->addUser();
+        $menus = DB::$socialEvents->menus($id);
+        $tables = DB::$socialEvents->tables($id);
+        DB::$socialEvents->register($id, $userId, $menus[0]->id, $tables[0]->id);
+
+        $response = $this->request('POST', "/social-events/$id", [
+            'name' => 'Summer Dinner',
+            'date' => '2099-06-15',
+            'menus' => 'Meat',
+            'tables' => '5, 5, 5, 5, 5, 5',
+        ]);
+
+        $this->assertEquals(303, $response->statusCode);
+        $this->assertCount(6, DB::$socialEvents->tables($id));
+        $this->assertEquals(5, DB::$socialEvents->tables($id)[0]->capacity);
+    }
+
     // ===== POST /social-events/{id}/delete =====
 
     public function testDeleteRequiresAdmin(): void

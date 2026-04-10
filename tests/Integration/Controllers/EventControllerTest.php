@@ -164,6 +164,53 @@ class EventControllerTest extends IntegrationTestCase
         $this->assertEquals('Original Name', $event->name);
     }
 
+    public function testUpdateReducingCapacityMovesNewestToWaitlist(): void
+    {
+        $this->loginAsAdmin();
+        $eventId = DB::$events->add('Big Event', '2099-03-15', 3);
+        $user1 = DB::$users->create('user1', 'Pass123!');
+        $user2 = DB::$users->create('user2', 'Pass123!');
+        $user3 = DB::$users->create('user3', 'Pass123!');
+        DB::$events->register($eventId, $user1, '');
+        DB::$events->register($eventId, $user2, '');
+        DB::$events->register($eventId, $user3, '');
+
+        $response = $this->request('POST', "/events/$eventId", [
+            'name' => 'Big Event',
+            'capacity' => '2',
+        ]);
+
+        $this->assertEquals(303, $response->statusCode);
+        $states = [
+            DB::$events->get($eventId, $user1)->userState,
+            DB::$events->get($eventId, $user2)->userState,
+            DB::$events->get($eventId, $user3)->userState,
+        ];
+        $this->assertEquals(2, array_count_values($states)[1]);
+        $this->assertEquals(1, array_count_values($states)[2]);
+    }
+
+    public function testUpdateIncreasingCapacityPromotesFromWaitlist(): void
+    {
+        $this->loginAsAdmin();
+        $eventId = DB::$events->add('Small Event', '2099-03-15', 1);
+        $user1 = DB::$users->create('user1', 'Pass123!');
+        $user2 = DB::$users->create('user2', 'Pass123!');
+        DB::$events->register($eventId, $user1, '');
+        DB::$events->register($eventId, $user2, '');
+
+        $this->assertEquals(2, DB::$events->get($eventId, $user2)->userState);
+
+        $response = $this->request('POST', "/events/$eventId", [
+            'name' => 'Small Event',
+            'capacity' => '2',
+        ]);
+
+        $this->assertEquals(303, $response->statusCode);
+        $this->assertEquals(1, DB::$events->get($eventId, $user1)->userState);
+        $this->assertEquals(1, DB::$events->get($eventId, $user2)->userState);
+    }
+
     public function testDeleteRemovesEvent(): void
     {
         $this->loginAsAdmin();
