@@ -34,7 +34,7 @@ return [
 
     // Authentication
     'auth' => [
-        'login' => 'Iniciar sesión',
+        'login' => 'Acceso para Socios',
         'welcome' => 'Bienvenido a GOLF EL FARO',
         'username' => 'Usuario',
         'password' => 'Contraseña',
