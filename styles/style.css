@@ -407,6 +407,13 @@ input[type="checkbox"]:disabled {
 }
 
 @media (max-width: 768px) {
+  .navtop {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+
   .navtop h1 {
     font-size: 1rem;
   }
