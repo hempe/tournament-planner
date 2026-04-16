@@ -20,10 +20,12 @@ class SocialCalendarEvent extends Component
         if ($this->event->isLocked) {
             return __('social_events.locked_message');
         }
-        if ($this->event->available <= 0) {
+        if ($this->event->available !== null && $this->event->available <= 0) {
             return __('social_events.full');
         }
-        return __('social_events.available', ['count' => $this->event->available]);
+        return $this->event->available !== null
+            ? __('social_events.available', ['count' => $this->event->available])
+            : __('social_events.register');
     }
 
     protected function template(): void
@@ -55,7 +57,7 @@ class SocialCalendarEvent extends Component
                                 }
                                 if ($this->event->isLocked) {
                                     yield new Icon('fa-lock', __('social_events.locked_message'));
-                                } elseif (!$this->event->userRegistered && $this->canJoin() && $this->event->available > 0) {
+                                } elseif (!$this->event->userRegistered && $this->canJoin() && ($this->event->available === null || $this->event->available > 0)) {
                                     yield new IconButton(
                                         title: __('social_events.register'),
                                         type: '',

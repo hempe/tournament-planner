@@ -328,7 +328,7 @@ final class EventController
             flash('success', __('events.registration_success'));
 
             $socialEvent = DB::$socialEvents->getForTournament($eventId);
-            if ($socialEvent !== null && !$socialEvent->userRegistered && !$socialEvent->isLocked && $socialEvent->available > 0) {
+            if ($socialEvent !== null && !$socialEvent->userRegistered && !$socialEvent->isLocked && ($socialEvent->available === null || $socialEvent->available > 0)) {
                 flash('social_prompt', [
                     'id' => $socialEvent->id,
                     'message' => __('events.social_prompt_message', ['name' => $socialEvent->name]),

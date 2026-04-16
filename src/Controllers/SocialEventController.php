@@ -223,10 +223,16 @@ final class SocialEventController
             return Response::redirect("/social-events/$socialEventId");
         }
 
-        $menuId = (int) $request->getString('menu_id');
+        $menus = DB::$socialEvents->menus($socialEventId);
+        $menuIdRaw = $request->getString('menu_id');
+        if (!empty($menus) && $menuIdRaw === '') {
+            flash('error', __('social_events.invalid_menu'));
+            return Response::redirect("/social-events/$socialEventId");
+        }
+        $menuId = !empty($menus) ? (int) $menuIdRaw : null;
         $tableId = $request->getString('table_id') !== '' ? (int) $request->getString('table_id') : null;
 
-        if (!DB::$socialEvents->menuBelongsToEvent($menuId, $socialEventId)) {
+        if ($menuId !== null && !DB::$socialEvents->menuBelongsToEvent($menuId, $socialEventId)) {
             flash('error', __('social_events.invalid_menu'));
             return Response::redirect("/social-events/$socialEventId");
         }
@@ -308,13 +314,19 @@ final class SocialEventController
 
         $isAdmin = User::admin();
         $emailRules = $isAdmin ? ['email', 'max' => 255] : ['required', 'email', 'max' => 255];
+        $guestMenus = DB::$socialEvents->menus($socialEventId);
+        $menuRules = !empty($guestMenus) ? ['required', 'integer'] : [];
 
-        $validation = $request->validate([
+        $validationRules = [
             new ValidationRule('first_name', ['required', 'string', 'max' => 255]),
             new ValidationRule('last_name', ['required', 'string', 'max' => 255]),
             new ValidationRule('email', $emailRules),
-            new ValidationRule('menu_id', ['required', 'integer']),
-        ]);
+        ];
+        if (!empty($menuRules)) {
+            $validationRules[] = new ValidationRule('menu_id', $menuRules);
+        }
+
+        $validation = $request->validate($validationRules);
 
         if (!$validation->isValid) {
             flash_input($request->getAllInput());
@@ -323,10 +335,10 @@ final class SocialEventController
         }
 
         $data = $request->getValidatedData();
-        $menuId = (int) $data['menu_id'];
+        $menuId = !empty($guestMenus) ? (int) $data['menu_id'] : null;
         $tableId = $request->getString('table_id') !== '' ? (int) $request->getString('table_id') : null;
 
-        if (!DB::$socialEvents->menuBelongsToEvent($menuId, $socialEventId)) {
+        if ($menuId !== null && !DB::$socialEvents->menuBelongsToEvent($menuId, $socialEventId)) {
             flash('error', __('social_events.invalid_menu'));
             return Response::redirect("/social-events/$socialEventId/guests/new");
         }

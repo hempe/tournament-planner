@@ -605,6 +605,19 @@ class SocialEventControllerTest extends IntegrationTestCase
         $this->assertEquals(0, $event->registered);
     }
 
+    public function testRegisterBlockedWhenMenusExistButNoneSelected(): void
+    {
+        $this->addUser();
+        $this->loginAs('member', 'Pass123!');
+        $id = $this->addSocialEvent();
+
+        $response = $this->request('POST', "/social-events/$id/register", []);
+
+        $this->assertEquals(303, $response->statusCode);
+        $event = DB::$socialEvents->get($id, 0);
+        $this->assertEquals(0, $event->registered);
+    }
+
     public function testRegisterBlockedWhenLocked(): void
     {
         $userId = $this->addUser();
@@ -637,6 +650,48 @@ class SocialEventControllerTest extends IntegrationTestCase
 
         $event = DB::$socialEvents->get($id, $userId);
         $this->assertEquals(1, $event->registered);
+    }
+
+    public function testRegisterWithNoMenus(): void
+    {
+        $userId = $this->addUser();
+        $this->loginAs('member', 'Pass123!');
+        $id = $this->addSocialEvent(menus: '', tables: '10');
+
+        $response = $this->request('POST', "/social-events/$id/register", []);
+
+        $this->assertEquals(303, $response->statusCode);
+        $event = DB::$socialEvents->get($id, $userId);
+        $this->assertEquals(1, $event->userRegistered);
+        $registration = DB::$socialEvents->getUserRegistration($id, $userId);
+        $this->assertNotNull($registration);
+        $this->assertNull($registration->menuId);
+    }
+
+    public function testRegisterWithNoMenusOrTables(): void
+    {
+        $userId = $this->addUser();
+        $this->loginAs('member', 'Pass123!');
+        $id = $this->addSocialEvent(menus: '', tables: '');
+
+        $response = $this->request('POST', "/social-events/$id/register", []);
+
+        $this->assertEquals(303, $response->statusCode);
+        $event = DB::$socialEvents->get($id, $userId);
+        $this->assertEquals(1, $event->userRegistered);
+    }
+
+    public function testDetailPageShowsRegisteredStateWithNoMenus(): void
+    {
+        $userId = $this->addUser();
+        $this->loginAs('member', 'Pass123!');
+        $id = $this->addSocialEvent(menus: '', tables: '');
+        DB::$socialEvents->register($id, $userId, null, null);
+
+        $response = $this->request('GET', "/social-events/$id");
+
+        $this->assertEquals(200, $response->statusCode);
+        $this->assertStringContainsString(__('social_events.registered'), $response->body);
     }
 
     // ===== POST /social-events/{id}/unregister =====
@@ -818,6 +873,12 @@ class SocialEventControllerTest extends IntegrationTestCase
     }
 
     // ===== Repository: isFull / isTableFull =====
+
+    public function testIsFullReturnsFalseWhenNoTablesConfigured(): void
+    {
+        $id = $this->addSocialEvent(tables: '');
+        $this->assertFalse(DB::$socialEvents->isFull($id));
+    }
 
     public function testIsFullReturnsFalseWhenSeatsAvailable(): void
     {

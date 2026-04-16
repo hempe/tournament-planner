@@ -79,15 +79,18 @@ assert(is_array($registrations));
         $regCardTitle,
         function () use ($socialEvent, $menus, $tables, $registration) {
             if ($registration) {
-                $regDetails = [
-                    [__('social_events.menu'), htmlspecialchars($registration->menuName)],
-                    [
+                $regDetails = [];
+                if ($registration->menuName !== null) {
+                    $regDetails[] = [__('social_events.menu'), htmlspecialchars($registration->menuName)];
+                }
+                if (!empty($tables) || $registration->tableNumber !== null) {
+                    $regDetails[] = [
                         __('social_events.table'),
                         $registration->tableNumber !== null
                         ? __('social_events.table_number', ['number' => $registration->tableNumber])
-                        : __('social_events.libero')
-                    ],
-                ];
+                        : __('social_events.libero'),
+                    ];
+                }
                 yield new Table(['', ''], $regDetails, fn($row) => $row, widths: [150, null]);
                 if (!$socialEvent->isLocked) {
                     yield new Form(
@@ -110,12 +113,12 @@ assert(is_array($registrations));
                 return;
             }
 
-            if ($socialEvent->available <= 0) {
+            if ($socialEvent->available !== null && $socialEvent->available <= 0) {
                 yield new Table([''], [0], fn($i) => [__('social_events.full')], widths: [null]);
                 return;
             }
 
-            $menuOptions = [];
+            $menuOptions = ['' => __('social_events.select_menu')];
             foreach ($menus as $menu) {
                 /** @var SocialMenu $menu */
                 $menuOptions[$menu->id] = $menu->name;
@@ -130,32 +133,37 @@ assert(is_array($registrations));
                 }
             }
 
+            $formRows = [];
+            if (!empty($menus)) {
+                $formRows[] = [
+                    __('social_events.menu') . new Span(content: ' *', style: 'color:var(--color-accent)'),
+                    new Select(options: $menuOptions, name: 'menu_id', required: true),
+                ];
+            }
+            if (!empty($tables)) {
+                $formRows[] = [
+                    __('social_events.table'),
+                    new Select(options: $tableOptions, name: 'table_id'),
+                ];
+            }
+            $formRows[] = [
+                '',
+                new IconButton(
+                    type: 'submit',
+                    title: __('social_events.register'),
+                    title_inline: true,
+                    icon: 'fa-user-plus',
+                    color: Color::Social,
+                    style: 'width:100%',
+                ),
+            ];
+
             yield new Form(
                 action: "/social-events/{$socialEvent->id}/register",
                 content: new Table(
                     columns: ['', ''],
-                    items: [0, 1, 2],
-                    projection: fn($i) => match ($i) {
-                        0 => [
-                            __('social_events.menu') . new Span(content: ' *', style: 'color:var(--color-accent)'),
-                            new Select(options: $menuOptions, name: 'menu_id', required: true),
-                        ],
-                        1 => [
-                            __('social_events.table'),
-                            new Select(options: $tableOptions, name: 'table_id'),
-                        ],
-                        2 => [
-                            '',
-                            new IconButton(
-                                type: 'submit',
-                                title: __('social_events.register'),
-                                title_inline: true,
-                                icon: 'fa-user-plus',
-                                color: Color::Social,
-                                style: 'width:100%',
-                            )
-                        ],
-                    },
+                    items: array_keys($formRows),
+                    projection: fn($i) => $formRows[$i],
                     widths: [150, null],
                     style: 'width:100%'
                 ),

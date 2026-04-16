@@ -17,8 +17,8 @@ final class SocialRegistration
         public readonly ?string $email,
         public readonly ?int $tableId,
         public readonly ?int $tableNumber,
-        public readonly int $menuId,
-        public readonly string $menuName,
+        public readonly ?int $menuId,
+        public readonly ?string $menuName,
         public readonly string $timestamp,
     ) {
         $this->displayName = $userId !== null

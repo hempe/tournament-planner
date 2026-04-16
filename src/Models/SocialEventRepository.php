@@ -17,7 +17,7 @@ final class SocialEventRepository extends BaseRepository
                 se.description,
                 se.registration_close,
                 (se.locked = 1 OR se.date < NOW() OR (se.registration_close IS NOT NULL AND se.registration_close < NOW())) AS isLocked,
-                COALESCE((SELECT SUM(st.capacity) FROM social_tables st WHERE st.socialEventId = se.id), 0) AS totalCapacity,
+                (SELECT SUM(st.capacity) FROM social_tables st WHERE st.socialEventId = se.id) AS totalCapacity,
                 (SELECT COUNT(*) FROM social_registrations sr WHERE sr.socialEventId = se.id) AS registered,
                 (SELECT COUNT(*) FROM social_registrations sr WHERE sr.socialEventId = se.id AND sr.userId = ?) AS userRegistered
             FROM social_events se";
@@ -32,7 +32,7 @@ final class SocialEventRepository extends BaseRepository
             $row['description'] ?? null,
             $row['registration_close'] ?? null,
             (bool) $row['isLocked'],
-            (int) $row['totalCapacity'],
+            isset($row['totalCapacity']) ? (int) $row['totalCapacity'] : null,
             (int) $row['registered'],
             (int) $row['userRegistered'],
         );
@@ -206,7 +206,7 @@ final class SocialEventRepository extends BaseRepository
                 u.first_name AS userFirstName, u.last_name AS userLastName, u.username
              FROM social_registrations sr
              LEFT JOIN social_tables st ON sr.tableId = st.id
-             JOIN social_menus sm ON sr.menuId = sm.id
+             LEFT JOIN social_menus sm ON sr.menuId = sm.id
              LEFT JOIN users u ON sr.userId = u.id
              WHERE sr.socialEventId = ?
              ORDER BY st.number IS NULL, st.number, sr.timestamp",
@@ -221,8 +221,8 @@ final class SocialEventRepository extends BaseRepository
                 $row['userId'] !== null ? null : $row['email'],
                 isset($row['tableId']) ? (int) $row['tableId'] : null,
                 isset($row['tableNumber']) ? (int) $row['tableNumber'] : null,
-                (int) $row['menuId'],
-                $row['menuName'],
+                isset($row['menuId']) ? (int) $row['menuId'] : null,
+                $row['menuName'] ?? null,
                 $row['timestamp'],
             )
         );
@@ -238,7 +238,7 @@ final class SocialEventRepository extends BaseRepository
                 u.first_name AS userFirstName, u.last_name AS userLastName, u.username
              FROM social_registrations sr
              LEFT JOIN social_tables st ON sr.tableId = st.id
-             JOIN social_menus sm ON sr.menuId = sm.id
+             LEFT JOIN social_menus sm ON sr.menuId = sm.id
              LEFT JOIN users u ON sr.userId = u.id
              WHERE sr.socialEventId = ? AND sr.userId = ?",
             'ii',
@@ -252,15 +252,15 @@ final class SocialEventRepository extends BaseRepository
                 null,
                 isset($row['tableId']) ? (int) $row['tableId'] : null,
                 isset($row['tableNumber']) ? (int) $row['tableNumber'] : null,
-                (int) $row['menuId'],
-                $row['menuName'],
+                isset($row['menuId']) ? (int) $row['menuId'] : null,
+                $row['menuName'] ?? null,
                 $row['timestamp'],
             )
         );
         return $rows[0] ?? null;
     }
 
-    public function register(int $socialEventId, int $userId, int $menuId, ?int $tableId): void
+    public function register(int $socialEventId, int $userId, ?int $menuId, ?int $tableId): void
     {
         $this->executeUpdateQuery(
             "INSERT INTO social_registrations (socialEventId, userId, menuId, tableId) VALUES (?, ?, ?, ?)",
@@ -269,7 +269,7 @@ final class SocialEventRepository extends BaseRepository
         );
     }
 
-    public function registerGuest(int $socialEventId, string $firstName, string $lastName, string $email, int $menuId, ?int $tableId): void
+    public function registerGuest(int $socialEventId, string $firstName, string $lastName, string $email, ?int $menuId, ?int $tableId): void
     {
         $this->executeUpdateQuery(
             "INSERT INTO social_registrations (socialEventId, firstName, lastName, email, menuId, tableId) VALUES (?, ?, ?, ?, ?, ?)",
@@ -298,8 +298,16 @@ final class SocialEventRepository extends BaseRepository
 
     public function isFull(int $socialEventId): bool
     {
+        $tableCount = (int) $this->fetchSingleValue(
+            "SELECT COUNT(*) FROM social_tables WHERE socialEventId = ?",
+            'i',
+            [$socialEventId]
+        );
+        if ($tableCount === 0) {
+            return false;
+        }
         $available = (int) $this->fetchSingleValue(
-            "SELECT COALESCE((SELECT SUM(capacity) FROM social_tables WHERE socialEventId = ?), 0)
+            "SELECT (SELECT SUM(capacity) FROM social_tables WHERE socialEventId = ?)
                   - (SELECT COUNT(*) FROM social_registrations WHERE socialEventId = ?)",
             'ii',
             [$socialEventId, $socialEventId]

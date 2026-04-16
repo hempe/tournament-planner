@@ -38,7 +38,7 @@ assert(is_array($tables));
         new Span(content: $formattedDate, style: 'flex-grow:1'),
     ];
 
-    $menuOptions = [];
+    $menuOptions = ['' => __('social_events.select_menu')];
     foreach ($menus as $menu) {
         /** @var SocialMenu $menu */
         $menuOptions[$menu->id] = $menu->name;
@@ -57,7 +57,7 @@ assert(is_array($tables));
         action: "/social-events/{$socialEvent->id}/guests/new",
         content: new Card(
             title: $cardTitle,
-            content: function () use ($socialEvent, $menuOptions, $tableOptions, $req, $isAdmin) {
+            content: function () use ($socialEvent, $menus, $menuOptions, $tableOptions, $req, $isAdmin) {
                 $details = [];
                 if ($socialEvent->description) {
                     $details[] = [__('social_events.description'), nl2br(htmlspecialchars($socialEvent->description))];
@@ -68,31 +68,36 @@ assert(is_array($tables));
                     fn($row) => $row,
                     widths: [150, null]
                 ));
+                $rows = [
+                    [
+                        __('guests.first_name') . $req,
+                        new Input(name: 'first_name', placeholder: __('guests.first_name'), required: true),
+                    ],
+                    [
+                        __('guests.last_name') . $req,
+                        new Input(name: 'last_name', placeholder: __('guests.last_name'), required: true),
+                    ],
+                    [
+                        __('guests.email') . (!$isAdmin ? $req : ''),
+                        new Input(type: 'email', name: 'email', placeholder: __('guests.email'), required: !$isAdmin),
+                    ],
+                ];
+                if (!empty($menus)) {
+                    $rows[] = [
+                        __('social_events.menu') . $req,
+                        new Select(options: $menuOptions, name: 'menu_id', required: true),
+                    ];
+                }
+                if (!empty($tableOptions) && array_keys($tableOptions) !== ['']) {
+                    $rows[] = [
+                        __('social_events.table'),
+                        new Select(options: $tableOptions, name: 'table_id'),
+                    ];
+                }
                 yield new Table(
                     columns: ['', ''],
-                    items: [0, 1, 2, 3, 4],
-                    projection: fn($i) => match ($i) {
-                        0 => [
-                            __('guests.first_name') . $req,
-                            new Input(name: 'first_name', placeholder: __('guests.first_name'), required: true),
-                        ],
-                        1 => [
-                            __('guests.last_name') . $req,
-                            new Input(name: 'last_name', placeholder: __('guests.last_name'), required: true),
-                        ],
-                        2 => [
-                            __('guests.email') . (!$isAdmin ? $req : ''),
-                            new Input(type: 'email', name: 'email', placeholder: __('guests.email'), required: !$isAdmin),
-                        ],
-                        3 => [
-                            __('social_events.menu') . $req,
-                            new Select(options: $menuOptions, name: 'menu_id', required: true),
-                        ],
-                        4 => [
-                            __('social_events.table'),
-                            new Select(options: $tableOptions, name: 'table_id'),
-                        ],
-                    },
+                    items: array_keys($rows),
+                    projection: fn($i) => $rows[$i],
                     widths: [150, null]
                 );
                 yield new IconButton(
