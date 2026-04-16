@@ -163,7 +163,6 @@ button[social],
   display: inline-flex;
   align-items: stretch;
   justify-content: space-between;
-  flex-wrap: wrap;
   gap: 8px;
   width: calc(100% - 24px);
   padding: 16px 0px 8px 16px;
@@ -179,8 +178,25 @@ button[social],
   --_--padding: 0 !important;
 }
 
-.card-title>span {
+.card-title>span,
+.card-title>select {
   margin-top: 10px;
+}
+
+.card-title>select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: none;
+  outline: none;
+  box-shadow: none;
+  color: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+  flex-grow: 1;
+  text-align: center;
 }
 
 @media (max-width: 768px) {

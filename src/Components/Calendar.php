@@ -82,11 +82,27 @@ class Calendar extends Component
      */
     public function formattedDate(): string
     {
-
         $date = $this->_active->time;
         $formatter = new \IntlDateFormatter(Translator::getInstance()->getLocale(), \IntlDateFormatter::FULL, \IntlDateFormatter::FULL);
         $formatter->setPattern('LLLL Y');
         return $formatter->format($date);
+    }
+
+    public function monthPickerHtml(): string
+    {
+        $formatter = new \IntlDateFormatter(Translator::getInstance()->getLocale(), \IntlDateFormatter::FULL, \IntlDateFormatter::FULL);
+        $formatter->setPattern('LLLL Y');
+
+        $current = date('Y-m-01', mktime(0, 0, 0, (int) $this->_active->month, 1, (int) $this->_active->year));
+        $options = '';
+        for ($i = -13; $i <= 13; $i++) {
+            $ts = strtotime("$i months", strtotime($current));
+            $value = date('Y-m-d', $ts);
+            $label = htmlspecialchars($formatter->format($ts));
+            $selected = $value === $current ? 'selected' : '';
+            $options .= "<option value=\"{$value}\" {$selected}>{$label}</option>";
+        }
+        return "<select name=\"month\" onchange=\"window.location.href='./?date='+this.value\">{$options}</select>";
     }
 
     /**
@@ -180,7 +196,7 @@ class Calendar extends Component
                         type: 'button',
                         color: Color::None,
                     ),
-                    new Span($this->formattedDate()),
+                    $this->monthPickerHtml(),
                     new IconButton(
                         title: __('calendar.next_month'),
                         href: "./?date={$this->nextMonth()}",
