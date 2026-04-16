@@ -19,6 +19,7 @@ class Page extends Component
 
     public function __construct(
         callable|string|Component $content,
+        private readonly bool $hideNav = false,
     ) {
         $this->content = $this->captureOutput($content);
     }
@@ -57,6 +58,8 @@ class Page extends Component
             )
             : '';
 
+        $nav = $this->hideNav ? '' : "<nav class=\"navtop\">{$adminButtons}{$logoutButton}{$loginButton}</nav>";
+
 
         echo <<<HTML
         <div class="body">
@@ -73,11 +76,7 @@ class Page extends Component
                     <nobr>DE MASPALOMAS</nobr>
                 </div>
             </div>
-            <nav class="navtop">
-                {$adminButtons}
-                {$logoutButton}
-                {$loginButton}
-            </nav>
+            {$nav}
 
            
             {$this->content}

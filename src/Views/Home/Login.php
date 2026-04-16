@@ -12,7 +12,7 @@ use TP\Components\Div;
 use TP\Components\IconButton;
 use TP\Components\Color;
 
-echo new Page(
+echo new Page(hideNav: true, content:
     new Div(
         class: 'content',
         style: [
@@ -23,15 +23,7 @@ echo new Page(
             action: "/login",
             content: new Card(
                 style: 'width: min(90vw, 400px)',
-                title: new Div(
-                    content: '<img src="favicon.svg?v=2.0" style="width:calc(100% - 40px); margin:20px" /><p>' . __('auth.welcome') . '</p>',
-                    style: [
-                        'display: flex;',
-                        'flex-direction: column;',
-                        'align-items: center;',
-                        'width: 100%;'
-                    ]
-                ),
+                title: __('auth.welcome'),
                 content: new Div(
                     content: [
                         new Input(
