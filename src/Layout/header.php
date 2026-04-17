@@ -60,66 +60,21 @@
             },
         };
     </script>
+    <?php if (\TP\Core\Config::getInstance()->isProduction()): ?>
+    <?php
+        $jsMatches = glob(__DIR__ . '/../../src/scripts/scripts.*.js');
+        $jsHref = $jsMatches ? '/src/scripts/' . basename($jsMatches[0]) : '/src/scripts/confirm.js';
+    ?>
+    <script src="<?= $jsHref ?>"></script>
+    <?php else: ?>
     <script src="/src/scripts/social-prompt.js"></script>
     <script src="/src/scripts/confirm.js"></script>
     <script src="/src/scripts/error.js"></script>
     <script src="/src/scripts/success.js"></script>
     <script src="/src/scripts/fieldset.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const scrollTop = sessionStorage.getItem('scrollPosition');
-            const currentUrl = window.location.href;
-
-            const savedUrl = sessionStorage.getItem('currentUrl');
-
-            if (scrollTop && savedUrl === currentUrl) {
-                window.scrollTo(0, scrollTop);
-                sessionStorage.removeItem('scrollPosition');
-            }
-
-            sessionStorage.setItem('currentUrl', currentUrl);
-            document.addEventListener('scroll', function () {
-                sessionStorage.setItem('scrollPosition', document.documentElement.scrollTop);
-            });
-
-            setTimeout(() => {
-                document.body.style.opacity = '1'; // Set opacity after content is loaded
-            }, 100);
-        });
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Select all forms on the page
-            const forms = document.querySelectorAll('form, fieldset');
-
-            // Function to set the button state (color) based on form state
-            function setSubmitButtonState(form) {
-                const submitButton = form.querySelector('button[type="submit"], button[type="button"]');
-                const inputs = Array.from(form.querySelectorAll('input, textarea, select'))
-                    .filter(el => el.type !== 'hidden');
-
-                if (!inputs.length)
-                    return;
-
-                // Update button class based on whether the form is dirty or pristine
-                if (!!inputs.filter(i => i.value !== i.defaultValue).length) {
-                    submitButton.classList.remove('pristine');
-                    submitButton.classList.add('dirty');
-                } else {
-                    submitButton.classList.remove('dirty');
-                    submitButton.classList.add('pristine');
-                }
-            }
-
-            // Add event listeners to each form for input changes
-            forms.forEach(form => {
-                form.addEventListener('input', () => setSubmitButtonState(form));
-
-                // Initial check for pristine state when the page loads
-                setSubmitButtonState(form);
-            });
-        });
-    </script>
+    <script src="/src/scripts/scroll.js"></script>
+    <script src="/src/scripts/form-state.js"></script>
+    <?php endif; ?>
     <?= isset($scripts) ? $scripts : '' ?>
 </head>
 
