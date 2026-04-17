@@ -14,12 +14,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Hind+Guntur:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
 
+    <?php if (\TP\Core\Config::getInstance()->isProduction()): ?>
+    <?php
+        $cssMatches = glob(__DIR__ . '/../../styles/styles.*.css');
+        $cssHref = $cssMatches ? '/styles/' . basename($cssMatches[0]) : '/styles/style.css';
+    ?>
+    <link href="<?= $cssHref ?>" rel="stylesheet" type="text/css">
+    <?php else: ?>
     <link href="/styles/style.css?v=4.4" rel="stylesheet" type="text/css">
-
     <link href="/styles/calendar.css?v=3.0" rel="stylesheet" type="text/css">
     <link href="/styles/confirm.css?v=2.0" rel="stylesheet" type="text/css">
     <link href="/styles/error.css?v=2.0" rel="stylesheet" type="text/css">
     <link href="/styles/success.css?v=2.0" rel="stylesheet" type="text/css">
+    <?php endif; ?>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"

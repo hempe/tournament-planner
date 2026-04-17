@@ -24,9 +24,15 @@ echo "Copying PHP source..."
 cp index.php bootstrap.php .htaccess "$DIST/"
 cp -r src "$DIST/src"
 
-# Assets
-echo "Copying assets..."
-cp -r styles "$DIST/styles"
+# Assets — combine + minify + fingerprint CSS
+echo "Building CSS bundle..."
+mkdir -p "$DIST/styles"
+CSS_FILES="styles/style.css styles/calendar.css styles/confirm.css styles/error.css styles/success.css"
+MINIFIED=$(php bin/minify-css.php $CSS_FILES)
+CSS_HASH=$(echo "$MINIFIED" | php -r "echo substr(hash('sha256', stream_get_contents(STDIN)), 0, 16);")
+echo "$MINIFIED" > "$DIST/styles/styles.${CSS_HASH}.css"
+echo "  → styles.${CSS_HASH}.css"
+
 cp -r resources "$DIST/resources"
 
 # Images & web manifests
@@ -61,6 +67,12 @@ composer install \
 
 # Remove composer files from dist (not needed at runtime)
 rm "$DIST/composer.json" "$DIST/composer.lock"
+
+# Pre-build route cache so the first production request pays no scan cost
+echo "Pre-building route cache..."
+cp -r bin "$DIST/bin"
+(cd "$DIST" && php bin/build-routes.php)
+rm -rf "$DIST/bin"
 
 echo ""
 echo "======================================"
