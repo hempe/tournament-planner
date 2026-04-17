@@ -15,17 +15,17 @@
         rel="stylesheet">
 
     <?php if (\TP\Core\Config::getInstance()->isProduction()): ?>
-    <?php
+        <?php
         $cssMatches = glob(__DIR__ . '/../../styles/styles.*.css');
         $cssHref = $cssMatches ? '/styles/' . basename($cssMatches[0]) : '/styles/style.css';
-    ?>
-    <link href="<?= $cssHref ?>" rel="stylesheet" type="text/css">
+        ?>
+        <link href="<?= $cssHref ?>" rel="stylesheet" type="text/css">
     <?php else: ?>
-    <link href="/styles/style.css?v=4.4" rel="stylesheet" type="text/css">
-    <link href="/styles/calendar.css?v=3.0" rel="stylesheet" type="text/css">
-    <link href="/styles/confirm.css?v=2.0" rel="stylesheet" type="text/css">
-    <link href="/styles/error.css?v=2.0" rel="stylesheet" type="text/css">
-    <link href="/styles/success.css?v=2.0" rel="stylesheet" type="text/css">
+        <link href="/styles/style.css" rel="stylesheet" type="text/css">
+        <link href="/styles/calendar.css" rel="stylesheet" type="text/css">
+        <link href="/styles/confirm.css" rel="stylesheet" type="text/css">
+        <link href="/styles/error.css" rel="stylesheet" type="text/css">
+        <link href="/styles/success.css" rel="stylesheet" type="text/css">
     <?php endif; ?>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -61,19 +61,19 @@
         };
     </script>
     <?php if (\TP\Core\Config::getInstance()->isProduction()): ?>
-    <?php
+        <?php
         $jsMatches = glob(__DIR__ . '/../../src/scripts/scripts.*.js');
         $jsHref = $jsMatches ? '/src/scripts/' . basename($jsMatches[0]) : '/src/scripts/confirm.js';
-    ?>
-    <script src="<?= $jsHref ?>"></script>
+        ?>
+        <script src="<?= $jsHref ?>"></script>
     <?php else: ?>
-    <script src="/src/scripts/social-prompt.js"></script>
-    <script src="/src/scripts/confirm.js"></script>
-    <script src="/src/scripts/error.js"></script>
-    <script src="/src/scripts/success.js"></script>
-    <script src="/src/scripts/fieldset.js"></script>
-    <script src="/src/scripts/scroll.js"></script>
-    <script src="/src/scripts/form-state.js"></script>
+        <script src="/src/scripts/social-prompt.js"></script>
+        <script src="/src/scripts/confirm.js"></script>
+        <script src="/src/scripts/error.js"></script>
+        <script src="/src/scripts/success.js"></script>
+        <script src="/src/scripts/fieldset.js"></script>
+        <script src="/src/scripts/scroll.js"></script>
+        <script src="/src/scripts/form-state.js"></script>
     <?php endif; ?>
     <?= isset($scripts) ? $scripts : '' ?>
 </head>

@@ -19,6 +19,10 @@ final class Config
 
     private function __construct()
     {
+        $envFile = __DIR__ . '/../../.env';
+        if (file_exists($envFile)) {
+            $this->loadEnvFile($envFile);
+        }
         $this->environment = Environment::from($_ENV['APP_ENV'] ?? 'development');
         $this->loadConfig();
     }
