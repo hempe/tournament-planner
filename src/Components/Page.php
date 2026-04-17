@@ -41,7 +41,8 @@ class Page extends Component
                 icon: 'fa-sign-out',
                 confirmMessage: '',
                 class: 'nav-button',
-                style: 'color: var(--fg-navtop);'
+                style: 'color: var(--fg-navtop);',
+                title_inline: true
             )
             : '';
 

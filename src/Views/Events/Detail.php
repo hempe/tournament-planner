@@ -101,9 +101,9 @@ assert(is_int($id));
             }
             yield new Card(
                 $innerTitle,
-                new Table(['', ''], $details, fn($row) => $row, widths: [150, null])
+                new Table(['', ''], $details, fn($row) => $row, widths: [150, null]),
+                style: 'padding-bottom:16px'
             );
-            yield '<br>';
 
             if (!$reg) {
                 if (!$event->isLocked) {

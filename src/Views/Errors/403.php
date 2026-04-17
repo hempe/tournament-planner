@@ -17,23 +17,23 @@ $message = $message ?? __('errors.forbidden');
         __('errors.403_title'),
         function () use ($message) {
             ?>
-            <div style="text-align: center; padding: 2rem 0;">
-                <div style="font-size: 4rem; margin-bottom: 1rem;">
-                    <?= new Icon('shield-off', __('errors.403_title')) ?>
-                </div>
-                <p style="font-size: 1.2rem; margin-bottom: 2rem;">
-                    <?= htmlspecialchars($message) ?>
-                </p>
-                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-                    <?= new IconButton(__('navigation.home'), 'link', 'home', Color::Primary, false, '/') ?>
-                    <?php if (TP\Models\User::loggedIn()): ?>
-                        <?= new IconButton(__('navigation.events'), 'link', 'calendar', Color::Primary, false, '/events') ?>
-                    <?php else: ?>
-                        <?= new IconButton(__('navigation.login'), 'link', 'login', Color::Primary, false, '/login') ?>
-                    <?php endif; ?>
-                </div>
+        <div style="text-align: center; padding: 2rem 0;">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">
+                <?= new Icon('shield-off', __('errors.403_title')) ?>
             </div>
-            <?php
+            <p style="font-size: 1.2rem; margin-bottom: 2rem;">
+                <?= htmlspecialchars($message) ?>
+            </p>
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <?= new IconButton(__('navigation.home'), 'link', 'fa-home', Color::Primary, false, '/') ?>
+                <?php if (TP\Models\User::loggedIn()): ?>
+                    <?= new IconButton(__('navigation.events'), 'link', 'fa-calendar ', Color::Primary, false, '/events') ?>
+                <?php else: ?>
+                    <?= new IconButton(__('navigation.login'), 'link', 'fa-sign-in', Color::Primary, false, '/login') ?>
+                <?php endif; ?>
+            </div>
+        </div>
+        <?php
         }
     );
 }) ?>
