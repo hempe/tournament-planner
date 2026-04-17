@@ -65,15 +65,15 @@
         $jsMatches = glob(__DIR__ . '/../../src/scripts/scripts.*.js');
         $jsHref = $jsMatches ? '/src/scripts/' . basename($jsMatches[0]) : '/src/scripts/confirm.js';
         ?>
-        <script src="<?= $jsHref ?>"></script>
+        <script src="<?= $jsHref ?>" defer></script>
     <?php else: ?>
-        <script src="/src/scripts/social-prompt.js"></script>
-        <script src="/src/scripts/confirm.js"></script>
-        <script src="/src/scripts/error.js"></script>
-        <script src="/src/scripts/success.js"></script>
-        <script src="/src/scripts/fieldset.js"></script>
-        <script src="/src/scripts/scroll.js"></script>
-        <script src="/src/scripts/form-state.js"></script>
+        <script src="/src/scripts/social-prompt.js" defer></script>
+        <script src="/src/scripts/confirm.js" defer></script>
+        <script src="/src/scripts/error.js" defer></script>
+        <script src="/src/scripts/success.js" defer></script>
+        <script src="/src/scripts/fieldset.js" defer></script>
+        <script src="/src/scripts/scroll.js" defer></script>
+        <script src="/src/scripts/form-state.js" defer></script>
     <?php endif; ?>
     <?= isset($scripts) ? $scripts : '' ?>
 </head>
