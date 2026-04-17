@@ -88,6 +88,28 @@ composer test:coverage-html
 
 See [TESTING.md](docs/TESTING.md) for detailed testing documentation.
 
+## Deploying to Production
+
+**Always deploy `dist/`, never the source root.**
+
+```bash
+# 1. Build
+./build.sh
+
+# 2. Upload dist/ contents to the server (not the dist/ folder itself)
+rsync -av dist/ user@server:/var/www/html/
+
+# 3. Ensure the server .env contains (create it if missing — it is NOT in dist/):
+#   APP_ENV=production
+#   DB_HOST=...
+#   DB_PORT=3306
+#   DB_NAME=...
+#   DB_USERNAME=...
+#   DB_PASSWORD=...
+```
+
+The build step combines and fingerprints CSS/JS, pre-builds the route cache, and strips dev dependencies. Shipping the source instead of `dist/` will serve unminified individual files, miss the route cache, and include dev-only composer packages.
+
 ## Quick Links
 
 - Need help? → See [docs/INSTALLATION.md](docs/INSTALLATION.md)
