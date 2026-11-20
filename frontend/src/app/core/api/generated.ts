@@ -3,13 +3,45 @@
 
 import type { ApiClient, RequestOptions } from './api-client';
 
+export interface CalendarDto {
+  month: string;
+  events: EventSummaryDto[];
+  socialEvents: SocialEventSummaryDto[];
+}
+
+export interface EventSummaryDto {
+  id: number;
+  name: string;
+  date: string;
+  capacity: number;
+  joined: number;
+  waitlist: number;
+  available: number;
+  isLocked: boolean;
+  userState: RegistrationState;
+}
+
 export interface LoginRequest {
   username: string;
   password: string;
 }
 
+export type RegistrationState = 'none' | 'registered' | 'waitlist';
+
 export interface SessionDto {
   user: UserDto | null;
+}
+
+export interface SocialEventSummaryDto {
+  id: number;
+  tournamentId: number | null;
+  name: string;
+  date: string;
+  isLocked: boolean;
+  totalCapacity: number | null;
+  registered: number;
+  available: number | null;
+  userRegistered: boolean;
 }
 
 export interface UserDto {
@@ -29,5 +61,12 @@ export function authApi(api: ApiClient) {
       api.post<SessionDto>('/auth/login', body, options),
     logout: (options?: RequestOptions): Promise<void> =>
       api.post<void>('/auth/logout', undefined, options),
+  };
+}
+
+export function calendarApi(api: ApiClient) {
+  return {
+    month: (month: number | string, options?: RequestOptions): Promise<CalendarDto> =>
+      api.get<CalendarDto>(`/calendar/${encodeURIComponent(month)}`, options),
   };
 }
