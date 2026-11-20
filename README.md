@@ -50,6 +50,7 @@ That's it! 🚀
 - PHP 8.1+
 - MySQL 8.0+ or MariaDB 10.6+
 - Extensions: `pdo_mysql`, `mysqli`
+- Node.js 26+ (development and build only — not needed on the server)
 
 ## Tech Stack
 
@@ -72,7 +73,7 @@ That's it! 🚀
 ✅ Responsive design
 ✅ User-friendly error pages (404, 403, 500)
 ✅ Health monitoring endpoint
-✅ Comprehensive test suite (506 tests)
+✅ Comprehensive test suite (514 tests)
 
 ## Testing
 

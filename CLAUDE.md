@@ -25,6 +25,15 @@ composer test              # Run all tests
 composer test:coverage     # Run with code coverage
 ```
 
+**Frontend (Angular, in `frontend/`):**
+```bash
+./run.sh                   # PHP on :5000 + Angular dev server on :4200
+cd frontend && npm test    # Vitest
+npm run lint               # includes the no-RxJS / no-HttpClient rule
+npm run check:i18n         # unknown translation keys
+composer api:generate      # regenerate frontend/src/app/core/api/generated.ts after DTO changes
+```
+
 **Environment setup:**
 Copy `.env` file and configure database credentials:
 ```bash
@@ -75,7 +84,7 @@ This is a PHP web application for golf event management with a modern MVC archit
 
 **Database**: Repository pattern with static instances accessible via `DB::$events`, `DB::$users`, `DB::$guests`, and `DB::$socialEvents`. Database connection configured in `.env` file.
 
-**Testing**: Comprehensive test suite with 506 tests covering controllers, localization, core classes, and event management. Tests use PCOV for fast coverage analysis. All routes have tests for anonymous, regular user, and admin access.
+**Testing**: Comprehensive test suite with 514 tests covering controllers, localization, core classes, and event management. Tests use PCOV for fast coverage analysis. All routes have tests for anonymous, regular user, and admin access.
 
 **Error Handling**: User-friendly error pages for 404 (Not Found), 403 (Forbidden), and 500 (Server Error) with navigation buttons to help users get back to safety.
 
@@ -97,6 +106,7 @@ Requires MySQL with extensions `pdo_mysql` and `mysqli` enabled. Database schema
 
 ## Documentation
 
+- **[Frontend](docs/FRONTEND.md)** - Angular app, rules, generated API client
 - **[Component System](docs/COMPONENTS.md)** - Comprehensive guide to UI components
   - [Table Component](docs/components/Table.md) - Data tables and form tables
   - [Page Component](docs/components/Page.md) - Page layout and navigation
@@ -111,7 +121,7 @@ Requires MySQL with extensions `pdo_mysql` and `mysqli` enabled. Database schema
 ### Testing Policy
 
 **Every change must be tested — no exceptions:**
-- Run `composer test` after every code change
+- Run `composer test` after every PHP change and `npm test && npm run lint && npm run check:i18n` (in `frontend/`) after every frontend change
 - Add or update tests to cover any modified or new behavior
 - All tests must pass (pre-existing failures are acceptable, but do not introduce new ones)
 - New views/features: add integration tests verifying the page renders and contains key content
