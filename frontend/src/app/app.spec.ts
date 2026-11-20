@@ -1,11 +1,17 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { App } from './app';
+import { I18n } from './core/i18n/i18n';
 
 describe('App', () => {
-  it('creates the app', () => {
+  it('renders the shell with header and footer', async () => {
     TestBed.configureTestingModule({ providers: [provideRouter([])] });
+    TestBed.inject(I18n).use('de', { app: { name: 'GOLF EL FARO' }, auth: { login: 'Mitglieder Anmeldung' } });
     const fixture = TestBed.createComponent(App);
-    expect(fixture.componentInstance).toBeTruthy();
+    await fixture.whenStable();
+    const el: HTMLElement = fixture.nativeElement;
+
+    expect(el.querySelector('app-header')?.textContent).toContain('GOLF EL FARO');
+    expect(el.querySelector('app-footer')?.textContent).toContain('dev');
   });
 });
