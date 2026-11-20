@@ -50,6 +50,47 @@ fresh cookie, so clients retry once.
 
 `User` = `UserDto` = `{ id, username, firstName, lastName, displayName, isAdmin }`. Responses are DTOs from `src/Api/Dto/`, never hand-built arrays (plan 2 generates TypeScript from them).
 
+## Member endpoints
+
+Formats: dates are `YYYY-MM-DD`; date-times are local time (Europe/Zurich) as
+`YYYY-MM-DDTHH:MM:SS` without offset. `RegistrationState` is `'none' | 'registered' | 'waitlist'`.
+Mutating member endpoints return the fresh detail DTO, so the UI re-renders from one response.
+Members act only on their own registration (`/registrations/me`).
+
+### Calendar
+
+| Method | Path | Access | Returns | Errors |
+|---|---|---|---|---|
+| GET | `/api/calendar/{month}` (`YYYY-MM`) | user | `CalendarDto` | 404 for an invalid month |
+
+### Tournaments (`/api/events`)
+
+| Method | Path | Access | Body | Returns | Errors |
+|---|---|---|---|---|---|
+| GET | `/{id}` | user | – | `EventDetailDto` | 404 `events.not_found` |
+| POST | `/{id}/registrations` | user | `RegisterRequest` | `EventDetailDto` | 404, 409 `events.locked_message` |
+| PATCH | `/{id}/registrations/me` | user | `CommentRequest` | `EventDetailDto` | 404, 404 `auth.not_registered`, 409 `events.locked_message` |
+| DELETE | `/{id}/registrations/me` | user | – | `EventDetailDto` | 404, 409 `events.locked_message` |
+| GET | `/{id}/guest-info` | public | – | `PublicEventDto` | 404 `events.not_found` |
+| POST | `/{id}/guests` | public | `GuestRegistrationRequest` | `204` | 404; 409 `events.locked_message` (non-admins); 422 `validation.failed` + `fields` |
+
+Registering on a full event puts the user on the waitlist. Registering again updates the comment.
+Locked means manually locked, date passed or registration deadline passed. Guest registration is
+rejected on locked events unless the caller is an admin; email and handicap are optional for admins.
+
+### Social events (`/api/social-events`)
+
+| Method | Path | Access | Body | Returns | Errors |
+|---|---|---|---|---|---|
+| GET | `/{id}` | user | – | `SocialEventDetailDto` | 404 `social_events.not_found` |
+| POST | `/{id}/registrations` | user | `SocialRegisterRequest` | `SocialEventDetailDto` | 404; 409 `social_events.locked_message`, `social_events.event_full`, `social_events.table_full`; 422 `validation.failed` with `fields.menuId` / `fields.tableId` = `social_events.invalid_menu` / `invalid_table` |
+| DELETE | `/{id}/registrations/me` | user | – | `SocialEventDetailDto` | 404; 409 `social_events.locked_message` |
+| GET | `/{id}/guest-info` | public | – | `SocialGuestInfoDto` | 404 `social_events.not_found` |
+| POST | `/{id}/guests` | public | `SocialGuestRequest` | `204` | 404; 409 locked (non-admins), full event, full table; 422 validation / invalid menu / invalid table |
+
+Registering when already registered returns the current detail (idempotent). Events without menus
+ignore `menuId`.
+
 ## Testing
 
 Use `$this->json($method, $uri, $data)` in integration tests; it sends the session's CSRF token

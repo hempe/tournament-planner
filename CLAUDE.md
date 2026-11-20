@@ -84,7 +84,7 @@ This is a PHP web application for golf event management with a modern MVC archit
 
 **Database**: Repository pattern with static instances accessible via `DB::$events`, `DB::$users`, `DB::$guests`, and `DB::$socialEvents`. Database connection configured in `.env` file.
 
-**Testing**: Comprehensive test suite with 514 tests covering controllers, localization, core classes, and event management. Tests use PCOV for fast coverage analysis. All routes have tests for anonymous, regular user, and admin access.
+**Testing**: Comprehensive test suite with 571 tests covering controllers, localization, core classes, and event management. Tests use PCOV for fast coverage analysis. All routes have tests for anonymous, regular user, and admin access.
 
 **Error Handling**: User-friendly error pages for 404 (Not Found), 403 (Forbidden), and 500 (Server Error) with navigation buttons to help users get back to safety.
 
