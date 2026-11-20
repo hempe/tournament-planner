@@ -395,7 +395,7 @@ class GuestControllerTest extends IntegrationTestCase
     {
         $eventId = DB::$events->add(
             'Rich Event', '2099-03-15', 20, false, true,
-            'Bring sunscreen', 15.50, 25.00, '2099-03-10 18:00:00'
+            'Bring sunscreen', '15.50', '25.00', '2099-03-10 18:00:00'
         );
 
         $response = $this->request('GET', "/events/$eventId/guests/new");

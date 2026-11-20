@@ -420,7 +420,7 @@ Step 2: Running integration tests...
 === All Integration Tests Passed! ===
 
 OK, but there were issues!
-Tests: 390, Assertions: 956, Warnings: 3, Deprecations: 9.
+Tests: 448, Assertions: 993, Warnings: 3, Deprecations: 9.
 
 Step 3: Cleaning up test database...
 ✓ Test database removed successfully!
@@ -434,7 +434,7 @@ Step 3: Cleaning up test database...
 
 Typical test execution time:
 - Database initialization: ~1 second
-- Test suite execution: ~40-45 seconds (390 tests)
+- Test suite execution: ~40-45 seconds (448 tests)
 - **Total: ~45 seconds**
 
 ## Best Practices

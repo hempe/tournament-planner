@@ -1128,8 +1128,8 @@ class EventControllerTest extends IntegrationTestCase
 
         $event = DB::$events->get($eventId, 1);
         $this->assertEquals('Updated description', $event->description);
-        $this->assertEquals(10.00, $event->priceMembers);
-        $this->assertEquals(20.00, $event->priceGuests);
+        $this->assertEquals('10.00', $event->priceMembers);
+        $this->assertEquals('20.00', $event->priceGuests);
         $this->assertNotNull($event->registrationClose);
     }
 
@@ -1137,7 +1137,7 @@ class EventControllerTest extends IntegrationTestCase
     {
         $this->loginAsAdmin();
 
-        $eventId = DB::$events->add('Event', '2099-06-01', 20, false, true, 'desc', 10.0, 20.0, '2099-05-01 00:00:00');
+        $eventId = DB::$events->add('Event', '2099-06-01', 20, false, true, 'desc', '10.0', '20.0', '2099-05-01 00:00:00');
 
         $response = $this->request('POST', "/events/$eventId", [
             'name' => 'Event',
@@ -1151,6 +1151,79 @@ class EventControllerTest extends IntegrationTestCase
         $this->assertNull($event->priceMembers);
         $this->assertNull($event->priceGuests);
         $this->assertNull($event->registrationClose);
+    }
+
+    public function testPricesAcceptFreeTextAndAreShownEscaped(): void
+    {
+        $this->loginAsAdmin();
+
+        $eventId = DB::$events->add('Event', '2099-06-01', 20);
+
+        $response = $this->request('POST', "/events/$eventId", [
+            'name' => 'Event',
+            'capacity' => '20',
+            'price_members' => 'CHF 80 inkl. Apéro',
+            'price_guests' => 'gratis <für Junioren>',
+        ]);
+
+        $this->assertEquals(303, $response->statusCode);
+
+        $event = DB::$events->get($eventId, 1);
+        $this->assertEquals('CHF 80 inkl. Apéro', $event->priceMembers);
+        $this->assertEquals('gratis <für Junioren>', $event->priceGuests);
+
+        $response = $this->request('GET', "/events/$eventId");
+        $this->assertEquals(200, $response->statusCode);
+        $this->assertStringContainsString('CHF 80 inkl. Apéro', $response->body);
+        $this->assertStringContainsString('gratis &lt;für Junioren&gt;', $response->body);
+        $this->assertStringNotContainsString('<für Junioren>', $response->body);
+    }
+
+    public function testPriceInputsAreTextFields(): void
+    {
+        $this->loginAsAdmin();
+
+        foreach (['/events/new', '/events/bulk/new'] as $url) {
+            $response = $this->request('GET', $url);
+            $this->assertEquals(200, $response->statusCode);
+            $this->assertMatchesRegularExpression('/<input[^>]*type="text"[^>]*name="price_members"/', $response->body, $url);
+            $this->assertMatchesRegularExpression('/<input[^>]*type="text"[^>]*name="price_guests"/', $response->body, $url);
+        }
+    }
+
+    public function testBulkNewFormHasDescriptionField(): void
+    {
+        $this->loginAsAdmin();
+
+        $response = $this->request('GET', '/events/bulk/new');
+
+        $this->assertEquals(200, $response->statusCode);
+        $this->assertStringContainsString('name="description"', $response->body);
+    }
+
+    public function testBulkStoreCopiesDescriptionToAllEvents(): void
+    {
+        $this->loginAsAdmin();
+
+        // Two-week range guarantees two Mondays
+        $this->request('POST', '/events/bulk/preview', [
+            'start_date' => '2099-06-01',
+            'end_date' => '2099-06-14',
+            'day_of_week' => '1',
+            'name' => 'Described Event',
+            'capacity' => '10',
+            'description' => 'Shotgun start 9:00',
+            'price_members' => 'CHF 50',
+        ]);
+
+        $this->request('POST', '/events/bulk/store');
+
+        $events = array_values(array_filter(DB::$events->all(), fn($e) => $e->name === 'Described Event'));
+        $this->assertCount(2, $events);
+        foreach ($events as $event) {
+            $this->assertEquals('Shotgun start 9:00', $event->description);
+            $this->assertEquals('CHF 50', $event->priceMembers);
+        }
     }
 
     public function testRegistrationCloseLocksEvent(): void
@@ -1186,8 +1259,8 @@ class EventControllerTest extends IntegrationTestCase
         $events = DB::$events->all();
         $event = array_values(array_filter($events, fn($e) => $e->name === 'Priced Event'))[0] ?? null;
         $this->assertNotNull($event);
-        $this->assertEquals(15.00, $event->priceMembers);
-        $this->assertEquals(25.00, $event->priceGuests);
+        $this->assertEquals('15.00', $event->priceMembers);
+        $this->assertEquals('25.00', $event->priceGuests);
         // registration_close should be 3 days before event date at 18:00
         $this->assertNotNull($event->registrationClose);
         $this->assertStringContainsString('18:00', $event->registrationClose);

@@ -48,8 +48,8 @@ final class EventRepository extends BaseRepository
             (int) $row['userState'],
             (bool) $row['mixed'],
             $row['description'] ?? null,
-            isset($row['price_members']) ? (float) $row['price_members'] : null,
-            isset($row['price_guests']) ? (float) $row['price_guests'] : null,
+            $row['price_members'] ?? null,
+            $row['price_guests'] ?? null,
             $row['registration_close'] ?? null,
         );
     }
@@ -84,22 +84,22 @@ final class EventRepository extends BaseRepository
         $this->executeUpdateQuery("DELETE FROM events WHERE id = ?", "i", [$id]);
     }
 
-    public function update(int $id, string $name, int $capacity, bool $mixed = true, ?string $description = null, ?float $priceMembers = null, ?float $priceGuests = null, ?string $registrationClose = null): void
+    public function update(int $id, string $name, int $capacity, bool $mixed = true, ?string $description = null, ?string $priceMembers = null, ?string $priceGuests = null, ?string $registrationClose = null): void
     {
         $this->executeUpdateQuery(
             "UPDATE events SET name = ?, capacity = ?, mixed = ?, description = ?, price_members = ?, price_guests = ?, registration_close = ? WHERE id = ?",
-            "siisddsi",
+            "siissssi",
             [$name, $capacity, $mixed ? 1 : 0, $description, $priceMembers, $priceGuests, $registrationClose, $id]
         );
         $this->fix($id);
     }
 
-    public function add(string $name, string $date, int $capacity, bool $locked = false, bool $mixed = true, ?string $description = null, ?float $priceMembers = null, ?float $priceGuests = null, ?string $registrationClose = null): int
+    public function add(string $name, string $date, int $capacity, bool $locked = false, bool $mixed = true, ?string $description = null, ?string $priceMembers = null, ?string $priceGuests = null, ?string $registrationClose = null): int
     {
         $now = (new DateTime())->format('Y-m-d H:i:s');
         $this->executeUpdateQuery(
             "INSERT INTO events (name, date, capacity, locked, mixed, timestamp, description, price_members, price_guests, registration_close) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            "ssiiissdds",
+            "ssiiisssss",
             [$name, $date, $capacity, $locked ? 1 : 0, $mixed ? 1 : 0, $now, $description, $priceMembers, $priceGuests, $registrationClose]
         );
 

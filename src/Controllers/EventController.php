@@ -118,8 +118,8 @@ final class EventController
             $data = $request->getValidatedData();
             $mixed = ($data['mixed'] ?? '0') === '1';
             $description = $request->getString('description') ?: null;
-            $priceMembers = $request->getString('price_members') !== '' ? (float) $request->getString('price_members') : null;
-            $priceGuests = $request->getString('price_guests') !== '' ? (float) $request->getString('price_guests') : null;
+            $priceMembers = $request->getString('price_members') ?: null;
+            $priceGuests = $request->getString('price_guests') ?: null;
             $registrationClose = $request->getString('registration_close') ?: null;
             $eventId = DB::$events->add($data['name'], $data['date'], (int) $data['capacity'], false, $mixed, $description, $priceMembers, $priceGuests, $registrationClose);
 
@@ -178,8 +178,8 @@ final class EventController
             $data = $request->getValidatedData();
             $mixed = ($data['mixed'] ?? '0') === '1';
             $description = $request->getString('description') ?: null;
-            $priceMembers = $request->getString('price_members') !== '' ? (float) $request->getString('price_members') : null;
-            $priceGuests = $request->getString('price_guests') !== '' ? (float) $request->getString('price_guests') : null;
+            $priceMembers = $request->getString('price_members') ?: null;
+            $priceGuests = $request->getString('price_guests') ?: null;
             $registrationClose = $request->getString('registration_close') ?: null;
             DB::$events->update($eventId, $data['name'], (int) $data['capacity'], $mixed, $description, $priceMembers, $priceGuests, $registrationClose);
 
@@ -440,8 +440,9 @@ final class EventController
         try {
             $data = $request->getValidatedData();
             $mixed = ($data['mixed'] ?? '0') === '1';
-            $priceMembers = $request->getString('price_members') !== '' ? (float) $request->getString('price_members') : null;
-            $priceGuests = $request->getString('price_guests') !== '' ? (float) $request->getString('price_guests') : null;
+            $description = $request->getString('description') ?: null;
+            $priceMembers = $request->getString('price_members') ?: null;
+            $priceGuests = $request->getString('price_guests') ?: null;
             $registrationCloseDays = $request->getString('registration_close_days') !== '' ? (int) $request->getString('registration_close_days') : null;
             $registrationCloseTime = $request->getString('registration_close_time') ?: null;
             $events = $this->calculateRecurringDates(
@@ -451,6 +452,7 @@ final class EventController
                 $data['name'],
                 (int) $data['capacity'],
                 $mixed,
+                $description,
                 $priceMembers,
                 $priceGuests,
                 $registrationCloseDays,
@@ -493,9 +495,9 @@ final class EventController
                     $event['capacity'],
                     true,
                     (bool) ($event['mixed'] ?? true),
-                    null,
-                    isset($event['price_members']) ? (float) $event['price_members'] : null,
-                    isset($event['price_guests']) ? (float) $event['price_guests'] : null,
+                    $event['description'] ?? null,
+                    $event['price_members'] ?? null,
+                    $event['price_guests'] ?? null,
                     $event['registration_close'] ?? null,
                 );
                 $successCount++;
@@ -524,8 +526,9 @@ final class EventController
         string $name,
         int $capacity,
         bool $mixed = true,
-        ?float $priceMembers = null,
-        ?float $priceGuests = null,
+        ?string $description = null,
+        ?string $priceMembers = null,
+        ?string $priceGuests = null,
         ?int $registrationCloseDays = null,
         ?string $registrationCloseTime = null,
     ): array {
@@ -549,6 +552,7 @@ final class EventController
                 'date' => $current->format('Y-m-d'),
                 'capacity' => $capacity,
                 'mixed' => $mixed,
+                'description' => $description,
                 'price_members' => $priceMembers,
                 'price_guests' => $priceGuests,
                 'registration_close' => null,

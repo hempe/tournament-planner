@@ -152,21 +152,19 @@ assert(is_int($id));
                             4 => [
                                 __('events.price_members'),
                                 new Input(
-                                    type: 'number',
+                                    type: 'text',
                                     name: 'price_members',
-                                    value: $event->priceMembers !== null ? (string) $event->priceMembers : '',
+                                    value: $event->priceMembers ?? '',
                                     placeholder: __('events.price_members'),
-                                    step: '0.01',
                                 )
                             ],
                             5 => [
                                 __('events.price_guests'),
                                 new Input(
-                                    type: 'number',
+                                    type: 'text',
                                     name: 'price_guests',
-                                    value: $event->priceGuests !== null ? (string) $event->priceGuests : '',
+                                    value: $event->priceGuests ?? '',
                                     placeholder: __('events.price_guests'),
-                                    step: '0.01',
                                 )
                             ],
                             6 => [

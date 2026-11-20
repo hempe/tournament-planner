@@ -65,13 +65,14 @@ That's it! 🚀
 ✅ Social events linked to tournaments (menu + table selection, no waitlist)
 ✅ User authentication and admin roles
 ✅ Event registration with waitlist support
+✅ Free-text event prices (e.g. "CHF 80 inkl. Apéro") and descriptions, also in bulk create
 ✅ Guest registration (no account required)
 ✅ Calendar view showing both event types
 ✅ Multi-language support (German/English/Spanish)
 ✅ Responsive design
 ✅ User-friendly error pages (404, 403, 500)
 ✅ Health monitoring endpoint
-✅ Comprehensive test suite (390 tests)
+✅ Comprehensive test suite (448 tests)
 
 ## Testing
 

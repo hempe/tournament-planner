@@ -20,7 +20,7 @@ use TP\Components\Textarea;
             __('events.bulk_create'),
             new Table(
                 columns: ['', ''],
-                items: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+                items: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
                 widths: [180, null],
                 projection: fn($index) => match ($index) {
                     0 => [
@@ -60,21 +60,25 @@ use TP\Components\Textarea;
                     ],
                     5 => [
                         new Label(for: 'price_members', text: __('events.price_members')),
-                        new Input(type: 'number', name: 'price_members', id: 'price_members', value: old('price_members'), placeholder: __('events.price_members'), step: '0.01'),
+                        new Input(type: 'text', name: 'price_members', id: 'price_members', value: old('price_members'), placeholder: __('events.price_members')),
                     ],
                     6 => [
                         new Label(for: 'price_guests', text: __('events.price_guests')),
-                        new Input(type: 'number', name: 'price_guests', id: 'price_guests', value: old('price_guests'), placeholder: __('events.price_guests'), step: '0.01'),
+                        new Input(type: 'text', name: 'price_guests', id: 'price_guests', value: old('price_guests'), placeholder: __('events.price_guests')),
                     ],
                     7 => [
+                        new Label(for: 'description', text: __('events.description')),
+                        new Textarea(name: 'description', value: old('description'), placeholder: __('events.description'), style: 'width:100%'),
+                    ],
+                    8 => [
                         new Label(for: 'registration_close_days', text: __('events.bulk_registration_close_days')),
                         new Input(type: 'number', name: 'registration_close_days', id: 'registration_close_days', value: old('registration_close_days'), placeholder: __('events.bulk_registration_close_days'), min: '1', max: '7'),
                     ],
-                    8 => [
+                    9 => [
                         new Label(for: 'registration_close_time', text: __('events.bulk_registration_close_time')),
                         new Input(type: 'time', name: 'registration_close_time', id: 'registration_close_time', value: old('registration_close_time')),
                     ],
-                    9 => [
+                    10 => [
                         new Checkbox(
                             name: 'mixed',
                             label: __('events.play_together'),

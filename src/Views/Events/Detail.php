@@ -80,10 +80,10 @@ assert(is_int($id));
                 $details[] = [__('events.description'), nl2br(htmlspecialchars($event->description))];
             }
             if ($event->priceMembers !== null) {
-                $details[] = [__('events.price_members'), number_format($event->priceMembers, 2)];
+                $details[] = [__('events.price_members'), htmlspecialchars($event->priceMembers)];
             }
             if ($event->priceGuests !== null) {
-                $details[] = [__('events.price_guests'), number_format($event->priceGuests, 2)];
+                $details[] = [__('events.price_guests'), htmlspecialchars($event->priceGuests)];
             }
             if ($event->registrationClose) {
                 $closeFormatter = new \IntlDateFormatter(Translator::getInstance()->getLocale(), \IntlDateFormatter::FULL, \IntlDateFormatter::SHORT);
