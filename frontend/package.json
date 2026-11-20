@@ -10,7 +10,8 @@
     "lint": "ng lint",
     "api": "php ../bin/generate-api.php",
     "prestart": "npm run api",
-    "prebuild": "npm run api"
+    "prebuild": "npm run api",
+    "check:i18n": "node scripts/check-i18n-keys.ts"
   },
   "private": true,
   "packageManager": "npm@12.0.2",

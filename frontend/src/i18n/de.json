@@ -187,7 +187,8 @@
         "403_title": "Zugriff verweigert",
         "500_title": "Serverfehler",
         "server_error": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.",
-        "invalid_json": "Ungültige Anfrage."
+        "invalid_json": "Ungültige Anfrage.",
+        "network": "Keine Verbindung zum Server. Bitte versuche es erneut."
     },
     "success": {
         "title": "Erfolg"

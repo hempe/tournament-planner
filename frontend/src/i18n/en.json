@@ -187,7 +187,8 @@
         "403_title": "Access Denied",
         "500_title": "Server Error",
         "server_error": "An unexpected error occurred. Please try again later.",
-        "invalid_json": "Invalid request."
+        "invalid_json": "Invalid request.",
+        "network": "No connection to the server. Please try again."
     },
     "success": {
         "title": "Success"

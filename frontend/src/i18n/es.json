@@ -187,7 +187,8 @@
         "403_title": "Acceso Denegado",
         "500_title": "Error del Servidor",
         "server_error": "Ocurrió un error inesperado. Por favor, inténtelo más tarde.",
-        "invalid_json": "Solicitud no válida."
+        "invalid_json": "Solicitud no válida.",
+        "network": "Sin conexión con el servidor. Inténtalo de nuevo."
     },
     "success": {
         "title": "Éxito"
