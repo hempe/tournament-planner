@@ -9,6 +9,22 @@ export interface CalendarDto {
   socialEvents: SocialEventSummaryDto[];
 }
 
+export interface CommentRequest {
+  comment: string;
+}
+
+export interface EventDetailDto {
+  event: EventSummaryDto;
+  description: string | null;
+  priceMembers: string | null;
+  priceGuests: string | null;
+  registrationClose: string | null;
+  myRegistration: MyRegistrationDto | null;
+  participants: ParticipantDto[];
+  guests: GuestNameDto[];
+  socialEvent: SocialEventSummaryDto | null;
+}
+
 export interface EventSummaryDto {
   id: number;
   name: string;
@@ -21,9 +37,28 @@ export interface EventSummaryDto {
   userState: RegistrationState;
 }
 
+export interface GuestNameDto {
+  firstName: string;
+  lastName: string;
+}
+
 export interface LoginRequest {
   username: string;
   password: string;
+}
+
+export interface MyRegistrationDto {
+  state: RegistrationState;
+  comment: string;
+}
+
+export interface ParticipantDto {
+  name: string;
+  state: RegistrationState;
+}
+
+export interface RegisterRequest {
+  comment: string;
 }
 
 export type RegistrationState = 'none' | 'registered' | 'waitlist';
@@ -68,5 +103,18 @@ export function calendarApi(api: ApiClient) {
   return {
     month: (month: number | string, options?: RequestOptions): Promise<CalendarDto> =>
       api.get<CalendarDto>(`/calendar/${encodeURIComponent(month)}`, options),
+  };
+}
+
+export function eventsApi(api: ApiClient) {
+  return {
+    show: (id: number | string, options?: RequestOptions): Promise<EventDetailDto> =>
+      api.get<EventDetailDto>(`/events/${encodeURIComponent(id)}`, options),
+    register: (id: number | string, body: RegisterRequest, options?: RequestOptions): Promise<EventDetailDto> =>
+      api.post<EventDetailDto>(`/events/${encodeURIComponent(id)}/registrations`, body, options),
+    updateComment: (id: number | string, body: CommentRequest, options?: RequestOptions): Promise<EventDetailDto> =>
+      api.patch<EventDetailDto>(`/events/${encodeURIComponent(id)}/registrations/me`, body, options),
+    unregister: (id: number | string, options?: RequestOptions): Promise<EventDetailDto> =>
+      api.delete<EventDetailDto>(`/events/${encodeURIComponent(id)}/registrations/me`, options),
   };
 }
