@@ -26,9 +26,9 @@ class TranslationValidationTest extends IntegrationTestCase
         echo "\n=== Testing Locale Files Existence ===\n";
 
         foreach (self::LOCALES as $locale) {
-            $filePath = __DIR__ . "/../../resources/lang/{$locale}.php";
+            $filePath = $this->localeFile($locale);
             $this->assertFileExists($filePath, "Locale file for {$locale} must exist");
-            echo "   ✓ Locale file exists: {$locale}.php\n";
+            echo "   ✓ Locale file exists: {$locale}.json\n";
         }
 
         echo "\n=== Locale Files Existence Tests Passed! ===\n\n";
@@ -43,8 +43,8 @@ class TranslationValidationTest extends IntegrationTestCase
 
         $localeData = [];
         foreach (self::LOCALES as $locale) {
-            $filePath = __DIR__ . "/../../resources/lang/{$locale}.php";
-            $localeData[$locale] = require $filePath;
+            $filePath = $this->localeFile($locale);
+            $localeData[$locale] = $this->loadLocale($locale);
         }
 
         $referenceKeys = $this->extractKeys($localeData[self::REFERENCE_LOCALE]);
@@ -95,8 +95,8 @@ class TranslationValidationTest extends IntegrationTestCase
         foreach (self::LOCALES as $locale) {
             echo "\n1. Checking {$locale} for empty values...\n";
 
-            $filePath = __DIR__ . "/../../resources/lang/{$locale}.php";
-            $translations = require $filePath;
+            $filePath = $this->localeFile($locale);
+            $translations = $this->loadLocale($locale);
             $keysWithValues = $this->extractKeysWithValues($translations);
 
             $emptyKeys = [];
@@ -148,8 +148,8 @@ class TranslationValidationTest extends IntegrationTestCase
         foreach (self::LOCALES as $locale) {
             echo "\n1. Checking required keys in {$locale}...\n";
 
-            $filePath = __DIR__ . "/../../resources/lang/{$locale}.php";
-            $translations = require $filePath;
+            $filePath = $this->localeFile($locale);
+            $translations = $this->loadLocale($locale);
             $keysWithValues = $this->extractKeysWithValues($translations);
 
             foreach ($requiredKeys as $requiredKey) {
@@ -186,8 +186,8 @@ class TranslationValidationTest extends IntegrationTestCase
         foreach (self::LOCALES as $locale) {
             echo "\n1. Checking language names in {$locale}...\n";
 
-            $filePath = __DIR__ . "/../../resources/lang/{$locale}.php";
-            $translations = require $filePath;
+            $filePath = $this->localeFile($locale);
+            $translations = $this->loadLocale($locale);
 
             foreach ($expectedLanguageNames as $langCode => $expectedName) {
                 $this->assertArrayHasKey('languages', $translations);
@@ -215,8 +215,8 @@ class TranslationValidationTest extends IntegrationTestCase
 
         $localeData = [];
         foreach (self::LOCALES as $locale) {
-            $filePath = __DIR__ . "/../../resources/lang/{$locale}.php";
-            $localeData[$locale] = $this->extractKeys(require $filePath);
+            $filePath = $this->localeFile($locale);
+            $localeData[$locale] = $this->extractKeys($this->loadLocale($locale));
         }
 
         // Compute union of all keys
@@ -238,6 +238,16 @@ class TranslationValidationTest extends IntegrationTestCase
     /**
      * Extract all translation keys from nested array
      */
+    private function localeFile(string $locale): string
+    {
+        return __DIR__ . "/../../frontend/src/i18n/{$locale}.json";
+    }
+
+    private function loadLocale(string $locale): array
+    {
+        return json_decode((string) file_get_contents($this->localeFile($locale)), true, 512, JSON_THROW_ON_ERROR);
+    }
+
     private function extractKeys(array $array, string $prefix = ''): array
     {
         $keys = [];

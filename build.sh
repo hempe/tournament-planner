@@ -44,7 +44,9 @@ echo "  → scripts.${JS_HASH}.js"
 # Remove the individual files that were copied with src/
 rm -f $(for f in $JS_FILES; do echo "$DIST/$f"; done)
 
-cp -r resources "$DIST/resources"
+# Translations (single source in the Angular workspace; PHP reads them from resources/i18n)
+mkdir -p "$DIST/resources/i18n"
+cp frontend/src/i18n/*.json "$DIST/resources/i18n/"
 
 # Images & web manifests
 echo "Copying images and manifests..."

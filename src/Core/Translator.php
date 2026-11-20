@@ -31,11 +31,22 @@ final class Translator
         return self::$instance;
     }
 
+    /**
+     * Directory holding the {locale}.json files.
+     * In dist/ the build copies them to resources/i18n; in the repository they
+     * live in the Angular workspace (single source of truth).
+     */
+    public static function langDir(): string
+    {
+        $dist = __DIR__ . '/../../resources/i18n';
+        return is_dir($dist) ? $dist : __DIR__ . '/../../frontend/src/i18n';
+    }
+
     private static function negotiateLocale(string $fallback): string
     {
         $available = array_map(
-            fn($f) => basename($f, '.php'),
-            glob(__DIR__ . '/../../resources/lang/*.php') ?: []
+            fn($f) => basename($f, '.json'),
+            glob(self::langDir() . '/*.json') ?: []
         );
 
         // Normalize the configured fallback to an available locale (e.g. de_CH → de)
@@ -131,13 +142,11 @@ final class Translator
             return;
         }
 
-        $translationFile = __DIR__ . "/../../resources/lang/{$locale}.php";
+        $translationFile = self::langDir() . "/{$locale}.json";
 
-        if (file_exists($translationFile)) {
-            $this->translations[$locale] = require $translationFile;
-        } else {
-            $this->translations[$locale] = [];
-        }
+        $this->translations[$locale] = file_exists($translationFile)
+            ? json_decode((string) file_get_contents($translationFile), true, 512, JSON_THROW_ON_ERROR)
+            : [];
 
         $this->loadedLocales[] = $locale;
     }
