@@ -1,0 +1,341 @@
+# UI Refactor: Angular SPA + PHP JSON API — Design
+
+**Date:** 2026-11-20
+**Branch:** `feature/ui-refactor`
+**Status:** Approved concept, pending implementation plan
+
+## 1. Summary
+
+Replace the server-rendered PHP UI (21 views, 27 PHP components, 7 plain-JS scripts) with an
+Angular single-page app written in TypeScript. PHP becomes a JSON API under `/api/*`. The
+frontend is compiled to static files and deployed next to the PHP code on the existing shared
+host. The switch happens in **one release** (big bang).
+
+### Goals
+- **Snappier UX** — no full page reloads; register/unregister/comment update in place.
+- **Mobile / app feel** — real PWA (service worker), touch-friendly layout.
+- **Modern look** — Tailwind-based design system with components we own.
+- **Maintainability** — typed UI code; replaces the hand-rolled PHP component system and plain JS.
+
+### Constraints
+- **Production runs PHP only** (shared host, Apache + PHP + MySQL). No Node process, no SSR.
+  The frontend must be static files.
+- **Deploys are manual uploads** by the maintainer. No production credentials in the repo or
+  in scripts.
+- **TypeScript only**, no plain JS in app code.
+- **No RxJS in app code**, no `HttpClient`.
+- **Existing installs must keep working** (home-screen shortcuts, bookmarks, shared links,
+  logged-in sessions).
+- Avoid dependencies with a history of frequent breaking changes (reason Angular Material was
+  rejected).
+
+### Improvements delivered by this refactor
+| Area | Today | After |
+|---|---|---|
+| UX | Every action reloads the page | In-place updates, instant feedback |
+| PWA | Manifest only, no service worker | Installable PWA, offline app shell, update prompt |
+| CSRF | Tokens generated but **never validated** (only `SameSite=Strict` protects) | `XSRF-TOKEN` cookie + `X-XSRF-TOKEN` header, validated by middleware, tested |
+| Shared links | `SameSite=Strict` makes users look logged out when arriving from WhatsApp/email | SPA shell needs no cookie; same-site API calls carry the session |
+| Exposed folders | `src/`, `vendor/`, `config/`, `storage/`, `logs/` reachable over HTTP | Blocked with 404 in `.htaccess` |
+| Deploy safety | Uncommitted code can be built and deployed unnoticed | Build refuses a dirty tree (unless `--dirty`), version shown in footer and `/version.txt` |
+| Rollback | Re-upload everything | Re-upload 3 small files; old version folder is still on the server |
+| Type safety | PHP ↔ HTML strings | TS types + JSON Schema contract tests against real API responses |
+| Translations | Keys can be missing silently in views | Build fails on unknown keys in frontend code and API error keys |
+
+## 2. Technology choices
+
+| Concern | Choice | Notes |
+|---|---|---|
+| Framework | **Angular** (current major), standalone components, signals, zoneless | Maintainer knows Angular |
+| UI components | **Spartan UI** (shadcn-style, copied into repo) + **Tailwind CSS** | We own and modify component code; no upstream breaking changes in our components |
+| Icons | Lucide (via Spartan's icon setup) | Replaces Font Awesome CDN |
+| Data loading | Angular `resource()` with async loaders | Signals: `value()`, `isLoading()`, `error()`, `reload()` |
+| HTTP | Custom `ApiClient` on `fetch`, returns `Promise<T>` | See §4.3 |
+| Forms | Angular signal forms if stable at implementation time, otherwise template-driven forms with `[(ngModel)]` bound to signals | Wrapped in our own field components, so switching later only touches the wrappers |
+| i18n | Small custom service (~80 lines) | See §5 |
+| PWA | `@angular/service-worker` | Promise APIs only (`checkForUpdate`, `activateUpdate`) |
+| Unit tests | Vitest (Angular default) | |
+| E2E | Playwright against Docker (`php:8.5-apache` + MariaDB) | Tests the real `.htaccess` |
+
+### RxJS policy
+`rxjs` stays in `package.json` because `@angular/core` requires it, but **app code never imports
+`rxjs` or `@angular/common/http`**. Enforced by ESLint `no-restricted-imports`. Replacements:
+
+| Usual Angular | Here |
+|---|---|
+| `HttpClient` | `ApiClient` (fetch, Promises) |
+| `.subscribe()` / `async` pipe | `resource()` |
+| `BehaviorSubject` | `signal()`, `computed()`, `linkedSignal()` |
+| `ActivatedRoute.params` | `withComponentInputBinding()` → `input.required<string>()` |
+| Observable guards | `async` guard functions returning `boolean \| UrlTree` |
+| Reactive Forms `valueChanges` | Signal forms / signals |
+| `SwUpdate.versionUpdates` | `checkForUpdate()` / `activateUpdate()` triggered on app start, `visibilitychange`, and API version header |
+
+## 3. Repository layout
+
+```
+tournament-planner/
+├── src/                 PHP API (Views/, Components/, Layout/, scripts/ deleted)
+├── database/            unchanged
+├── tests/               PHPUnit API tests
+├── frontend/            Angular workspace
+│   ├── src/app/
+│   │   ├── core/        api/, auth/, i18n/, update/, error handling
+│   │   ├── ui/          Spartan components + Tailwind theme (club colours)
+│   │   └── features/    events/, social-events/, guests/, users/, admin/ (one lazy chunk each)
+│   ├── src/i18n/        de.json, en.json, es.json (single source of truth)
+│   └── e2e/             Playwright tests + docker-compose.yml
+├── build.sh             builds both, produces dist/1-upload-first and dist/2-upload-last
+└── releases/            local, git-ignored: go-live files per version for rollback
+```
+
+## 4. Architecture
+
+### 4.1 Routing and URLs
+The Angular router uses **the same URLs as today** so bookmarks, home-screen shortcuts and
+shared links keep working:
+
+| Angular route | Screen | Access |
+|---|---|---|
+| `/` | Home (calendar / event overview) | public |
+| `/login` | Login | public |
+| `/guest` | Guest landing | public |
+| `/events` | Event list | user |
+| `/events/new` | Create event | admin |
+| `/events/bulk/new` | Bulk create (form → preview → store, one screen with steps) | admin |
+| `/events/:id` | Event detail, register/unregister, comment | user |
+| `/events/:id/admin` | Event admin (edit, lock, export, registrations) | admin |
+| `/events/:id/guests/new` | Guest registration | public |
+| `/events/:id/guests/:guestId/edit` | Edit guest | admin |
+| `/social-events/new` | Create social event | admin |
+| `/social-events/:id` | Social event detail, register/unregister | user |
+| `/social-events/:id/admin` | Social event admin | admin |
+| `/social-events/:id/guests/new` | Social event guest registration | public |
+| `/users` | User list | admin |
+| `/users/new` | Create user | admin |
+| `/users/:id/edit` | Edit user | admin |
+
+Access levels match the current middleware exactly (public = no middleware, user = `AuthMiddleware`, admin = `AdminMiddleware`); this refactor does not change who may do what.
+
+Each feature folder is a lazy-loaded route chunk. Members never download admin chunks.
+
+`/admin/migrate-names` is **not** ported. Precondition for cut-over: it reports 0 pending users
+on production.
+
+Access rules are mirrored in Angular guards for UX only; the server remains the authority.
+
+### 4.2 API
+All endpoints live under `/api/*`, accept and return JSON. Business rules (waitlist, locking,
+registration close, social event link, capacity) stay in the existing repositories and
+controllers; only input/output changes.
+
+REST shape (complete list is produced in the implementation plan; representative mapping):
+
+| Action | Today | New |
+|---|---|---|
+| List events | `GET /events` (HTML) | `GET /api/events` |
+| Event detail | `GET /events/{id}` | `GET /api/events/{id}` |
+| Create event | `POST /events/new` | `POST /api/events` |
+| Update event | `POST /events/{id}` | `PUT /api/events/{id}` |
+| Delete event | `POST /events/{id}/delete` | `DELETE /api/events/{id}` |
+| Lock / unlock | `POST /events/{id}/lock` / `unlock` | `PUT /api/events/{id}/lock` / `DELETE /api/events/{id}/lock` |
+| Register | `POST /events/{id}/register` | `POST /api/events/{id}/registrations` |
+| Unregister | `POST /events/{id}/unregister` | `DELETE /api/events/{id}/registrations/{userId\|me}` |
+| Comment | `POST /events/{id}/comment` | `PATCH /api/events/{id}/registrations/{userId\|me}` |
+| Bulk preview | `POST /events/bulk/preview` | `POST /api/events/bulk/preview` (stateless: returns dates) |
+| Bulk store | `POST /events/bulk/store` | `POST /api/events/bulk` (client sends the previewed list) |
+| Export | `GET /events/{id}/export` | `GET /api/events/{id}/export` (CSV file download) |
+| Auth | `POST /login`, `POST /logout` | `POST /api/auth/login`, `POST /api/auth/logout`, `GET /api/auth/me` |
+
+Pure form pages (`GET /events/new`, `/bulk/new`, `/users/new`, …) disappear; forms are Angular-only.
+
+**Response format**
+- Success: the resource or list as JSON (camelCase fields).
+- Error: `{ "error": "<translation key>", "fields": { "<field>": "<translation key>" } }`
+  - 401 not logged in, 403 not allowed / bad XSRF token, 404 not found,
+    409 conflict (event full, locked, registration closed), 422 validation.
+- PHP returns **translation keys, never translated text**.
+- Every response carries `X-App-Version: <version>`.
+
+**Request parsing:** `Request` reads JSON bodies (`Content-Type: application/json`) into the
+same input array, so `getString()`, `getInt()` and `validate()` keep working.
+
+### 4.3 ApiClient (`frontend/src/app/core/api/`)
+```ts
+api.get<Event[]>('/events', { signal })
+api.post<Registration>(`/events/${id}/registrations`, body)
+api.delete(`/events/${id}/registrations/me`)
+```
+Responsibilities:
+- JSON serialisation both ways; base path `/api`.
+- Reads `XSRF-TOKEN` cookie, sends `X-XSRF-TOKEN` header on non-GET requests.
+- Throws typed `ApiError { status, error, fields }`.
+- 401 → navigate to `/login?returnUrl=<current>`.
+- `X-App-Version` newer than the app's build version → trigger update prompt.
+- Supports `AbortSignal` (passed through from `resource()`).
+
+TypeScript API types live in `core/api/types.ts` and are the contract (see §7.1).
+
+### 4.4 Authentication and security
+- Session cookie unchanged (`HttpOnly`, `SameSite=Strict`, same origin). Existing sessions survive
+  the switch.
+- `GET /api/auth/me` returns `{ id, firstName, lastName, isAdmin } | null`; the app loads it
+  in `provideAppInitializer` before the first route renders.
+- **CSRF:** PHP sets a readable `XSRF-TOKEN` cookie (per session). New `CsrfMiddleware` on all
+  non-GET `/api/*` routes compares header and session token with `hash_equals`; mismatch → 403.
+- `AuthMiddleware` returns 401 JSON (instead of 303 to `/login`); `AdminMiddleware` returns 403 JSON.
+
+### 4.5 UI layer
+- `ui/` holds the Spartan components we use (button, input, textarea, select, checkbox, dialog,
+  alert-dialog, sheet, toast, table, card, badge, tabs) plus app-specific pieces:
+  `ConfirmDialog`, `FormField` (label + control + translated error), `PageHeader`, `Calendar`
+  (month grid, own component).
+- Tailwind theme carries the club colours; light theme only (no dark mode in scope).
+- Confirm dialog is a promise-returning service: `await confirm.ask(t('…'), { danger: true })`.
+- Toasts replace the current success/error flash scripts.
+- Mobile first: bottom-sheet style dialogs on small screens, sticky primary actions on detail pages.
+
+### 4.6 Error handling (frontend)
+- `ApiError` with `fields` → shown on the matching `FormField`s.
+- `ApiError` without `fields` → toast with `t(error)`.
+- 404 on a detail route → in-app "not found" view with navigation back (replaces `Errors/404.php`).
+- Network failure → toast "Keine Verbindung"; the service worker keeps the app shell usable.
+- Unexpected errors → global `ErrorHandler` shows a generic toast and logs to console.
+
+## 5. Translations
+
+- One-time conversion: `resources/lang/*.php` → `frontend/src/i18n/{de,en,es}.json`, same keys
+  and nesting. The PHP files are deleted.
+- **Language selection:** first match of `navigator.languages` against `de`/`en`/`es`, fallback `de`
+  (same behaviour as today's `Accept-Language` negotiation). No in-app switcher (not requested).
+- **Loading:** the chosen file is loaded via dynamic `import()` in `provideAppInitializer`.
+  Each language is its own hashed chunk inside `app/<version>/`.
+- **API:** `t(key, params)` with `:name` placeholders and `choice(key, count, params)` with the
+  same `"one|many"` plural syntax as today; `t` pure pipe for templates. Locale is fixed at
+  startup, so the pipe stays pure.
+- **Dates/numbers:** `Intl.DateTimeFormat` / `Intl.NumberFormat` with the active locale.
+- **PHP** still needs a few strings (CSV export headers). The PHP `Translator` reads the same JSON
+  files; `build.sh` copies them to `dist/1-upload-first/resources/i18n/`.
+- **Checks:** all three files have identical keys; every key referenced in frontend code
+  (`t('…')`, `| t`) exists; every error key the API can return exists. The logout vs.
+  unregister label regression test is kept.
+
+## 6. Build and deploy
+
+### 6.1 Development
+- Node is a dev-only dependency.
+- `run.sh` starts `php -S localhost:5000` and `ng serve` with a proxy for `/api` → `localhost:5000`.
+
+### 6.2 `build.sh`
+1. **Version** = `YYYY-MM-DD-<git short hash>`. If the working tree is dirty the build stops,
+   unless `--dirty` is passed (version gets `-dirty` suffix).
+2. **Frontend:** `ng build` (production, service worker). Move everything except `index.html`
+   into `app/<version>/`, point `index.html` at that folder (`deployUrl`, or a `sed` rewrite if
+   `deployUrl` is unavailable), regenerate `ngsw.json` for the new paths.
+3. **Backend:** copy PHP (`src/` without legacy UI), `composer install --no-dev
+   --optimize-autoloader`, pre-build route cache, `config/production.php`, i18n JSON.
+4. Write `version.txt`; PHP reads it for the `X-App-Version` header. Footer shows the version.
+5. Split output:
+   ```
+   dist/1-upload-first/   app/<version>/, PHP, vendor, icons, manifest, .htaccess, ngsw-worker.js
+   dist/2-upload-last/    index.html, ngsw.json, version.txt
+   ```
+6. Copy `dist/2-upload-last/` to `releases/<version>/` (git-ignored) for rollback.
+7. Print upload instructions, the previous version, and the check URL.
+
+### 6.3 Service worker config (`ngsw-config.json`)
+- Asset group `core` (main bundle, polyfills, styles, active i18n file): `installMode: prefetch`.
+- Asset group `features` (lazy route chunks): `installMode: lazy`, `updateMode: lazy`.
+- `/api/*` is **not** cached by the service worker (always network).
+- Navigation requests fall back to `index.html`.
+
+### 6.4 `.htaccess`
+1. `DirectoryIndex index.html`.
+2. Block `^/(src|vendor|config|resources|storage|logs)/` → 404.
+3. `^/api/` → `index.php`.
+4. Existing files served directly.
+5. Non-GET request to any other path (stale legacy form) → 303 to the same path.
+6. Everything else → `index.html`.
+7. Caching inside `<IfModule mod_headers.c>`:
+   - `/app/*`: `Cache-Control: public, max-age=31536000, immutable`
+   - `index.html`, `ngsw.json`, `ngsw-worker.js`, `site.webmanifest`, `version.txt`: `Cache-Control: no-cache`
+
+### 6.5 Manual deploy procedure (documented in `docs/DEPLOYMENT.md`)
+1. Run DB migrations (`ALTER`s) if the release has any.
+2. Upload contents of `dist/1-upload-first/` to the web root. Safe at any time; users still see
+   the old version.
+3. Upload contents of `dist/2-upload-last/` to the web root. **New version goes live.**
+4. Check the footer or `/version.txt`.
+5. Optional: delete folders in `/app/` except the newest 3 (names sort by date).
+
+**Rollback:** upload contents of `releases/<old version>/` to the web root (works as long as that
+`app/<old version>/` folder still exists on the server). PHP code is rolled back by building and
+uploading the old commit.
+
+### 6.6 Updates for users
+- On app start, when the tab becomes visible again, and when `X-App-Version` differs, the app
+  calls `checkForUpdate()`. If an update is ready it shows a persistent toast
+  "Neue Version verfügbar – Neu laden"; the action calls `activateUpdate()` and reloads.
+
+## 7. Testing
+
+### 7.1 PHP (PHPUnit, existing `TP_test` DB)
+- Existing tests are converted from HTML assertions to status code + JSON assertions; repository
+  and business-logic tests stay.
+- `IntegrationTestCase` gets a `json()` request helper that sets the XSRF header.
+- Access matrix per endpoint: anonymous → 401, user → 403 where admin required, admin → OK.
+- CSRF: non-GET without valid header → 403.
+- **Contract:** TS API types → JSON Schema (`ts-json-schema-generator`, run in `frontend/`) →
+  PHPUnit validates real responses with `opis/json-schema` (dev dependency).
+- All API error keys exist in all three i18n files.
+- Coverage gate stays at 85%.
+
+### 7.2 Frontend (Vitest)
+- `ApiClient`: JSON, XSRF header, `ApiError` mapping, 401 redirect, version header → update
+  prompt, abort.
+- i18n service: placeholders, plurals, locale selection, fallback.
+- Logic components: confirm dialog, tournament/dinner unregister choice, forms with server
+  field errors, admin-only elements hidden for members.
+- Guards: unauthenticated → `/login?returnUrl=…`.
+- Coverage gate 80% for `core/`.
+
+### 7.3 E2E (Playwright, Docker: `php:8.5-apache` + MariaDB, runs built `dist/`)
+- Flows: login/logout; register/unregister tournament with confirmation; social prompt and
+  "Nur Turnier" / "Turnier & Abendessen"; waitlist when full; guest registration; admin create
+  event, bulk create, lock, CSV export. Main member flows also on an iPhone-size viewport.
+- Transition: legacy URLs (`/events/12`, `/social-events/3`) open the right screen; legacy POST →
+  303; `/site.webmanifest` name and icons unchanged; `/src/…`, `/vendor/…`, `/logs/…` → 404;
+  cache headers for `/app/*` and `index.html`.
+- Update flow: deploy version A, then B; app shows the update toast; reload runs B.
+
+### 7.4 Commands
+```bash
+composer test     # PHP API
+npm test          # frontend/ Vitest
+npm run e2e       # Docker + build + Playwright
+./test-all.sh     # all of the above, before every release
+```
+`CLAUDE.md` and `docs/TESTING.md` are updated so the testing policy covers frontend and E2E.
+
+## 8. Existing installs and cut-over
+
+- Current "installs" are manifest-only home-screen shortcuts (no service worker, no `start_url`),
+  so nothing is cached on devices.
+- URLs stay identical (§4.1); `/site.webmanifest` keeps path, name and icons; `start_url: "/"`,
+  `scope: "/"` and `id: "/"` are added.
+- Sessions stay valid (same cookie).
+- Stale open pages submitting legacy forms get a 303 to the new screen.
+- **Cut-over checklist**
+  1. `/admin/migrate-names` shows 0 pending on production.
+  2. Run DB migrations, if any.
+  3. Deploy per §6.5.
+  4. Delete legacy files on the server: `styles/`, `src/scripts/`, `src/Views/`, `src/Components/`,
+     `src/Layout/`, `resources/lang/`.
+
+## 9. Out of scope
+- In-app language switcher.
+- Dark mode.
+- Push notifications.
+- Offline data editing (only the app shell works offline).
+- CI pipeline (tests run locally; can be added later).
+- Changes to business rules or the database schema.
