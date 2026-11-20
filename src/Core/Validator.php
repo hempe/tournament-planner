@@ -59,7 +59,7 @@ final class Validator
     private function validateRequired(string $field, mixed $value): ?ValidationError
     {
         if ($value === null || $value === '' || (is_array($value) && empty($value))) {
-            return new ValidationError($field, "The {$field} field is required.");
+            return new ValidationError($field, "The {$field} field is required.", 'validation.required');
         }
         return null;
     }
@@ -67,7 +67,7 @@ final class Validator
     private function validateString(string $field, mixed $value): ?ValidationError
     {
         if ($value !== null && !is_string($value)) {
-            return new ValidationError($field, "The {$field} field must be a string.");
+            return new ValidationError($field, "The {$field} field must be a string.", 'validation.string');
         }
         return null;
     }
@@ -75,7 +75,7 @@ final class Validator
     private function validateInteger(string $field, mixed $value): ?ValidationError
     {
         if ($value !== null && !is_int($value) && !ctype_digit((string) $value)) {
-            return new ValidationError($field, "The {$field} field must be an integer.");
+            return new ValidationError($field, "The {$field} field must be an integer.", 'validation.integer');
         }
         return null;
     }
@@ -83,7 +83,7 @@ final class Validator
     private function validateEmail(string $field, mixed $value): ?ValidationError
     {
         if ($value !== null && !filter_var($value, FILTER_VALIDATE_EMAIL)) {
-            return new ValidationError($field, "The {$field} field must be a valid email address.");
+            return new ValidationError($field, "The {$field} field must be a valid email address.", 'validation.email');
         }
         return null;
     }
@@ -94,11 +94,11 @@ final class Validator
             return null;
 
         if (is_string($value) && strlen($value) < $min) {
-            return new ValidationError($field, "The {$field} field must be at least {$min} characters.");
+            return new ValidationError($field, "The {$field} field must be at least {$min} characters.", 'validation.min', ['min' => $min]);
         }
 
         if (is_numeric($value) && $value < $min) {
-            return new ValidationError($field, "The {$field} field must be at least {$min}.");
+            return new ValidationError($field, "The {$field} field must be at least {$min}.", 'validation.min', ['min' => $min]);
         }
 
         return null;
@@ -110,11 +110,11 @@ final class Validator
             return null;
 
         if (is_string($value) && strlen($value) > $max) {
-            return new ValidationError($field, "The {$field} field must not exceed {$max} characters.");
+            return new ValidationError($field, "The {$field} field must not exceed {$max} characters.", 'validation.max', ['max' => $max]);
         }
 
         if (is_numeric($value) && $value > $max) {
-            return new ValidationError($field, "The {$field} field must not exceed {$max}.");
+            return new ValidationError($field, "The {$field} field must not exceed {$max}.", 'validation.max', ['max' => $max]);
         }
 
         return null;
@@ -126,7 +126,7 @@ final class Validator
             return null;
 
         if (!is_string($value) || !strtotime($value)) {
-            return new ValidationError($field, "The {$field} field must be a valid date.");
+            return new ValidationError($field, "The {$field} field must be a valid date.", 'validation.date');
         }
 
         return null;
@@ -135,7 +135,7 @@ final class Validator
     private function validateBoolean(string $field, mixed $value): ?ValidationError
     {
         if ($value !== null && !is_bool($value) && !in_array($value, ['0', '1', 'true', 'false', 0, 1], true)) {
-            return new ValidationError($field, "The {$field} field must be a boolean.");
+            return new ValidationError($field, "The {$field} field must be a boolean.", 'validation.boolean');
         }
         return null;
     }
@@ -144,7 +144,7 @@ final class Validator
     {
         if ($value !== null && !in_array($value, $allowed, true)) {
             $allowedStr = implode(', ', $allowed);
-            return new ValidationError($field, "The {$field} field must be one of: {$allowedStr}.");
+            return new ValidationError($field, "The {$field} field must be one of: {$allowedStr}.", 'validation.in', ['values' => $allowedStr]);
         }
         return null;
     }

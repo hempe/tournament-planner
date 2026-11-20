@@ -155,4 +155,46 @@ class ValidatorTest extends TestCase
         $this->assertFalse($result->isValid);
         $this->assertCount(2, $result->errors); // One 'required' per field
     }
+
+    public function testErrorsCarryTranslationKeys(): void
+    {
+        $result = (new Validator())->validate(
+            ['name' => '', 'code' => 'ab', 'count' => '99', 'kind' => 'x', 'mail' => 'nope'],
+            [
+                new ValidationRule('name', ['required']),
+                new ValidationRule('code', ['min' => 3]),
+                new ValidationRule('count', ['max' => 10]),
+                new ValidationRule('kind', ['in' => ['a', 'b']]),
+                new ValidationRule('mail', ['email']),
+            ]
+        );
+
+        $this->assertSame(
+            [
+                'name' => ['key' => 'validation.required'],
+                'code' => ['key' => 'validation.min', 'params' => ['min' => 3]],
+                'count' => ['key' => 'validation.max', 'params' => ['max' => 10]],
+                'kind' => ['key' => 'validation.in', 'params' => ['values' => 'a, b']],
+                'mail' => ['key' => 'validation.email'],
+            ],
+            $result->fieldErrors()
+        );
+    }
+
+    public function testFieldErrorsKeepsFirstErrorPerField(): void
+    {
+        $result = (new Validator())->validate(
+            ['n' => 'abc'],
+            [new ValidationRule('n', ['integer', 'min' => 5])]
+        );
+
+        $this->assertSame(['n' => ['key' => 'validation.integer']], $result->fieldErrors());
+    }
+
+    public function testExistingMessagesUnchanged(): void
+    {
+        $result = (new Validator())->validate([], [new ValidationRule('name', ['required'])]);
+
+        $this->assertSame(['The name field is required.'], $result->getErrorMessages());
+    }
 }
