@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace TP\Tests\Integration;
 
 use PHPUnit\Framework\TestCase;
+use TP\Core\Request;
+use TP\Core\Response;
 use TP\Models\DB;
 
 /**
@@ -155,6 +157,11 @@ abstract class IntegrationTestCase extends TestCase
         array $data = [],
         array $headers = []
     ): TestResponse {
+        // Reset state that a previous json() call may have left behind
+        unset($_SERVER['CONTENT_TYPE'], $_SERVER['HTTP_X_XSRF_TOKEN'], $_SERVER['HTTP_X_REQUESTED_WITH']);
+        Request::setRawBodyForTesting(null);
+        Response::resetLastSent();
+
         // Set up request globals
         $_SERVER['REQUEST_METHOD'] = $method;
         $_SERVER['REQUEST_URI'] = $uri;
@@ -184,7 +191,61 @@ abstract class IntegrationTestCase extends TestCase
             throw $e;
         }
 
-        return new TestResponse($output, http_response_code());
+        $sent = Response::lastSent();
+        return new TestResponse($output, http_response_code(), $sent['headers'] ?? [], $sent['cookies'] ?? []);
+    }
+
+    /**
+     * Simulate a JSON API request. Sends the session's XSRF token unless
+     * $withCsrf is false.
+     */
+    protected function json(string $method, string $uri, array $data = [], bool $withCsrf = true): TestResponse
+    {
+        $_SERVER['REQUEST_METHOD'] = $method;
+        $_SERVER['REQUEST_URI'] = $uri;
+        $_SERVER['HTTP_HOST'] = 'localhost';
+        $_GET = [];
+        $_POST = [];
+        Response::resetLastSent();
+
+        $hasBody = in_array($method, ['POST', 'PUT', 'PATCH', 'DELETE'], true);
+        if ($hasBody) {
+            $_SERVER['CONTENT_TYPE'] = 'application/json';
+            Request::setRawBodyForTesting(json_encode($data, JSON_THROW_ON_ERROR));
+        } else {
+            unset($_SERVER['CONTENT_TYPE']);
+            Request::setRawBodyForTesting(null);
+            $_GET = $data;
+        }
+
+        if ($withCsrf && isset($_SESSION['xsrf_token'])) {
+            $_SERVER['HTTP_X_XSRF_TOKEN'] = $_SESSION['xsrf_token'];
+        } else {
+            unset($_SERVER['HTTP_X_XSRF_TOKEN']);
+        }
+
+        ob_start();
+        try {
+            require __DIR__ . '/../../index.php';
+            $output = ob_get_clean();
+        } catch (\Exception $e) {
+            ob_end_clean();
+            throw $e;
+        } finally {
+            Request::setRawBodyForTesting(null);
+        }
+
+        $sent = Response::lastSent();
+        return new TestResponse($output, http_response_code(), $sent['headers'] ?? [], $sent['cookies'] ?? []);
+    }
+
+    /**
+     * Log in through the JSON API (fetches a CSRF token first).
+     */
+    protected function apiLoginAs(string $username, string $password): TestResponse
+    {
+        $this->json('GET', '/api/auth/me');
+        return $this->json('POST', '/api/auth/login', ['username' => $username, 'password' => $password]);
     }
 
     /**
@@ -217,8 +278,22 @@ class TestResponse
 {
     public function __construct(
         public readonly string $body,
-        public readonly int $statusCode
+        public readonly int $statusCode,
+        /** @var array<string, string> */
+        public readonly array $headers = [],
+        /** @var array<string, array> */
+        public readonly array $cookies = [],
     ) {}
+
+    /** Decoded JSON body; fails the test if the body is not valid JSON. */
+    public function json(): array
+    {
+        $decoded = json_decode($this->body, true);
+        if (!is_array($decoded)) {
+            throw new \RuntimeException("Response is not JSON: {$this->body}");
+        }
+        return $decoded;
+    }
 
     public function assertOk(): self
     {
