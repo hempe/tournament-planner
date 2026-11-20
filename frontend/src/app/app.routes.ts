@@ -9,9 +9,18 @@ export const routes: Routes = [
     loadComponent: () => import('./features/login/login.page').then((m) => m.LoginPage),
   },
   {
+    path: 'events/:id/guests/new',
+    loadComponent: () => import('./features/guests/guest-registration.page').then((m) => m.GuestRegistrationPage),
+  },
+  {
     path: 'events/:id',
     canActivate: [authGuard],
     loadComponent: () => import('./features/events/event-detail.page').then((m) => m.EventDetailPage),
+  },
+  {
+    path: 'social-events/:id/guests/new',
+    loadComponent: () =>
+      import('./features/guests/social-guest-registration.page').then((m) => m.SocialGuestRegistrationPage),
   },
   {
     path: 'social-events/:id',
