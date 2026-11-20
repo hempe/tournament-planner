@@ -238,4 +238,76 @@ class RequestTest extends TestCase
         $this->assertArrayHasKey('q', $all);
         $this->assertArrayHasKey('p', $all);
     }
+
+    public function testIsApiForApiPaths(): void
+    {
+        $this->assertTrue($this->makeRequest('GET', '/api/events')->isApi());
+        $this->assertTrue($this->makeRequest('GET', '/api')->isApi());
+        $this->assertFalse($this->makeRequest('GET', '/events')->isApi());
+        $this->assertFalse($this->makeRequest('GET', '/apifoo')->isApi());
+    }
+
+    public function testDecodeJsonBodyReturnsArray(): void
+    {
+        $this->assertSame(['name' => 'Cup', 'tags' => ['a', 'b']], Request::decodeJsonBody('{"name":"Cup","tags":["a","b"]}'));
+    }
+
+    public function testDecodeJsonBodyEmptyIsEmptyArray(): void
+    {
+        $this->assertSame([], Request::decodeJsonBody(''));
+        $this->assertSame([], Request::decodeJsonBody('   '));
+    }
+
+    public function testDecodeJsonBodyInvalidReturnsNull(): void
+    {
+        $this->assertNull(Request::decodeJsonBody('{not json'));
+        $this->assertNull(Request::decodeJsonBody('"just a string"'));
+    }
+
+    public function testCreateFromGlobalsReadsJsonBody(): void
+    {
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_SERVER['REQUEST_URI'] = '/api/things';
+        $_SERVER['CONTENT_TYPE'] = 'application/json; charset=utf-8';
+        $_GET = [];
+        $_POST = [];
+        Request::setRawBodyForTesting('{"name":"Cup","capacity":20,"mixed":true}');
+
+        try {
+            $req = Request::createFromGlobals();
+
+            $this->assertSame('Cup', $req->getString('name'));
+            $this->assertSame(20, $req->getInt('capacity'));
+            $this->assertTrue($req->getBool('mixed'));
+            $this->assertFalse($req->hasInvalidJsonBody());
+        } finally {
+            Request::setRawBodyForTesting(null);
+            unset($_SERVER['CONTENT_TYPE']);
+        }
+    }
+
+    public function testCreateFromGlobalsFlagsInvalidJson(): void
+    {
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_SERVER['REQUEST_URI'] = '/api/things';
+        $_SERVER['CONTENT_TYPE'] = 'application/json';
+        Request::setRawBodyForTesting('{broken');
+
+        try {
+            $req = Request::createFromGlobals();
+
+            $this->assertTrue($req->hasInvalidJsonBody());
+            $this->assertSame([], $req->getPost());
+        } finally {
+            Request::setRawBodyForTesting(null);
+            unset($_SERVER['CONTENT_TYPE']);
+        }
+    }
+
+    public function testPutAndPatchAndDeleteAreSupportedMethods(): void
+    {
+        foreach (['PUT', 'PATCH', 'DELETE'] as $method) {
+            $this->assertSame($method, $this->makeRequest($method, '/api/x')->getMethod()->value);
+        }
+    }
 }

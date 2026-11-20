@@ -19,6 +19,7 @@ final class Request
 {
     private array $sanitizedData = [];
     private array $validatedData = [];
+    private static ?string $rawBodyOverride = null;
 
     public function __construct(
         private readonly HttpMethod $method,
@@ -27,7 +28,8 @@ final class Request
         private readonly array $post,
         private readonly array $server,
         private readonly array $headers,
-        private readonly array $files = []
+        private readonly array $files = [],
+        private readonly bool $invalidJsonBody = false,
     ) {
         $this->sanitizeInput();
     }
@@ -50,7 +52,55 @@ final class Request
             }
         }
 
-        return new Request($method, $uri, $query, $post, $server, $headers, $files);
+        $invalidJsonBody = false;
+        $contentType = strtolower((string) ($server['CONTENT_TYPE'] ?? $server['HTTP_CONTENT_TYPE'] ?? ''));
+        if (str_starts_with($contentType, 'application/json')) {
+            $raw = self::$rawBodyOverride ?? (string) file_get_contents('php://input');
+            $decoded = self::decodeJsonBody($raw);
+            $invalidJsonBody = $decoded === null;
+            $post = $decoded ?? [];
+        }
+
+        return new Request($method, $uri, $query, $post, $server, $headers, $files, $invalidJsonBody);
+    }
+
+    /**
+     * Decode a JSON request body. Returns [] for an empty body and null when the
+     * body is not valid JSON or not a JSON object/array.
+     */
+    public static function decodeJsonBody(string $raw): ?array
+    {
+        if (trim($raw) === '') {
+            return [];
+        }
+
+        try {
+            $decoded = json_decode($raw, true, 64, JSON_THROW_ON_ERROR);
+        } catch (\JsonException) {
+            return null;
+        }
+
+        return is_array($decoded) ? $decoded : null;
+    }
+
+    /**
+     * Integration tests cannot write php://input; they inject the raw body here.
+     * Pass null to go back to reading php://input.
+     */
+    public static function setRawBodyForTesting(?string $body): void
+    {
+        self::$rawBodyOverride = $body;
+    }
+
+    public function hasInvalidJsonBody(): bool
+    {
+        return $this->invalidJsonBody;
+    }
+
+    public function isApi(): bool
+    {
+        $path = $this->getPath();
+        return $path === '/api' || str_starts_with($path, '/api/');
     }
 
     public function getMethod(): HttpMethod
