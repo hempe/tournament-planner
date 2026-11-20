@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace TP\Controllers\Api;
 
+use TP\Api\Dto\LoginRequest;
 use TP\Api\Dto\SessionDto;
 use TP\Api\Dto\UserDto;
+use TP\Core\Attributes\Body;
 use TP\Core\Attributes\Get;
 use TP\Core\Attributes\Middleware;
 use TP\Core\Attributes\Post;
+use TP\Core\Attributes\Returns;
 use TP\Core\Attributes\RoutePrefix;
 use TP\Core\HttpStatus;
 use TP\Core\Request;
@@ -24,6 +27,7 @@ use TP\Models\User;
 final class AuthController
 {
     #[Get('/me')]
+    #[Returns(SessionDto::class)]
     public function me(Request $request): Response
     {
         $id = User::id();
@@ -42,6 +46,8 @@ final class AuthController
     }
 
     #[Post('/login')]
+    #[Body(LoginRequest::class)]
+    #[Returns(SessionDto::class)]
     public function login(Request $request): Response
     {
         $validation = $request->validate([
