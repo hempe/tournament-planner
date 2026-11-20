@@ -48,6 +48,7 @@
 | `src/Middleware/AuthMiddleware.php` | modify | JSON 401 for API |
 | `src/Middleware/AdminMiddleware.php` | modify | JSON 401/403 for API |
 | `src/Middleware/CsrfMiddleware.php` | create | XSRF cookie + header check |
+| `src/Api/Dto/UserDto.php`, `SessionDto.php` | create | response DTOs (input for the TS generator in plan 2) |
 | `src/Controllers/Api/AuthController.php` | create | `/api/auth/me`, `/login`, `/logout` |
 | `frontend/src/i18n/{de,en,es}.json` | create | translations (single source) |
 | `resources/lang/*.php` | delete | replaced by JSON |
@@ -1746,9 +1747,95 @@ git commit -m "feat(security): Add CSRF middleware with XSRF-TOKEN cookie for th
 ### Task 11: Auth API (`/api/auth/me`, `/login`, `/logout`)
 
 **Files:**
+- Create: `src/Api/Dto/UserDto.php`, `src/Api/Dto/SessionDto.php`
 - Create: `src/Controllers/Api/AuthController.php`
+- Modify: `src/Core/Response.php` (`json()` accepts DTO objects)
 - Modify: `frontend/src/i18n/*.json` (new key `validation.failed`)
-- Test: `tests/Integration/Api/AuthApiTest.php` (create)
+- Test: `tests/Integration/Api/AuthApiTest.php` (create), `tests/Integration/Core/ResponseTest.php`
+
+Responses are built from DTOs (`final readonly class` with public constructor-promoted properties in
+`src/Api/Dto/`), not hand-built arrays. Plan 2 adds a generator that turns these DTOs and route
+attributes into TypeScript (spec §4.7), so every API response must be a DTO from the start.
+
+- [ ] **Step 0a: Write the failing Response test** — append to `tests/Integration/Core/ResponseTest.php`:
+
+```php
+    public function testJsonSerialisesDtoObjects(): void
+    {
+        $dto = new \TP\Api\Dto\SessionDto(null);
+
+        $this->assertSame('{"user":null}', Response::json($dto)->getContent());
+    }
+```
+
+Run: `vendor/bin/phpunit --filter testJsonSerialisesDtoObjects` → Expected: FAIL (class `SessionDto` not found).
+
+- [ ] **Step 0b: Create the DTOs and let `Response::json()` accept them**
+
+`src/Api/Dto/UserDto.php`:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace TP\Api\Dto;
+
+use TP\Models\User;
+
+final readonly class UserDto
+{
+    public function __construct(
+        public int $id,
+        public string $username,
+        public ?string $firstName,
+        public ?string $lastName,
+        public string $displayName,
+        public bool $isAdmin,
+    ) {
+    }
+
+    public static function fromUser(User $user): self
+    {
+        return new self(
+            $user->id,
+            $user->username,
+            $user->firstName,
+            $user->lastName,
+            $user->displayName(),
+            $user->isAdmin,
+        );
+    }
+}
+```
+
+`src/Api/Dto/SessionDto.php`:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace TP\Api\Dto;
+
+/** Current session: the logged-in user, or null when anonymous. */
+final readonly class SessionDto
+{
+    public function __construct(
+        public ?UserDto $user,
+    ) {
+    }
+}
+```
+
+In `src/Core/Response.php`, change the signature of `json()` from `array $data` to `array|object $data`
+(body unchanged — `json_encode` serialises public properties of DTOs):
+
+```php
+    public static function json(array|object $data, HttpStatus $status = HttpStatus::OK): Response
+```
+
+Run: `vendor/bin/phpunit --filter ResponseTest` → Expected: OK.
 
 - [ ] **Step 1: Write the failing tests**
 
@@ -1903,6 +1990,8 @@ declare(strict_types=1);
 
 namespace TP\Controllers\Api;
 
+use TP\Api\Dto\SessionDto;
+use TP\Api\Dto\UserDto;
 use TP\Core\Attributes\Get;
 use TP\Core\Attributes\Middleware;
 use TP\Core\Attributes\Post;
@@ -1925,17 +2014,17 @@ final class AuthController
     {
         $id = User::id();
         if ($id === null) {
-            return Response::json(['user' => null]);
+            return Response::json(new SessionDto(null));
         }
 
         $user = DB::$users->get($id);
         if ($user === null) {
             // Account was deleted while logged in
             $this->resetSession();
-            return Response::json(['user' => null]);
+            return Response::json(new SessionDto(null));
         }
 
-        return Response::json(['user' => self::userJson($user)]);
+        return Response::json(new SessionDto(UserDto::fromUser($user)));
     }
 
     #[Post('/login')]
@@ -1961,7 +2050,7 @@ final class AuthController
         User::setCurrent($user);
 
         // Reload so the response has the same shape as /me (names included)
-        return Response::json(['user' => self::userJson(DB::$users->get($user->id) ?? $user)]);
+        return Response::json(new SessionDto(UserDto::fromUser(DB::$users->get($user->id) ?? $user)));
     }
 
     #[Post('/logout')]
@@ -1970,21 +2059,6 @@ final class AuthController
     {
         $this->resetSession();
         return Response::noContent();
-    }
-
-    /**
-     * @return array{id: int, username: string, firstName: ?string, lastName: ?string, displayName: string, isAdmin: bool}
-     */
-    public static function userJson(User $user): array
-    {
-        return [
-            'id' => $user->id,
-            'username' => $user->username,
-            'firstName' => $user->firstName,
-            'lastName' => $user->lastName,
-            'displayName' => $user->displayName(),
-            'isAdmin' => $user->isAdmin,
-        ];
     }
 
     /**
@@ -2023,7 +2097,7 @@ Run: `composer test` → Expected: baseline. The old `/login` and `/logout` HTML
 - [ ] **Step 5: Commit**
 
 ```bash
-git add src/Controllers/Api/AuthController.php frontend/src/i18n tests/Integration/Api/AuthApiTest.php
+git add src/Api/Dto src/Core/Response.php src/Controllers/Api/AuthController.php frontend/src/i18n tests/Integration/Api/AuthApiTest.php tests/Integration/Core/ResponseTest.php
 git commit -m "feat(api): Add /api/auth/me, /api/auth/login and /api/auth/logout"
 ```
 
@@ -2152,7 +2226,7 @@ fresh cookie, so clients retry once.
 | POST | `/api/auth/login` | `{ "username", "password" }` | `200 { "user": User }`, `422 auth.login_failed` |
 | POST | `/api/auth/logout` | – | `204` (requires login) |
 
-`User` = `{ id, username, firstName, lastName, displayName, isAdmin }`.
+`User` = `UserDto` = `{ id, username, firstName, lastName, displayName, isAdmin }`. Responses are DTOs from `src/Api/Dto/`, never hand-built arrays (plan 2 generates TypeScript from them).
 
 ## Testing
 
