@@ -40,4 +40,24 @@ describe('ConfirmDialog', () => {
 
     await expect(answer).resolves.toBe(false);
   });
+
+  it('renders custom title and all actions of choose()', async () => {
+    const fixture = TestBed.createComponent(ConfirmDialog);
+    const confirm = TestBed.inject(ConfirmService);
+    await fixture.whenStable();
+
+    const choice = confirm.choose({
+      title: 'Abmeldung',
+      message: 'Von welchem Anlass möchtest du dich abmelden?',
+      actions: [
+        { value: 'tournament', label: 'Nur Turnier' },
+        { value: 'both', label: 'Turnier & Abendessen' },
+      ],
+    });
+    await fixture.whenStable();
+
+    expect(document.body.textContent).toContain('Abmeldung');
+    button('Turnier & Abendessen').click();
+    await expect(choice).resolves.toBe('both');
+  });
 });

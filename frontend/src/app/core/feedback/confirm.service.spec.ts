@@ -6,7 +6,7 @@ describe('ConfirmService', () => {
     const confirm = TestBed.inject(ConfirmService);
 
     const answer = confirm.ask('Turnier abmelden?', { danger: true });
-    expect(confirm.pending()).toEqual({ message: 'Turnier abmelden?', danger: true });
+    expect(confirm.pending()?.message).toBe('Turnier abmelden?');
 
     confirm.answer(true);
     await expect(answer).resolves.toBe(true);
@@ -32,5 +32,25 @@ describe('ConfirmService', () => {
     confirm.answer(false);
 
     await expect(answer).resolves.toBe(true);
+  });
+
+  it('choose() resolves with the chosen action value or null on cancel', async () => {
+    const confirm = TestBed.inject(ConfirmService);
+
+    const choice = confirm.choose({
+      title: 'Abmeldung',
+      message: 'Von welchem Anlass?',
+      actions: [
+        { value: 'tournament', label: 'Nur Turnier', danger: true },
+        { value: 'both', label: 'Turnier & Abendessen', danger: true },
+      ],
+    });
+    expect(confirm.pending()?.actions.map((a) => a.value)).toEqual(['tournament', 'both']);
+    confirm.answer('both');
+    await expect(choice).resolves.toBe('both');
+
+    const cancelled = confirm.choose({ message: 'x', actions: [{ value: 'a', label: 'A' }] });
+    confirm.answer(null);
+    await expect(cancelled).resolves.toBeNull();
   });
 });

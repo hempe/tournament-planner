@@ -7,21 +7,23 @@ import { ConfirmService } from './confirm.service';
   selector: 'app-confirm-dialog',
   imports: [HlmAlertDialogImports, TranslatePipe],
   template: `
-    <hlm-alert-dialog [state]="state()" (closed)="confirm.answer(false)">
+    <hlm-alert-dialog [state]="state()" (closed)="confirm.answer(null)">
       <hlm-alert-dialog-content *hlmAlertDialogPortal>
         <hlm-alert-dialog-header>
-          <h2 hlmAlertDialogTitle>{{ 'calendar.confirmation' | t }}</h2>
+          <h2 hlmAlertDialogTitle>{{ confirm.pending()?.title || ('calendar.confirmation' | t) }}</h2>
           <p hlmAlertDialogDescription>{{ confirm.pending()?.message }}</p>
         </hlm-alert-dialog-header>
-        <hlm-alert-dialog-footer>
-          <button hlmAlertDialogCancel (click)="confirm.answer(false)">{{ 'actions.cancel' | t }}</button>
-          <button
-            hlmAlertDialogAction
-            [variant]="confirm.pending()?.danger ? 'destructive' : 'default'"
-            (click)="confirm.answer(true)"
-          >
-            {{ 'actions.confirm' | t }}
-          </button>
+        <hlm-alert-dialog-footer class="flex-col-reverse sm:flex-row">
+          <button hlmAlertDialogCancel (click)="confirm.answer(null)">{{ 'actions.cancel' | t }}</button>
+          @for (action of confirm.pending()?.actions; track action.value) {
+            <button
+              hlmAlertDialogAction
+              [variant]="action.danger ? 'destructive' : 'default'"
+              (click)="confirm.answer(action.value)"
+            >
+              {{ action.label || ('actions.confirm' | t) }}
+            </button>
+          }
         </hlm-alert-dialog-footer>
       </hlm-alert-dialog-content>
     </hlm-alert-dialog>

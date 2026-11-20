@@ -13,8 +13,8 @@ import { TranslatePipe } from '../i18n/translate.pipe';
       <nav class="mx-auto flex max-w-5xl flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3">
         <a routerLink="/" class="font-semibold tracking-wide">{{ 'app.name' | t }}</a>
         @if (session.loggedIn()) {
-          <a routerLink="/events" routerLinkActive="text-primary">{{ 'nav.events' | t }}</a>
           @if (session.isAdmin()) {
+            <a routerLink="/events" routerLinkActive="text-primary">{{ 'nav.events' | t }}</a>
             <a routerLink="/users" routerLinkActive="text-primary">{{ 'nav.users' | t }}</a>
           }
           <span class="ml-auto text-sm text-muted-foreground">{{ session.user()?.displayName }}</span>

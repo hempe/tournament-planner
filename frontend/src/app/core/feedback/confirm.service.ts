@@ -1,29 +1,51 @@
 import { Injectable, signal } from '@angular/core';
 
-export interface ConfirmRequest {
-  message: string;
-  danger: boolean;
+export interface ConfirmAction {
+  value: string;
+  label: string;
+  danger?: boolean;
 }
 
-/** `if (await confirm.ask(t('…'))) { … }` — rendered by <app-confirm-dialog> in the app shell. */
+export interface ConfirmRequest {
+  /** Already translated. Defaults to the "Bestätigung" title in the dialog. */
+  title?: string;
+  message: string;
+  actions: ConfirmAction[];
+}
+
+/**
+ * `if (await confirm.ask(i18n.t('…'))) { … }` for yes/no,
+ * `await confirm.choose({ message, actions })` for several options (null = cancelled).
+ * Rendered by <app-confirm-dialog> in the app shell.
+ */
 @Injectable({ providedIn: 'root' })
 export class ConfirmService {
   private readonly _pending = signal<ConfirmRequest | null>(null);
   readonly pending = this._pending.asReadonly();
-  private resolve: ((answer: boolean) => void) | null = null;
+  private resolve: ((value: string | null) => void) | null = null;
 
-  ask(message: string, options: { danger?: boolean } = {}): Promise<boolean> {
-    this.resolve?.(false);
-    return new Promise<boolean>((resolve) => {
+  /** Yes/no question; the confirm button uses the "actions.confirm" label. */
+  async ask(message: string, options: { danger?: boolean; confirmLabel?: string } = {}): Promise<boolean> {
+    const answer = await this.choose({
+      message,
+      actions: [{ value: 'confirm', label: options.confirmLabel ?? '', danger: options.danger }],
+    });
+    return answer === 'confirm';
+  }
+
+  choose(request: ConfirmRequest): Promise<string | null> {
+    this.resolve?.(null);
+    return new Promise<string | null>((resolve) => {
       this.resolve = resolve;
-      this._pending.set({ message, danger: options.danger ?? false });
+      this._pending.set(request);
     });
   }
 
-  answer(answer: boolean): void {
+  /** `true`/`false` keep working for ask(); `null` cancels. */
+  answer(value: string | boolean | null): void {
     const resolve = this.resolve;
     this.resolve = null;
     this._pending.set(null);
-    resolve?.(answer);
+    resolve?.(value === true ? 'confirm' : value === false ? null : value);
   }
 }

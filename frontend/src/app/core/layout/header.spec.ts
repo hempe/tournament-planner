@@ -42,20 +42,21 @@ describe('Header', () => {
     expect(text).not.toContain('Anlässe');
   });
 
-  it('shows name, events and logout for members; users only for admins', async () => {
+  it('shows name and logout for members; events and users only for admins', async () => {
     user.set({ id: 1, username: 'jane', firstName: 'Jane', lastName: 'Doe', displayName: 'Jane Doe', isAdmin: false });
     const fixture = TestBed.createComponent(Header);
     await fixture.whenStable();
     let text = fixture.nativeElement.textContent as string;
 
     expect(text).toContain('Jane Doe');
-    expect(text).toContain('Anlässe');
     expect(text).toContain('Abmelden');
+    expect(text).not.toContain('Anlässe');
     expect(text).not.toContain('Benutzer');
 
     user.set({ ...user()!, isAdmin: true });
     await fixture.whenStable();
     text = fixture.nativeElement.textContent as string;
+    expect(text).toContain('Anlässe');
     expect(text).toContain('Benutzer');
   });
 
