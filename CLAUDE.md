@@ -67,13 +67,15 @@ This is a PHP web application for golf event management with a modern MVC archit
 - Controllers return Response objects (ok, redirect, json, notFound, etc.)
 - Validation handled via `$request->validate()` with ValidationRule objects
 
+**JSON API**: New API controllers live in `src/Controllers/Api/` under `/api/*` and return DTOs (`final readonly class` in `src/Api/Dto/`) via `Response::json()`, or errors via `Response::apiError()`. Errors are translation keys, never translated text. Every API controller needs `#[Middleware(CsrfMiddleware::class)]`. See [docs/API.md](docs/API.md).
+
 **Components**: All UI Components extend `Component` base class and implement `template()` method. Components support nested rendering and automatic output buffering. See [docs/COMPONENTS.md](docs/COMPONENTS.md) for comprehensive component documentation.
 
-**Translation System**: All user-facing text uses `__('key')` function for internationalization. Translations defined in `resources/lang/{de,en,es}.php` (German is the primary language; keep all three in sync). Never hardcode German text in views.
+**Translation System**: All user-facing text uses `__('key')` function for internationalization. Translations are defined in `frontend/src/i18n/{de,en,es}.json` (single source for PHP and the Angular app; German is the primary language; keep all three in sync). Never hardcode German text in views.
 
 **Database**: Repository pattern with static instances accessible via `DB::$events`, `DB::$users`, `DB::$guests`, and `DB::$socialEvents`. Database connection configured in `.env` file.
 
-**Testing**: Comprehensive test suite with 448 tests covering controllers, localization, core classes, and event management. Tests use PCOV for fast coverage analysis. All routes have tests for anonymous, regular user, and admin access.
+**Testing**: Comprehensive test suite with 506 tests covering controllers, localization, core classes, and event management. Tests use PCOV for fast coverage analysis. All routes have tests for anonymous, regular user, and admin access.
 
 **Error Handling**: User-friendly error pages for 404 (Not Found), 403 (Forbidden), and 500 (Server Error) with navigation buttons to help users get back to safety.
 
@@ -100,7 +102,8 @@ Requires MySQL with extensions `pdo_mysql` and `mysqli` enabled. Database schema
   - [Page Component](docs/components/Page.md) - Page layout and navigation
   - [Form Component](docs/components/Form.md) - Forms with CSRF protection
   - [Card Component](docs/components/Card.md) - Content cards
-- **[Translation System](resources/lang/de.php)** - i18n strings
+- **[Translation System](frontend/src/i18n/de.json)** - i18n strings
+- **[JSON API](docs/API.md)** - API conventions, errors, CSRF
 - **[Testing Guide](docs/TESTING.md)** - Test suite documentation and code coverage
 
 ## Important Reminders
@@ -117,7 +120,7 @@ Requires MySQL with extensions `pdo_mysql` and `mysqli` enabled. Database schema
 ### Documentation Policy
 
 **Update docs alongside every change:**
-- New translation keys: they are self-documenting via `resources/lang/`
+- New translation keys: they are self-documenting via `frontend/src/i18n/`
 - New `Color` cases: update `docs/COMPONENTS.md` if behavior differs from existing cases
 - New CSS version bumps: bump `?v=X` in `src/Layout/header.php` whenever a CSS file changes
 - After larger feature additions: update `README.md` feature list and `docs/TESTING.md` test count
