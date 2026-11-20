@@ -75,6 +75,10 @@ final class Config
                 'url' => $_ENV['APP_URL'] ?? 'http://localhost:5000',
                 'timezone' => $_ENV['APP_TIMEZONE'] ?? 'Europe/Zurich',
                 'locale' => $_ENV['APP_LOCALE'] ?? 'de',
+                'secure' => filter_var(
+                    $_ENV['APP_SECURE'] ?? ($this->isProduction() ? 'true' : 'false'),
+                    FILTER_VALIDATE_BOOLEAN
+                ),
             ],
             'database' => [
                 'host' => $_ENV['DB_HOST'] ?? 'localhost',

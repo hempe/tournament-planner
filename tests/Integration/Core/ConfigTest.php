@@ -325,4 +325,35 @@ class ConfigTest extends TestCase
 
         $this->assertEquals('default', $value);
     }
+
+    public function testAppSecureDefaultsToFalseOutsideProduction(): void
+    {
+        $_ENV['APP_ENV'] = 'testing';
+        unset($_ENV['APP_SECURE']);
+
+        $this->assertFalse(Config::getInstance()->get('app.secure'));
+    }
+
+    public function testAppSecureDefaultsToTrueInProduction(): void
+    {
+        $_ENV['APP_ENV'] = 'production';
+        unset($_ENV['APP_SECURE']);
+        try {
+            $this->assertTrue(Config::getInstance()->get('app.secure'));
+        } finally {
+            $_ENV['APP_ENV'] = 'testing';
+        }
+    }
+
+    public function testAppSecureCanBeDisabledExplicitly(): void
+    {
+        $_ENV['APP_ENV'] = 'production';
+        $_ENV['APP_SECURE'] = 'false';
+        try {
+            $this->assertFalse(Config::getInstance()->get('app.secure'));
+        } finally {
+            $_ENV['APP_ENV'] = 'testing';
+            unset($_ENV['APP_SECURE']);
+        }
+    }
 }
