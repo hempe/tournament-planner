@@ -69,7 +69,7 @@ This is a PHP web application for golf event management with a modern MVC archit
 
 **Components**: All UI Components extend `Component` base class and implement `template()` method. Components support nested rendering and automatic output buffering. See [docs/COMPONENTS.md](docs/COMPONENTS.md) for comprehensive component documentation.
 
-**Translation System**: All user-facing text uses `__('key')` function for internationalization. Translations defined in `resources/lang/de_CH.php`. Never hardcode German text in views.
+**Translation System**: All user-facing text uses `__('key')` function for internationalization. Translations defined in `resources/lang/{de,en,es}.php` (German is the primary language; keep all three in sync). Never hardcode German text in views.
 
 **Database**: Repository pattern with static instances accessible via `DB::$events`, `DB::$users`, `DB::$guests`, and `DB::$socialEvents`. Database connection configured in `.env` file.
 
@@ -100,7 +100,7 @@ Requires MySQL with extensions `pdo_mysql` and `mysqli` enabled. Database schema
   - [Page Component](docs/components/Page.md) - Page layout and navigation
   - [Form Component](docs/components/Form.md) - Forms with CSRF protection
   - [Card Component](docs/components/Card.md) - Content cards
-- **[Translation System](resources/lang/de_CH.php)** - i18n strings
+- **[Translation System](resources/lang/de.php)** - i18n strings
 - **[Testing Guide](docs/TESTING.md)** - Test suite documentation and code coverage
 
 ## Important Reminders
