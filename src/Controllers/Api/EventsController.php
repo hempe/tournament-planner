@@ -9,8 +9,10 @@ use TP\Api\Dto\CommentRequest;
 use TP\Api\Dto\EventDetailDto;
 use TP\Api\Dto\EventSummaryDto;
 use TP\Api\Dto\GuestNameDto;
+use TP\Api\Dto\GuestRegistrationRequest;
 use TP\Api\Dto\MyRegistrationDto;
 use TP\Api\Dto\ParticipantDto;
+use TP\Api\Dto\PublicEventDto;
 use TP\Api\Dto\RegisterRequest;
 use TP\Api\Dto\SocialEventSummaryDto;
 use TP\Core\Attributes\Body;
@@ -24,6 +26,7 @@ use TP\Core\Attributes\RoutePrefix;
 use TP\Core\HttpStatus;
 use TP\Core\Request;
 use TP\Core\Response;
+use TP\Core\ValidationRule;
 use TP\Middleware\AuthMiddleware;
 use TP\Middleware\CsrfMiddleware;
 use TP\Models\DB;
@@ -110,6 +113,68 @@ final class EventsController
         DB::$events->unregister($eventId, $userId);
 
         return Response::json($this->detail($eventId, $userId));
+    }
+
+    #[Get('/{id}/guest-info')]
+    #[Returns(PublicEventDto::class)]
+    public function guestInfo(Request $request, array $params): Response
+    {
+        $event = DB::$events->get((int) $params['id'], 0);
+
+        return $event === null
+            ? Response::apiError('events.not_found', HttpStatus::NOT_FOUND)
+            : Response::json(PublicEventDto::fromEvent($event));
+    }
+
+    #[Post('/{id}/guests')]
+    #[Body(GuestRegistrationRequest::class)]
+    public function addGuest(Request $request, array $params): Response
+    {
+        $eventId = (int) $params['id'];
+
+        if (DB::$events->get($eventId, 0) === null) {
+            return Response::apiError('events.not_found', HttpStatus::NOT_FOUND);
+        }
+
+        $isAdmin = User::admin();
+        // Locked events (manual lock, date or deadline passed) only accept guests from admins
+        if (!$isAdmin && DB::$events->isLocked($eventId)) {
+            return Response::apiError('events.locked_message', HttpStatus::CONFLICT);
+        }
+
+        $validation = $request->validate([
+            new ValidationRule('male', ['required', 'boolean']),
+            new ValidationRule('firstName', ['required', 'string', 'max' => 255]),
+            new ValidationRule('lastName', ['required', 'string', 'max' => 255]),
+            new ValidationRule('email', $this->emailRules($isAdmin, $request)),
+            new ValidationRule('handicap', $isAdmin ? ['string'] : ['required', 'string']),
+            new ValidationRule('comment', ['string', 'max' => 2048]),
+        ]);
+        if (!$validation->isValid) {
+            return Response::apiError('validation.failed', HttpStatus::UNPROCESSABLE_ENTITY, $validation->fieldErrors());
+        }
+
+        $handicap = $request->getString('handicap');
+        DB::$guests->add(
+            $eventId,
+            $request->getBool('male'),
+            $request->getString('firstName'),
+            $request->getString('lastName'),
+            $request->getString('email') ?: null,
+            $handicap !== '' ? (float) $handicap : null,
+            $request->getString('comment') ?: null,
+        );
+
+        return Response::noContent();
+    }
+
+    /** Admins may leave the email blank; everyone else must give a valid one. */
+    private function emailRules(bool $isAdmin, Request $request): array
+    {
+        if ($isAdmin) {
+            return $request->getString('email') === '' ? ['string'] : ['email', 'max' => 255];
+        }
+        return ['required', 'email', 'max' => 255];
     }
 
     private function myRegistration(int $eventId, int $userId): ?EventRegistration

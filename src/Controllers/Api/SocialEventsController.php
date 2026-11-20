@@ -7,6 +7,8 @@ namespace TP\Controllers\Api;
 use TP\Api\Dto\MenuDto;
 use TP\Api\Dto\SocialEventDetailDto;
 use TP\Api\Dto\SocialEventSummaryDto;
+use TP\Api\Dto\SocialGuestInfoDto;
+use TP\Api\Dto\SocialGuestRequest;
 use TP\Api\Dto\SocialParticipantDto;
 use TP\Api\Dto\SocialRegisterRequest;
 use TP\Api\Dto\SocialRegistrationDto;
@@ -22,6 +24,7 @@ use TP\Core\Attributes\RoutePrefix;
 use TP\Core\HttpStatus;
 use TP\Core\Request;
 use TP\Core\Response;
+use TP\Core\ValidationRule;
 use TP\Middleware\AuthMiddleware;
 use TP\Middleware\CsrfMiddleware;
 use TP\Models\DB;
@@ -99,6 +102,83 @@ final class SocialEventsController
         DB::$socialEvents->unregister($id, $userId);
 
         return Response::json($this->detail($id, $userId));
+    }
+
+    #[Get('/{id}/guest-info')]
+    #[Returns(SocialGuestInfoDto::class)]
+    public function guestInfo(Request $request, array $params): Response
+    {
+        $id = (int) $params['id'];
+        $socialEvent = DB::$socialEvents->get($id, 0);
+        if ($socialEvent === null) {
+            return Response::apiError('social_events.not_found', HttpStatus::NOT_FOUND);
+        }
+
+        return Response::json(new SocialGuestInfoDto(
+            SocialEventSummaryDto::fromSocialEvent($socialEvent),
+            $socialEvent->description,
+            array_map(MenuDto::fromMenu(...), DB::$socialEvents->menus($id)),
+            array_map(TableDto::fromTable(...), DB::$socialEvents->tables($id)),
+        ));
+    }
+
+    #[Post('/{id}/guests')]
+    #[Body(SocialGuestRequest::class)]
+    public function addGuest(Request $request, array $params): Response
+    {
+        $id = (int) $params['id'];
+        $socialEvent = DB::$socialEvents->get($id, 0);
+        if ($socialEvent === null) {
+            return Response::apiError('social_events.not_found', HttpStatus::NOT_FOUND);
+        }
+
+        $isAdmin = User::admin();
+        // Locked events only accept guests from admins
+        if (!$isAdmin && $socialEvent->isLocked) {
+            return Response::apiError('social_events.locked_message', HttpStatus::CONFLICT);
+        }
+
+        $hasMenus = DB::$socialEvents->menus($id) !== [];
+        $rules = [
+            new ValidationRule('firstName', ['required', 'string', 'max' => 255]),
+            new ValidationRule('lastName', ['required', 'string', 'max' => 255]),
+            new ValidationRule('email', $this->emailRules($isAdmin, $request)),
+        ];
+        if ($hasMenus) {
+            $rules[] = new ValidationRule('menuId', ['required', 'integer']);
+        }
+        $validation = $request->validate($rules);
+        if (!$validation->isValid) {
+            return Response::apiError('validation.failed', HttpStatus::UNPROCESSABLE_ENTITY, $validation->fieldErrors());
+        }
+
+        $menuId = $hasMenus ? $this->optionalInt($request, 'menuId') : null;
+        $tableId = $this->optionalInt($request, 'tableId');
+
+        $error = $this->checkChoice($id, $menuId, $tableId);
+        if ($error !== null) {
+            return $error;
+        }
+
+        DB::$socialEvents->registerGuest(
+            $id,
+            $request->getString('firstName'),
+            $request->getString('lastName'),
+            $request->getString('email'),
+            $menuId,
+            $tableId,
+        );
+
+        return Response::noContent();
+    }
+
+    /** Admins may leave the email blank; everyone else must give a valid one. */
+    private function emailRules(bool $isAdmin, Request $request): array
+    {
+        if ($isAdmin) {
+            return $request->getString('email') === '' ? ['string'] : ['email', 'max' => 255];
+        }
+        return ['required', 'email', 'max' => 255];
     }
 
     private function optionalInt(Request $request, string $key): ?int

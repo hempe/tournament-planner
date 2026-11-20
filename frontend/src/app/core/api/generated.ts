@@ -42,6 +42,15 @@ export interface GuestNameDto {
   lastName: string;
 }
 
+export interface GuestRegistrationRequest {
+  male: boolean;
+  firstName: string;
+  lastName: string;
+  email: string | null;
+  handicap: string | null;
+  comment: string | null;
+}
+
 export interface LoginRequest {
   username: string;
   password: string;
@@ -60,6 +69,17 @@ export interface MyRegistrationDto {
 export interface ParticipantDto {
   name: string;
   state: RegistrationState;
+}
+
+export interface PublicEventDto {
+  id: number;
+  name: string;
+  date: string;
+  description: string | null;
+  priceMembers: string | null;
+  priceGuests: string | null;
+  registrationClose: string | null;
+  isLocked: boolean;
 }
 
 export interface RegisterRequest {
@@ -92,6 +112,21 @@ export interface SocialEventSummaryDto {
   registered: number;
   available: number | null;
   userRegistered: boolean;
+}
+
+export interface SocialGuestInfoDto {
+  event: SocialEventSummaryDto;
+  description: string | null;
+  menus: MenuDto[];
+  tables: TableDto[];
+}
+
+export interface SocialGuestRequest {
+  firstName: string;
+  lastName: string;
+  email: string | null;
+  menuId: number | null;
+  tableId: number | null;
 }
 
 export interface SocialParticipantDto {
@@ -153,6 +188,10 @@ export function eventsApi(api: ApiClient) {
       api.patch<EventDetailDto>(`/events/${encodeURIComponent(id)}/registrations/me`, body, options),
     unregister: (id: number | string, options?: RequestOptions): Promise<EventDetailDto> =>
       api.delete<EventDetailDto>(`/events/${encodeURIComponent(id)}/registrations/me`, options),
+    guestInfo: (id: number | string, options?: RequestOptions): Promise<PublicEventDto> =>
+      api.get<PublicEventDto>(`/events/${encodeURIComponent(id)}/guest-info`, options),
+    addGuest: (id: number | string, body: GuestRegistrationRequest, options?: RequestOptions): Promise<void> =>
+      api.post<void>(`/events/${encodeURIComponent(id)}/guests`, body, options),
   };
 }
 
@@ -164,5 +203,9 @@ export function socialEventsApi(api: ApiClient) {
       api.post<SocialEventDetailDto>(`/social-events/${encodeURIComponent(id)}/registrations`, body, options),
     unregister: (id: number | string, options?: RequestOptions): Promise<SocialEventDetailDto> =>
       api.delete<SocialEventDetailDto>(`/social-events/${encodeURIComponent(id)}/registrations/me`, options),
+    guestInfo: (id: number | string, options?: RequestOptions): Promise<SocialGuestInfoDto> =>
+      api.get<SocialGuestInfoDto>(`/social-events/${encodeURIComponent(id)}/guest-info`, options),
+    addGuest: (id: number | string, body: SocialGuestRequest, options?: RequestOptions): Promise<void> =>
+      api.post<void>(`/social-events/${encodeURIComponent(id)}/guests`, body, options),
   };
 }
