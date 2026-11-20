@@ -278,4 +278,36 @@ class TranslationValidationTest extends IntegrationTestCase
         }
         return $result;
     }
+
+    /**
+     * Every translation key the API can return (apiError('…') calls and the
+     * validator's validation.* keys) must exist in every locale.
+     */
+    public function testAllApiErrorKeysExistInAllLocales(): void
+    {
+        $keys = [];
+        $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(__DIR__ . '/../../src'));
+        foreach ($files as $file) {
+            if ($file->getExtension() !== 'php') {
+                continue;
+            }
+            $source = (string) file_get_contents($file->getPathname());
+            preg_match_all("/apiError\(\s*'([a-z0-9_.]+)'/", $source, $m);
+            array_push($keys, ...$m[1]);
+            if (str_ends_with($file->getPathname(), 'Core/Validator.php')) {
+                preg_match_all("/'(validation\.[a-z_]+)'/", $source, $m);
+                array_push($keys, ...$m[1]);
+            }
+        }
+        $keys = array_values(array_unique($keys));
+
+        $this->assertContains('errors.not_found', $keys, 'sanity: scan found the router key');
+        $this->assertContains('validation.required', $keys, 'sanity: scan found validator keys');
+
+        foreach (self::LOCALES as $locale) {
+            $available = $this->extractKeys($this->loadLocale($locale));
+            $missing = array_diff($keys, $available);
+            $this->assertEmpty($missing, "Locale '{$locale}' is missing API keys: " . implode(', ', $missing));
+        }
+    }
 }
