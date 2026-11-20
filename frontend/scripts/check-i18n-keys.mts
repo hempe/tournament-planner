@@ -1,5 +1,5 @@
 // Fails when code in src/app references a translation key that does not exist in de.json.
-// Run with: node scripts/check-i18n-keys.ts   (Node runs TypeScript directly)
+// Run with: node scripts/check-i18n-keys.mts   (Node runs TypeScript directly)
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 

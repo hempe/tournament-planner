@@ -53,7 +53,7 @@
 | `frontend/src/app/features/home/home.page.ts` | `/` placeholder (replaced in plan 3) |
 | `frontend/src/app/features/login/login.page.ts` | `/login` |
 | `frontend/src/app/features/not-found/not-found.page.ts` | `**` |
-| `frontend/scripts/check-i18n-keys.ts` | fails on unknown translation keys in `src/app` |
+| `frontend/scripts/check-i18n-keys.mts` | fails on unknown translation keys in `src/app` |
 | `src/Core/Attributes/Returns.php`, `Body.php`, `ArrayOf.php` | API contract attributes |
 | `src/Api/Dto/LoginRequest.php` | login body DTO |
 | `src/Core/Api/TypeScriptGenerator.php` | PHP → TS generator |
@@ -1252,7 +1252,7 @@ git commit -m "feat(api): Add generate-api CLI and commit generated TypeScript c
 ### Task 6: Translations in the frontend
 
 **Files:**
-- Create: `frontend/src/app/core/i18n/i18n.ts`, `translate.pipe.ts`, `i18n.spec.ts`, `translate.pipe.spec.ts`, `frontend/scripts/check-i18n-keys.ts`
+- Create: `frontend/src/app/core/i18n/i18n.ts`, `translate.pipe.ts`, `i18n.spec.ts`, `translate.pipe.spec.ts`, `frontend/scripts/check-i18n-keys.mts`
 - Modify: `frontend/src/i18n/{de,en,es}.json` (new key `errors.network`), `frontend/package.json`
 
 - [ ] **Step 1: Add the `errors.network` key** (repo root):
@@ -1484,11 +1484,11 @@ export class TranslatePipe implements PipeTransform {
 
 Run: `npx ng test --watch=false --include 'src/app/core/i18n/**/*.spec.ts'` → Expected: all passed.
 
-- [ ] **Step 6: Key check script** — `frontend/scripts/check-i18n-keys.ts`:
+- [ ] **Step 6: Key check script** — `frontend/scripts/check-i18n-keys.mts`:
 
 ```ts
 // Fails when code in src/app references a translation key that does not exist in de.json.
-// Run with: node scripts/check-i18n-keys.ts   (Node runs TypeScript directly)
+// Run with: node scripts/check-i18n-keys.mts   (Node runs TypeScript directly)
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 
@@ -1544,7 +1544,7 @@ console.log('All translation keys used in src/app exist.');
 
 ```bash
 cd frontend
-npm pkg set scripts.check:i18n="node scripts/check-i18n-keys.ts"
+npm pkg set scripts.check:i18n="node scripts/check-i18n-keys.mts"
 npm run check:i18n
 printf "export const probe = (t: (k: string) => string) => t('nope.missing');\n" > src/app/i18n-probe.ts
 npm run check:i18n; echo "exit=$?"
