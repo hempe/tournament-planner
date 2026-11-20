@@ -173,7 +173,8 @@
         "max": "The :field field must not exceed :max characters.",
         "date": "The :field field must be a valid date.",
         "boolean": "The :field field must be true or false.",
-        "in": "The :field field must be one of: :values."
+        "in": "The :field field must be one of: :values.",
+        "failed": "Please check your input."
     },
     "errors": {
         "title": "Error",

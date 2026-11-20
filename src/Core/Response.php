@@ -52,7 +52,7 @@ final class Response
         return new Response('', $status, ['Location' => Url::build($url)]);
     }
 
-    public static function json(array $data, HttpStatus $status = HttpStatus::OK): Response
+    public static function json(array|object $data, HttpStatus $status = HttpStatus::OK): Response
     {
         return new Response(
             json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR),

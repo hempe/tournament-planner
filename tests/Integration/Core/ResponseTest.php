@@ -144,4 +144,11 @@ class ResponseTest extends TestCase
         $this->assertSame('yes', $sent['headers']['X-Test']);
         $this->assertSame('v', $sent['cookies']['C']['value']);
     }
+
+    public function testJsonSerialisesDtoObjects(): void
+    {
+        $dto = new \TP\Api\Dto\SessionDto(null);
+
+        $this->assertSame('{"user":null}', Response::json($dto)->getContent());
+    }
 }
