@@ -26,6 +26,26 @@ src/app/
 src/i18n/       de.json, en.json, es.json (also read by PHP)
 ```
 
+## Screens
+
+| URL | Component | Access |
+|---|---|---|
+| `/` (`?month=YYYY-MM`, legacy `?date=`) | `features/calendar/calendar.page` | everyone (anonymous: tournaments only) |
+| `/login` | `features/login/login.page` | anonymous only (`guestGuard`) |
+| `/events/:id` | `features/events/event-detail.page` | members (`authGuard`) |
+| `/events/:id/guests/new` | `features/guests/guest-registration.page` | everyone |
+| `/social-events/:id` | `features/social-events/social-event-detail.page` | members (`authGuard`) |
+| `/social-events/:id/guests/new` | `features/guests/social-guest-registration.page` | everyone |
+| anything else | `features/not-found/not-found.page` | everyone |
+
+`RegistrationFlow` (`features/events/registration-flow.ts`) holds register / unregister / comment update
+including confirmations, toasts and the dinner prompt after registering; the calendar and the tournament
+detail page both use it. Each method resolves with the fresh detail DTO, or `null` when the user cancelled.
+
+`ConfirmService.choose({ message, actions })` is the general dialog: it resolves with the `value` of the
+chosen action, or `null` when cancelled (`ask()` is the yes/no shortcut). The unregister dialog uses it for
+"tournament only" / "tournament & dinner".
+
 ## Rules
 
 - **No RxJS, no HttpClient** in app code (lint error). Use signals, `computed()`, `resource()` and Promises.
