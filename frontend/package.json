@@ -7,7 +7,10 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test --watch=false",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "api": "php ../bin/generate-api.php",
+    "prestart": "npm run api",
+    "prebuild": "npm run api"
   },
   "private": true,
   "packageManager": "npm@12.0.2",
