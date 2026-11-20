@@ -102,6 +102,9 @@ final class Router
         }
 
         // No route matched - return 404
+        if ($request->isApi()) {
+            return Response::apiError('errors.not_found', HttpStatus::NOT_FOUND);
+        }
         return Response::notFound('Page not found');
     }
 

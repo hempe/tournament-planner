@@ -185,7 +185,8 @@
         "404_title": "Seite nicht gefunden",
         "403_title": "Zugriff verweigert",
         "500_title": "Serverfehler",
-        "server_error": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es später erneut."
+        "server_error": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.",
+        "invalid_json": "Ungültige Anfrage."
     },
     "success": {
         "title": "Erfolg"

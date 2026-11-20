@@ -185,7 +185,8 @@
         "404_title": "Página No Encontrada",
         "403_title": "Acceso Denegado",
         "500_title": "Error del Servidor",
-        "server_error": "Ocurrió un error inesperado. Por favor, inténtelo más tarde."
+        "server_error": "Ocurrió un error inesperado. Por favor, inténtelo más tarde.",
+        "invalid_json": "Solicitud no válida."
     },
     "success": {
         "title": "Éxito"

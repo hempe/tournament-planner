@@ -185,7 +185,8 @@
         "404_title": "Page Not Found",
         "403_title": "Access Denied",
         "500_title": "Server Error",
-        "server_error": "An unexpected error occurred. Please try again later."
+        "server_error": "An unexpected error occurred. Please try again later.",
+        "invalid_json": "Invalid request."
     },
     "success": {
         "title": "Success"

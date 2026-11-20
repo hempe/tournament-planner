@@ -98,6 +98,7 @@ final class Application
     public function run(): void
     {
         $this->boot();
+        $request = null;
 
         try {
             $request = Request::createFromGlobals();
@@ -107,7 +108,15 @@ final class Application
                 'ip' => $request->getIp(),
             ]);
 
-            $response = $this->router->handle($request);
+            if ($request->isApi() && $request->hasInvalidJsonBody()) {
+                $response = Response::apiError('errors.invalid_json', HttpStatus::BAD_REQUEST);
+            } else {
+                $response = $this->router->handle($request);
+            }
+
+            if ($request->isApi()) {
+                $response = $this->withApiHeaders($response);
+            }
 
             $this->logger->debug('Sending response', [
                 'status' => $response->getStatus()->value,
@@ -124,8 +133,15 @@ final class Application
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            $this->handleError($e);
+            $this->handleError($e, $request);
         }
+    }
+
+    private function withApiHeaders(Response $response): Response
+    {
+        return $response
+            ->withHeader('X-App-Version', AppVersion::current())
+            ->withHeader('Cache-Control', 'no-store');
     }
 
     private function configureSession(): void
@@ -157,8 +173,17 @@ final class Application
         Translator::getInstance();
     }
 
-    private function handleError(Throwable $e): void
+    private function handleError(Throwable $e, ?Request $request = null): void
     {
+        if ($request?->isApi()) {
+            $body = ['error' => 'errors.server_error'];
+            if ($this->config->isDevelopment()) {
+                $body['debug'] = $e->getMessage() . ' @ ' . $e->getFile() . ':' . $e->getLine();
+            }
+            $this->withApiHeaders(Response::json($body, HttpStatus::INTERNAL_SERVER_ERROR))->send();
+            return;
+        }
+
         if (!headers_sent()) {
             http_response_code(500);
             header('Content-Type: text/html; charset=UTF-8');

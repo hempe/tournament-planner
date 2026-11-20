@@ -39,3 +39,6 @@ coverage.xml
 coverage-cobertura.xml
 .phpunit.cache/
 *.session.sql
+
+# Release version (written by build.sh)
+/version.txt
