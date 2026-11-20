@@ -14,7 +14,7 @@ import { ConfirmService } from './confirm.service';
           <p hlmAlertDialogDescription>{{ confirm.pending()?.message }}</p>
         </hlm-alert-dialog-header>
         <hlm-alert-dialog-footer class="flex-col-reverse sm:flex-row">
-          <button hlmAlertDialogCancel (click)="confirm.answer(null)">{{ 'actions.cancel' | t }}</button>
+          <button hlmAlertDialogCancel (click)="confirm.answer(null)">{{ confirm.pending()?.cancelLabel || ('actions.cancel' | t) }}</button>
           @for (action of confirm.pending()?.actions; track action.value) {
             <button
               hlmAlertDialogAction

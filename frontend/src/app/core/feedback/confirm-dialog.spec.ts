@@ -60,4 +60,16 @@ describe('ConfirmDialog', () => {
     button('Turnier & Abendessen').click();
     await expect(choice).resolves.toBe('both');
   });
+
+  it('uses a custom cancel label', async () => {
+    const fixture = TestBed.createComponent(ConfirmDialog);
+    const confirm = TestBed.inject(ConfirmService);
+    await fixture.whenStable();
+
+    const choice = confirm.choose({ message: 'Auch Abendessen?', actions: [{ value: 'yes', label: 'Ja' }], cancelLabel: 'Nein danke' });
+    await fixture.whenStable();
+    button('Nein danke').click();
+
+    await expect(choice).resolves.toBeNull();
+  });
 });

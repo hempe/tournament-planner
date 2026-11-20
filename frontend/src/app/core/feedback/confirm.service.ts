@@ -11,6 +11,8 @@ export interface ConfirmRequest {
   title?: string;
   message: string;
   actions: ConfirmAction[];
+  /** Already translated. Defaults to "actions.cancel". */
+  cancelLabel?: string;
 }
 
 /**
