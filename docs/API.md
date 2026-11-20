@@ -61,7 +61,7 @@ Members act only on their own registration (`/registrations/me`).
 
 | Method | Path | Access | Returns | Errors |
 |---|---|---|---|---|
-| GET | `/api/calendar/{month}` (`YYYY-MM`) | user | `CalendarDto` | 404 for an invalid month |
+| GET | `/api/calendar/{month}` (`YYYY-MM`) | public (guests see fewer events) | `CalendarDto` | 404 for an invalid month |
 
 ### Tournaments (`/api/events`)
 
