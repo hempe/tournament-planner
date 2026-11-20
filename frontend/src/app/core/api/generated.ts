@@ -47,6 +47,11 @@ export interface LoginRequest {
   password: string;
 }
 
+export interface MenuDto {
+  id: number;
+  name: string;
+}
+
 export interface MyRegistrationDto {
   state: RegistrationState;
   comment: string;
@@ -67,6 +72,16 @@ export interface SessionDto {
   user: UserDto | null;
 }
 
+export interface SocialEventDetailDto {
+  event: SocialEventSummaryDto;
+  description: string | null;
+  registrationClose: string | null;
+  menus: MenuDto[];
+  tables: TableDto[];
+  myRegistration: SocialRegistrationDto | null;
+  participants: SocialParticipantDto[];
+}
+
 export interface SocialEventSummaryDto {
   id: number;
   tournamentId: number | null;
@@ -77,6 +92,28 @@ export interface SocialEventSummaryDto {
   registered: number;
   available: number | null;
   userRegistered: boolean;
+}
+
+export interface SocialParticipantDto {
+  name: string;
+  tableNumber: number | null;
+}
+
+export interface SocialRegisterRequest {
+  menuId: number | null;
+  tableId: number | null;
+}
+
+export interface SocialRegistrationDto {
+  menuName: string | null;
+  tableNumber: number | null;
+}
+
+export interface TableDto {
+  id: number;
+  number: number;
+  capacity: number;
+  available: number;
 }
 
 export interface UserDto {
@@ -116,5 +153,16 @@ export function eventsApi(api: ApiClient) {
       api.patch<EventDetailDto>(`/events/${encodeURIComponent(id)}/registrations/me`, body, options),
     unregister: (id: number | string, options?: RequestOptions): Promise<EventDetailDto> =>
       api.delete<EventDetailDto>(`/events/${encodeURIComponent(id)}/registrations/me`, options),
+  };
+}
+
+export function socialEventsApi(api: ApiClient) {
+  return {
+    show: (id: number | string, options?: RequestOptions): Promise<SocialEventDetailDto> =>
+      api.get<SocialEventDetailDto>(`/social-events/${encodeURIComponent(id)}`, options),
+    register: (id: number | string, body: SocialRegisterRequest, options?: RequestOptions): Promise<SocialEventDetailDto> =>
+      api.post<SocialEventDetailDto>(`/social-events/${encodeURIComponent(id)}/registrations`, body, options),
+    unregister: (id: number | string, options?: RequestOptions): Promise<SocialEventDetailDto> =>
+      api.delete<SocialEventDetailDto>(`/social-events/${encodeURIComponent(id)}/registrations/me`, options),
   };
 }

@@ -1,0 +1,155 @@
+<?php
+
+declare(strict_types=1);
+
+namespace TP\Controllers\Api;
+
+use TP\Api\Dto\MenuDto;
+use TP\Api\Dto\SocialEventDetailDto;
+use TP\Api\Dto\SocialEventSummaryDto;
+use TP\Api\Dto\SocialParticipantDto;
+use TP\Api\Dto\SocialRegisterRequest;
+use TP\Api\Dto\SocialRegistrationDto;
+use TP\Api\Dto\TableDto;
+use TP\Api\Dto\ApiDate;
+use TP\Core\Attributes\Body;
+use TP\Core\Attributes\Delete;
+use TP\Core\Attributes\Get;
+use TP\Core\Attributes\Middleware;
+use TP\Core\Attributes\Post;
+use TP\Core\Attributes\Returns;
+use TP\Core\Attributes\RoutePrefix;
+use TP\Core\HttpStatus;
+use TP\Core\Request;
+use TP\Core\Response;
+use TP\Middleware\AuthMiddleware;
+use TP\Middleware\CsrfMiddleware;
+use TP\Models\DB;
+use TP\Models\User;
+
+#[RoutePrefix('/api/social-events')]
+#[Middleware(CsrfMiddleware::class)]
+final class SocialEventsController
+{
+    #[Get('/{id}')]
+    #[Middleware(AuthMiddleware::class)]
+    #[Returns(SocialEventDetailDto::class)]
+    public function show(Request $request, array $params): Response
+    {
+        $detail = $this->detail((int) $params['id'], (int) User::id());
+
+        return $detail === null
+            ? Response::apiError('social_events.not_found', HttpStatus::NOT_FOUND)
+            : Response::json($detail);
+    }
+
+    #[Post('/{id}/registrations')]
+    #[Middleware(AuthMiddleware::class)]
+    #[Body(SocialRegisterRequest::class)]
+    #[Returns(SocialEventDetailDto::class)]
+    public function register(Request $request, array $params): Response
+    {
+        $id = (int) $params['id'];
+        $userId = (int) User::id();
+
+        $socialEvent = DB::$socialEvents->get($id, $userId);
+        if ($socialEvent === null) {
+            return Response::apiError('social_events.not_found', HttpStatus::NOT_FOUND);
+        }
+        if ($socialEvent->isLocked) {
+            return Response::apiError('social_events.locked_message', HttpStatus::CONFLICT);
+        }
+        if ($socialEvent->userRegistered === 1) {
+            return Response::json($this->detail($id, $userId));
+        }
+
+        $hasMenus = DB::$socialEvents->menus($id) !== [];
+        $menuId = $hasMenus ? $this->optionalInt($request, 'menuId') : null;
+        if ($hasMenus && $menuId === null) {
+            return $this->invalidField('menuId', 'social_events.invalid_menu');
+        }
+        $tableId = $this->optionalInt($request, 'tableId');
+
+        $error = $this->checkChoice($id, $menuId, $tableId);
+        if ($error !== null) {
+            return $error;
+        }
+
+        DB::$socialEvents->register($id, $userId, $menuId, $tableId);
+
+        return Response::json($this->detail($id, $userId));
+    }
+
+    #[Delete('/{id}/registrations/me')]
+    #[Middleware(AuthMiddleware::class)]
+    #[Returns(SocialEventDetailDto::class)]
+    public function unregister(Request $request, array $params): Response
+    {
+        $id = (int) $params['id'];
+        $userId = (int) User::id();
+
+        $socialEvent = DB::$socialEvents->get($id, $userId);
+        if ($socialEvent === null) {
+            return Response::apiError('social_events.not_found', HttpStatus::NOT_FOUND);
+        }
+        if ($socialEvent->isLocked) {
+            return Response::apiError('social_events.locked_message', HttpStatus::CONFLICT);
+        }
+
+        DB::$socialEvents->unregister($id, $userId);
+
+        return Response::json($this->detail($id, $userId));
+    }
+
+    private function optionalInt(Request $request, string $key): ?int
+    {
+        return $request->has($key) && $request->getString($key) !== '' ? $request->getInt($key) : null;
+    }
+
+    private function invalidField(string $field, string $key): Response
+    {
+        return Response::apiError('validation.failed', HttpStatus::UNPROCESSABLE_ENTITY, [
+            $field => ['key' => $key],
+        ]);
+    }
+
+    /**
+     * Menu/table ownership and capacity checks shared by member and guest registration.
+     */
+    private function checkChoice(int $socialEventId, ?int $menuId, ?int $tableId): ?Response
+    {
+        if ($menuId !== null && !DB::$socialEvents->menuBelongsToEvent($menuId, $socialEventId)) {
+            return $this->invalidField('menuId', 'social_events.invalid_menu');
+        }
+        if ($tableId !== null && !DB::$socialEvents->tableBelongsToEvent($tableId, $socialEventId)) {
+            return $this->invalidField('tableId', 'social_events.invalid_table');
+        }
+        if (DB::$socialEvents->isFull($socialEventId)) {
+            return Response::apiError('social_events.event_full', HttpStatus::CONFLICT);
+        }
+        if ($tableId !== null && DB::$socialEvents->isTableFull($tableId)) {
+            return Response::apiError('social_events.table_full', HttpStatus::CONFLICT);
+        }
+        return null;
+    }
+
+    private function detail(int $id, int $userId): ?SocialEventDetailDto
+    {
+        $socialEvent = DB::$socialEvents->get($id, $userId);
+        if ($socialEvent === null) {
+            return null;
+        }
+
+        $mine = DB::$socialEvents->getUserRegistration($id, $userId);
+
+        return new SocialEventDetailDto(
+            SocialEventSummaryDto::fromSocialEvent($socialEvent),
+            $socialEvent->description,
+            ApiDate::dateTime($socialEvent->registrationClose),
+            array_map(MenuDto::fromMenu(...), DB::$socialEvents->menus($id)),
+            array_map(TableDto::fromTable(...), DB::$socialEvents->tables($id)),
+            $mine === null ? null : SocialRegistrationDto::fromRegistration($mine),
+            array_map(SocialParticipantDto::fromRegistration(...), DB::$socialEvents->registrations($id)),
+        );
+    }
+}
