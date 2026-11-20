@@ -13,5 +13,11 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () => import('./features/events/event-detail.page').then((m) => m.EventDetailPage),
   },
+  {
+    path: 'social-events/:id',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/social-events/social-event-detail.page').then((m) => m.SocialEventDetailPage),
+  },
   { path: '**', loadComponent: () => import('./features/not-found/not-found.page').then((m) => m.NotFoundPage) },
 ];
