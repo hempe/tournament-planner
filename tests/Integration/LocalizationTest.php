@@ -63,6 +63,13 @@ class LocalizationTest extends IntegrationTestCase
         $this->assertEquals('Anlässe', __('nav.events'));
         $this->assertEquals('Benutzer', __('nav.users'));
         $this->assertEquals('Abmelden', __('nav.logout'));
+        $this->assertEquals('Turnier abmelden', __('events.unregister'));
+        $this->assertNotEquals(__('nav.logout'), __('events.unregister'), 'Tournament unregister must not look like logout');
+        $this->assertEquals('Anlass abmelden', __('social_events.unregister'));
+        $this->assertNotEquals(__('nav.logout'), __('social_events.unregister'), 'Social event unregister must not look like logout');
+        $this->assertNotEquals(__('events.unregister'), __('social_events.unregister'), 'Tournament and social event unregister must be distinguishable');
+        $this->assertNotEquals(__('nav.logout'), __('events.unregister_choice_title'), 'Unregister dialog title must not look like logout');
+        $this->assertEquals('Möchtest du dich wirklich von diesem Turnier abmelden?', __('events.unregister_confirm'));
         $this->assertEquals('Willkommen bei GOLF EL FARO', __('app.welcome'));
         echo "   ✓ German translations loaded correctly\n";
 
