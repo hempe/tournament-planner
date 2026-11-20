@@ -11,6 +11,7 @@ use TP\Core\Attributes\Get;
 use TP\Core\Attributes\Post;
 use TP\Core\Attributes\Put;
 use TP\Core\Attributes\Delete;
+use TP\Core\Attributes\Patch;
 use TP\Core\Attributes\RoutePrefix;
 use TP\Core\Attributes\Middleware;
 
@@ -103,6 +104,7 @@ final class RouteScanner
             ...$method->getAttributes(Post::class),
             ...$method->getAttributes(Put::class),
             ...$method->getAttributes(Delete::class),
+            ...$method->getAttributes(Patch::class),
             ...$method->getAttributes(Route::class),
         ];
 
@@ -157,6 +159,7 @@ final class RouteScanner
             Post::class => 'POST',
             Put::class => 'PUT',
             Delete::class => 'DELETE',
+            Patch::class => 'PATCH',
             Route::class => $attribute->method,
             default => throw new \RuntimeException('Unknown route attribute type'),
         };
