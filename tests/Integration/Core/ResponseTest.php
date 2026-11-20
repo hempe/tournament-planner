@@ -69,4 +69,79 @@ class ResponseTest extends TestCase
         $response = Response::unauthorized();
         $this->assertFalse($response->isRedirect());
     }
+
+    public function testApiErrorWithoutFields(): void
+    {
+        $response = Response::apiError('errors.not_found', HttpStatus::NOT_FOUND);
+
+        $this->assertSame(HttpStatus::NOT_FOUND, $response->getStatus());
+        $this->assertSame(['error' => 'errors.not_found'], json_decode($response->getContent(), true));
+    }
+
+    public function testApiErrorWithFields(): void
+    {
+        $fields = ['name' => ['key' => 'validation.required']];
+        $response = Response::apiError('validation.failed', HttpStatus::UNPROCESSABLE_ENTITY, $fields);
+
+        $this->assertSame(
+            ['error' => 'validation.failed', 'fields' => $fields],
+            json_decode($response->getContent(), true)
+        );
+    }
+
+    public function testConflictStatusExists(): void
+    {
+        $this->assertSame(409, HttpStatus::CONFLICT->value);
+    }
+
+    public function testNoContent(): void
+    {
+        $response = Response::noContent();
+
+        $this->assertSame(HttpStatus::NO_CONTENT, $response->getStatus());
+        $this->assertSame('', $response->getContent());
+    }
+
+    public function testJsonKeepsUnicodeAndSlashesReadable(): void
+    {
+        $response = Response::json(['text' => 'Apéro / Turnier']);
+
+        $this->assertSame('{"text":"Apéro / Turnier"}', $response->getContent());
+    }
+
+    public function testWithHeaderReturnsCopy(): void
+    {
+        $original = Response::ok('x');
+        $copy = $original->withHeader('X-App-Version', '1.0');
+
+        $this->assertSame('1.0', $copy->getHeaders()['X-App-Version']);
+        $this->assertArrayNotHasKey('X-App-Version', $original->getHeaders());
+    }
+
+    public function testWithCookieStoresOptions(): void
+    {
+        $response = Response::ok()->withCookie('XSRF-TOKEN', 'abc', httpOnly: false, secure: true);
+
+        $cookie = $response->getCookies()['XSRF-TOKEN'];
+        $this->assertSame('abc', $cookie['value']);
+        $this->assertFalse($cookie['httponly']);
+        $this->assertTrue($cookie['secure']);
+        $this->assertSame('Strict', $cookie['samesite']);
+        $this->assertSame('/', $cookie['path']);
+    }
+
+    public function testSendRecordsLastSentResponse(): void
+    {
+        Response::resetLastSent();
+        $response = Response::json(['a' => 1])->withHeader('X-Test', 'yes')->withCookie('C', 'v');
+
+        ob_start();
+        $response->send();
+        ob_end_clean();
+
+        $sent = Response::lastSent();
+        $this->assertSame(200, $sent['status']);
+        $this->assertSame('yes', $sent['headers']['X-Test']);
+        $this->assertSame('v', $sent['cookies']['C']['value']);
+    }
 }

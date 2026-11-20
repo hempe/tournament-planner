@@ -20,6 +20,7 @@ enum HttpStatus: int
     case FORBIDDEN = 403;
     case NOT_FOUND = 404;
     case METHOD_NOT_ALLOWED = 405;
+    case CONFLICT = 409;
     case UNPROCESSABLE_ENTITY = 422;
     case INTERNAL_SERVER_ERROR = 500;
 }
@@ -28,6 +29,9 @@ final class Response
 {
     private array $headers = [];
     private array $cookies = [];
+
+    /** @var array{status: int, headers: array<string, string>, cookies: array<string, array>}|null */
+    private static ?array $lastSent = null;
 
 
     public function __construct(
@@ -51,10 +55,30 @@ final class Response
     public static function json(array $data, HttpStatus $status = HttpStatus::OK): Response
     {
         return new Response(
-            json_encode($data, JSON_UNESCAPED_UNICODE),
+            json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR),
             $status,
             ['Content-Type' => 'application/json']
         );
+    }
+
+    /**
+     * API error response. $key and the keys inside $fields are translation keys;
+     * the frontend translates them.
+     *
+     * @param array<string, array{key: string, params?: array<string, scalar>}> $fields
+     */
+    public static function apiError(string $key, HttpStatus $status, array $fields = []): Response
+    {
+        $body = ['error' => $key];
+        if ($fields !== []) {
+            $body['fields'] = $fields;
+        }
+        return self::json($body, $status);
+    }
+
+    public static function noContent(): Response
+    {
+        return new Response('', HttpStatus::NO_CONTENT);
     }
 
     public static function notFound(string $message = 'Not Found'): Response
@@ -89,8 +113,72 @@ final class Response
         return $this->status;
     }
 
+    public function getContent(): string
+    {
+        return $this->content;
+    }
+
+    /** @return array<string, string> */
+    public function getHeaders(): array
+    {
+        return $this->headers;
+    }
+
+    /** @return array<string, array{value: string, path: string, secure: bool, httponly: bool, samesite: string}> */
+    public function getCookies(): array
+    {
+        return $this->cookies;
+    }
+
+    public function withHeader(string $name, string $value): Response
+    {
+        $clone = clone $this;
+        $clone->headers[$name] = $value;
+        return $clone;
+    }
+
+    public function withCookie(
+        string $name,
+        string $value,
+        bool $httpOnly = true,
+        bool $secure = false,
+        string $sameSite = 'Strict',
+    ): Response {
+        $clone = clone $this;
+        $clone->cookies[$name] = [
+            'value' => $value,
+            'path' => '/',
+            'secure' => $secure,
+            'httponly' => $httpOnly,
+            'samesite' => $sameSite,
+        ];
+        return $clone;
+    }
+
+    /**
+     * The last response passed to send(). Used by integration tests, because the
+     * CLI SAPI does not expose sent headers.
+     *
+     * @return array{status: int, headers: array<string, string>, cookies: array<string, array>}|null
+     */
+    public static function lastSent(): ?array
+    {
+        return self::$lastSent;
+    }
+
+    public static function resetLastSent(): void
+    {
+        self::$lastSent = null;
+    }
+
     public function send(): void
     {
+        self::$lastSent = [
+            'status' => $this->status->value,
+            'headers' => $this->headers,
+            'cookies' => $this->cookies,
+        ];
+
         if (!headers_sent()) {
             http_response_code($this->status->value);
 
@@ -99,15 +187,13 @@ final class Response
             }
 
             foreach ($this->cookies as $name => $options) {
-                setcookie(
-                    $name,
-                    $options['value'],
-                    $options['expire'],
-                    $options['path'],
-                    $options['domain'],
-                    $options['secure'],
-                    $options['httponly']
-                );
+                setcookie($name, $options['value'], [
+                    'expires' => 0,
+                    'path' => $options['path'],
+                    'secure' => $options['secure'],
+                    'httponly' => $options['httponly'],
+                    'samesite' => $options['samesite'],
+                ]);
             }
         }
 
