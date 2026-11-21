@@ -15,6 +15,7 @@ export class ApiError extends Error {
     readonly status: number,
     readonly error: string,
     readonly fields: Record<string, FieldError> = {},
+    readonly params: Record<string, string | number> = {},
   ) {
     super(`${status} ${error}`);
     this.name = 'ApiError';
@@ -119,8 +120,17 @@ export class ApiClient {
       return data as T;
     }
 
-    const payload = (data ?? {}) as { error?: string; fields?: Record<string, FieldError> };
-    const error = new ApiError(response.status, payload.error ?? 'errors.general', payload.fields ?? {});
+    const payload = (data ?? {}) as {
+      error?: string;
+      fields?: Record<string, FieldError>;
+      params?: Record<string, string | number>;
+    };
+    const error = new ApiError(
+      response.status,
+      payload.error ?? 'errors.general',
+      payload.fields ?? {},
+      payload.params ?? {},
+    );
 
     // The 403 response carries a fresh XSRF cookie; retry once with it.
     if (response.status === 403 && error.error === 'errors.csrf' && !retried) {

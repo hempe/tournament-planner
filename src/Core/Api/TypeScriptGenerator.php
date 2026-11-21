@@ -12,6 +12,7 @@ use ReflectionProperty;
 use RuntimeException;
 use TP\Core\Attributes\ArrayOf;
 use TP\Core\Attributes\Body;
+use TP\Core\Attributes\RawResponse;
 use TP\Core\Attributes\Returns;
 use TP\Core\ControllerDiscovery;
 use TP\Core\RouteScanner;
@@ -84,6 +85,9 @@ final class TypeScriptGenerator
         foreach ($routes as $route) {
             [$class, $methodName] = $route['handler'];
             $method = new ReflectionMethod($class, $methodName);
+            if ($method->getAttributes(RawResponse::class) !== []) {
+                continue;
+            }
             $returns = $this->attribute($method, Returns::class);
             $body = $this->attribute($method, Body::class);
 

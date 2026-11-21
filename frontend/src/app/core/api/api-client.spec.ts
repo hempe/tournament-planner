@@ -75,6 +75,24 @@ describe('ApiClient', () => {
     expect((error as ApiError).fields).toEqual({ username: { key: 'validation.required' } });
   });
 
+  it('reads params of an error', async () => {
+    fetchMock.mockResolvedValue(
+      json(409, { error: 'social_events.menu_in_use', params: { menu: 'Fisch', count: 3 } }),
+    );
+
+    const error = (await api.delete('/x').catch((e: unknown) => e)) as ApiError;
+
+    expect(error.params).toEqual({ menu: 'Fisch', count: 3 });
+  });
+
+  it('defaults params to an empty object', async () => {
+    fetchMock.mockResolvedValue(json(404, { error: 'errors.not_found' }));
+
+    const error = (await api.get('/x').catch((e: unknown) => e)) as ApiError;
+
+    expect(error.params).toEqual({});
+  });
+
   it('uses errors.general when the error body is not JSON', async () => {
     fetchMock.mockResolvedValue(new Response('<html>oops</html>', { status: 500 }));
 

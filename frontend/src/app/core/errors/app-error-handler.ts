@@ -14,7 +14,7 @@ export class AppErrorHandler implements ErrorHandler {
     if (error instanceof ApiError) {
       // 401 is handled by the API hooks (redirect to /login).
       if (error.status !== 401) {
-        this.notify.error(error.error);
+        this.notify.error(error.error, error.params);
       }
       return;
     }

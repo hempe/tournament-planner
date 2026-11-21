@@ -12,6 +12,7 @@ use TP\Core\Attributes\Body;
 use TP\Core\Attributes\Delete;
 use TP\Core\Attributes\Get;
 use TP\Core\Attributes\Post;
+use TP\Core\Attributes\RawResponse;
 use TP\Core\Attributes\Returns;
 use TP\Core\Attributes\RoutePrefix;
 use TP\Core\Request;
@@ -79,6 +80,13 @@ final class FixtureItemsController
 
     #[Delete('/{id}/tags/{tag}')]
     public function removeTag(Request $request, array $params): Response
+    {
+        return Response::noContent();
+    }
+
+    #[Get('/{id}/export')]
+    #[RawResponse]
+    public function export(Request $request, array $params): Response
     {
         return Response::noContent();
     }

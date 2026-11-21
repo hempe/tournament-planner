@@ -45,12 +45,16 @@ final class Response
      * the frontend translates them.
      *
      * @param array<string, array{key: string, params?: array<string, scalar>}> $fields
+     * @param array<string, scalar> $params values for the translation of $key
      */
-    public static function apiError(string $key, HttpStatus $status, array $fields = []): Response
+    public static function apiError(string $key, HttpStatus $status, array $fields = [], array $params = []): Response
     {
         $body = ['error' => $key];
         if ($fields !== []) {
             $body['fields'] = $fields;
+        }
+        if ($params !== []) {
+            $body['params'] = $params;
         }
         return self::json($body, $status);
     }

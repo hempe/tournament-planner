@@ -38,6 +38,7 @@ final class Router
                 'name' => $route['name'] ?? '',
             ];
         }
+        $this->sortBySpecificity();
     }
 
     /**
@@ -129,7 +130,12 @@ final class Router
             'name' => $name,
         ];
 
-        // Keep specific routes (no parameters) before parameterised routes
+        $this->sortBySpecificity();
+    }
+
+    /** Keep specific routes (fewer parameters) first; declaration order breaks ties (usort is stable). */
+    private function sortBySpecificity(): void
+    {
         usort($this->routes, fn($a, $b) =>
             substr_count($a['pattern'], '{') <=> substr_count($b['pattern'], '{')
         );

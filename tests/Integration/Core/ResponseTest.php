@@ -89,6 +89,16 @@ class ResponseTest extends TestCase
         );
     }
 
+    public function testApiErrorWithParams(): void
+    {
+        $response = Response::apiError('social_events.menu_in_use', HttpStatus::CONFLICT, [], ['menu' => 'Fisch', 'count' => 3]);
+
+        $this->assertSame(
+            ['error' => 'social_events.menu_in_use', 'params' => ['menu' => 'Fisch', 'count' => 3]],
+            json_decode($response->getContent(), true)
+        );
+    }
+
     public function testConflictStatusExists(): void
     {
         $this->assertSame(409, HttpStatus::CONFLICT->value);

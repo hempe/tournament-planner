@@ -6,6 +6,7 @@ namespace TP\Models;
 
 use DateTime;
 use Exception;
+use TP\Core\UserFacingException;
 
 final class SocialEventRepository extends BaseRepository
 {
@@ -375,7 +376,7 @@ final class SocialEventRepository extends BaseRepository
                 [$menu['id']]
             );
             if ($count > 0) {
-                throw new Exception(__('social_events.menu_in_use', ['menu' => $menu['name'], 'count' => $count]));
+                throw new UserFacingException('social_events.menu_in_use', ['menu' => $menu['name'], 'count' => $count]);
             }
             $this->executeUpdateQuery("DELETE FROM social_menus WHERE id = ?", 'i', [$menu['id']]);
         }
@@ -424,7 +425,7 @@ final class SocialEventRepository extends BaseRepository
         foreach ($existingByNumber as $number => $table) {
             if ($number > $newCount) {
                 if ($table['registered'] > 0) {
-                    throw new Exception(__('social_events.table_in_use', ['number' => $number, 'count' => $table['registered']]));
+                    throw new UserFacingException('social_events.table_in_use', ['number' => $number, 'count' => $table['registered']]);
                 }
                 $this->executeUpdateQuery("DELETE FROM social_tables WHERE id = ?", 'i', [$table['id']]);
             }
@@ -435,11 +436,11 @@ final class SocialEventRepository extends BaseRepository
             if (isset($existingByNumber[$number])) {
                 $table = $existingByNumber[$number];
                 if ($capacity < $table['registered']) {
-                    throw new Exception(__('social_events.table_capacity_too_low', [
+                    throw new UserFacingException('social_events.table_capacity_too_low', [
                         'number'     => $number,
                         'registered' => $table['registered'],
                         'capacity'   => $capacity,
-                    ]));
+                    ]);
                 }
                 if ($capacity !== $table['capacity']) {
                     $this->executeUpdateQuery(

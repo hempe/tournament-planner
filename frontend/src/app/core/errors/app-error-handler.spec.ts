@@ -18,7 +18,12 @@ describe('AppErrorHandler', () => {
 
   it('shows the API error key', () => {
     handler.handleError(new ApiError(409, 'events.full'));
-    expect(notify.error).toHaveBeenCalledWith('events.full');
+    expect(notify.error).toHaveBeenCalledWith('events.full', {});
+  });
+
+  it('passes error params to the notification', () => {
+    handler.handleError(new ApiError(409, 'social_events.menu_in_use', {}, { menu: 'Fisch', count: 3 }));
+    expect(notify.error).toHaveBeenCalledWith('social_events.menu_in_use', { menu: 'Fisch', count: 3 });
   });
 
   it('stays quiet for 401 (the app redirects to login)', () => {
