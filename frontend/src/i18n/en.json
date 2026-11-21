@@ -237,6 +237,7 @@
     },
     "guests": {
         "title": "Guests",
+        "guest": "Guest",
         "add": "Add Guest",
         "edit": "Edit Guest",
         "first_name": "First Name",

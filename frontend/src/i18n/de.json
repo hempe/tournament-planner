@@ -237,6 +237,7 @@
     },
     "guests": {
         "title": "Gäste",
+        "guest": "Gast",
         "add": "Gast hinzufügen",
         "edit": "Gast bearbeiten",
         "first_name": "Vorname",

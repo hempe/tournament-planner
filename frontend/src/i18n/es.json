@@ -237,6 +237,7 @@
     },
     "guests": {
         "title": "Invitados",
+        "guest": "Invitado",
         "add": "Añadir Invitado",
         "edit": "Editar Invitado",
         "first_name": "Nombre",
