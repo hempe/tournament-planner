@@ -34,6 +34,8 @@ final class EventRepository extends BaseRepository
     private const QUERY_REGISTERED_EVENTS = self::QUERY_EVENT;
     private const QUERY_EVENT_BY_ID = self::QUERY_EVENT . " WHERE e.id = ?";
     private const QUERY_ALL_EVENTS = self::QUERY_EVENT . " WHERE 1=1";
+    /** Lists are chronological; the name and id break ties so the order is stable. */
+    private const ORDER_BY_DATE = " ORDER BY e.date ASC, e.name ASC, e.id ASC";
 
     private function mapEvent(array $row): Event
     {
@@ -205,7 +207,7 @@ final class EventRepository extends BaseRepository
                 return [];
             }
             return $this->fetchEvents(
-                $query,
+                $query . self::ORDER_BY_DATE,
                 'iii',
                 [$userId, (int) $date->format('m'), (int) $date->format('Y')]
             );
@@ -217,7 +219,7 @@ final class EventRepository extends BaseRepository
         }
 
         return $this->fetchEvents(
-            $query,
+            $query . self::ORDER_BY_DATE,
             'i',
             [$userId]
         );

@@ -81,6 +81,19 @@ class EventAdminApiTest extends IntegrationTestCase
         $this->assertContains('admin', array_map(fn($u) => $u['displayName'], $detail->json()['availableUsers']));
     }
 
+    public function testListIsSortedByDate(): void
+    {
+        DB::$events->add('Late', '2099-08-01', 2);
+        DB::$events->add('Early', '2099-06-01', 2);
+        DB::$events->add('Past', '2001-01-01', 2);
+        DB::$events->add('Also early', '2099-06-01', 2);
+        $this->admin();
+
+        $list = $this->json('GET', '/api/events')->json();
+
+        $this->assertSame(['Past', 'Also early', 'Early', 'Late'], array_column($list, 'name'));
+    }
+
     public function testCreateWithMixedFalseAndNoOptionalFields(): void
     {
         $this->admin();
