@@ -1,5 +1,5 @@
 #!/bin/bash
-# Development: PHP (API + legacy UI) on http://localhost:5000,
+# Development: PHP (JSON API) on http://localhost:5000,
 # Angular dev server on http://localhost:4200 (proxies /api to PHP).
 set -e
 trap 'kill 0' EXIT

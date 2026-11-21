@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { expect, test } from '@playwright/test';
-import { resetDatabase } from './support';
+import { login, resetDatabase, USERS } from './support';
 
 test.beforeAll(() => resetDatabase());
 
@@ -25,6 +25,22 @@ test('a stale legacy form POST is redirected with 303 to the same URL', async ({
   const response = await request.post('/events/1/register', { form: { comment: '' }, maxRedirects: 0 });
   expect(response.status()).toBe(303);
   expect(new URL(response.headers()['location'], 'http://x').pathname).toBe('/events/1/register');
+
+  const social = await request.post('/social-events/1/unregister', { form: {}, maxRedirects: 0 });
+  expect(social.status()).toBe(303);
+  expect(new URL(social.headers()['location'], 'http://x').pathname).toBe('/social-events/1/unregister');
+});
+
+test('after the 303 the browser lands on the page the form belonged to', async ({ page }) => {
+  await login(page, USERS.member);
+  for (const [stale, target] of [
+    ['/events/1/register', '/events/1'],
+    ['/social-events/1/unregister', '/social-events/1'],
+  ]) {
+    await page.goto(stale);
+    await expect(page).toHaveURL(new RegExp(`${target}$`));
+    await expect(page.locator('app-header')).toBeVisible();
+  }
 });
 
 test('the web manifest is unchanged', async ({ request }) => {
