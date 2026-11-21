@@ -24,7 +24,8 @@ import { TranslatePipe } from '../i18n/translate.pipe';
             {{ 'app.club_name_line1' | t }}<br />{{ 'app.club_name_line2' | t }}
           </a>
         </div>
-        <nav class="ml-auto flex flex-wrap items-center gap-x-4 gap-y-2 pt-1">
+        <!-- Phones: no room next to logo + name, so the nav gets its own centred row (as on the previous site) -->
+        <nav class="flex w-full flex-wrap items-center justify-center gap-x-4 gap-y-2 md:ml-auto md:w-auto md:justify-end md:pt-1">
           @if (session.loggedIn()) {
             @if (session.isAdmin()) {
               <a routerLink="/events" routerLinkActive="text-primary">{{ 'nav.events' | t }}</a>
