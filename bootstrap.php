@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 // Check PHP version
-if (version_compare(PHP_VERSION, '8.1.0', '<')) {
-    die('PHP 8.1 or higher is required.');
+if (version_compare(PHP_VERSION, '8.3.0', '<')) {
+    die('PHP 8.3 or higher is required.');
 }
 
 // Enable strict error reporting in development
