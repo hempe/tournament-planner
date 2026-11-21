@@ -27,7 +27,8 @@ describe('UserListPage', () => {
     TestBed.inject(I18n).use('de', {
       users: {
         title: 'Benutzer', username: 'Benutzername', admin: 'Administrator', add_user: 'Benutzer hinzufügen', edit: 'Bearbeiten', delete: 'Löschen',
-        give_admin_rights: 'Admin rechte geben?', remove_admin_rights: 'Admin rechte entnehmen?',
+        give_admin_rights: 'Admin-Rechte geben', remove_admin_rights: 'Admin-Rechte entziehen',
+        search: 'Benutzer suchen', no_users_found: 'Keine Benutzer gefunden.',
         give_admin_rights_confirm: ':username Admin rechte geben?', remove_admin_rights_confirm: ':username Admin rechte entnehmen?',
         delete_confirm: ':username definitiv löschen?', first_name: 'Vorname', last_name: 'Nachname',
       },
@@ -39,12 +40,19 @@ describe('UserListPage', () => {
     await fixture.whenStable();
     const el: HTMLElement = fixture.nativeElement;
     const row = (username: string) => Array.from(el.querySelectorAll<HTMLElement>('[data-user]')).find((r) => r.querySelector('[data-username]')?.textContent?.trim() === username)!;
-    const buttonIn = (root: ParentNode, text: string) => Array.from(root.querySelectorAll('button')).find((b) => b.textContent?.trim() === text) as HTMLButtonElement;
+    // Row actions are icon buttons; they are found by their aria-label.
+    const buttonIn = (root: ParentNode, label: string) => root.querySelector<HTMLButtonElement>(`button[aria-label="${label}"]`) ?? undefined;
     const click = async (b: HTMLElement) => {
       b.click();
       await fixture.whenStable();
     };
-    return { el, row, buttonIn, click };
+    const search = async (text: string) => {
+      const input = el.querySelector<HTMLInputElement>('[data-user-search]')!;
+      input.value = text;
+      input.dispatchEvent(new Event('input'));
+      await fixture.whenStable();
+    };
+    return { el, row, buttonIn, click, search };
   }
 
   it('lists users with username, display name and an admin badge only for admins; links to add and edit', async () => {
@@ -59,25 +67,40 @@ describe('UserListPage', () => {
     const hrefs = Array.from(el.querySelectorAll('a')).map((a) => a.getAttribute('href'));
     expect(hrefs).toContain('/users/new');
     expect(hrefs).toContain('/users/2/edit');
+    expect(row('bert').querySelector('a[href="/users/2/edit"]')?.getAttribute('aria-label')).toBe('Bearbeiten');
+  });
+
+  it('filters by display name or username; shows a message when nothing matches', async () => {
+    const { el, search } = await render();
+
+    await search('name2');
+    expect(Array.from(el.querySelectorAll('[data-username]')).map((u) => u.textContent?.trim())).toEqual(['bert']);
+    await search('ANNA');
+    expect(Array.from(el.querySelectorAll('[data-username]')).map((u) => u.textContent?.trim())).toEqual(['anna']);
+    await search('zzz');
+    expect(el.querySelectorAll('[data-user]')).toHaveLength(0);
+    expect(el.textContent).toContain('Keine Benutzer gefunden.');
+    await search('');
+    expect(el.querySelectorAll('[data-user]')).toHaveLength(2);
   });
 
   it('grants admin rights after confirming and re-renders from the returned user', async () => {
     api.put.mockResolvedValue(user(2, 'bert', { isAdmin: true }));
     const { row, buttonIn, click } = await render();
 
-    await click(buttonIn(row('bert'), 'Admin rechte geben?'));
+    await click(buttonIn(row('bert'), 'Admin-Rechte geben')!);
 
     expect(confirm.ask).toHaveBeenCalledWith('bert Admin rechte geben?');
     expect(api.put).toHaveBeenCalledWith('/users/2/admin', undefined, undefined);
     expect(row('bert').querySelector('[data-admin-badge]')).not.toBeNull();
-    expect(buttonIn(row('bert'), 'Admin rechte entnehmen?')).toBeDefined();
+    expect(buttonIn(row('bert'), 'Admin-Rechte entziehen')).toBeDefined();
   });
 
   it('revokes admin rights after confirming', async () => {
     api.delete.mockResolvedValue(user(1, 'anna'));
     const { row, buttonIn, click } = await render();
 
-    await click(buttonIn(row('anna'), 'Admin rechte entnehmen?'));
+    await click(buttonIn(row('anna'), 'Admin-Rechte entziehen')!);
 
     expect(confirm.ask).toHaveBeenCalledWith('anna Admin rechte entnehmen?');
     expect(api.delete).toHaveBeenCalledWith('/users/1/admin', undefined);
@@ -88,7 +111,7 @@ describe('UserListPage', () => {
     confirm.ask.mockResolvedValue(false);
     const { row, buttonIn, click } = await render();
 
-    await click(buttonIn(row('bert'), 'Admin rechte geben?'));
+    await click(buttonIn(row('bert'), 'Admin-Rechte geben')!);
 
     expect(api.put).not.toHaveBeenCalled();
   });
@@ -98,7 +121,7 @@ describe('UserListPage', () => {
     const { el, row, buttonIn, click } = await render();
     api.get.mockResolvedValue([users[0]]);
 
-    await click(buttonIn(row('bert'), 'Löschen'));
+    await click(buttonIn(row('bert'), 'Löschen')!);
 
     expect(confirm.ask).toHaveBeenCalledWith('bert definitiv löschen?', { danger: true });
     expect(api.delete).toHaveBeenCalledWith('/users/2', undefined);
@@ -110,7 +133,7 @@ describe('UserListPage', () => {
     confirm.ask.mockResolvedValue(false);
     const { row, buttonIn, click } = await render();
 
-    await click(buttonIn(row('bert'), 'Löschen'));
+    await click(buttonIn(row('bert'), 'Löschen')!);
 
     expect(api.delete).not.toHaveBeenCalled();
   });

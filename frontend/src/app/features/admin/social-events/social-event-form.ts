@@ -38,20 +38,22 @@ interface FormModel {
         <input hlmInput id="name" [formField]="socialForm.name" />
         <app-field-error field="name" label="social_events.name" [error]="error()" [control]="socialForm.name()" />
       </div>
-      <div class="flex flex-col gap-2">
-        <label hlmLabel for="date">{{ 'social_events.date' | t }} *</label>
-        <input hlmInput id="date" type="date" [formField]="socialForm.date" />
-        <app-field-error field="date" label="social_events.date" [error]="error()" [control]="socialForm.date()" />
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div class="flex flex-col gap-2">
+          <label hlmLabel for="date">{{ 'social_events.date' | t }} *</label>
+          <input hlmInput id="date" type="date" [formField]="socialForm.date" />
+          <app-field-error field="date" label="social_events.date" [error]="error()" [control]="socialForm.date()" />
+        </div>
+        <div class="flex flex-col gap-2">
+          <label hlmLabel for="registrationClose">{{ 'social_events.registration_close' | t }}</label>
+          <input hlmInput id="registrationClose" type="datetime-local" [formField]="socialForm.registrationClose" />
+          <app-field-error field="registrationClose" label="social_events.registration_close" [error]="error()" />
+        </div>
       </div>
       <div class="flex flex-col gap-2">
         <label hlmLabel for="description">{{ 'social_events.description' | t }}</label>
         <textarea hlmInput id="description" rows="3" class="h-auto" [formField]="socialForm.description"></textarea>
         <app-field-error field="description" label="social_events.description" [error]="error()" />
-      </div>
-      <div class="flex flex-col gap-2">
-        <label hlmLabel for="registrationClose">{{ 'social_events.registration_close' | t }}</label>
-        <input hlmInput id="registrationClose" type="datetime-local" [formField]="socialForm.registrationClose" />
-        <app-field-error field="registrationClose" label="social_events.registration_close" [error]="error()" />
       </div>
       <div class="flex flex-col gap-2">
         <label hlmLabel for="menus">{{ 'social_events.menus' | t }}</label>

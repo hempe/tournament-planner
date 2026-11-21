@@ -109,7 +109,9 @@ describe('user create and edit pages', () => {
       const { el } = await render(UserEditPage, '5');
 
       expect(api.get).toHaveBeenCalledWith('/users/5', expect.anything());
-      expect(el.querySelector('h1')?.textContent).toContain('Bearbeiten');
+      expect(el.querySelector('h1')?.textContent).toContain('Bert Beispiel');
+      expect(el.querySelector('header [data-subtitle]')?.textContent).toContain('Bearbeiten');
+      expect(el.querySelector('[data-back-link]')?.getAttribute('href')).toBe('/users');
       expect(el.querySelector<HTMLInputElement>('#username')!.value).toBe('bert');
       expect(el.querySelector<HTMLSelectElement>('#male')!.value).toBe('false');
       expect(el.querySelector<HTMLInputElement>('#firstName')!.value).toBe('Bert');

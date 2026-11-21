@@ -1,18 +1,26 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { HlmCardImports } from '@ui/card';
 import { ApiClient, ApiError } from '../../../core/api/api-client';
 import { UserCreateRequest, UserUpdateRequest, userAdminApi } from '../../../core/api/generated';
 import { Notify } from '../../../core/feedback/notify';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { UserForm } from './user-form';
+import { BackLink } from '../../../shared/ui/back-link';
+import { Page, PageHeader } from '../../../shared/ui/page';
 
 @Component({
   selector: 'app-user-create-page',
-  imports: [UserForm, TranslatePipe],
+  imports: [UserForm, TranslatePipe, HlmCardImports, BackLink, Page, PageHeader],
   template: `
-    <div class="mx-auto flex max-w-2xl flex-col gap-4">
-      <h1 class="text-2xl font-semibold">{{ 'users.new' | t }}</h1>
-      <app-user-form mode="create" [error]="error()" [busy]="busy()" (save)="create($event)" />
+    <div appPage>
+      <app-back-link link="/users" />
+      <app-page-header [title]="'users.new' | t" />
+      <section hlmCard>
+        <div hlmCardContent>
+          <app-user-form mode="create" [error]="error()" [busy]="busy()" (save)="create($event)" />
+        </div>
+      </section>
     </div>
   `,
 })

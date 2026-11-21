@@ -1,6 +1,10 @@
-import { formatDate, formatDateTime, formatMonth, parseApiDate } from './dates';
+import { formatDate, formatDateTime, formatMonth, parseApiDate, toApiDate } from './dates';
 
 describe('dates', () => {
+  it('formats a local date as an API date', () => {
+    expect(toApiDate(new Date(2099, 0, 5, 23, 59))).toBe('2099-01-05');
+  });
+
   it('parses API dates and date-times as local time', () => {
     const d = parseApiDate('2099-06-01');
     expect([d.getFullYear(), d.getMonth(), d.getDate(), d.getHours()]).toEqual([2099, 5, 1, 0]);

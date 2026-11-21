@@ -18,3 +18,9 @@ export function formatDateTime(value: string, locale: string): string {
 export function formatMonth(month: string, locale: string): string {
   return new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric' }).format(parseApiDate(`${month}-01`));
 }
+
+/** Local date → 'YYYY-MM-DD' (comparable with API dates as strings). */
+export function toApiDate(date: Date): string {
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}

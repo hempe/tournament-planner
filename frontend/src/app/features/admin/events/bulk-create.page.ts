@@ -2,6 +2,7 @@ import { Component, computed, inject, linkedSignal, signal } from '@angular/core
 import { FormField, form, min, required, submit } from '@angular/forms/signals';
 import { Router } from '@angular/router';
 import { HlmButtonImports } from '@ui/button';
+import { HlmCardImports } from '@ui/card';
 import { HlmInputImports } from '@ui/input';
 import { HlmLabelImports } from '@ui/label';
 import { ApiClient, ApiError } from '../../../core/api/api-client';
@@ -12,6 +13,8 @@ import { I18n } from '../../../core/i18n/i18n';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { FieldError } from '../../../shared/forms/field-error';
 import { SELECT_CLASSES } from '../../../shared/forms/select';
+import { BackLink } from '../../../shared/ui/back-link';
+import { Page, PageHeader } from '../../../shared/ui/page';
 
 /** Monday to Sunday, as `dayOfWeek` values (0 = Sunday). */
 const WEEKDAYS = [1, 2, 3, 4, 5, 6, 0];
@@ -32,21 +35,21 @@ interface FormModel {
 
 @Component({
   selector: 'app-bulk-create-page',
-  imports: [FormField, HlmButtonImports, HlmInputImports, HlmLabelImports, TranslatePipe, FieldError],
+  imports: [FormField, HlmButtonImports, HlmCardImports, HlmInputImports, HlmLabelImports, TranslatePipe, FieldError, BackLink, Page, PageHeader],
   template: `
-    <div class="mx-auto flex max-w-2xl flex-col gap-4">
+    <div appPage>
       @if (preview(); as events) {
-        <h1 class="text-2xl font-semibold">{{ 'events.bulk_preview_title' | t: { count: events.length } }}</h1>
+        <app-page-header [title]="'events.bulk_preview_title' | t: { count: events.length }" />
         @if (events.length === 0) {
           <p class="text-muted-foreground">{{ 'events.bulk_no_events_message' | t }}</p>
         } @else {
-          <ul class="flex flex-col gap-2">
+          <ul class="divide-y rounded-xl bg-card px-3 text-sm shadow-xs ring-1 ring-foreground/10 sm:px-4">
             @for (e of events; track e.date) {
-              <li data-preview-row class="flex flex-col gap-1 rounded-md border bg-card p-3 sm:flex-row sm:items-center sm:gap-4">
+              <li data-preview-row class="flex flex-col gap-0.5 py-2 sm:flex-row sm:items-baseline sm:gap-4">
                 <span class="text-muted-foreground sm:w-56">{{ formatDate(e.date) }}</span>
                 <span class="font-medium sm:flex-1">{{ e.name }}</span>
-                <span class="text-sm sm:w-16">{{ e.capacity }}</span>
-                <span class="text-sm text-muted-foreground sm:w-64">{{ e.registrationClose ? formatDateTime(e.registrationClose) : '–' }}</span>
+                <span class="text-muted-foreground tabular-nums sm:w-12 sm:text-right sm:text-foreground">{{ e.capacity }}</span>
+                <span class="text-xs text-muted-foreground sm:w-64 sm:text-sm">{{ e.registrationClose ? formatDateTime(e.registrationClose) : '–' }}</span>
               </li>
             }
           </ul>
@@ -60,69 +63,78 @@ interface FormModel {
           }
         </div>
       } @else {
-        <h1 class="text-2xl font-semibold">{{ 'events.bulk_create' | t }}</h1>
-        <form class="flex flex-col gap-4" novalidate (submit)="$event.preventDefault(); send()">
-          <div class="flex flex-col gap-2">
-            <label hlmLabel for="startDate">{{ 'events.bulk_start_date' | t }} *</label>
-            <input hlmInput id="startDate" type="date" [formField]="bulkForm.startDate" />
-            <app-field-error field="startDate" label="events.bulk_start_date" [error]="error()" [control]="bulkForm.startDate()" />
-          </div>
-          <div class="flex flex-col gap-2">
-            <label hlmLabel for="endDate">{{ 'events.bulk_end_date' | t }} *</label>
-            <input hlmInput id="endDate" type="date" [formField]="bulkForm.endDate" />
-            <app-field-error field="endDate" label="events.bulk_end_date" [error]="error()" [control]="bulkForm.endDate()" />
-          </div>
-          <div class="flex flex-col gap-2">
-            <label hlmLabel for="dayOfWeek">{{ 'events.bulk_day_of_week' | t }} *</label>
-            <select id="dayOfWeek" [class]="selectClasses" [formField]="bulkForm.dayOfWeek">
-              <option value="">{{ 'events.bulk_select_day' | t }}</option>
-              @for (day of weekdays(); track day.value) {
-                <option [value]="day.value">{{ day.label }}</option>
-              }
-            </select>
-            <app-field-error field="dayOfWeek" label="events.bulk_day_of_week" [error]="error()" [control]="bulkForm.dayOfWeek()" />
-          </div>
-          <div class="flex flex-col gap-2">
-            <label hlmLabel for="name">{{ 'events.name' | t }} *</label>
-            <input hlmInput id="name" [formField]="bulkForm.name" />
-            <app-field-error field="name" label="events.name" [error]="error()" [control]="bulkForm.name()" />
-          </div>
-          <div class="flex flex-col gap-2">
-            <label hlmLabel for="capacity">{{ 'events.max_participants' | t }} *</label>
-            <input hlmInput id="capacity" type="number" inputmode="numeric" [formField]="bulkForm.capacity" />
-            <app-field-error field="capacity" label="events.max_participants" [error]="error()" [control]="bulkForm.capacity()" />
-          </div>
-          <label class="flex items-center gap-2 text-sm">
-            <input id="mixed" type="checkbox" class="size-4" [formField]="bulkForm.mixed" />
-            {{ 'events.play_together' | t }}
-          </label>
-          <div class="flex flex-col gap-2">
-            <label hlmLabel for="description">{{ 'events.description' | t }}</label>
-            <textarea hlmInput id="description" rows="3" class="h-auto" [formField]="bulkForm.description"></textarea>
-            <app-field-error field="description" label="events.description" [error]="error()" />
-          </div>
-          <div class="flex flex-col gap-2">
-            <label hlmLabel for="priceMembers">{{ 'events.price_members' | t }}</label>
-            <input hlmInput id="priceMembers" [formField]="bulkForm.priceMembers" />
-            <app-field-error field="priceMembers" label="events.price_members" [error]="error()" />
-          </div>
-          <div class="flex flex-col gap-2">
-            <label hlmLabel for="priceGuests">{{ 'events.price_guests' | t }}</label>
-            <input hlmInput id="priceGuests" [formField]="bulkForm.priceGuests" />
-            <app-field-error field="priceGuests" label="events.price_guests" [error]="error()" />
-          </div>
-          <div class="flex flex-col gap-2">
-            <label hlmLabel for="registrationCloseDays">{{ 'events.bulk_registration_close_days' | t }}</label>
-            <input hlmInput id="registrationCloseDays" type="number" inputmode="numeric" [formField]="bulkForm.registrationCloseDays" />
-            <app-field-error field="registrationCloseDays" label="events.bulk_registration_close_days" [error]="error()" />
-          </div>
-          <div class="flex flex-col gap-2">
-            <label hlmLabel for="registrationCloseTime">{{ 'events.bulk_registration_close_time' | t }}</label>
-            <input hlmInput id="registrationCloseTime" type="time" [formField]="bulkForm.registrationCloseTime" />
-            <app-field-error field="registrationCloseTime" label="events.bulk_registration_close_time" [error]="error()" />
-          </div>
-          <button hlmBtn type="submit" class="w-full sm:w-auto sm:self-start" [disabled]="busy()">{{ 'events.bulk_preview' | t }}</button>
-        </form>
+        <app-back-link link="/events" />
+        <app-page-header [title]="'events.bulk_create' | t" />
+        <section hlmCard>
+          <form hlmCardContent class="flex flex-col gap-4" novalidate (submit)="$event.preventDefault(); send()">
+            <div class="grid gap-4 sm:grid-cols-2">
+              <div class="flex flex-col gap-2">
+                <label hlmLabel for="startDate">{{ 'events.bulk_start_date' | t }} *</label>
+                <input hlmInput id="startDate" type="date" [formField]="bulkForm.startDate" />
+                <app-field-error field="startDate" label="events.bulk_start_date" [error]="error()" [control]="bulkForm.startDate()" />
+              </div>
+              <div class="flex flex-col gap-2">
+                <label hlmLabel for="endDate">{{ 'events.bulk_end_date' | t }} *</label>
+                <input hlmInput id="endDate" type="date" [formField]="bulkForm.endDate" />
+                <app-field-error field="endDate" label="events.bulk_end_date" [error]="error()" [control]="bulkForm.endDate()" />
+              </div>
+            </div>
+            <div class="flex flex-col gap-2">
+              <label hlmLabel for="dayOfWeek">{{ 'events.bulk_day_of_week' | t }} *</label>
+              <select id="dayOfWeek" [class]="selectClasses" [formField]="bulkForm.dayOfWeek">
+                <option value="">{{ 'events.bulk_select_day' | t }}</option>
+                @for (day of weekdays(); track day.value) {
+                  <option [value]="day.value">{{ day.label }}</option>
+                }
+              </select>
+              <app-field-error field="dayOfWeek" label="events.bulk_day_of_week" [error]="error()" [control]="bulkForm.dayOfWeek()" />
+            </div>
+            <div class="flex flex-col gap-2">
+              <label hlmLabel for="name">{{ 'events.name' | t }} *</label>
+              <input hlmInput id="name" [formField]="bulkForm.name" />
+              <app-field-error field="name" label="events.name" [error]="error()" [control]="bulkForm.name()" />
+            </div>
+            <div class="flex flex-col gap-2">
+              <label hlmLabel for="capacity">{{ 'events.max_participants' | t }} *</label>
+              <input hlmInput id="capacity" type="number" inputmode="numeric" [formField]="bulkForm.capacity" />
+              <app-field-error field="capacity" label="events.max_participants" [error]="error()" [control]="bulkForm.capacity()" />
+            </div>
+            <label class="flex items-center gap-2 text-sm">
+              <input id="mixed" type="checkbox" class="size-4 accent-primary" [formField]="bulkForm.mixed" />
+              {{ 'events.play_together' | t }}
+            </label>
+            <div class="flex flex-col gap-2">
+              <label hlmLabel for="description">{{ 'events.description' | t }}</label>
+              <textarea hlmInput id="description" rows="3" class="h-auto" [formField]="bulkForm.description"></textarea>
+              <app-field-error field="description" label="events.description" [error]="error()" />
+            </div>
+            <div class="grid gap-4 sm:grid-cols-2">
+              <div class="flex flex-col gap-2">
+                <label hlmLabel for="priceMembers">{{ 'events.price_members' | t }}</label>
+                <input hlmInput id="priceMembers" [formField]="bulkForm.priceMembers" />
+                <app-field-error field="priceMembers" label="events.price_members" [error]="error()" />
+              </div>
+              <div class="flex flex-col gap-2">
+                <label hlmLabel for="priceGuests">{{ 'events.price_guests' | t }}</label>
+                <input hlmInput id="priceGuests" [formField]="bulkForm.priceGuests" />
+                <app-field-error field="priceGuests" label="events.price_guests" [error]="error()" />
+              </div>
+            </div>
+            <div class="grid gap-4 sm:grid-cols-2">
+              <div class="flex flex-col gap-2">
+                <label hlmLabel for="registrationCloseDays">{{ 'events.bulk_registration_close_days' | t }}</label>
+                <input hlmInput id="registrationCloseDays" type="number" inputmode="numeric" [formField]="bulkForm.registrationCloseDays" />
+                <app-field-error field="registrationCloseDays" label="events.bulk_registration_close_days" [error]="error()" />
+              </div>
+              <div class="flex flex-col gap-2">
+                <label hlmLabel for="registrationCloseTime">{{ 'events.bulk_registration_close_time' | t }}</label>
+                <input hlmInput id="registrationCloseTime" type="time" [formField]="bulkForm.registrationCloseTime" />
+                <app-field-error field="registrationCloseTime" label="events.bulk_registration_close_time" [error]="error()" />
+              </div>
+            </div>
+            <button hlmBtn type="submit" class="w-full sm:w-auto sm:self-start" [disabled]="busy()">{{ 'events.bulk_preview' | t }}</button>
+          </form>
+        </section>
       }
     </div>
   `,

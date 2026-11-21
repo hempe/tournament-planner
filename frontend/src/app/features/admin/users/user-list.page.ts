@@ -1,6 +1,9 @@
-import { Component, computed, inject, resource } from '@angular/core';
+import { Component, computed, inject, resource, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { lucidePencil, lucidePlus, lucideSearch, lucideShieldMinus, lucideShieldPlus, lucideTrash2 } from '@ng-icons/lucide';
 import { HlmButtonImports } from '@ui/button';
+import { HlmInputImports } from '@ui/input';
 import { HlmSpinner } from '@ui/spinner';
 import { ApiClient } from '../../../core/api/api-client';
 import { asApiError } from '../../../core/api/api-error';
@@ -9,40 +12,81 @@ import { ConfirmService } from '../../../core/feedback/confirm.service';
 import { Notify } from '../../../core/feedback/notify';
 import { I18n } from '../../../core/i18n/i18n';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { matchesWords, queryWords } from '../../../shared/search';
+import { Badge } from '../../../shared/ui/badge';
+import { Page, PageHeader } from '../../../shared/ui/page';
 
 @Component({
   selector: 'app-user-list-page',
-  imports: [RouterLink, HlmButtonImports, HlmSpinner, TranslatePipe],
+  imports: [RouterLink, NgIcon, HlmButtonImports, HlmInputImports, HlmSpinner, TranslatePipe, Badge, Page, PageHeader],
+  providers: [provideIcons({ lucidePencil, lucidePlus, lucideSearch, lucideShieldMinus, lucideShieldPlus, lucideTrash2 })],
   template: `
-    <div class="mx-auto flex max-w-3xl flex-col gap-4">
-      <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <h1 class="text-2xl font-semibold">{{ 'users.title' | t }}</h1>
-        <a hlmBtn routerLink="/users/new" class="w-full sm:w-auto">{{ 'users.add_user' | t }}</a>
-      </div>
+    <div appPage width="wide">
+      <app-page-header [title]="'users.title' | t">
+        <a hlmBtn size="sm" routerLink="/users/new"><ng-icon name="lucidePlus" />{{ 'users.add_user' | t }}</a>
+      </app-page-header>
 
       @if (users.hasValue()) {
-        <ul class="flex flex-col gap-2">
-          @for (u of users.value(); track u.id) {
-            <li data-user class="flex flex-col gap-2 rounded-md border bg-card p-3 sm:flex-row sm:items-center">
-              <div class="sm:flex-1">
-                <span data-username class="font-medium">{{ u.username }}</span>
-                @if (u.isAdmin) {
-                  <span data-admin-badge class="ml-2 rounded-full border px-2 py-0.5 text-xs text-muted-foreground">{{ 'users.admin' | t }}</span>
-                }
-                <span class="block text-sm text-muted-foreground">{{ u.displayName }}</span>
-              </div>
-              <div class="flex flex-col gap-2 sm:flex-row">
-                <a hlmBtn size="sm" variant="outline" class="w-full sm:w-auto" [routerLink]="['/users', u.id, 'edit']">{{ 'users.edit' | t }}</a>
-                <button hlmBtn size="sm" variant="outline" type="button" class="w-full sm:w-auto" (click)="toggleAdmin(u)">
-                  {{ (u.isAdmin ? 'users.remove_admin_rights' : 'users.give_admin_rights') | t }}
-                </button>
-                <button hlmBtn size="sm" variant="destructive" type="button" class="w-full sm:w-auto" (click)="remove(u)">
-                  {{ 'users.delete' | t }}
-                </button>
-              </div>
-            </li>
-          }
-        </ul>
+        <div class="relative sm:max-w-sm">
+          <ng-icon name="lucideSearch" class="pointer-events-none absolute top-1/2 left-2.5 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+          <input
+            hlmInput
+            class="pl-8"
+            data-user-search
+            autocomplete="off"
+            [attr.aria-label]="'users.search' | t"
+            [attr.placeholder]="'users.search' | t"
+            [value]="query()"
+            (input)="query.set($any($event.target).value)"
+          />
+        </div>
+        @if (filtered().length === 0) {
+          <p class="text-muted-foreground">{{ 'users.no_users_found' | t }}</p>
+        } @else {
+          <ul class="divide-y rounded-xl bg-card px-3 text-sm shadow-xs ring-1 ring-foreground/10 sm:px-4">
+            @for (u of filtered(); track u.id) {
+              <li data-user class="flex items-center gap-2 py-2">
+                <div class="flex min-w-0 flex-1 flex-col pt-[0.3em] sm:flex-row sm:items-baseline sm:gap-3">
+                  <span class="flex items-center gap-2">
+                    <span class="truncate font-medium">{{ u.displayName }}</span>
+                    @if (u.isAdmin) {
+                      <span appBadge variant="outline" data-admin-badge>{{ 'users.admin' | t }}</span>
+                    }
+                  </span>
+                  <span data-username class="truncate text-sm text-muted-foreground">{{ u.username }}</span>
+                </div>
+                <div class="flex shrink-0 gap-0.5">
+                  <a hlmBtn variant="ghost" size="icon-sm" [routerLink]="['/users', u.id, 'edit']" [attr.aria-label]="'users.edit' | t" [attr.title]="'users.edit' | t">
+                    <ng-icon name="lucidePencil" />
+                  </a>
+                  <button
+                    hlmBtn
+                    variant="ghost"
+                    size="icon-sm"
+                    type="button"
+                    [attr.aria-label]="(u.isAdmin ? 'users.remove_admin_rights' : 'users.give_admin_rights') | t"
+                    [attr.title]="(u.isAdmin ? 'users.remove_admin_rights' : 'users.give_admin_rights') | t"
+                    (click)="toggleAdmin(u)"
+                  >
+                    <ng-icon [name]="u.isAdmin ? 'lucideShieldMinus' : 'lucideShieldPlus'" />
+                  </button>
+                  <button
+                    hlmBtn
+                    variant="ghost"
+                    size="icon-sm"
+                    type="button"
+                    class="text-muted-foreground hover:text-destructive"
+                    [attr.aria-label]="'users.delete' | t"
+                    [attr.title]="'users.delete' | t"
+                    (click)="remove(u)"
+                  >
+                    <ng-icon name="lucideTrash2" />
+                  </button>
+                </div>
+              </li>
+            }
+          </ul>
+        }
       } @else if (users.error()) {
         <p role="alert" class="text-destructive">{{ errorKey() | t }}</p>
       } @else {
@@ -61,6 +105,14 @@ export class UserListPage {
     loader: ({ abortSignal }) => userAdminApi(this.api).index({ signal: abortSignal }),
   });
   protected readonly errorKey = computed(() => asApiError(this.users.error())?.error ?? 'errors.general');
+
+  /** Filters by display name and username (every word must match). */
+  protected readonly query = signal('');
+  protected readonly filtered = computed(() => {
+    const list = this.users.hasValue() ? this.users.value() : [];
+    const words = queryWords(this.query());
+    return words.length === 0 ? list : list.filter((u) => matchesWords(`${u.displayName} ${u.username}`, words));
+  });
 
   protected async toggleAdmin(user: AdminUserDto): Promise<void> {
     const key = user.isAdmin ? 'users.remove_admin_rights_confirm' : 'users.give_admin_rights_confirm';

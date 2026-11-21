@@ -1,18 +1,36 @@
 import { Component, computed, inject, input, resource, signal, untracked } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { lucidePencil, lucidePlus, lucideSearch, lucideTrash2, lucideUserMinus, lucideX } from '@ng-icons/lucide';
 import { HlmButtonImports } from '@ui/button';
 import { HlmCardImports } from '@ui/card';
 import { HlmInputImports } from '@ui/input';
 import { HlmSpinner } from '@ui/spinner';
 import { ApiClient, ApiError } from '../../../core/api/api-client';
 import { asApiError } from '../../../core/api/api-error';
-import { AdminGuestDto, AdminRegistrationDto, EventAdminDto, EventRequest, EventUpdateRequest, eventAdminApi } from '../../../core/api/generated';
+import {
+  AdminGuestDto,
+  AdminRegistrationDto,
+  EventAdminDto,
+  EventRequest,
+  EventUpdateRequest,
+  UserOptionDto,
+  eventAdminApi,
+} from '../../../core/api/generated';
 import { ConfirmService } from '../../../core/feedback/confirm.service';
 import { Notify } from '../../../core/feedback/notify';
 import { formatDate, formatDateTime } from '../../../core/format/dates';
 import { I18n } from '../../../core/i18n/i18n';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { BackLink } from '../../../shared/ui/back-link';
+import { Badge } from '../../../shared/ui/badge';
+import { Page, PageHeader } from '../../../shared/ui/page';
+import { SocialEventRow } from '../../social-events/social-event-row';
 import { EventForm } from './event-form';
+import { filterMembers } from './member-search';
+
+/** Matches shown below the member search. */
+const MAX_MATCHES = 8;
 
 interface RegistrationGroup {
   /** Heading key. */
@@ -30,155 +48,266 @@ interface GuestGroup {
 
 @Component({
   selector: 'app-event-admin-page',
-  imports: [RouterLink, HlmButtonImports, HlmCardImports, HlmInputImports, HlmSpinner, TranslatePipe, EventForm],
+  imports: [
+    RouterLink,
+    NgIcon,
+    HlmButtonImports,
+    HlmCardImports,
+    HlmInputImports,
+    HlmSpinner,
+    TranslatePipe,
+    EventForm,
+    BackLink,
+    Badge,
+    Page,
+    PageHeader,
+    SocialEventRow,
+  ],
+  providers: [provideIcons({ lucidePencil, lucidePlus, lucideSearch, lucideTrash2, lucideUserMinus, lucideX })],
   template: `
     @if (detail.hasValue()) {
       @let d = detail.value();
-      <div class="mx-auto flex max-w-3xl flex-col gap-4">
-        <div>
-          <a hlmBtn variant="ghost" size="sm" [routerLink]="['/events', d.event.id]">{{ 'nav.back' | t }}</a>
-        </div>
-        <header>
-          <p class="text-sm text-muted-foreground">{{ formatDate(d.event.date) }}</p>
-          <h1 class="text-2xl font-semibold">{{ d.event.name }}</h1>
-        </header>
-
-        <div class="flex flex-col gap-2 sm:flex-row">
-          <button hlmBtn variant="outline" type="button" class="w-full sm:w-auto" [disabled]="busy()" (click)="toggleLock(d)">
+      <div appPage>
+        <app-back-link [link]="['/events', d.event.id]" />
+        <app-page-header [title]="d.event.name" [subtitle]="formatDate(d.event.date)">
+          <div meta class="flex flex-wrap gap-2 empty:hidden">
+            @if (d.event.isLocked) {
+              <span appBadge variant="secondary">{{ 'events.locked' | t }}</span>
+            }
+          </div>
+          <button hlmBtn variant="outline" size="sm" type="button" [disabled]="busy()" (click)="toggleLock(d)">
             {{ (d.event.isLocked ? 'events.unlock' : 'events.lock') | t }}
           </button>
-          <a hlmBtn variant="outline" class="w-full sm:w-auto" [href]="exportUrl()" download>{{ 'events.export' | t }}</a>
-          <button hlmBtn variant="destructive" type="button" class="w-full sm:w-auto" [disabled]="busy()" (click)="deleteEvent()">
+          <a hlmBtn variant="outline" size="sm" [href]="exportUrl()" download>{{ 'events.export' | t }}</a>
+          <button hlmBtn variant="destructive" size="sm" type="button" [disabled]="busy()" (click)="deleteEvent()">
             {{ 'events.delete' | t }}
           </button>
-        </div>
+        </app-page-header>
 
         <section hlmCard>
           <div hlmCardContent>
-            <app-event-form
-              mode="edit"
-              [initial]="formInitial()"
-              [error]="formError()"
-              [busy]="busy()"
-              (save)="saveEvent($event)"
-            />
-          </div>
-        </section>
-
-        @for (g of groups(); track g.key + g.waitlist) {
-          @if (g.rows.length > 0) {
-            <section hlmCard data-group>
-              <div hlmCardHeader>
-                <h2 hlmCardTitle>{{ g.key | t }}@if (g.waitlist) { – {{ 'events.waitlist' | t }} }</h2>
-              </div>
-              <ul hlmCardContent class="flex flex-col gap-3">
-                @for (r of g.rows; track r.userId) {
-                  <li data-row class="flex flex-col gap-2 border-b pb-3 last:border-b-0 last:pb-0">
-                    <div>
-                      <span data-name class="font-medium">{{ r.name }}</span>
-                      <span class="block text-xs text-muted-foreground">{{ formatDateTime(r.registeredAt) }}</span>
-                    </div>
-                    <div class="flex flex-col gap-2 sm:flex-row">
-                      <input
-                        hlmInput
-                        class="sm:flex-1"
-                        [attr.aria-label]="'events.comment' | t"
-                        [attr.placeholder]="'events.comment' | t"
-                        [value]="draft('r' + r.userId, r.comment)"
-                        (input)="setDraft('r' + r.userId, $any($event.target).value)"
-                      />
-                      <button hlmBtn size="sm" type="button" class="w-full sm:w-auto" [disabled]="busy()" (click)="saveComment(r)">
-                        {{ 'events.save' | t }}
-                      </button>
-                      <button hlmBtn size="sm" variant="destructive" type="button" class="w-full sm:w-auto" [disabled]="busy()" (click)="unregister(r)">
-                        {{ 'events.unregister' | t }}
-                      </button>
-                    </div>
-                  </li>
-                }
-              </ul>
-            </section>
-          }
-        }
-
-        @if (d.availableUsers.length > 0) {
-          <section hlmCard>
-            <div hlmCardHeader><h2 hlmCardTitle>{{ 'auth.not_registered' | t }}</h2></div>
-            <ul hlmCardContent class="flex flex-col gap-3">
-              @for (u of d.availableUsers; track u.id) {
-                <li data-row class="flex flex-col gap-2 sm:flex-row sm:items-center">
-                  <span class="font-medium sm:w-48">{{ u.displayName }}</span>
-                  <input
-                    hlmInput
-                    class="sm:flex-1"
-                    [attr.aria-label]="'events.comment' | t"
-                    [attr.placeholder]="'events.comment' | t"
-                    [value]="draft('u' + u.id, '')"
-                    (input)="setDraft('u' + u.id, $any($event.target).value)"
-                  />
-                  <button hlmBtn size="sm" type="button" class="w-full sm:w-auto" [disabled]="busy()" (click)="registerUser(d, u.id, u.displayName)">
-                    {{ 'events.register' | t }}
-                  </button>
-                </li>
-              }
-            </ul>
-          </section>
-        }
-
-        <section hlmCard>
-          <div hlmCardHeader><h2 hlmCardTitle>{{ 'guests.title' | t }}</h2></div>
-          <div hlmCardContent class="flex flex-col gap-4">
-            @for (g of guestGroups(); track g.key) {
-              <div data-guest-group class="flex flex-col gap-3">
-                @if (g.key) {
-                  <h3 class="text-sm font-medium text-muted-foreground">{{ g.key | t }}</h3>
-                }
-                @for (guest of g.rows; track guest.id) {
-                  <div data-guest class="flex flex-col gap-2 border-b pb-3 last:border-b-0 last:pb-0">
-                    <div>
-                      <span class="font-medium">{{ guest.firstName }} {{ guest.lastName }}</span>
-                      <span class="block text-xs text-muted-foreground">{{ formatDateTime(guest.registeredAt) }}</span>
-                    </div>
-                    <dl class="text-sm text-muted-foreground">
-                      @if (guest.email) { <dd>{{ guest.email }}</dd> }
-                      @if (guest.handicap !== null) { <dd>{{ 'guests.handicap' | t }}: {{ guest.handicap }}</dd> }
-                      @if (guest.comment) { <dd>{{ guest.comment }}</dd> }
-                    </dl>
-                    <div class="flex flex-col gap-2 sm:flex-row">
-                      <a hlmBtn size="sm" variant="outline" class="w-full sm:w-auto" [routerLink]="['/events', d.event.id, 'guests', guest.id, 'edit']">
-                        {{ 'guests.edit' | t }}
-                      </a>
-                      <button hlmBtn size="sm" variant="destructive" type="button" class="w-full sm:w-auto" [disabled]="busy()" (click)="deleteGuest(guest)">
-                        {{ 'events.delete' | t }}
-                      </button>
-                    </div>
-                  </div>
-                }
-              </div>
-            }
-            <a hlmBtn variant="outline" class="w-full sm:w-auto sm:self-start" [routerLink]="['/events', d.event.id, 'guests', 'new']">
-              {{ 'guests.add' | t }}
-            </a>
+            <app-event-form mode="edit" [initial]="formInitial()" [error]="formError()" [busy]="busy()" (save)="saveEvent($event)" />
           </div>
         </section>
 
         @if (d.socialEvent; as social) {
-          <a
-            [routerLink]="['/social-events', social.id, 'admin']"
-            class="rounded-xl border-2 border-[var(--social)] p-4 font-medium text-[var(--social)]"
-          >
-            {{ social.name }} – {{ 'social_events.edit' | t }}
-          </a>
+          <app-social-event-row [event]="social" [link]="['/social-events', social.id, 'admin']" note="social_events.edit" />
         } @else {
-          <a hlmBtn variant="outline" routerLink="/social-events/new" [queryParams]="{ tournamentId: d.event.id }" class="w-full sm:w-auto sm:self-start">
+          <a hlmBtn variant="outline" size="sm" class="self-start" routerLink="/social-events/new" [queryParams]="{ tournamentId: d.event.id }">
             {{ 'social_events.new' | t }}
           </a>
         }
+
+        <section hlmCard data-registrations>
+          <div hlmCardHeader>
+            <h2 hlmCardTitle>{{ 'events.registrations' | t }} ({{ d.event.joined }}/{{ d.event.capacity }})</h2>
+          </div>
+          <div hlmCardContent class="flex flex-col gap-4">
+            @for (g of groups(); track g.key + g.waitlist) {
+              @if (g.rows.length > 0) {
+                <div data-group>
+                  <h3 class="mb-1 text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                    {{ g.key | t }}@if (g.waitlist) { – {{ 'events.waitlist' | t }} }<span data-count> ({{ g.rows.length }})</span>
+                  </h3>
+                  <ul class="divide-y">
+                    @for (r of g.rows; track r.userId) {
+                      <li data-row class="flex items-center gap-2 py-1.5">
+                        <div class="flex min-w-0 flex-1 flex-col pt-[0.3em]">
+                          <div class="flex flex-wrap items-baseline gap-x-2">
+                            <span data-name class="font-medium">{{ r.name }}</span>
+                            <span class="text-xs text-muted-foreground">{{ formatDateTime(r.registeredAt) }}</span>
+                          </div>
+                          @if (editing() === r.userId) {
+                            <div class="mt-1 flex items-center gap-2">
+                              <input
+                                hlmInput
+                                class="h-8 flex-1"
+                                [attr.aria-label]="'events.comment' | t"
+                                [attr.placeholder]="'events.comment' | t"
+                                [value]="draft('r' + r.userId, r.comment)"
+                                (input)="setDraft('r' + r.userId, $any($event.target).value)"
+                                (keydown.enter)="saveComment(r)"
+                                (keydown.escape)="cancelEdit(r)"
+                              />
+                              <button hlmBtn size="sm" type="button" [disabled]="busy()" (click)="saveComment(r)">{{ 'events.save' | t }}</button>
+                              <button hlmBtn variant="ghost" size="icon-sm" type="button" [attr.aria-label]="'actions.cancel' | t" (click)="cancelEdit(r)">
+                                <ng-icon name="lucideX" />
+                              </button>
+                            </div>
+                          } @else if (r.comment) {
+                            <span data-comment class="text-sm break-words text-muted-foreground">{{ r.comment }}</span>
+                          }
+                        </div>
+                        <div class="flex shrink-0 gap-0.5">
+                          @if (editing() !== r.userId) {
+                            <button
+                              hlmBtn
+                              variant="ghost"
+                              size="icon-sm"
+                              type="button"
+                              [attr.aria-label]="'events.edit_comment' | t"
+                              [attr.title]="'events.edit_comment' | t"
+                              (click)="editing.set(r.userId)"
+                            >
+                              <ng-icon name="lucidePencil" />
+                            </button>
+                          }
+                          <button
+                            hlmBtn
+                            variant="ghost"
+                            size="icon-sm"
+                            type="button"
+                            class="text-destructive hover:text-destructive"
+                            [attr.aria-label]="'events.unregister' | t"
+                            [attr.title]="'events.unregister' | t"
+                            [disabled]="busy()"
+                            (click)="unregister(r)"
+                          >
+                            <ng-icon name="lucideUserMinus" />
+                          </button>
+                        </div>
+                      </li>
+                    }
+                  </ul>
+                </div>
+              }
+            }
+            @if (d.registrations.length === 0) {
+              <p class="text-muted-foreground">{{ 'events.no_participants' | t }}</p>
+            }
+          </div>
+        </section>
+
+        <section hlmCard data-add-member>
+          <div hlmCardHeader><h2 hlmCardTitle>{{ 'events.add_member' | t }}</h2></div>
+          <div hlmCardContent class="flex flex-col gap-2">
+            @if (d.availableUsers.length === 0) {
+              <p class="text-muted-foreground">{{ 'events.all_members_registered' | t }}</p>
+            } @else if (selected(); as user) {
+              <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <span data-selected class="inline-flex h-9 items-center gap-1 rounded-md border bg-muted/50 pr-1 pl-2.5 text-sm sm:max-w-[16rem]">
+                  <span class="truncate pt-[0.3em] font-medium">{{ user.displayName }}</span>
+                  <button hlmBtn variant="ghost" size="icon-xs" type="button" class="ml-auto" [attr.aria-label]="'actions.cancel' | t" (click)="clearSelection()">
+                    <ng-icon name="lucideX" />
+                  </button>
+                </span>
+                <input
+                  hlmInput
+                  class="sm:flex-1"
+                  [attr.aria-label]="'events.comment' | t"
+                  [attr.placeholder]="'events.comment' | t"
+                  [value]="addComment()"
+                  (input)="addComment.set($any($event.target).value)"
+                />
+                <button hlmBtn type="button" [disabled]="busy()" (click)="registerUser(d, user.id, user.displayName)">
+                  {{ (d.event.available > 0 ? 'events.register' : 'events.waitlist') | t }}
+                </button>
+              </div>
+            } @else {
+              <div class="relative">
+                <ng-icon name="lucideSearch" class="pointer-events-none absolute top-1/2 left-2.5 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+                <input
+                  hlmInput
+                  class="pl-8"
+                  data-member-search
+                  autocomplete="off"
+                  [attr.aria-label]="'events.search_member' | t"
+                  [attr.placeholder]="'events.search_member' | t"
+                  [value]="query()"
+                  (input)="query.set($any($event.target).value)"
+                  (keydown.enter)="selectFirstMatch()"
+                />
+              </div>
+              @if (query().trim()) {
+                @let found = matches();
+                @if (found.users.length === 0) {
+                  <p class="px-2.5 text-sm text-muted-foreground">{{ 'events.no_member_found' | t }}</p>
+                } @else {
+                  <ul data-matches class="flex flex-col">
+                    @for (u of found.users; track u.id) {
+                      <li>
+                        <button type="button" data-match class="w-full rounded-md px-2.5 pt-[calc(0.375rem+0.2em)] pb-1.5 text-left text-sm hover:bg-muted focus-visible:bg-muted focus-visible:outline-none" (click)="select(u)">
+                          {{ u.displayName }}
+                        </button>
+                      </li>
+                    }
+                  </ul>
+                  @if (found.more > 0) {
+                    <p class="px-2.5 text-xs text-muted-foreground">{{ 'events.more_matches' | t: { count: found.more } }}</p>
+                  }
+                }
+              }
+            }
+          </div>
+        </section>
+
+        <section hlmCard data-guests>
+          <div hlmCardHeader>
+            <h2 hlmCardTitle>{{ 'guests.title' | t }} ({{ d.guests.length }})</h2>
+            <a hlmCardAction hlmBtn variant="outline" size="sm" [routerLink]="['/events', d.event.id, 'guests', 'new']">
+              <ng-icon name="lucidePlus" />{{ 'guests.add' | t }}
+            </a>
+          </div>
+          <div hlmCardContent class="flex flex-col gap-4">
+            @for (g of guestGroups(); track g.key) {
+              @if (g.rows.length > 0) {
+                <div data-guest-group>
+                  @if (g.key) {
+                    <h3 class="mb-1 text-xs font-medium tracking-wide text-muted-foreground uppercase">{{ g.key | t }} ({{ g.rows.length }})</h3>
+                  }
+                  <ul class="divide-y">
+                    @for (guest of g.rows; track guest.id) {
+                      <li data-guest class="flex items-center gap-2 py-1.5">
+                        <div class="flex min-w-0 flex-1 flex-col pt-[0.3em]">
+                          <div class="flex flex-wrap items-baseline gap-x-2">
+                            <span class="font-medium">{{ guest.firstName }} {{ guest.lastName }}</span>
+                            <span class="text-xs text-muted-foreground">{{ formatDateTime(guest.registeredAt) }}</span>
+                          </div>
+                          <span class="text-sm break-words text-muted-foreground">
+                            {{ guestDetails(guest) }}
+                          </span>
+                        </div>
+                        <div class="flex shrink-0 gap-0.5">
+                          <a
+                            hlmBtn
+                            variant="ghost"
+                            size="icon-sm"
+                            [attr.aria-label]="'guests.edit' | t"
+                            [attr.title]="'guests.edit' | t"
+                            [routerLink]="['/events', d.event.id, 'guests', guest.id, 'edit']"
+                          >
+                            <ng-icon name="lucidePencil" />
+                          </a>
+                          <button
+                            hlmBtn
+                            variant="ghost"
+                            size="icon-sm"
+                            type="button"
+                            class="text-destructive hover:text-destructive"
+                            [attr.aria-label]="'events.delete' | t"
+                            [attr.title]="'events.delete' | t"
+                            [disabled]="busy()"
+                            (click)="deleteGuest(guest)"
+                          >
+                            <ng-icon name="lucideTrash2" />
+                          </button>
+                        </div>
+                      </li>
+                    }
+                  </ul>
+                </div>
+              }
+            }
+            @if (d.guests.length === 0) {
+              <p class="text-muted-foreground">{{ 'events.no_participants' | t }}</p>
+            }
+          </div>
+        </section>
       </div>
     } @else if (detail.error()) {
-      <div class="mx-auto max-w-3xl">
+      <div appPage>
         <p class="text-lg">{{ errorKey() | t }}</p>
-        <a hlmBtn class="mt-4" routerLink="/">{{ 'navigation.home' | t }}</a>
+        <a hlmBtn class="self-start" routerLink="/">{{ 'navigation.home' | t }}</a>
       </div>
     } @else {
       <div class="flex justify-center p-8"><hlm-spinner /></div>
@@ -202,8 +331,18 @@ export class EventAdminPage {
 
   protected readonly busy = signal(false);
   protected readonly formError = signal<ApiError | null>(null);
-  /** Unsaved comment inputs: 'r<userId>' for registrations, 'u<userId>' for users to add. */
+  /** Unsaved registration comments, keyed 'r<userId>'. */
   private readonly drafts = signal<Record<string, string>>({});
+  /** User id of the registration whose comment is being edited. */
+  protected readonly editing = signal<number | null>(null);
+
+  /** "Mitglied hinzufügen": search text, the picked member and the comment for the registration. */
+  protected readonly query = signal('');
+  protected readonly selected = signal<UserOptionDto | null>(null);
+  protected readonly addComment = signal('');
+  protected readonly matches = computed(() =>
+    filterMembers(this.detail.hasValue() ? this.detail.value().availableUsers : [], this.query(), MAX_MATCHES),
+  );
 
   /** Bumped after the form's own save so the form is re-seeded only then (and on load), never by other actions. */
   private readonly seedVersion = signal(0);
@@ -324,17 +463,49 @@ export class EventAdminPage {
     }
   }
 
+  protected select(user: UserOptionDto): void {
+    this.selected.set(user);
+  }
+
+  protected selectFirstMatch(): void {
+    const first = this.matches().users[0];
+    if (first) {
+      this.select(first);
+    }
+  }
+
+  protected clearSelection(): void {
+    this.selected.set(null);
+    this.addComment.set('');
+  }
+
   protected async registerUser(d: EventAdminDto, userId: number, name: string): Promise<void> {
     const key = d.event.available > 0 ? 'auth.register_user' : 'auth.register_user_waitlist';
     if (!(await this.confirm.ask(this.i18n.t(key, { username: name })))) {
       return;
     }
     await this.run(async () => {
-      const fresh = await eventAdminApi(this.api).register(this.id(), userId, { comment: this.draft(`u${userId}`, '') });
-      this.clearDraft(`u${userId}`);
+      const fresh = await eventAdminApi(this.api).register(this.id(), userId, { comment: this.addComment() });
+      this.clearSelection();
+      this.query.set('');
       this.notify.success('events.registration_success');
       return fresh;
     });
+  }
+
+  protected cancelEdit(r: AdminRegistrationDto): void {
+    this.clearDraft(`r${r.userId}`);
+    this.editing.set(null);
+  }
+
+  protected guestDetails(guest: AdminGuestDto): string {
+    return [
+      guest.email,
+      guest.handicap === null ? null : `${this.i18n.t('guests.handicap')}: ${guest.handicap}`,
+      guest.comment,
+    ]
+      .filter((part) => part)
+      .join(' · ');
   }
 
   protected async unregister(r: AdminRegistrationDto): Promise<void> {
@@ -352,6 +523,7 @@ export class EventAdminPage {
     await this.run(async () => {
       const fresh = await eventAdminApi(this.api).updateComment(this.id(), r.userId, { comment: this.draft(`r${r.userId}`, r.comment) });
       this.clearDraft(`r${r.userId}`);
+      this.editing.set(null);
       this.notify.success('events.comment_update_success');
       return fresh;
     });

@@ -1,5 +1,6 @@
 import { Component, computed, inject, input, resource, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { HlmCardImports } from '@ui/card';
 import { HlmButtonImports } from '@ui/button';
 import { HlmSpinner } from '@ui/spinner';
 import { ApiClient, ApiError } from '../../../core/api/api-client';
@@ -8,18 +9,25 @@ import { UserCreateRequest, UserUpdateRequest, userAdminApi } from '../../../cor
 import { Notify } from '../../../core/feedback/notify';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { UserForm } from './user-form';
+import { BackLink } from '../../../shared/ui/back-link';
+import { Page, PageHeader } from '../../../shared/ui/page';
 
 @Component({
   selector: 'app-user-edit-page',
-  imports: [RouterLink, HlmButtonImports, HlmSpinner, UserForm, TranslatePipe],
+  imports: [RouterLink, HlmButtonImports, HlmSpinner, UserForm, TranslatePipe, HlmCardImports, BackLink, Page, PageHeader],
   template: `
-    <div class="mx-auto flex max-w-2xl flex-col gap-4">
+    <div appPage>
+      <app-back-link link="/users" />
       @if (user.hasValue()) {
-        <h1 class="text-2xl font-semibold">{{ 'users.edit' | t }}</h1>
-        <app-user-form mode="edit" [initial]="user.value()" [error]="error()" [busy]="busy()" (save)="update($event)" />
+        <app-page-header [title]="user.value().displayName" [subtitle]="'users.edit' | t" />
+        <section hlmCard>
+          <div hlmCardContent>
+            <app-user-form mode="edit" [initial]="user.value()" [error]="error()" [busy]="busy()" (save)="update($event)" />
+          </div>
+        </section>
       } @else if (user.error()) {
         <p class="text-lg">{{ errorKey() | t }}</p>
-        <a hlmBtn routerLink="/users">{{ 'nav.users' | t }}</a>
+        <a hlmBtn class="self-start" routerLink="/users">{{ 'nav.users' | t }}</a>
       } @else {
         <div class="flex justify-center p-8"><hlm-spinner /></div>
       }

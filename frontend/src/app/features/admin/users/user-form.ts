@@ -50,25 +50,29 @@ interface FormModel {
           [control]="userForm.password()"
         />
       </div>
-      <div class="flex flex-col gap-2">
-        <label hlmLabel for="firstName">{{ 'users.first_name' | t }}</label>
-        <input hlmInput id="firstName" [formField]="userForm.firstName" />
-        <app-field-error field="firstName" label="users.first_name" [error]="error()" />
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div class="flex flex-col gap-2">
+          <label hlmLabel for="firstName">{{ 'users.first_name' | t }}</label>
+          <input hlmInput id="firstName" [formField]="userForm.firstName" />
+          <app-field-error field="firstName" label="users.first_name" [error]="error()" />
+        </div>
+        <div class="flex flex-col gap-2">
+          <label hlmLabel for="lastName">{{ 'users.last_name' | t }}</label>
+          <input hlmInput id="lastName" [formField]="userForm.lastName" />
+          <app-field-error field="lastName" label="users.last_name" [error]="error()" />
+        </div>
       </div>
-      <div class="flex flex-col gap-2">
-        <label hlmLabel for="lastName">{{ 'users.last_name' | t }}</label>
-        <input hlmInput id="lastName" [formField]="userForm.lastName" />
-        <app-field-error field="lastName" label="users.last_name" [error]="error()" />
-      </div>
-      <div class="flex flex-col gap-2">
-        <label hlmLabel for="memberNumber">{{ 'users.member_number' | t }}</label>
-        <input hlmInput id="memberNumber" [formField]="userForm.memberNumber" />
-        <app-field-error field="memberNumber" label="users.member_number" [error]="error()" />
-      </div>
-      <div class="flex flex-col gap-2">
-        <label hlmLabel for="rfeg">{{ 'users.rfeg' | t }}</label>
-        <input hlmInput id="rfeg" [formField]="userForm.rfeg" />
-        <app-field-error field="rfeg" label="users.rfeg" [error]="error()" />
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div class="flex flex-col gap-2">
+          <label hlmLabel for="memberNumber">{{ 'users.member_number' | t }}</label>
+          <input hlmInput id="memberNumber" [formField]="userForm.memberNumber" />
+          <app-field-error field="memberNumber" label="users.member_number" [error]="error()" />
+        </div>
+        <div class="flex flex-col gap-2">
+          <label hlmLabel for="rfeg">{{ 'users.rfeg' | t }}</label>
+          <input hlmInput id="rfeg" [formField]="userForm.rfeg" />
+          <app-field-error field="rfeg" label="users.rfeg" [error]="error()" />
+        </div>
       </div>
       <button hlmBtn type="submit" class="w-full sm:w-auto sm:self-start" [disabled]="busy()">
         {{ (mode() === 'create' ? 'users.create' : 'users.update') | t }}

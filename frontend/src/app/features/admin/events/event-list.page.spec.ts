@@ -33,6 +33,7 @@ describe('EventListPage', () => {
         title: 'Anlässe', date: 'Datum', name: 'Name', max_participants: 'Max. Teilnehmer', registered: 'Angemeldet',
         waitlist: 'Warteliste', add: 'Anlass hinzufügen', bulk_create: 'Mehrfache Termine erstellen', delete: 'Löschen',
         delete_confirm: 'Termin :name definitiv löschen?', delete_success: 'Anlass gelöscht',
+        upcoming_events: 'Kommende Anlässe', past_events: 'Vergangene Anlässe', no_events: 'Keine Anlässe vorhanden.',
       },
     });
   });
@@ -47,16 +48,42 @@ describe('EventListPage', () => {
     const { el } = await render();
 
     expect(api.get).toHaveBeenCalledWith('/events', expect.anything());
-    const rows = Array.from(el.querySelectorAll('tbody tr'));
+    const rows = Array.from(el.querySelectorAll('[data-upcoming] tbody tr'));
     expect(rows).toHaveLength(2);
     expect(rows[0].textContent).toContain('Frühlingscup');
     expect(rows[0].textContent).toContain('20');
     expect(rows[0].textContent).toContain('12');
     expect(rows[0].textContent).toContain('3');
     expect(rows[1].textContent).toContain('Herbstcup');
+    expect(rows[0].querySelector('a')?.getAttribute('href')).toBe('/events/1/admin');
     for (const header of ['Datum', 'Name', 'Max. Teilnehmer', 'Angemeldet', 'Warteliste']) {
       expect(el.querySelector('thead')?.textContent).toContain(header);
     }
+  });
+
+  it('sorts upcoming events by date and puts past events newest first into a collapsed section', async () => {
+    api.get.mockResolvedValue([
+      ev(1, 'Spät', { date: '2099-09-01' }),
+      ev(2, 'Alt', { date: '2001-01-01' }),
+      ev(3, 'Früh', { date: '2099-06-01' }),
+      ev(4, 'Älter', { date: '2000-01-01' }),
+    ]);
+    const { el } = await render();
+    const names = (selector: string) => Array.from(el.querySelectorAll(`${selector} tbody tr a`)).map((a) => a.textContent?.trim());
+
+    expect(names('[data-upcoming]')).toEqual(['Früh', 'Spät']);
+    expect(names('[data-past]')).toEqual(['Alt', 'Älter']);
+    const past = el.querySelector<HTMLDetailsElement>('details[data-past]')!;
+    expect(past.open).toBe(false);
+    expect(past.querySelector('summary')?.textContent).toContain('Vergangene Anlässe (2)');
+  });
+
+  it('shows an empty state without upcoming events', async () => {
+    api.get.mockResolvedValue([]);
+    const { el } = await render();
+
+    expect(el.textContent).toContain('Keine Anlässe vorhanden.');
+    expect(el.querySelector('details')).toBeNull();
   });
 
   it('links to create and bulk create', async () => {
@@ -79,7 +106,9 @@ describe('EventListPage', () => {
     const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
     const { fixture, el } = await render();
 
-    el.querySelectorAll<HTMLButtonElement>('tbody button')[0].click();
+    const remove = el.querySelectorAll<HTMLButtonElement>('tbody button[aria-label="Löschen"]')[0];
+    expect(remove.textContent?.trim()).toBe(''); // icon only
+    remove.click();
     await fixture.whenStable();
 
     expect(confirm.ask).toHaveBeenCalledWith('Termin Frühlingscup definitiv löschen?', { danger: true });

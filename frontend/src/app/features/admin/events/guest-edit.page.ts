@@ -15,17 +15,17 @@ import { I18n } from '../../../core/i18n/i18n';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { FieldError } from '../../../shared/forms/field-error';
 import { SELECT_CLASSES } from '../../../shared/forms/select';
+import { BackLink } from '../../../shared/ui/back-link';
+import { Page, PageHeader } from '../../../shared/ui/page';
 
 @Component({
   selector: 'app-guest-edit-page',
-  imports: [FormField, RouterLink, HlmButtonImports, HlmCardImports, HlmInputImports, HlmLabelImports, HlmSpinner, TranslatePipe, FieldError],
+  imports: [FormField, RouterLink, HlmButtonImports, HlmCardImports, HlmInputImports, HlmLabelImports, HlmSpinner, TranslatePipe, FieldError, BackLink, Page, PageHeader],
   template: `
     @if (guest.hasValue()) {
-      <div class="mx-auto flex max-w-2xl flex-col gap-4">
-        <div>
-          <a hlmBtn variant="ghost" size="sm" [routerLink]="['/events', id(), 'admin']">{{ 'nav.back' | t }}</a>
-        </div>
-        <h1 class="text-2xl font-semibold">{{ 'guests.edit' | t }}</h1>
+      <div appPage>
+        <app-back-link [link]="['/events', id(), 'admin']" />
+        <app-page-header [title]="guest.value().firstName + ' ' + guest.value().lastName" [subtitle]="'guests.edit' | t" />
         <section hlmCard>
           <form hlmCardContent class="flex flex-col gap-4" novalidate (submit)="$event.preventDefault(); save()">
             <div class="flex flex-col gap-2">
@@ -37,25 +37,29 @@ import { SELECT_CLASSES } from '../../../shared/forms/select';
               </select>
               <app-field-error field="male" label="users.salutation" [error]="error()" [control]="guestForm.male()" />
             </div>
-            <div class="flex flex-col gap-2">
-              <label hlmLabel for="firstName">{{ 'guests.first_name' | t }} *</label>
-              <input hlmInput id="firstName" autocomplete="off" [formField]="guestForm.firstName" />
-              <app-field-error field="firstName" label="guests.first_name" [error]="error()" [control]="guestForm.firstName()" />
+            <div class="grid gap-4 sm:grid-cols-2">
+              <div class="flex flex-col gap-2">
+                <label hlmLabel for="firstName">{{ 'guests.first_name' | t }} *</label>
+                <input hlmInput id="firstName" autocomplete="off" [formField]="guestForm.firstName" />
+                <app-field-error field="firstName" label="guests.first_name" [error]="error()" [control]="guestForm.firstName()" />
+              </div>
+              <div class="flex flex-col gap-2">
+                <label hlmLabel for="lastName">{{ 'guests.last_name' | t }} *</label>
+                <input hlmInput id="lastName" autocomplete="off" [formField]="guestForm.lastName" />
+                <app-field-error field="lastName" label="guests.last_name" [error]="error()" [control]="guestForm.lastName()" />
+              </div>
             </div>
-            <div class="flex flex-col gap-2">
-              <label hlmLabel for="lastName">{{ 'guests.last_name' | t }} *</label>
-              <input hlmInput id="lastName" autocomplete="off" [formField]="guestForm.lastName" />
-              <app-field-error field="lastName" label="guests.last_name" [error]="error()" [control]="guestForm.lastName()" />
-            </div>
-            <div class="flex flex-col gap-2">
-              <label hlmLabel for="email">{{ 'guests.email' | t }}</label>
-              <input hlmInput id="email" type="email" autocomplete="off" [formField]="guestForm.email" />
-              <app-field-error field="email" label="guests.email" [error]="error()" />
-            </div>
-            <div class="flex flex-col gap-2">
-              <label hlmLabel for="handicap">{{ 'guests.handicap' | t }}</label>
-              <input hlmInput id="handicap" inputmode="decimal" [formField]="guestForm.handicap" />
-              <app-field-error field="handicap" label="guests.handicap" [error]="error()" />
+            <div class="grid gap-4 sm:grid-cols-2">
+              <div class="flex flex-col gap-2">
+                <label hlmLabel for="email">{{ 'guests.email' | t }}</label>
+                <input hlmInput id="email" type="email" autocomplete="off" [formField]="guestForm.email" />
+                <app-field-error field="email" label="guests.email" [error]="error()" />
+              </div>
+              <div class="flex flex-col gap-2">
+                <label hlmLabel for="handicap">{{ 'guests.handicap' | t }}</label>
+                <input hlmInput id="handicap" inputmode="decimal" [formField]="guestForm.handicap" />
+                <app-field-error field="handicap" label="guests.handicap" [error]="error()" />
+              </div>
             </div>
             <div class="flex flex-col gap-2">
               <label hlmLabel for="comment">{{ 'guests.comment' | t }}</label>
@@ -72,9 +76,9 @@ import { SELECT_CLASSES } from '../../../shared/forms/select';
         </section>
       </div>
     } @else if (guest.error()) {
-      <div class="mx-auto max-w-2xl">
+      <div appPage>
         <p class="text-lg">{{ errorKey() | t }}</p>
-        <a hlmBtn class="mt-4" routerLink="/">{{ 'navigation.home' | t }}</a>
+        <a hlmBtn class="self-start" routerLink="/">{{ 'navigation.home' | t }}</a>
       </div>
     } @else {
       <div class="flex justify-center p-8"><hlm-spinner /></div>

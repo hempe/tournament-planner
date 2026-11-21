@@ -49,8 +49,9 @@ describe('SocialEventAdminPage', () => {
       nav: { back: 'Zurück' },
       validation: { required: 'Das Feld :field ist erforderlich.' },
       guests: { guest: 'Gast' },
-      events: { delete_success: 'Anlass gelöscht', lock_success: 'Gesperrt', unlock_success: 'Entsperrt', update_success: 'Aktualisiert', unregistration_success: 'Abgemeldet', unregister_user_confirm: ':name abmelden?' },
+      events: { delete_success: 'Anlass gelöscht', lock_success: 'Gesperrt', unlock_success: 'Entsperrt', update_success: 'Aktualisiert', unregistration_success: 'Abgemeldet', unregister_user_confirm: ':name abmelden?', locked: 'Gesperrt', no_participants: 'Noch keine Anmeldungen.' },
       social_events: {
+        libero: 'Kein Wunsch',
         name: 'Name', date: 'Datum', description: 'Beschreibung', registration_close: 'Anmeldeschluss', menus: 'Menüoptionen', menus_hint: 'Menü-Hinweis',
         tables: 'Tische', tables_hint: 'Tisch-Hinweis', save: 'Speichern', lock: 'Sperren', unlock: 'Entsperren', lock_confirm: 'Anlass sperren?',
         unlock_confirm: 'Anlass entsperren?', delete: 'Löschen', delete_confirm: 'Anlass dauerhaft löschen?', participants: 'Teilnehmer',
@@ -102,6 +103,8 @@ describe('SocialEventAdminPage', () => {
     expect(rows[0].textContent).not.toContain('Gast');
     expect(rows[1].textContent).toContain('Gus Guest');
     expect(rows[1].textContent).toContain('Gast');
+    expect(rows[1].textContent).toContain('Kein Wunsch');
+    expect(el.querySelector('[data-participants] h2')?.textContent).toContain('(2)');
   });
 
   it('links back to the tournament administration when linked, else home; add guest link', async () => {
@@ -194,10 +197,10 @@ describe('SocialEventAdminPage', () => {
 
   it('removing a participant confirms with the name and re-renders from the returned DTO', async () => {
     api.delete.mockResolvedValue(dto({ registrations: [dto().registrations[1]] }));
-    const { el, buttonIn, click } = await render();
+    const { el, click } = await render();
     const row = el.querySelector<HTMLElement>('[data-participant]')!;
 
-    await click(buttonIn(row, 'Anlass abmelden'));
+    await click(row.querySelector<HTMLElement>('button[aria-label="Anlass abmelden"]')!);
 
     expect(confirm.ask).toHaveBeenCalledWith('Anna Muster abmelden?', { danger: true });
     expect(api.delete).toHaveBeenCalledWith('/social-events/4/registrations/21', undefined);

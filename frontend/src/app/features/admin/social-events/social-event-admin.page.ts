@@ -1,5 +1,7 @@
 import { Component, ErrorHandler, computed, inject, input, resource, signal, untracked } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { lucidePlus, lucideUserMinus } from '@ng-icons/lucide';
 import { HlmButtonImports } from '@ui/button';
 import { HlmCardImports } from '@ui/card';
 import { HlmSpinner } from '@ui/spinner';
@@ -11,31 +13,33 @@ import { Notify } from '../../../core/feedback/notify';
 import { formatDate } from '../../../core/format/dates';
 import { I18n } from '../../../core/i18n/i18n';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { BackLink } from '../../../shared/ui/back-link';
+import { Badge } from '../../../shared/ui/badge';
+import { Page, PageHeader } from '../../../shared/ui/page';
 import { SocialEventForm } from './social-event-form';
 
 @Component({
   selector: 'app-social-event-admin-page',
-  imports: [RouterLink, HlmButtonImports, HlmCardImports, HlmSpinner, TranslatePipe, SocialEventForm],
+  imports: [RouterLink, NgIcon, HlmButtonImports, HlmCardImports, HlmSpinner, TranslatePipe, SocialEventForm, BackLink, Badge, Page, PageHeader],
+  providers: [provideIcons({ lucidePlus, lucideUserMinus })],
   template: `
     @if (detail.hasValue()) {
       @let d = detail.value();
-      <div class="mx-auto flex max-w-3xl flex-col gap-4">
-        <div>
-          <a hlmBtn variant="ghost" size="sm" [routerLink]="backUrl()">{{ 'nav.back' | t }}</a>
-        </div>
-        <header>
-          <p class="text-sm text-muted-foreground">{{ formatDate(d.event.date) }}</p>
-          <h1 class="text-2xl font-semibold">{{ d.event.name }}</h1>
-        </header>
-
-        <div class="flex flex-col gap-2 sm:flex-row">
-          <button hlmBtn variant="outline" type="button" class="w-full sm:w-auto" [disabled]="busy()" (click)="toggleLock(d)">
+      <div appPage>
+        <app-back-link [link]="backUrl()" />
+        <app-page-header [title]="d.event.name" [subtitle]="formatDate(d.event.date)">
+          <div meta class="flex flex-wrap gap-2 empty:hidden">
+            @if (d.event.isLocked) {
+              <span appBadge variant="secondary">{{ 'events.locked' | t }}</span>
+            }
+          </div>
+          <button hlmBtn variant="outline" size="sm" type="button" [disabled]="busy()" (click)="toggleLock(d)">
             {{ (d.event.isLocked ? 'social_events.unlock' : 'social_events.lock') | t }}
           </button>
-          <button hlmBtn variant="destructive" type="button" class="w-full sm:w-auto" [disabled]="busy()" (click)="deleteEvent(d)">
+          <button hlmBtn variant="destructive" size="sm" type="button" [disabled]="busy()" (click)="deleteEvent(d)">
             {{ 'social_events.delete' | t }}
           </button>
-        </div>
+        </app-page-header>
 
         <section hlmCard>
           <div hlmCardContent>
@@ -49,37 +53,55 @@ import { SocialEventForm } from './social-event-form';
           </div>
         </section>
 
-        <section hlmCard>
-          <div hlmCardHeader><h2 hlmCardTitle>{{ 'social_events.participants' | t }}</h2></div>
-          <div hlmCardContent class="flex flex-col gap-4">
-            @for (r of d.registrations; track r.id) {
-              <div data-participant class="flex flex-col gap-2 border-b pb-3 last:border-b-0 last:pb-0 sm:flex-row sm:items-center">
-                <div class="sm:flex-1">
-                  <span class="font-medium">{{ r.name }}</span>
-                  @if (r.isGuest) {
-                    <span class="ml-2 rounded-full border px-2 py-0.5 text-xs text-muted-foreground">{{ 'guests.guest' | t }}</span>
-                  }
-                  <span class="block text-sm text-muted-foreground">
-                    @if (r.tableNumber !== null) { {{ 'social_events.table_number' | t: { number: r.tableNumber } }} }
-                    @if (r.tableNumber !== null && r.menuName) { · }
-                    @if (r.menuName) { {{ r.menuName }} }
-                  </span>
-                </div>
-                <button hlmBtn size="sm" variant="destructive" type="button" class="w-full sm:w-auto" [disabled]="busy()" (click)="removeRegistration(d, r)">
-                  {{ 'social_events.unregister' | t }}
-                </button>
-              </div>
-            }
-            <a hlmBtn variant="outline" class="w-full sm:w-auto sm:self-start" [routerLink]="['/social-events', d.event.id, 'guests', 'new']">
-              {{ 'social_events.add_guest' | t }}
+        <section hlmCard data-participants>
+          <div hlmCardHeader>
+            <h2 hlmCardTitle>{{ 'social_events.participants' | t }} ({{ d.registrations.length }})</h2>
+            <a hlmCardAction hlmBtn variant="outline" size="sm" [routerLink]="['/social-events', d.event.id, 'guests', 'new']">
+              <ng-icon name="lucidePlus" />{{ 'social_events.add_guest' | t }}
             </a>
+          </div>
+          <div hlmCardContent>
+            @if (d.registrations.length === 0) {
+              <p class="text-muted-foreground">{{ 'events.no_participants' | t }}</p>
+            } @else {
+              <ul class="divide-y">
+                @for (r of d.registrations; track r.id) {
+                  <li data-participant class="flex items-center gap-2 py-1.5">
+                    <div class="flex min-w-0 flex-1 flex-col pt-[0.3em]">
+                      <div class="flex flex-wrap items-center gap-x-2">
+                        <span class="font-medium">{{ r.name }}</span>
+                        @if (r.isGuest) {
+                          <span appBadge variant="outline">{{ 'guests.guest' | t }}</span>
+                        }
+                      </div>
+                      <span class="text-sm text-muted-foreground">
+                        {{ r.tableNumber === null ? ('social_events.libero' | t) : ('social_events.table_number' | t: { number: r.tableNumber }) }}@if (r.menuName) { · {{ r.menuName }} }
+                      </span>
+                    </div>
+                    <button
+                      hlmBtn
+                      variant="ghost"
+                      size="icon-sm"
+                      type="button"
+                      class="shrink-0 text-destructive hover:text-destructive"
+                      [attr.aria-label]="'social_events.unregister' | t"
+                      [attr.title]="'social_events.unregister' | t"
+                      [disabled]="busy()"
+                      (click)="removeRegistration(d, r)"
+                    >
+                      <ng-icon name="lucideUserMinus" />
+                    </button>
+                  </li>
+                }
+              </ul>
+            }
           </div>
         </section>
       </div>
     } @else if (detail.error()) {
-      <div class="mx-auto max-w-3xl">
+      <div appPage>
         <p class="text-lg">{{ errorKey() | t }}</p>
-        <a hlmBtn class="mt-4" routerLink="/">{{ 'navigation.home' | t }}</a>
+        <a hlmBtn class="self-start" routerLink="/">{{ 'navigation.home' | t }}</a>
       </div>
     } @else {
       <div class="flex justify-center p-8"><hlm-spinner /></div>

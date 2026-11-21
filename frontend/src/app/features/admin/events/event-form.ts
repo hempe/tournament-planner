@@ -55,7 +55,7 @@ interface FormModel {
         <app-field-error field="capacity" label="events.max_participants" [error]="error()" [control]="eventForm.capacity()" />
       </div>
       <label class="flex items-center gap-2 text-sm">
-        <input id="mixed" type="checkbox" class="size-4" [formField]="eventForm.mixed" />
+        <input id="mixed" type="checkbox" class="size-4 accent-primary" [formField]="eventForm.mixed" />
         {{ 'events.play_together' | t }}
       </label>
       <div class="flex flex-col gap-2">
@@ -63,15 +63,17 @@ interface FormModel {
         <textarea hlmInput id="description" rows="3" class="h-auto" [formField]="eventForm.description"></textarea>
         <app-field-error field="description" label="events.description" [error]="error()" />
       </div>
-      <div class="flex flex-col gap-2">
-        <label hlmLabel for="priceMembers">{{ 'events.price_members' | t }}</label>
-        <input hlmInput id="priceMembers" [formField]="eventForm.priceMembers" />
-        <app-field-error field="priceMembers" label="events.price_members" [error]="error()" />
-      </div>
-      <div class="flex flex-col gap-2">
-        <label hlmLabel for="priceGuests">{{ 'events.price_guests' | t }}</label>
-        <input hlmInput id="priceGuests" [formField]="eventForm.priceGuests" />
-        <app-field-error field="priceGuests" label="events.price_guests" [error]="error()" />
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div class="flex flex-col gap-2">
+          <label hlmLabel for="priceMembers">{{ 'events.price_members' | t }}</label>
+          <input hlmInput id="priceMembers" [formField]="eventForm.priceMembers" />
+          <app-field-error field="priceMembers" label="events.price_members" [error]="error()" />
+        </div>
+        <div class="flex flex-col gap-2">
+          <label hlmLabel for="priceGuests">{{ 'events.price_guests' | t }}</label>
+          <input hlmInput id="priceGuests" [formField]="eventForm.priceGuests" />
+          <app-field-error field="priceGuests" label="events.price_guests" [error]="error()" />
+        </div>
       </div>
       <div class="flex flex-col gap-2">
         <label hlmLabel for="registrationClose">{{ 'events.registration_close' | t }}</label>
