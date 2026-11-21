@@ -25,13 +25,14 @@ import { TranslatePipe } from '../i18n/translate.pipe';
           </a>
         </div>
         <!-- Phones: no room next to logo + name, so the nav gets its own centred row (as on the previous site) -->
-        <nav class="flex w-full flex-wrap items-center justify-center gap-x-4 gap-y-2 md:ml-auto md:w-auto md:justify-end md:pt-1">
+        <nav class="flex w-full flex-wrap items-center justify-center gap-1 md:ml-auto md:w-auto md:justify-end md:pt-1">
           @if (session.loggedIn()) {
             @if (session.isAdmin()) {
-              <a routerLink="/events" routerLinkActive="text-primary">{{ 'nav.events' | t }}</a>
-              <a routerLink="/users" routerLinkActive="text-primary">{{ 'nav.users' | t }}</a>
+              <a hlmBtn variant="ghost" size="sm" routerLink="/events" routerLinkActive="text-primary!">{{ 'nav.events' | t }}</a>
+              <a hlmBtn variant="ghost" size="sm" routerLink="/users" routerLinkActive="text-primary!">{{ 'nav.users' | t }}</a>
+              <span class="mx-1 h-4 w-px bg-border" aria-hidden="true"></span>
             }
-            <span class="text-sm text-muted-foreground">{{ session.user()?.displayName }}</span>
+            <span data-user-name class="max-w-[12rem] truncate px-1 pt-[0.3em] text-sm text-muted-foreground">{{ session.user()?.displayName }}</span>
             <button hlmBtn variant="ghost" size="sm" type="button" (click)="logout()">{{ 'nav.logout' | t }}</button>
           } @else {
             <a hlmBtn size="sm" routerLink="/login">{{ 'auth.login' | t }}</a>
