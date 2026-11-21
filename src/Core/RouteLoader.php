@@ -31,9 +31,7 @@ final class RouteLoader
     {
         $routes = $this->getRoutes();
 
-        foreach ($routes as $route) {
-            $router->loadRoutes([$route]);
-        }
+        $router->loadRoutes($routes);
     }
 
     /**

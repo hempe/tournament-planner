@@ -9,6 +9,8 @@ use Closure;
 final class Router
 {
     private array $routes = [];
+    /** @var array<string, true> */
+    private array $loadedRouteKeys = [];
     private array $groupPrefixStack = [];
     private array $groupMiddlewareStack = [];
 
@@ -30,6 +32,13 @@ final class Router
     public function loadRoutes(array $routes): void
     {
         foreach ($routes as $route) {
+            // Attribute routes are handler arrays; skip ones already loaded (index.php can run
+            // several times in one process, e.g. in integration tests).
+            $key = $route['method'] . ' ' . $route['pattern'] . ' ' . implode('::', $route['handler']);
+            if (isset($this->loadedRouteKeys[$key])) {
+                continue;
+            }
+            $this->loadedRouteKeys[$key] = true;
             $this->routes[] = [
                 'method' => $route['method'],
                 'pattern' => $this->normalizePath($route['pattern']),
