@@ -39,9 +39,9 @@ export function toast(page: Page, text: string | RegExp) {
   return page.locator('[data-sonner-toast]').filter({ hasText: text });
 }
 
-/** Versions of the two builds made by e2e/run.sh (build.sh appends "-dirty"). */
-export const VERSION_1 = 'e2e-1-dirty';
-export const VERSION_2 = 'e2e-2-dirty';
+/** Versions of the two builds made by e2e/run.sh (build.sh appends "-dirty" on an unclean tree, so match by prefix). */
+export const VERSION_1 = 'e2e-1';
+export const VERSION_2 = 'e2e-2';
 
 /** Merges a build's dist/ into the running site, like uploading it to the server. */
 export function deploy(distDir: '.dist-v1' | '.dist-v2'): void {

@@ -6,7 +6,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-cleanup() { e2e/stack.sh down; rm -rf releases/e2e-1-dirty releases/e2e-2-dirty; }
+cleanup() { e2e/stack.sh down; rm -rf releases/e2e-1 releases/e2e-2 releases/e2e-1-dirty releases/e2e-2-dirty; }
 trap cleanup EXIT
 
 rm -rf e2e/.dist-v1 e2e/.dist-v2
