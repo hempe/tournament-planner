@@ -307,5 +307,9 @@
         "days": ":count day|:count days",
         "hours": ":count hr.",
         "minutes": ":count min."
+    },
+    "update": {
+        "available": "A new version is available.",
+        "reload": "Reload"
     }
 }

@@ -307,5 +307,9 @@
         "days": ":count Tag|:count Tage",
         "hours": ":count Std.",
         "minutes": ":count Min."
+    },
+    "update": {
+        "available": "Eine neue Version ist verfügbar.",
+        "reload": "Neu laden"
     }
 }

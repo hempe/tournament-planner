@@ -1,7 +1,9 @@
 import { Injectable, InjectionToken, computed, inject, signal } from '@angular/core';
 
-/** Release of this frontend build ("dev" when served by ng serve). Plan 5 injects the real value. */
-export const APP_VERSION = new InjectionToken<string>('APP_VERSION', { factory: () => 'dev' });
+/** Release of this frontend build ("dev" unless `ng build --define APP_BUILD_VERSION` sets it). */
+export const APP_VERSION = new InjectionToken<string>('APP_VERSION', {
+  factory: () => (typeof APP_BUILD_VERSION === 'string' ? APP_BUILD_VERSION : 'dev'),
+});
 
 @Injectable({ providedIn: 'root' })
 export class VersionService {

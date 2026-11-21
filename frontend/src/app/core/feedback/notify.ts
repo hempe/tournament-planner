@@ -6,9 +6,24 @@ export interface Toaster {
   success(message: string): unknown;
   error(message: string): unknown;
   info(message: string): unknown;
+  /** Stays until dismissed; the action button runs `action.onClick`. */
+  persistent(message: string, action: ToastAction): unknown;
 }
 
-export const TOASTER = new InjectionToken<Toaster>('TOASTER', { factory: () => toast });
+export interface ToastAction {
+  label: string;
+  onClick: () => unknown;
+}
+
+export const TOASTER = new InjectionToken<Toaster>('TOASTER', {
+  factory: () => ({
+    success: (message) => toast.success(message),
+    error: (message) => toast.error(message),
+    info: (message) => toast.info(message),
+    persistent: (message, action) =>
+      toast(message, { duration: Infinity, action: { label: action.label, onClick: () => void action.onClick() } }),
+  }),
+});
 
 /** Translated toasts, rendered by <hlm-toaster> in the app shell. */
 @Injectable({ providedIn: 'root' })
@@ -26,5 +41,10 @@ export class Notify {
 
   info(key: string, params?: Params): void {
     this.toaster.info(this.i18n.t(key, params));
+  }
+
+  /** Toast that stays until dismissed, with a translated action button. */
+  persistent(key: string, actionKey: string, onAction: () => unknown): void {
+    this.toaster.persistent(this.i18n.t(key), { label: this.i18n.t(actionKey), onClick: onAction });
   }
 }

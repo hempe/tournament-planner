@@ -23,4 +23,9 @@ describe('VersionService', () => {
     version.reportServerVersion('2027-01-10-ffff000');
     expect(version.outdated()).toBe(false);
   });
+
+  it('defaults the build version to "dev" when no build constant is defined', () => {
+    TestBed.configureTestingModule({});
+    expect(TestBed.inject(APP_VERSION)).toBe('dev');
+  });
 });

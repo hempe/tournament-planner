@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { HlmToasterImports } from '@ui/sonner';
 import { ConfirmDialog } from './core/feedback/confirm-dialog';
 import { Footer } from './core/layout/footer';
 import { Header } from './core/layout/header';
+import { UpdateService } from './core/update/update.service';
 
 @Component({
   selector: 'app-root',
@@ -20,4 +21,8 @@ import { Header } from './core/layout/header';
     <app-confirm-dialog />
   `,
 })
-export class App {}
+export class App {
+  constructor() {
+    inject(UpdateService).start();
+  }
+}
