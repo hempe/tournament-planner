@@ -559,3 +559,13 @@ For issues or questions about testing:
 2. Review test output for error messages
 3. Check database logs: `sudo journalctl -u mysql`
 4. Open an issue on GitHub with test output
+
+## End-to-end tests (Playwright)
+
+`cd frontend && npm run e2e` builds two releases (`BUILD_VERSION=e2e-1` / `e2e-2`), starts the production-like
+stack in Docker (`php:8.3-apache` with the real `.htaccess` + `mariadb:11`, see `e2e/stack.sh`), runs the Playwright
+specs in `frontend/e2e/` (desktop Chromium, plus an iPhone 13 emulation project for auth/member/guest) and tears
+everything down. Seed data lives in `e2e/seed.sql` (logins `admin` / `member` / `other`, events in 2099); every
+mutating spec resets the database first. `update.spec.ts` (tagged `@slow`) deploys the second release into the running
+site and checks the service-worker update prompt; skip it with `E2E_SKIP_SLOW=1 npm run e2e`. Extra arguments are
+passed to Playwright, e.g. `npm run e2e -- admin.spec.ts`. Requires Docker and `npx playwright install chromium` once.
