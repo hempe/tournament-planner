@@ -19,6 +19,16 @@ export const routes: Routes = [
     loadComponent: () => import('./features/admin/events/event-create.page').then((m) => m.EventCreatePage),
   },
   {
+    path: 'events/:id/admin',
+    canActivate: [adminGuard],
+    loadComponent: () => import('./features/admin/events/event-admin.page').then((m) => m.EventAdminPage),
+  },
+  {
+    path: 'events/:id/guests/:guestId/edit',
+    canActivate: [adminGuard],
+    loadComponent: () => import('./features/admin/events/guest-edit.page').then((m) => m.GuestEditPage),
+  },
+  {
     path: 'events/:id/guests/new',
     loadComponent: () => import('./features/guests/guest-registration.page').then((m) => m.GuestRegistrationPage),
   },
