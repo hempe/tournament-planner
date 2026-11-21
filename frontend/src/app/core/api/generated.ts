@@ -34,6 +34,18 @@ export interface AdminSocialRegistrationDto {
   tableNumber: number | null;
 }
 
+export interface AdminUserDto {
+  id: number;
+  username: string;
+  firstName: string | null;
+  lastName: string | null;
+  displayName: string;
+  male: boolean;
+  isAdmin: boolean;
+  rfeg: string | null;
+  memberNumber: string | null;
+}
+
 export interface BulkCreateRequest {
   events: BulkEventDto[];
 }
@@ -274,6 +286,16 @@ export interface TableDto {
   available: number;
 }
 
+export interface UserCreateRequest {
+  male: boolean;
+  username: string;
+  password: string;
+  firstName: string | null;
+  lastName: string | null;
+  rfeg: string | null;
+  memberNumber: string | null;
+}
+
 export interface UserDto {
   id: number;
   username: string;
@@ -286,6 +308,16 @@ export interface UserDto {
 export interface UserOptionDto {
   id: number;
   displayName: string;
+}
+
+export interface UserUpdateRequest {
+  male: boolean;
+  username: string;
+  password: string | null;
+  firstName: string | null;
+  lastName: string | null;
+  rfeg: string | null;
+  memberNumber: string | null;
 }
 
 export function authApi(api: ApiClient) {
@@ -389,5 +421,24 @@ export function socialEventsApi(api: ApiClient) {
       api.get<SocialGuestInfoDto>(`/social-events/${encodeURIComponent(id)}/guest-info`, options),
     addGuest: (id: number | string, body: SocialGuestRequest, options?: RequestOptions): Promise<void> =>
       api.post<void>(`/social-events/${encodeURIComponent(id)}/guests`, body, options),
+  };
+}
+
+export function userAdminApi(api: ApiClient) {
+  return {
+    index: (options?: RequestOptions): Promise<AdminUserDto[]> =>
+      api.get<AdminUserDto[]>('/users', options),
+    create: (body: UserCreateRequest, options?: RequestOptions): Promise<AdminUserDto> =>
+      api.post<AdminUserDto>('/users', body, options),
+    show: (id: number | string, options?: RequestOptions): Promise<AdminUserDto> =>
+      api.get<AdminUserDto>(`/users/${encodeURIComponent(id)}`, options),
+    update: (id: number | string, body: UserUpdateRequest, options?: RequestOptions): Promise<AdminUserDto> =>
+      api.put<AdminUserDto>(`/users/${encodeURIComponent(id)}`, body, options),
+    grantAdmin: (id: number | string, options?: RequestOptions): Promise<AdminUserDto> =>
+      api.put<AdminUserDto>(`/users/${encodeURIComponent(id)}/admin`, undefined, options),
+    revokeAdmin: (id: number | string, options?: RequestOptions): Promise<AdminUserDto> =>
+      api.delete<AdminUserDto>(`/users/${encodeURIComponent(id)}/admin`, options),
+    delete: (id: number | string, options?: RequestOptions): Promise<void> =>
+      api.delete<void>(`/users/${encodeURIComponent(id)}`, options),
   };
 }
