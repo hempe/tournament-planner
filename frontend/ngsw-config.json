@@ -1,0 +1,19 @@
+{
+  "$schema": "./node_modules/@angular/service-worker/config/schema.json",
+  "index": "/index.html",
+  "assetGroups": [
+    {
+      "name": "core",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "resources": { "files": ["/index.html", "/site.webmanifest", "/app/*/main-*.js", "/app/*/polyfills-*.js", "/app/*/styles-*.css"] }
+    },
+    {
+      "name": "lazy",
+      "installMode": "lazy",
+      "updateMode": "lazy",
+      "resources": { "files": ["/app/**", "/*.png", "/*.svg", "/*.ico"] }
+    }
+  ],
+  "navigationUrls": ["/**", "!/api/**", "!/**/*.*"]
+}

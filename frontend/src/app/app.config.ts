@@ -1,9 +1,11 @@
 import {
   ApplicationConfig,
   ErrorHandler,
+  isDevMode,
   provideAppInitializer,
   provideBrowserGlobalErrorListeners,
 } from '@angular/core';
+import { provideServiceWorker } from '@angular/service-worker';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { routes } from './app.routes';
 import { API_HOOKS } from './core/api/api-client';
@@ -17,5 +19,9 @@ export const appConfig: ApplicationConfig = {
     { provide: ErrorHandler, useClass: AppErrorHandler },
     { provide: API_HOOKS, useFactory: apiHooks },
     provideAppInitializer(initializeApp),
+    provideServiceWorker('ngsw-worker.js', {
+      enabled: !isDevMode(),
+      registrationStrategy: 'registerWhenStable:30000',
+    }),
   ],
 };
