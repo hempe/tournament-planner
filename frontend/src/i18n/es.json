@@ -175,7 +175,8 @@
         "date": "El campo :field debe ser una fecha válida.",
         "boolean": "El campo :field debe ser verdadero o falso.",
         "in": "El campo :field debe ser uno de: :values.",
-        "failed": "Por favor, revisa tus datos."
+        "failed": "Por favor, revisa tus datos.",
+        "max_value": "El campo :field no puede superar :max."
     },
     "errors": {
         "title": "Error",

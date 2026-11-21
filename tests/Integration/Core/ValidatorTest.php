@@ -173,7 +173,7 @@ class ValidatorTest extends TestCase
             [
                 'name' => ['key' => 'validation.required'],
                 'code' => ['key' => 'validation.min', 'params' => ['min' => 3]],
-                'count' => ['key' => 'validation.max', 'params' => ['max' => 10]],
+                'count' => ['key' => 'validation.max_value', 'params' => ['max' => 10]],
                 'kind' => ['key' => 'validation.in', 'params' => ['values' => 'a, b']],
                 'mail' => ['key' => 'validation.email'],
             ],

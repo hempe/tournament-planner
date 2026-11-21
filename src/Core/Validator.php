@@ -98,7 +98,7 @@ final class Validator
         }
 
         if (is_numeric($value) && $value < $min) {
-            return new ValidationError($field, "The {$field} field must be at least {$min}.", 'validation.min', ['min' => $min]);
+            return new ValidationError($field, "The {$field} field must be at least {$min}.", 'validation.min_value', ['min' => $min]);
         }
 
         return null;
@@ -114,7 +114,7 @@ final class Validator
         }
 
         if (is_numeric($value) && $value > $max) {
-            return new ValidationError($field, "The {$field} field must not exceed {$max}.", 'validation.max', ['max' => $max]);
+            return new ValidationError($field, "The {$field} field must not exceed {$max}.", 'validation.max_value', ['max' => $max]);
         }
 
         return null;
