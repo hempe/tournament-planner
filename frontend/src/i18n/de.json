@@ -124,7 +124,18 @@
         "unregister_choice_title": "Abmeldung",
         "unregister_choice_message": "Von welchem Anlass möchtest du dich abmelden?",
         "unregister_tournament_only": "Nur Turnier",
-        "unregister_both": "Turnier & Abendessen"
+        "unregister_both": "Turnier & Abendessen",
+        "your_registration": "Deine Anmeldung",
+        "upcoming_events": "Kommende Anlässe",
+        "past_events": "Vergangene Anlässe",
+        "no_events": "Keine Anlässe vorhanden.",
+        "no_participants": "Noch keine Anmeldungen.",
+        "add_member": "Mitglied hinzufügen",
+        "search_member": "Mitglied suchen",
+        "no_member_found": "Kein Mitglied gefunden.",
+        "more_matches": ":count weitere Treffer – Suche verfeinern",
+        "all_members_registered": "Alle Mitglieder sind bereits angemeldet.",
+        "edit_comment": "Kommentar bearbeiten"
     },
     "users": {
         "title": "Benutzer",
@@ -146,8 +157,8 @@
         "delete": "Löschen",
         "delete_confirm": ":username definitiv löschen?",
         "is_admin": "Ist Administrator",
-        "give_admin_rights": "Admin rechte geben?",
-        "remove_admin_rights": "Admin rechte entnehmen?",
+        "give_admin_rights": "Admin-Rechte geben",
+        "remove_admin_rights": "Admin-Rechte entziehen",
         "give_admin_rights_confirm": ":username Admin rechte geben?",
         "remove_admin_rights_confirm": ":username Admin rechte entnehmen?",
         "create_success": "Benutzer erfolgreich erstellt",
@@ -164,7 +175,9 @@
         "last_name": "Nachname",
         "name_update_success": "Name aktualisiert",
         "edit": "Bearbeiten",
-        "not_found": "Benutzer nicht gefunden"
+        "not_found": "Benutzer nicht gefunden",
+        "search": "Benutzer suchen",
+        "no_users_found": "Keine Benutzer gefunden."
     },
     "validation": {
         "required": "Das Feld :field ist erforderlich.",
@@ -235,7 +248,8 @@
             "friday": "Freitag",
             "saturday": "Samstag",
             "sunday": "Sonntag"
-        }
+        },
+        "no_events": "Keine Anlässe in diesem Monat."
     },
     "guests": {
         "title": "Gäste",
@@ -296,7 +310,7 @@
         "add_guest": "Gast hinzufügen",
         "participants": "Teilnehmer",
         "full": "Ausgebucht",
-        "available": ":count Plätze verfügbar",
+        "available": "1 Platz verfügbar|:count Plätze verfügbar",
         "menu_in_use": "Die Menüoption \":menu\" wurde von :count Teilnehmer(n) ausgewählt und kann nicht entfernt werden. Bitte aktualisieren Sie zuerst die entsprechenden Anmeldungen.",
         "table_in_use": "Tisch :number hat :count angemeldete Teilnehmer und kann nicht entfernt werden. Bitte aktualisieren Sie zuerst die entsprechenden Anmeldungen.",
         "table_capacity_too_low": "Tisch :number hat bereits :registered angemeldete Teilnehmer. Die neue Kapazität von :capacity ist zu gering.",

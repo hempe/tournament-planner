@@ -124,7 +124,18 @@
         "unregister_choice_title": "Cancelar inscripción",
         "unregister_choice_message": "¿De qué evento quieres cancelar la inscripción?",
         "unregister_tournament_only": "Solo torneo",
-        "unregister_both": "Torneo y cena"
+        "unregister_both": "Torneo y cena",
+        "your_registration": "Tu inscripción",
+        "upcoming_events": "Próximos eventos",
+        "past_events": "Eventos pasados",
+        "no_events": "Todavía no hay eventos.",
+        "no_participants": "Todavía no hay inscripciones.",
+        "add_member": "Añadir socio",
+        "search_member": "Buscar socio",
+        "no_member_found": "No se ha encontrado ningún socio.",
+        "more_matches": ":count resultados más – afina la búsqueda",
+        "all_members_registered": "Todos los socios ya están inscritos.",
+        "edit_comment": "Editar comentario"
     },
     "users": {
         "title": "Usuarios",
@@ -146,8 +157,8 @@
         "delete": "Eliminar",
         "delete_confirm": "¿Eliminar permanentemente a :username?",
         "is_admin": "Es Administrador",
-        "give_admin_rights": "¿Dar derechos de administrador?",
-        "remove_admin_rights": "¿Quitar derechos de administrador?",
+        "give_admin_rights": "Dar derechos de administrador",
+        "remove_admin_rights": "Quitar derechos de administrador",
         "give_admin_rights_confirm": "¿Dar derechos de administrador a :username?",
         "remove_admin_rights_confirm": "¿Quitar derechos de administrador a :username?",
         "create_success": "Usuario creado correctamente",
@@ -164,7 +175,9 @@
         "last_name": "Apellido",
         "name_update_success": "Nombre actualizado",
         "edit": "Editar",
-        "not_found": "Usuario no encontrado"
+        "not_found": "Usuario no encontrado",
+        "search": "Buscar usuarios",
+        "no_users_found": "No se han encontrado usuarios."
     },
     "validation": {
         "required": "El campo :field es obligatorio.",
@@ -235,7 +248,8 @@
             "friday": "Viernes",
             "saturday": "Sábado",
             "sunday": "Domingo"
-        }
+        },
+        "no_events": "No hay eventos este mes."
     },
     "guests": {
         "title": "Invitados",
@@ -296,7 +310,7 @@
         "add_guest": "Añadir Invitado",
         "participants": "Participantes",
         "full": "Completo",
-        "available": ":count plazas disponibles",
+        "available": "1 plaza disponible|:count plazas disponibles",
         "menu_in_use": "La opción de menú \":menu\" está seleccionada por :count participante(s) y no se puede eliminar. Primero actualice esas inscripciones.",
         "table_in_use": "La mesa :number tiene :count participante(s) inscrito(s) y no se puede eliminar. Primero actualice esas inscripciones.",
         "table_capacity_too_low": "La mesa :number ya tiene :registered participante(s) inscrito(s). La nueva capacidad de :capacity es demasiado baja.",

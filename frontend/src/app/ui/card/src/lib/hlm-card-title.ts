@@ -8,6 +8,6 @@ import { classes } from '@ui/utils';
 })
 export class HlmCardTitle {
   constructor() {
-    classes(() => 'text-base leading-normal font-medium group-data-[size=sm]/card:text-sm');
+    classes(() => 'text-base leading-tight font-semibold group-data-[size=sm]/card:text-sm');
   }
 }

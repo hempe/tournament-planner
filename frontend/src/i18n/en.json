@@ -124,7 +124,18 @@
         "unregister_choice_title": "Unregister",
         "unregister_choice_message": "Which event do you want to unregister from?",
         "unregister_tournament_only": "Tournament only",
-        "unregister_both": "Tournament & Dinner"
+        "unregister_both": "Tournament & Dinner",
+        "your_registration": "Your registration",
+        "upcoming_events": "Upcoming events",
+        "past_events": "Past events",
+        "no_events": "No events yet.",
+        "no_participants": "No registrations yet.",
+        "add_member": "Add member",
+        "search_member": "Search member",
+        "no_member_found": "No member found.",
+        "more_matches": ":count more matches – refine the search",
+        "all_members_registered": "All members are already registered.",
+        "edit_comment": "Edit comment"
     },
     "users": {
         "title": "Users",
@@ -146,8 +157,8 @@
         "delete": "Delete",
         "delete_confirm": "Permanently delete :username?",
         "is_admin": "Is Administrator",
-        "give_admin_rights": "Give admin rights?",
-        "remove_admin_rights": "Remove admin rights?",
+        "give_admin_rights": "Grant admin rights",
+        "remove_admin_rights": "Revoke admin rights",
         "give_admin_rights_confirm": "Give admin rights to :username?",
         "remove_admin_rights_confirm": "Remove admin rights from :username?",
         "create_success": "User created successfully",
@@ -164,7 +175,9 @@
         "last_name": "Last name",
         "name_update_success": "Name updated",
         "edit": "Edit",
-        "not_found": "User not found"
+        "not_found": "User not found",
+        "search": "Search users",
+        "no_users_found": "No users found."
     },
     "validation": {
         "required": "The :field field is required.",
@@ -235,7 +248,8 @@
             "friday": "Friday",
             "saturday": "Saturday",
             "sunday": "Sunday"
-        }
+        },
+        "no_events": "No events this month."
     },
     "guests": {
         "title": "Guests",
@@ -296,7 +310,7 @@
         "add_guest": "Add Guest",
         "participants": "Participants",
         "full": "Full",
-        "available": ":count spots available",
+        "available": "1 spot available|:count spots available",
         "menu_in_use": "Menu option \":menu\" is selected by :count participant(s) and cannot be removed. Please update those registrations first.",
         "table_in_use": "Table :number has :count registered participant(s) and cannot be removed. Please update those registrations first.",
         "table_capacity_too_low": "Table :number already has :registered registered participant(s). The new capacity of :capacity is too low.",

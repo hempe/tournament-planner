@@ -30,7 +30,8 @@ function sourceFiles(dir: string): string[] {
 
 const patterns = [
   /\bt\(\s*'([a-z0-9_.]+)'/g, // i18n.t('key')
-  /'([a-z0-9_.]+)'\s*\|\s*t\b/g, // {{ 'key' | t }}
+  /'([a-z0-9_.]+)'\s*\|\s*tc?\b/g, // {{ 'key' | t }} and {{ 'key' | tc: count }}
+  /\bchoice\(\s*'([a-z0-9_.]+)'/g, // i18n.choice('key', n)
   /\b(?:success|error|info)\(\s*'([a-z0-9_.]+)'/g, // notify.error('key')
 ];
 

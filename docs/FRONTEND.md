@@ -76,6 +76,25 @@ form only on load and after its own save, so unsaved edits survive other actions
 - **Tests:** jsdom does not submit a form when a submit button is clicked — dispatch
   `new Event('submit', { cancelable: true })` on the form instead.
 
+## Shared layout pieces (`shared/ui/`)
+
+Use these instead of hand-rolled markup so pages look the same:
+
+| Piece | Use |
+|---|---|
+| `<div appPage width="wide\|medium\|narrow">` | page column: `wide` (max-w-5xl) for the calendar and admin lists, `medium` (max-w-3xl, default) for detail pages and forms, `narrow` for the login |
+| `<app-page-header [title] [subtitle]>` | page heading: optional date line above the `h1`, badges in a `<div meta>` child, any other content becomes the right-aligned actions (use `size="sm"` buttons) |
+| `<app-back-link [link] [queryParams]>` | "‹ Zurück" above the heading, flush with the content's left edge |
+| `<span appBadge variant="primary\|secondary\|outline\|social">` | status pills ("Angemeldet", "Admin", "Gast") |
+| `<dl appDetailList><div><dt/><dd/></div></dl>` | label/value pairs: 10rem label column from `sm` up, stacked on phones |
+
+Hind Guntur draws its glyphs high in the line box. Buttons, inputs, selects and badges compensate with
+`pt-[0.3em]`; do the same when vertically centring text next to icons (e.g. list rows with icon buttons).
+Row actions in lists are ghost icon buttons (`size="icon-sm"`) with an `aria-label`/`title`.
+
+Plurals: `{{ 'social_events.available' | tc: count }}` (`ChoicePipe`) or `i18n.choice(key, count)` with a
+`"one|many"` translation.
+
 ## Spartan UI components
 
 Components in `src/app/ui/` were generated once by the Spartan CLI and are now regular source files.
