@@ -1,5 +1,8 @@
 import { adminGuard, authGuard, guestGuard } from './core/auth/guards';
-import { routes } from './app.routes';
+import { routes as allRoutes } from './app.routes';
+
+// Legacy form-action redirects are tested in legacy-redirects.spec.ts.
+const routes = allRoutes.filter((r) => r.redirectTo === undefined);
 
 describe('routes', () => {
   it('lists the member, guest and admin screens in order with the right guards', () => {

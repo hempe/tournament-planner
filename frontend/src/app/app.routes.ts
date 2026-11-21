@@ -1,7 +1,9 @@
 import { Routes } from '@angular/router';
 import { adminGuard, authGuard, guestGuard } from './core/auth/guards';
+import { legacyRedirects } from './legacy-redirects';
 
 export const routes: Routes = [
+  ...legacyRedirects,
   { path: '', loadComponent: () => import('./features/calendar/calendar.page').then((m) => m.CalendarPage) },
   {
     path: 'login',
