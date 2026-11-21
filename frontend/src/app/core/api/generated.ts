@@ -3,6 +3,65 @@
 
 import type { ApiClient, RequestOptions } from './api-client';
 
+export interface AdminGuestDto {
+  id: number;
+  male: boolean;
+  firstName: string;
+  lastName: string;
+  email: string | null;
+  handicap: number | null;
+  comment: string | null;
+  registeredAt: string;
+}
+
+export interface AdminRegistrationDto {
+  userId: number;
+  name: string;
+  comment: string;
+  state: RegistrationState;
+  male: boolean;
+  registeredAt: string;
+  rfeg: string | null;
+  memberNumber: string | null;
+}
+
+export interface BulkCreateRequest {
+  events: BulkEventDto[];
+}
+
+export interface BulkEventDto {
+  name: string;
+  date: string;
+  capacity: number;
+  mixed: boolean;
+  description: string | null;
+  priceMembers: string | null;
+  priceGuests: string | null;
+  registrationClose: string | null;
+}
+
+export interface BulkPreviewDto {
+  events: BulkEventDto[];
+}
+
+export interface BulkRequest {
+  startDate: string;
+  endDate: string;
+  dayOfWeek: number;
+  name: string;
+  capacity: number;
+  mixed: boolean;
+  description: string | null;
+  priceMembers: string | null;
+  priceGuests: string | null;
+  registrationCloseDays: number | null;
+  registrationCloseTime: string | null;
+}
+
+export interface BulkResultDto {
+  created: number;
+}
+
 export interface CalendarDto {
   month: string;
   events: EventSummaryDto[];
@@ -11,6 +70,19 @@ export interface CalendarDto {
 
 export interface CommentRequest {
   comment: string;
+}
+
+export interface EventAdminDto {
+  event: EventSummaryDto;
+  mixed: boolean;
+  description: string | null;
+  priceMembers: string | null;
+  priceGuests: string | null;
+  registrationClose: string | null;
+  registrations: AdminRegistrationDto[];
+  guests: AdminGuestDto[];
+  availableUsers: UserOptionDto[];
+  socialEvent: SocialEventSummaryDto | null;
 }
 
 export interface EventDetailDto {
@@ -25,6 +97,17 @@ export interface EventDetailDto {
   socialEvent: SocialEventSummaryDto | null;
 }
 
+export interface EventRequest {
+  name: string;
+  date: string;
+  capacity: number;
+  mixed: boolean;
+  description: string | null;
+  priceMembers: string | null;
+  priceGuests: string | null;
+  registrationClose: string | null;
+}
+
 export interface EventSummaryDto {
   id: number;
   name: string;
@@ -35,6 +118,16 @@ export interface EventSummaryDto {
   available: number;
   isLocked: boolean;
   userState: RegistrationState;
+}
+
+export interface EventUpdateRequest {
+  name: string;
+  capacity: number;
+  mixed: boolean;
+  description: string | null;
+  priceMembers: string | null;
+  priceGuests: string | null;
+  registrationClose: string | null;
 }
 
 export interface GuestNameDto {
@@ -160,6 +253,11 @@ export interface UserDto {
   isAdmin: boolean;
 }
 
+export interface UserOptionDto {
+  id: number;
+  displayName: string;
+}
+
 export function authApi(api: ApiClient) {
   return {
     me: (options?: RequestOptions): Promise<SessionDto> =>
@@ -175,6 +273,41 @@ export function calendarApi(api: ApiClient) {
   return {
     month: (month: number | string, options?: RequestOptions): Promise<CalendarDto> =>
       api.get<CalendarDto>(`/calendar/${encodeURIComponent(month)}`, options),
+  };
+}
+
+export function eventAdminApi(api: ApiClient) {
+  return {
+    index: (options?: RequestOptions): Promise<EventSummaryDto[]> =>
+      api.get<EventSummaryDto[]>('/events', options),
+    create: (body: EventRequest, options?: RequestOptions): Promise<EventAdminDto> =>
+      api.post<EventAdminDto>('/events', body, options),
+    show: (id: number | string, options?: RequestOptions): Promise<EventAdminDto> =>
+      api.get<EventAdminDto>(`/events/${encodeURIComponent(id)}/admin`, options),
+    update: (id: number | string, body: EventUpdateRequest, options?: RequestOptions): Promise<EventAdminDto> =>
+      api.put<EventAdminDto>(`/events/${encodeURIComponent(id)}`, body, options),
+    delete: (id: number | string, options?: RequestOptions): Promise<void> =>
+      api.delete<void>(`/events/${encodeURIComponent(id)}`, options),
+    lock: (id: number | string, options?: RequestOptions): Promise<EventAdminDto> =>
+      api.put<EventAdminDto>(`/events/${encodeURIComponent(id)}/lock`, undefined, options),
+    unlock: (id: number | string, options?: RequestOptions): Promise<EventAdminDto> =>
+      api.delete<EventAdminDto>(`/events/${encodeURIComponent(id)}/lock`, options),
+    register: (id: number | string, userId: number | string, body: RegisterRequest, options?: RequestOptions): Promise<EventAdminDto> =>
+      api.post<EventAdminDto>(`/events/${encodeURIComponent(id)}/registrations/${encodeURIComponent(userId)}`, body, options),
+    updateComment: (id: number | string, userId: number | string, body: CommentRequest, options?: RequestOptions): Promise<EventAdminDto> =>
+      api.patch<EventAdminDto>(`/events/${encodeURIComponent(id)}/registrations/${encodeURIComponent(userId)}`, body, options),
+    unregister: (id: number | string, userId: number | string, options?: RequestOptions): Promise<EventAdminDto> =>
+      api.delete<EventAdminDto>(`/events/${encodeURIComponent(id)}/registrations/${encodeURIComponent(userId)}`, options),
+    showGuest: (id: number | string, guestId: number | string, options?: RequestOptions): Promise<AdminGuestDto> =>
+      api.get<AdminGuestDto>(`/events/${encodeURIComponent(id)}/guests/${encodeURIComponent(guestId)}`, options),
+    updateGuest: (id: number | string, guestId: number | string, body: GuestRegistrationRequest, options?: RequestOptions): Promise<AdminGuestDto> =>
+      api.put<AdminGuestDto>(`/events/${encodeURIComponent(id)}/guests/${encodeURIComponent(guestId)}`, body, options),
+    deleteGuest: (id: number | string, guestId: number | string, options?: RequestOptions): Promise<void> =>
+      api.delete<void>(`/events/${encodeURIComponent(id)}/guests/${encodeURIComponent(guestId)}`, options),
+    bulkPreview: (body: BulkRequest, options?: RequestOptions): Promise<BulkPreviewDto> =>
+      api.post<BulkPreviewDto>('/events/bulk/preview', body, options),
+    bulkCreate: (body: BulkCreateRequest, options?: RequestOptions): Promise<BulkResultDto> =>
+      api.post<BulkResultDto>('/events/bulk', body, options),
   };
 }
 

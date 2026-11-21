@@ -237,7 +237,7 @@ final class Request
         $sanitized = [];
 
         foreach ($data as $key => $value) {
-            $sanitizedKey = $this->sanitizeString($key);
+            $sanitizedKey = is_string($key) ? $this->sanitizeString($key) : $key; // list items have int keys
 
             if (is_array($value)) {
                 $sanitized[$sanitizedKey] = $this->sanitizeArray($value);

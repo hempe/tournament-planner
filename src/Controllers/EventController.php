@@ -15,6 +15,8 @@ use TP\Middleware\AuthMiddleware;
 use TP\Middleware\AdminMiddleware;
 use TP\Models\User;
 use TP\Models\DB;
+use TP\Services\EventExport;
+use TP\Services\RecurringEvents;
 use Exception;
 
 #[RoutePrefix('/events')]
@@ -224,49 +226,7 @@ final class EventController
             return Response::notFound(__('events.not_found'));
         }
 
-        $registrations = DB::$events->registrations($eventId);
-        $guests = DB::$guests->allForEvent($eventId);
-
-        $csvField = fn(string $s): string => '"' . str_replace('"', '""', $s) . '"';
-        $isoDate = fn(string $ts): string => (new \DateTime($ts))->format('Y-m-d\TH:i:s');
-        $filename = preg_replace('/[^A-Za-z0-9_\-]/', '_', $event->date . '_' . $event->name) . '.csv';
-
-        $rows = [];
-        $rows[] = implode(',', [
-            $csvField(__('events.export_col_name')),
-            $csvField(__('events.export_col_gender')),
-            $csvField(__('events.export_col_is_guest')),
-            $csvField(__('users.member_number')),
-            $csvField(__('users.rfeg')),
-            $csvField(__('events.export_col_timestamp')),
-        ]);
-
-        foreach ($registrations as $reg) {
-            $rows[] = implode(',', [
-                $csvField($reg->name),
-                $csvField($reg->male ? __('users.mr') : __('users.mrs')),
-                $csvField(__('events.export_no')),
-                $csvField($reg->memberNumber ?? ''),
-                $csvField($reg->rfeg ?? ''),
-                $csvField($isoDate($reg->timestamp)),
-            ]);
-        }
-
-        foreach ($guests as $guest) {
-            $rows[] = implode(',', [
-                $csvField($guest->firstName . ' ' . $guest->lastName),
-                $csvField($guest->male ? __('users.mr') : __('users.mrs')),
-                $csvField(__('events.export_yes')),
-                $csvField(''),
-                $csvField(''),
-                $csvField($isoDate($guest->timestamp)),
-            ]);
-        }
-
-        return Response::ok("\xEF\xBB\xBF" . implode("\r\n", $rows), [
-            'Content-Type' => 'text/csv; charset=UTF-8',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
-        ]);
+        return EventExport::csvResponse($event);
     }
 
     #[Post('/{id}/lock')]
@@ -445,7 +405,7 @@ final class EventController
             $priceGuests = $request->getString('price_guests') ?: null;
             $registrationCloseDays = $request->getString('registration_close_days') !== '' ? (int) $request->getString('registration_close_days') : null;
             $registrationCloseTime = $request->getString('registration_close_time') ?: null;
-            $events = $this->calculateRecurringDates(
+            $events = RecurringEvents::plan(
                 $data['start_date'],
                 $data['end_date'],
                 (int) $data['day_of_week'],
@@ -459,7 +419,18 @@ final class EventController
                 $registrationCloseTime,
             );
 
-            $_SESSION['bulk_events'] = $events;
+            // The preview view and bulkStore() work with plain arrays in the session
+            $_SESSION['bulk_events'] = array_map(fn($e) => [
+                'name' => $e->name,
+                'date' => $e->date,
+                'capacity' => $e->capacity,
+                'mixed' => $e->mixed,
+                'description' => $e->description,
+                'price_members' => $e->priceMembers,
+                'price_guests' => $e->priceGuests,
+                'registration_close' => $e->registrationClose,
+            ], $events);
+            $events = $_SESSION['bulk_events'];
 
             ob_start();
             require __DIR__ . '/../Layout/header.php';
@@ -517,57 +488,5 @@ final class EventController
         }
 
         return Response::redirect('/events');
-    }
-
-    private function calculateRecurringDates(
-        string $startDate,
-        string $endDate,
-        int $dayOfWeek,
-        string $name,
-        int $capacity,
-        bool $mixed = true,
-        ?string $description = null,
-        ?string $priceMembers = null,
-        ?string $priceGuests = null,
-        ?int $registrationCloseDays = null,
-        ?string $registrationCloseTime = null,
-    ): array {
-        $start = new \DateTime($startDate);
-        $end = new \DateTime($endDate);
-        $events = [];
-
-        // Find first occurrence of target day-of-week on/after start date
-        $current = clone $start;
-        $currentDayOfWeek = (int) $current->format('w');
-
-        if ($currentDayOfWeek !== $dayOfWeek) {
-            $daysToAdd = ($dayOfWeek - $currentDayOfWeek + 7) % 7;
-            $current->modify("+{$daysToAdd} days");
-        }
-
-        // Loop with +7 days increment until end date exceeded
-        while ($current <= $end) {
-            $event = [
-                'name' => $name,
-                'date' => $current->format('Y-m-d'),
-                'capacity' => $capacity,
-                'mixed' => $mixed,
-                'description' => $description,
-                'price_members' => $priceMembers,
-                'price_guests' => $priceGuests,
-                'registration_close' => null,
-            ];
-
-            if ($registrationCloseDays !== null && $registrationCloseTime !== null) {
-                $closeDate = clone $current;
-                $closeDate->modify("-{$registrationCloseDays} days");
-                $event['registration_close'] = $closeDate->format('Y-m-d') . ' ' . $registrationCloseTime . ':00';
-            }
-
-            $events[] = $event;
-            $current->modify('+7 days');
-        }
-
-        return $events;
     }
 }

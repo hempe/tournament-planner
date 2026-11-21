@@ -219,6 +219,13 @@ class RequestTest extends TestCase
         $this->assertEquals('10.0.0.1', $req->getIp());
     }
 
+    public function testInputSanitizationHandlesListsWithIntegerKeys(): void
+    {
+        $req = $this->makeRequest('POST', '/', [], ['events' => [['name' => ' A '], ['name' => 'B']]]);
+
+        $this->assertSame([['name' => 'A'], ['name' => 'B']], $req->getArray('events'));
+    }
+
     public function testInputSanitizationRemovesNullBytes(): void
     {
         $req = $this->makeRequest('GET', '/', ['key' => "val\0ue"]);
