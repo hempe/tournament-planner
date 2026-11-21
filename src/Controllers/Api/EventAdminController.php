@@ -444,7 +444,7 @@ final class EventAdminController
      * Normalise a `YYYY-MM-DDTHH:MM[:SS]` input to the stored `YYYY-MM-DD HH:MM:SS`.
      * Returns null for an empty value and false when the value is not a valid date-time.
      */
-    private static function dateTime(string $value): string|false|null
+    public static function dateTime(string $value): string|false|null
     {
         if ($value === '') {
             return null;

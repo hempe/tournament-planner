@@ -25,6 +25,15 @@ export interface AdminRegistrationDto {
   memberNumber: string | null;
 }
 
+export interface AdminSocialRegistrationDto {
+  id: number;
+  name: string;
+  email: string | null;
+  isGuest: boolean;
+  menuName: string | null;
+  tableNumber: number | null;
+}
+
 export interface BulkCreateRequest {
   events: BulkEventDto[];
 }
@@ -185,6 +194,17 @@ export interface SessionDto {
   user: UserDto | null;
 }
 
+export interface SocialEventAdminDto {
+  event: SocialEventSummaryDto;
+  description: string | null;
+  registrationClose: string | null;
+  menus: string;
+  tables: string;
+  menuOptions: MenuDto[];
+  tableOptions: TableDto[];
+  registrations: AdminSocialRegistrationDto[];
+}
+
 export interface SocialEventDetailDto {
   event: SocialEventSummaryDto;
   description: string | null;
@@ -193,6 +213,16 @@ export interface SocialEventDetailDto {
   tables: TableDto[];
   myRegistration: SocialRegistrationDto | null;
   participants: SocialParticipantDto[];
+}
+
+export interface SocialEventRequest {
+  name: string;
+  date: string;
+  tournamentId: number | null;
+  description: string | null;
+  registrationClose: string | null;
+  menus: string;
+  tables: string;
 }
 
 export interface SocialEventSummaryDto {
@@ -325,6 +355,25 @@ export function eventsApi(api: ApiClient) {
       api.get<PublicEventDto>(`/events/${encodeURIComponent(id)}/guest-info`, options),
     addGuest: (id: number | string, body: GuestRegistrationRequest, options?: RequestOptions): Promise<void> =>
       api.post<void>(`/events/${encodeURIComponent(id)}/guests`, body, options),
+  };
+}
+
+export function socialEventAdminApi(api: ApiClient) {
+  return {
+    create: (body: SocialEventRequest, options?: RequestOptions): Promise<SocialEventAdminDto> =>
+      api.post<SocialEventAdminDto>('/social-events', body, options),
+    show: (id: number | string, options?: RequestOptions): Promise<SocialEventAdminDto> =>
+      api.get<SocialEventAdminDto>(`/social-events/${encodeURIComponent(id)}/admin`, options),
+    update: (id: number | string, body: SocialEventRequest, options?: RequestOptions): Promise<SocialEventAdminDto> =>
+      api.put<SocialEventAdminDto>(`/social-events/${encodeURIComponent(id)}`, body, options),
+    delete: (id: number | string, options?: RequestOptions): Promise<void> =>
+      api.delete<void>(`/social-events/${encodeURIComponent(id)}`, options),
+    lock: (id: number | string, options?: RequestOptions): Promise<SocialEventAdminDto> =>
+      api.put<SocialEventAdminDto>(`/social-events/${encodeURIComponent(id)}/lock`, undefined, options),
+    unlock: (id: number | string, options?: RequestOptions): Promise<SocialEventAdminDto> =>
+      api.delete<SocialEventAdminDto>(`/social-events/${encodeURIComponent(id)}/lock`, options),
+    deleteRegistration: (id: number | string, registrationId: number | string, options?: RequestOptions): Promise<SocialEventAdminDto> =>
+      api.delete<SocialEventAdminDto>(`/social-events/${encodeURIComponent(id)}/registrations/${encodeURIComponent(registrationId)}`, options),
   };
 }
 
