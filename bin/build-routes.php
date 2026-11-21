@@ -38,7 +38,6 @@ spl_autoload_register(function (string $className) use ($appRoot): void {
 });
 
 require_once $appRoot . '/src/helpers.php';
-require_once $appRoot . '/src/Core/Component.php';
 
 // Force production so RouteLoader enables caching
 $_ENV['APP_ENV'] = 'production';

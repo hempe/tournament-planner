@@ -42,3 +42,6 @@ coverage-cobertura.xml
 
 # Release version (written by build.sh)
 /version.txt
+
+# Rollback copies (written by build.sh)
+/releases/

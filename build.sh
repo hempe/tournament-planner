@@ -1,83 +1,148 @@
 #!/bin/bash
 
-# Build script — copies everything needed for production into dist/
-# Upload the contents of dist/ to your server.
+# Build script — produces dist/1-upload-first/ and dist/2-upload-last/.
+#   ./build.sh            clean working tree required
+#   ./build.sh --dirty    allow uncommitted changes (version gets a -dirty suffix)
 
-set -e
+set -euo pipefail
 
+DIRTY=0
+for arg in "$@"; do
+    case "$arg" in
+        --dirty) DIRTY=1 ;;
+        *) echo "Unknown argument: $arg" >&2; exit 2 ;;
+    esac
+done
+
+cd "$(dirname "$0")"
 DIST="dist"
+STAGE="$DIST/.stage-frontend"
+FIRST="$DIST/1-upload-first"
+LAST="$DIST/2-upload-last"
 
-echo "======================================"
-echo "  Tournament Planner Build"
-echo "======================================"
-echo ""
-
-# Clean previous build
-if [ -d "$DIST" ]; then
-    echo "Cleaning previous dist/..."
-    rm -rf "$DIST"
+# 1. Version
+VERSION="$(date +%Y-%m-%d)-$(git rev-parse --short HEAD)"
+STATUS="$(git status --porcelain)"
+if [ -n "$STATUS" ]; then
+    if [ "$DIRTY" -eq 0 ]; then
+        echo "Working tree is dirty — commit or stash first (or use --dirty):" >&2
+        echo "$STATUS" >&2
+        exit 1
+    fi
+    VERSION="$VERSION-dirty"
 fi
-mkdir -p "$DIST"
 
-# PHP source
-echo "Copying PHP source..."
-cp index.php bootstrap.php .htaccess "$DIST/"
-cp -r src "$DIST/src"
+echo "======================================"
+echo "  Tournament Planner Build $VERSION"
+echo "======================================"
 
-# Translations (single source in the Angular workspace; PHP reads them from resources/i18n)
-mkdir -p "$DIST/resources/i18n"
-cp frontend/src/i18n/*.json "$DIST/resources/i18n/"
+# Lint PHP against production's PHP version (8.3)
+if command -v docker >/dev/null 2>&1 && docker info >/dev/null 2>&1; then
+    echo "Linting PHP with php:8.3-cli..."
+    LINT_OUT="$(docker run --rm -v "$PWD":/app -w /app php:8.3-cli sh -c \
+        'for f in $(find src bin -name "*.php") index.php bootstrap.php; do php -l "$f"; done' 2>&1 \
+        | grep -v '^No syntax errors detected' || true)"
+    if [ -n "$LINT_OUT" ]; then
+        echo "$LINT_OUT" >&2
+        echo "PHP 8.3 lint failed" >&2
+        exit 1
+    fi
+else
+    echo "WARNING: Docker not available — skipping PHP 8.3 lint." >&2
+fi
 
-# Images & web manifests
-echo "Copying images and manifests..."
-cp *.png *.ico *.svg site.webmanifest browserconfig.xml "$DIST/" 2>/dev/null || true
+# 2. API client must be up to date
+echo "Checking generated API client..."
+composer api:check
 
-# Production config only
-echo "Copying config..."
-mkdir -p "$DIST/config"
-cp config/production.php "$DIST/config/"
+# 3. Frontend
+echo "Building frontend..."
+(cd frontend && npm ci && npx ng build --configuration production \
+    --deploy-url="/app/$VERSION/" \
+    --define "APP_BUILD_VERSION='\"$VERSION\"'")
+BROWSER="frontend/dist/tournament-planner-ui/browser"
 
-# php.ini — strip xdebug settings for production
-echo "Creating production php.ini..."
-grep -v 'xdebug' php.ini > "$DIST/php.ini"
+# 4. Stage frontend
+rm -rf "$DIST"
+mkdir -p "$STAGE/app/$VERSION"
+cp "$BROWSER/index.html" "$STAGE/index.html"
+(cd "$BROWSER" && find . -type f \
+    ! -name index.html ! -name ngsw.json ! -name ngsw-worker.js \
+    ! -name safety-worker.js ! -name worker-basic.min.js -print0 \
+    | while IFS= read -r -d '' f; do
+        mkdir -p "$OLDPWD/$STAGE/app/$VERSION/$(dirname "$f")"
+        cp "$f" "$OLDPWD/$STAGE/app/$VERSION/$f"
+    done)
+for f in ngsw-worker.js safety-worker.js worker-basic.min.js; do
+    [ -f "$BROWSER/$f" ] && cp "$BROWSER/$f" "$STAGE/$f"
+done
+cp site.webmanifest browserconfig.xml favicon* *.png *.svg "$STAGE/" 2>/dev/null || true
 
-# Empty writable directories (server needs these)
-echo "Creating writable directories..."
-mkdir -p "$DIST/storage/cache"
-mkdir -p "$DIST/logs"
-touch "$DIST/storage/cache/.gitkeep"
-touch "$DIST/logs/.gitkeep"
+# index.html must reference only /app/<version>/ assets (or root-level static files / external URLs)
+BAD=""
+while IFS= read -r ref; do
+    case "$ref" in
+        "/app/$VERSION/"*|"/"|https://*|"#"*|data:*) ;;
+        /*) [ -f "$STAGE${ref}" ] || BAD="$BAD$ref"$'\n' ;;
+        *) BAD="$BAD$ref"$'\n' ;;
+    esac
+done < <(grep -oE '(src|href)="[^"]*"' "$STAGE/index.html" | sed -E 's/^[a-z]+="(.*)"$/\1/')
+if [ -n "$BAD" ]; then
+    echo "index.html references assets outside /app/$VERSION/:" >&2
+    echo "$BAD" >&2
+    exit 1
+fi
 
-# Install production-only composer dependencies with optimised autoloader
-echo "Installing production composer dependencies..."
-cp composer.json composer.lock "$DIST/"
-composer install \
-    --working-dir="$DIST" \
-    --no-dev \
-    --optimize-autoloader \
-    --no-interaction \
-    --quiet
+# 5. Service worker manifest for the final layout
+(cd frontend && npx ngsw-config "../$STAGE" ngsw-config.json /)
 
-# Remove composer files from dist (not needed at runtime)
-rm "$DIST/composer.json" "$DIST/composer.lock"
+# 6. Backend
+echo "Assembling backend..."
+mkdir -p "$FIRST" "$LAST"
+cp index.php bootstrap.php .htaccess "$FIRST/"
+cp -r src "$FIRST/src"
+mkdir -p "$FIRST/resources/i18n" "$FIRST/config"
+cp frontend/src/i18n/*.json "$FIRST/resources/i18n/"
+cp config/production.php "$FIRST/config/"
+grep -v 'xdebug' php.ini > "$FIRST/php.ini"
+mkdir -p "$FIRST/storage/cache" "$FIRST/logs"
+touch "$FIRST/storage/cache/.gitkeep" "$FIRST/logs/.gitkeep"
 
-# Pre-build route cache so the first production request pays no scan cost
-echo "Pre-building route cache..."
-cp -r bin "$DIST/bin"
-(cd "$DIST" && php bin/build-routes.php)
-rm -rf "$DIST/bin"
+cp composer.json composer.lock "$FIRST/"
+composer install --working-dir="$FIRST" --no-dev --optimize-autoloader --no-interaction --quiet
+rm "$FIRST/composer.json" "$FIRST/composer.lock"
 
+cp -r bin "$FIRST/bin"
+(cd "$FIRST" && php bin/build-routes.php)
+rm -rf "$FIRST/bin"
+
+# 7. Split
+cp "$STAGE/index.html" "$STAGE/ngsw.json" "$LAST/"
+echo "$VERSION" > "$LAST/version.txt"
+rm "$STAGE/index.html" "$STAGE/ngsw.json"
+cp -r "$STAGE"/. "$FIRST/"
+rm -rf "$STAGE"
+
+# 8. Keep a copy for rollback
+mkdir -p releases
+rm -rf "releases/$VERSION"
+cp -r "$LAST" "releases/$VERSION"
+
+# 9. Verify
+php bin/verify-dist.php "$DIST"
+
+# 10. Instructions
+PREVIOUS="$(ls -1t releases | grep -vxF "$VERSION" | head -1 || true)"
 echo ""
 echo "======================================"
-echo "  Build complete → $DIST/"
+echo "  Build complete: $VERSION"
 echo "======================================"
 echo ""
-echo "Contents:"
-ls "$DIST/"
+echo "Upload (in this order):"
+echo "  1. Contents of $FIRST/  ->  web root (merge, keep .env and existing app/ folders)"
+echo "  2. Contents of $LAST/   ->  web root (index.html, ngsw.json, version.txt)"
 echo ""
-echo "Don't forget to create a .env file on the server:"
-echo "  DB_HOST=..."
-echo "  DB_PORT=3306"
-echo "  DB_NAME=TPDb"
-echo "  DB_USERNAME=..."
-echo "  DB_PASSWORD=..."
+echo "Then check: https://<your-domain>/health  (version must be $VERSION)"
+echo "Previous version: ${PREVIOUS:-none}  (rollback: upload releases/${PREVIOUS:-<version>}/ again)"
+echo ""
+echo "Don't forget the .env file on the server (DB_HOST, DB_PORT, DB_NAME, DB_USERNAME, DB_PASSWORD)."

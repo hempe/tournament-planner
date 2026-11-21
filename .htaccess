@@ -1,6 +1,33 @@
+Options -Indexes
+DirectoryIndex index.html
+
+<IfModule mod_rewrite.c>
 RewriteEngine On
 
-# Route all requests through index.php (front controller pattern)
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^ index.php [QSA,L]
+# Internal folders are never served
+RewriteRule ^(src|vendor|config|resources|storage|logs)(/|$) - [R=404,L]
+
+# API → PHP front controller
+RewriteRule ^api(/.*)?$ index.php [QSA,L]
+RewriteRule ^health$ index.php [QSA,L]
+
+# Real files (app/<version>/*, icons, manifest, service worker)
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# Stale legacy form posts from pages opened before the switch → reload the same URL
+RewriteCond %{REQUEST_METHOD} !^(GET|HEAD)$
+RewriteRule ^ %{REQUEST_URI} [R=303,L]
+
+# Everything else is an Angular route
+RewriteRule ^ index.html [L]
+</IfModule>
+
+<IfModule mod_headers.c>
+<If "%{REQUEST_URI} =~ m#^/app/#">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+</If>
+<FilesMatch "^(index\.html|ngsw\.json|ngsw-worker\.js|site\.webmanifest|version\.txt)$">
+    Header set Cache-Control "no-cache"
+</FilesMatch>
+</IfModule>
