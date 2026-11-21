@@ -14,42 +14,55 @@ import { formatDate, formatDateTime } from '../../core/format/dates';
 import { I18n } from '../../core/i18n/i18n';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { SELECT_CLASSES } from '../../shared/forms/select';
+import { BackLink } from '../../shared/ui/back-link';
+import { Badge } from '../../shared/ui/badge';
+import { DetailList } from '../../shared/ui/detail-list';
+import { Page, PageHeader } from '../../shared/ui/page';
 
 @Component({
   selector: 'app-social-event-detail-page',
-  imports: [FormField, RouterLink, HlmButtonImports, HlmCardImports, HlmLabelImports, HlmSpinner, TranslatePipe],
+  imports: [
+    FormField,
+    RouterLink,
+    HlmButtonImports,
+    HlmCardImports,
+    HlmLabelImports,
+    HlmSpinner,
+    TranslatePipe,
+    BackLink,
+    Badge,
+    DetailList,
+    Page,
+    PageHeader,
+  ],
   template: `
     @if (detail.hasValue()) {
       @let d = detail.value();
-      <div class="mx-auto flex max-w-2xl flex-col gap-4">
-        <div class="flex items-center justify-between gap-2">
-          <a hlmBtn variant="ghost" size="sm" routerLink="/" [queryParams]="{ month: d.event.date.slice(0, 7) }">
-            {{ 'nav.back' | t }}
-          </a>
+      <div appPage>
+        <app-back-link link="/" [queryParams]="{ month: d.event.date.slice(0, 7) }" />
+        <app-page-header [title]="d.event.name" [subtitle]="formatDate(d.event.date)">
+          <div meta class="flex flex-wrap gap-2 empty:hidden">
+            @if (d.event.userRegistered) {
+              <span appBadge>{{ 'social_events.registered' | t }}</span>
+            }
+          </div>
           @if (session.isAdmin()) {
-            <a hlmBtn variant="outline" size="sm" [routerLink]="['/social-events', d.event.id, 'admin']">
-              {{ 'social_events.edit' | t }}
-            </a>
+            <a hlmBtn variant="outline" size="sm" [routerLink]="['/social-events', d.event.id, 'admin']">{{ 'social_events.edit' | t }}</a>
           }
-        </div>
-
-        <header>
-          <p class="text-sm text-muted-foreground">{{ formatDate(d.event.date) }}</p>
-          <h1 class="text-2xl font-semibold">{{ d.event.name }}</h1>
-        </header>
+        </app-page-header>
 
         @if (d.description || d.registrationClose) {
           <section hlmCard>
-            <dl hlmCardContent class="flex flex-col gap-3">
+            <dl hlmCardContent appDetailList>
               @if (d.description) {
                 <div>
-                  <dt class="text-sm text-muted-foreground">{{ 'social_events.description' | t }}</dt>
+                  <dt>{{ 'social_events.description' | t }}</dt>
                   <dd class="whitespace-pre-line">{{ d.description }}</dd>
                 </div>
               }
               @if (d.registrationClose) {
                 <div>
-                  <dt class="text-sm text-muted-foreground">{{ 'social_events.registration_close' | t }}</dt>
+                  <dt>{{ 'social_events.registration_close' | t }}</dt>
                   <dd>{{ formatDateTime(d.registrationClose) }}</dd>
                 </div>
               }
@@ -57,20 +70,22 @@ import { SELECT_CLASSES } from '../../shared/forms/select';
           </section>
         }
 
-        <section hlmCard>
+        <section hlmCard data-registration>
+          @if (d.event.userRegistered && d.myRegistration) {
+            <div hlmCardHeader><h2 hlmCardTitle>{{ 'events.your_registration' | t }}</h2></div>
+          }
           <div hlmCardContent class="flex flex-col gap-3">
             @if (d.event.userRegistered && d.myRegistration; as mine) {
-              <p class="font-medium">{{ 'social_events.registered' | t }}</p>
-              <dl class="flex flex-col gap-1">
+              <dl appDetailList>
                 @if (mine.menuName) {
                   <div>
-                    <dt class="inline text-muted-foreground">{{ 'social_events.menu' | t }}:</dt>
-                    <dd class="inline">{{ mine.menuName }}</dd>
+                    <dt>{{ 'social_events.menu' | t }}</dt>
+                    <dd>{{ mine.menuName }}</dd>
                   </div>
                 }
                 <div>
-                  <dt class="inline text-muted-foreground">{{ 'social_events.table' | t }}:</dt>
-                  <dd class="inline">{{ mine.tableNumber === null ? ('social_events.libero' | t) : tableLabel(mine.tableNumber) }}</dd>
+                  <dt>{{ 'social_events.table' | t }}</dt>
+                  <dd>{{ mine.tableNumber === null ? ('social_events.libero' | t) : tableLabel(mine.tableNumber) }}</dd>
                 </div>
               </dl>
               @if (!d.event.isLocked) {
@@ -81,11 +96,11 @@ import { SELECT_CLASSES } from '../../shared/forms/select';
             } @else if (d.event.isLocked) {
               <p class="text-sm text-muted-foreground">{{ 'social_events.locked_message' | t }}</p>
             } @else if (d.event.available === 0) {
-              <p class="font-medium">{{ 'social_events.full' | t }}</p>
+              <p class="text-muted-foreground">{{ 'social_events.full' | t }}</p>
             } @else {
-              <form class="flex flex-col gap-4" novalidate (submit)="$event.preventDefault(); register()">
+              <form class="flex flex-col gap-3 sm:flex-row sm:items-start" novalidate (submit)="$event.preventDefault(); register()">
                 @if (d.menus.length > 0) {
-                  <div class="flex flex-col gap-2">
+                  <div class="flex flex-col gap-2 sm:flex-1">
                     <label hlmLabel for="menu">{{ 'social_events.menu' | t }} *</label>
                     <select id="menu" [class]="selectClasses" [formField]="registerForm.menuId">
                       <option value="">{{ 'social_events.select_menu' | t }}</option>
@@ -99,7 +114,7 @@ import { SELECT_CLASSES } from '../../shared/forms/select';
                   </div>
                 }
                 @if (d.tables.length > 0) {
-                  <div class="flex flex-col gap-2">
+                  <div class="flex flex-col gap-2 sm:flex-1">
                     <label hlmLabel for="table">{{ 'social_events.table' | t }}</label>
                     <select id="table" [class]="selectClasses" [formField]="registerForm.tableId">
                       <option value="">{{ 'social_events.libero' | t }}</option>
@@ -112,7 +127,7 @@ import { SELECT_CLASSES } from '../../shared/forms/select';
                     }
                   </div>
                 }
-                <button hlmBtn type="submit" class="w-full sm:w-auto sm:self-start" [disabled]="busy()">
+                <button hlmBtn type="submit" class="w-full sm:mt-[1.375rem] sm:w-auto" [disabled]="busy()">
                   {{ 'social_events.register' | t }}
                 </button>
               </form>
@@ -120,32 +135,40 @@ import { SELECT_CLASSES } from '../../shared/forms/select';
           </div>
         </section>
 
-        <section hlmCard>
-          <div hlmCardHeader><h2 hlmCardTitle>{{ 'social_events.participants' | t }}</h2></div>
+        <section hlmCard data-participants>
+          <div hlmCardHeader>
+            <h2 hlmCardTitle>{{ 'social_events.participants' | t }} ({{ d.participants.length }})</h2>
+          </div>
           <div hlmCardContent>
-            <table class="w-full text-left">
-              <thead>
-                <tr class="text-sm text-muted-foreground">
-                  <th class="w-24 font-normal">{{ 'social_events.table' | t }}</th>
-                  <th class="font-normal">{{ 'social_events.name' | t }}</th>
-                </tr>
-              </thead>
-              <tbody>
-                @for (p of d.participants; track $index) {
-                  <tr>
-                    <td>{{ p.tableNumber ?? '' }}</td>
-                    <td>{{ p.name }}</td>
+            @if (d.participants.length === 0) {
+              <p class="text-muted-foreground">{{ 'events.no_participants' | t }}</p>
+            } @else {
+              <table class="-mx-2 w-[calc(100%+1rem)] text-left">
+                <thead>
+                  <tr class="border-b text-xs text-muted-foreground">
+                    <th class="w-28 px-2 pb-1.5 font-medium sm:w-40">{{ 'social_events.table' | t }}</th>
+                    <th class="px-2 pb-1.5 font-medium">{{ 'social_events.name' | t }}</th>
                   </tr>
-                }
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  @for (p of d.participants; track $index) {
+                    <tr class="border-b last:border-b-0 data-own:bg-primary/10 data-own:font-medium" [attr.data-own]="p.name === ownName() ? '' : null">
+                      <td class="px-2 py-1.5 align-top" [class.text-muted-foreground]="p.tableNumber === null">
+                        {{ p.tableNumber ?? ('social_events.libero' | t) }}
+                      </td>
+                      <td class="px-2 py-1.5 align-top">{{ p.name }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            }
           </div>
         </section>
       </div>
     } @else if (detail.error()) {
-      <div class="mx-auto max-w-2xl">
+      <div appPage>
         <p class="text-lg">{{ errorKey() | t }}</p>
-        <a hlmBtn class="mt-4" routerLink="/">{{ 'navigation.home' | t }}</a>
+        <a hlmBtn class="self-start" routerLink="/">{{ 'navigation.home' | t }}</a>
       </div>
     } @else {
       <div class="flex justify-center p-8"><hlm-spinner /></div>
@@ -167,6 +190,8 @@ export class SocialEventDetailPage {
     loader: ({ params, abortSignal }) => socialEventsApi(this.api).show(params, { signal: abortSignal }),
   });
 
+  /** The logged-in member's own row is highlighted in the participant list. */
+  protected readonly ownName = computed(() => this.session.user()?.displayName ?? null);
   private readonly current = computed(() => (this.detail.hasValue() ? this.detail.value() : undefined));
   protected readonly busy = signal(false);
   private readonly serverErrors = signal<Record<string, string>>({});

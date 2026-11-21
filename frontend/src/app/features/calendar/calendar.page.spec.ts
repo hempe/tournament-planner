@@ -57,13 +57,13 @@ describe('CalendarPage', () => {
       ],
     });
     TestBed.inject(I18n).use('de', {
-      calendar: { previous_month: 'Vorheriger Monat', next_month: 'Nächster Monat' },
+      calendar: { previous_month: 'Vorheriger Monat', next_month: 'Nächster Monat', no_events: 'Keine Anlässe in diesem Monat.' },
       events: {
         registered: 'Angemeldet', on_waitlist: 'Auf Warteliste', locked: 'Gesperrt',
         waitlist_available: 'Warteliste verfügbar', spot_available: ':count Platz frei',
         spots_available: ':count Plätze frei', register: 'Anmelden', waitlist: 'Warteliste', new_for_date: 'Neuer Anlass: :date',
       },
-      social_events: { registered: 'Angemeldet', full: 'Ausgebucht', available: ':count Plätze verfügbar' },
+      social_events: { registered: 'Angemeldet', full: 'Ausgebucht', available: '1 Platz verfügbar|:count Plätze verfügbar' },
       errors: { general: 'Fehler' },
     });
     navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
@@ -133,6 +133,22 @@ describe('CalendarPage', () => {
     expect(el.textContent).toContain('Abendessen');
     expect(card('Abendessen').querySelector('a')?.getAttribute('href')).toBe('/social-events/9');
     expect(card('Abendessen').textContent).toContain('15 Plätze verfügbar');
+  });
+
+  it('phone list: shows an empty state for a month without events', async () => {
+    api.get.mockResolvedValue(calendar({ events: [], socialEvents: [] }));
+    const { el } = await render();
+
+    expect(el.querySelector('[data-empty]')?.textContent).toContain('Keine Anlässe in diesem Monat.');
+  });
+
+  it('member: one free dinner spot uses the singular', async () => {
+    loggedIn.set(true);
+    api.get.mockResolvedValue(calendar({ socialEvents: [{ ...social, available: 1 }] }));
+    const { card } = await render();
+
+    expect(card('Abendessen').textContent).toContain('1 Platz verfügbar');
+    expect(card('Abendessen').textContent).not.toContain('Plätze');
   });
 
   it('member: past events count as locked', async () => {

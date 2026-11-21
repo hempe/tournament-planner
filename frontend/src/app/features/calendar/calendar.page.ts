@@ -1,7 +1,7 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { Component, computed, inject, input, resource } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideChevronLeft, lucideChevronRight } from '@ng-icons/lucide';
+import { lucideChevronLeft, lucideChevronRight, lucidePlus } from '@ng-icons/lucide';
 import { Router, RouterLink } from '@angular/router';
 import { HlmButtonImports } from '@ui/button';
 import { HlmSpinner } from '@ui/spinner';
@@ -15,6 +15,7 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { EventCard } from './event-card';
 import { monthGrid, resolveMonth, shiftMonth } from './month';
 import { SocialEventCard } from './social-event-card';
+import { Page } from '../../shared/ui/page';
 
 type DayItem =
   | { type: 'event'; event: EventSummaryDto }
@@ -22,11 +23,11 @@ type DayItem =
 
 @Component({
   selector: 'app-calendar-page',
-  imports: [NgTemplateOutlet, NgIcon, RouterLink, HlmButtonImports, HlmSpinner, TranslatePipe, EventCard, SocialEventCard],
-  providers: [provideIcons({ lucideChevronLeft, lucideChevronRight })],
+  imports: [NgTemplateOutlet, NgIcon, RouterLink, HlmButtonImports, HlmSpinner, TranslatePipe, EventCard, SocialEventCard, Page],
+  providers: [provideIcons({ lucideChevronLeft, lucideChevronRight, lucidePlus })],
   template: `
-    <div class="mx-auto max-w-5xl">
-      <div class="mb-4 flex items-center justify-between gap-2">
+    <div appPage width="wide">
+      <div class="flex items-center justify-between gap-2">
         <button hlmBtn variant="outline" size="icon" type="button" [attr.aria-label]="'calendar.previous_month' | t" (click)="go(-1)">
           <ng-icon name="lucideChevronLeft" />
         </button>
@@ -56,6 +57,8 @@ type DayItem =
               <h2 class="mb-1 text-sm font-medium text-muted-foreground">{{ dayHeading(day) }}</h2>
               <ng-container *ngTemplateOutlet="items; context: { $implicit: day }" />
             </section>
+          } @empty {
+            <p data-empty class="py-8 text-center text-muted-foreground">{{ 'calendar.no_events' | t }}</p>
           }
         </div>
 
@@ -75,8 +78,8 @@ type DayItem =
                         routerLink="/events/new"
                         [queryParams]="{ date: day }"
                         [attr.aria-label]="'events.new_for_date' | t: { date: dayHeading(day) }"
-                        class="inline-flex size-6 items-center justify-center rounded-md border border-border hover:bg-accent"
-                      >+</a>
+                        class="inline-flex size-5 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
+                      ><ng-icon name="lucidePlus" class="text-sm" aria-hidden="true" /></a>
                     }
                   </div>
                   <ng-container *ngTemplateOutlet="items; context: { $implicit: day }" />

@@ -14,20 +14,20 @@ import { Notify } from '../../core/feedback/notify';
 import { formatDate } from '../../core/format/dates';
 import { I18n } from '../../core/i18n/i18n';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { BackLink } from '../../shared/ui/back-link';
+import { Page, PageHeader } from '../../shared/ui/page';
 import { translateFieldErrors } from '../../shared/forms/field-errors';
 import { SELECT_CLASSES } from '../../shared/forms/select';
 
 @Component({
   selector: 'app-social-guest-registration-page',
-  imports: [FormField, RouterLink, HlmButtonImports, HlmCardImports, HlmInputImports, HlmLabelImports, HlmSpinner, TranslatePipe],
+  imports: [FormField, RouterLink, HlmButtonImports, HlmCardImports, HlmInputImports, HlmLabelImports, HlmSpinner, TranslatePipe, BackLink, Page, PageHeader],
   template: `
     @if (info.hasValue()) {
       @let d = info.value();
-      <div class="mx-auto flex max-w-2xl flex-col gap-4">
-        <header>
-          <p class="text-sm text-muted-foreground">{{ formatDate(d.event.date) }}</p>
-          <h1 class="text-2xl font-semibold">{{ d.event.name }}</h1>
-        </header>
+      <div appPage>
+        <app-back-link [link]="backLink()" [queryParams]="session.isAdmin() ? null : { month: d.event.date.slice(0, 7) }" />
+        <app-page-header [title]="d.event.name" [subtitle]="formatDate(d.event.date)" />
 
         @if (d.description) {
           <section hlmCard>
@@ -40,19 +40,21 @@ import { SELECT_CLASSES } from '../../shared/forms/select';
         } @else {
           <section hlmCard>
             <form hlmCardContent class="flex flex-col gap-4" novalidate (submit)="$event.preventDefault(); register()">
-              <div class="flex flex-col gap-2">
-                <label hlmLabel for="firstName">{{ 'guests.first_name' | t }} *</label>
-                <input hlmInput id="firstName" autocomplete="given-name" [formField]="guestForm.firstName" />
-                @if (fieldError('firstName', guestForm.firstName(), 'guests.first_name'); as message) {
-                  <p id="firstName-error" class="text-sm text-destructive">{{ message }}</p>
-                }
-              </div>
-              <div class="flex flex-col gap-2">
-                <label hlmLabel for="lastName">{{ 'guests.last_name' | t }} *</label>
-                <input hlmInput id="lastName" autocomplete="family-name" [formField]="guestForm.lastName" />
-                @if (fieldError('lastName', guestForm.lastName(), 'guests.last_name'); as message) {
-                  <p id="lastName-error" class="text-sm text-destructive">{{ message }}</p>
-                }
+              <div class="grid gap-4 sm:grid-cols-2">
+                <div class="flex flex-col gap-2">
+                  <label hlmLabel for="firstName">{{ 'guests.first_name' | t }} *</label>
+                  <input hlmInput id="firstName" autocomplete="given-name" [formField]="guestForm.firstName" />
+                  @if (fieldError('firstName', guestForm.firstName(), 'guests.first_name'); as message) {
+                    <p id="firstName-error" class="text-sm text-destructive">{{ message }}</p>
+                  }
+                </div>
+                <div class="flex flex-col gap-2">
+                  <label hlmLabel for="lastName">{{ 'guests.last_name' | t }} *</label>
+                  <input hlmInput id="lastName" autocomplete="family-name" [formField]="guestForm.lastName" />
+                  @if (fieldError('lastName', guestForm.lastName(), 'guests.last_name'); as message) {
+                    <p id="lastName-error" class="text-sm text-destructive">{{ message }}</p>
+                  }
+                </div>
               </div>
               <div class="flex flex-col gap-2">
                 <label hlmLabel for="email">{{ 'guests.email' | t }}@if (!session.isAdmin()) { * }</label>
@@ -99,9 +101,9 @@ import { SELECT_CLASSES } from '../../shared/forms/select';
         }
       </div>
     } @else if (info.error()) {
-      <div class="mx-auto max-w-2xl">
+      <div appPage>
         <p class="text-lg">{{ errorKey() | t }}</p>
-        <a hlmBtn class="mt-4" routerLink="/">{{ 'navigation.home' | t }}</a>
+        <a hlmBtn class="self-start" routerLink="/">{{ 'navigation.home' | t }}</a>
       </div>
     } @else {
       <div class="flex justify-center p-8"><hlm-spinner /></div>
@@ -135,6 +137,7 @@ export class SocialGuestRegistrationPage {
     required(path.menuId, { when: () => (this.current()?.menus.length ?? 0) > 0 });
   });
 
+  protected readonly backLink = computed(() => (this.session.isAdmin() ? `/social-events/${this.id()}/admin` : '/'));
   protected readonly errorKey = computed(() => {
     const error = asApiError(this.info.error());
     return error?.status === 404 ? 'social_events.not_found' : (error?.error ?? 'errors.general');

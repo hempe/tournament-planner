@@ -43,7 +43,10 @@ describe('EventDetailPage', () => {
         provideRouter([]),
         { provide: ApiClient, useValue: api },
         { provide: RegistrationFlow, useValue: flow },
-        { provide: SessionStore, useValue: { isAdmin: computed(() => isAdmin()), loggedIn: signal(true) } },
+        {
+          provide: SessionStore,
+          useValue: { isAdmin: computed(() => isAdmin()), loggedIn: signal(true), user: signal({ displayName: 'Ben' }) },
+        },
       ],
     });
     TestBed.inject(I18n).use('de', {
@@ -53,9 +56,11 @@ describe('EventDetailPage', () => {
         unregister: 'Turnier abmelden', save: 'Speichern', edit: 'Bearbeiten', comment: 'Kommentar',
         description: 'Beschreibung', price_members: 'Preis für Mitglieder', price_guests: 'Preis für Gäste',
         registration_close: 'Anmeldeschluss', locked_message: 'Anmeldung geschlossen', not_found: 'Anlass nicht gefunden',
+        participants: 'Teilnehmer', your_registration: 'Deine Anmeldung', no_participants: 'Noch keine Anmeldungen.',
       },
       navigation: { home: 'Startseite' },
       guests: { title: 'Gäste' },
+      social_events: { registered: 'Angemeldet', full: 'Ausgebucht', available: '1 Platz verfügbar|:count Plätze verfügbar' },
     });
   });
 
@@ -69,17 +74,34 @@ describe('EventDetailPage', () => {
     return { fixture, el, button };
   }
 
-  it('renders name, prices, participants with waitlist suffix and guests', async () => {
+  it('renders name, prices as label/value pairs and the back link to the month', async () => {
     const { el } = await render();
 
     expect(api.get).toHaveBeenCalledWith('/events/3', expect.anything());
-    expect(el.textContent).toContain('Frühlingscup');
-    expect(el.textContent).toContain('CHF 50');
-    expect(el.textContent).toContain('CHF 80');
-    expect(el.textContent).toContain('Anna');
-    expect(el.textContent).toContain('Ben (Warteliste)');
-    expect(el.textContent).toContain('Gus Guest');
-    expect(el.querySelector('a[href="/?month=2099-06"]')).not.toBeNull();
+    expect(el.querySelector('h1')?.textContent).toContain('Frühlingscup');
+    const pairs = Array.from(el.querySelectorAll('dl > div')).map((d) => [d.querySelector('dt')?.textContent?.trim(), d.querySelector('dd')?.textContent?.trim()]);
+    expect(pairs).toContainEqual(['Preis für Mitglieder', 'CHF 50']);
+    expect(pairs).toContainEqual(['Preis für Gäste', 'CHF 80']);
+    expect(el.querySelector('[data-back-link]')?.getAttribute('href')).toBe('/?month=2099-06');
+  });
+
+  it('lists registered, waitlist and guests as sub-sections with counts and highlights the own entry', async () => {
+    const { el } = await render();
+    const groups = Array.from(el.querySelectorAll<HTMLElement>('[data-participant-group]'));
+
+    expect(groups.map((g) => g.querySelector('h3')?.textContent?.trim())).toEqual(['Angemeldet (1)', 'Warteliste (1)', 'Gäste (1)']);
+    expect(groups[0].querySelector('ul')?.textContent).toContain('Anna');
+    expect(groups[1].querySelector('ul')?.textContent).toContain('Ben');
+    expect(groups[2].querySelector('ul')?.textContent).toContain('Gus Guest');
+    expect(Array.from(el.querySelectorAll('[data-own]')).map((li) => li.textContent?.trim())).toEqual(['Ben']);
+  });
+
+  it('shows an empty state without participants', async () => {
+    api.get.mockResolvedValue(detail({ participants: [], guests: [] }));
+    const { el } = await render();
+
+    expect(el.querySelectorAll('[data-participant-group]').length).toBe(0);
+    expect(el.textContent).toContain('Noch keine Anmeldungen.');
   });
 
   it('not registered: register button passes the typed comment', async () => {
@@ -93,6 +115,15 @@ describe('EventDetailPage', () => {
 
     expect(flow.register).toHaveBeenCalledWith(3, 'Bin dabei', { available: 8, isLocked: false });
     expect(button('Turnier abmelden')).toBeUndefined();
+    expect(el.querySelector('[data-registration] h2')).toBeNull();
+  });
+
+  it('shows the social event status with the plural form of the free spots', async () => {
+    const social = { id: 9, tournamentId: 3, name: 'Dinner', date: '2099-06-01', isLocked: false, totalCapacity: 10, registered: 9, available: 1, userRegistered: false };
+    api.get.mockResolvedValue(detail({ socialEvent: social }));
+    const { el } = await render();
+
+    expect(el.querySelector('[data-social-row] [data-status]')?.textContent?.trim()).toBe('1 Platz verfügbar');
   });
 
   it('shows the waitlist button when the event is full', async () => {
@@ -112,7 +143,10 @@ describe('EventDetailPage', () => {
 
     expect(el.querySelector<HTMLInputElement>('input')!.value).toBe('alt');
     expect(button('Speichern')!.disabled).toBe(true);
-    expect(el.querySelector('a[href="/social-events/9"]')?.textContent).toContain('Dinner');
+    expect(el.querySelector('[data-registration] h2')?.textContent).toContain('Deine Anmeldung');
+    const socialRow = el.querySelector('a[href="/social-events/9"]');
+    expect(socialRow?.textContent).toContain('Dinner');
+    expect(socialRow?.querySelector('[data-status]')?.textContent?.trim()).toBe('Angemeldet');
 
     flow.unregister.mockResolvedValue(detail({ participants: [] }, { name: 'Neu' }));
     button('Turnier abmelden')!.click();

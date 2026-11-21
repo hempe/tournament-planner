@@ -41,7 +41,10 @@ describe('SocialEventDetailPage', () => {
         provideRouter([]),
         { provide: ApiClient, useValue: api },
         { provide: ConfirmService, useValue: confirm },
-        { provide: SessionStore, useValue: { isAdmin: computed(() => isAdmin()), loggedIn: signal(true) } },
+        {
+          provide: SessionStore,
+          useValue: { isAdmin: computed(() => isAdmin()), loggedIn: signal(true), user: signal({ displayName: 'Anna' }) },
+        },
       ],
     });
     TestBed.inject(I18n).use('de', {
@@ -54,7 +57,9 @@ describe('SocialEventDetailPage', () => {
         register_confirm: 'Anmelden?', locked_message: 'Anmeldung geschlossen.', full: 'Ausgebucht',
         select_menu: 'Menü auswählen', participants: 'Teilnehmer', edit: 'Bearbeiten', description: 'Beschreibung',
         registration_close: 'Anmeldeschluss', not_found: 'Anlass nicht gefunden', invalid_menu: 'Ungültige Menüauswahl.',
+        name: 'Name',
       },
+      events: { your_registration: 'Deine Anmeldung', no_participants: 'Noch keine Anmeldungen.' },
     });
   });
 
@@ -107,6 +112,29 @@ describe('SocialEventDetailPage', () => {
     expect(confirm.ask).toHaveBeenCalledWith('Wirklich abmelden?', { danger: true });
     expect(api.delete).toHaveBeenCalledWith('/social-events/9/registrations/me', undefined);
     expect(el.querySelector('form')).not.toBeNull();
+  });
+
+  it('participants: table number or libero per row, count in the heading, own row highlighted', async () => {
+    const { el } = await render();
+    const rows = Array.from(el.querySelectorAll('[data-participants] tbody tr')).map((tr) =>
+      Array.from(tr.querySelectorAll('td')).map((td) => td.textContent?.trim()),
+    );
+
+    expect(el.querySelector('[data-participants] h2')?.textContent).toContain('Teilnehmer (2)');
+    expect(rows).toEqual([['1', 'Anna'], ['Kein Wunsch', 'Ben']]);
+    expect(el.querySelector('[data-participants] tr[data-own]')?.textContent).toContain('Anna');
+  });
+
+  it('registered: menu and table are label/value pairs under "Deine Anmeldung"', async () => {
+    api.get.mockResolvedValue(detail({ myRegistration: { menuName: 'Fisch', tableNumber: 2 } }, { userRegistered: true }));
+    const { el } = await render();
+    const pairs = Array.from(el.querySelectorAll('[data-registration] dl > div')).map((d) => [
+      d.querySelector('dt')?.textContent?.trim(),
+      d.querySelector('dd')?.textContent?.trim(),
+    ]);
+
+    expect(el.querySelector('[data-registration] h2')?.textContent).toContain('Deine Anmeldung');
+    expect(pairs).toEqual([['Menü', 'Fisch'], ['Tisch', 'Tisch 2']]);
   });
 
   it('registered without a table shows libero', async () => {

@@ -9,6 +9,7 @@ import { ApiError } from '../../core/api/api-client';
 import { SessionStore } from '../../core/auth/session.store';
 import { I18n } from '../../core/i18n/i18n';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { Page } from '../../shared/ui/page';
 
 /** Only same-site paths are allowed as redirect targets (no open redirects). */
 export function safeReturnUrl(url: string | undefined): string {
@@ -17,9 +18,9 @@ export function safeReturnUrl(url: string | undefined): string {
 
 @Component({
   selector: 'app-login-page',
-  imports: [FormField, HlmButtonImports, HlmCardImports, HlmInputImports, HlmLabelImports, TranslatePipe],
+  imports: [FormField, HlmButtonImports, HlmCardImports, HlmInputImports, HlmLabelImports, TranslatePipe, Page],
   template: `
-    <div class="mx-auto mt-8 max-w-sm">
+    <div appPage width="narrow" class="sm:mt-8">
       <section hlmCard>
         <div hlmCardHeader>
           <h1 hlmCardTitle>{{ 'auth.login' | t }}</h1>
