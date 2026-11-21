@@ -36,6 +36,16 @@ src/i18n/       de.json, en.json, es.json (also read by PHP)
 | `/events/:id/guests/new` | `features/guests/guest-registration.page` | everyone |
 | `/social-events/:id` | `features/social-events/social-event-detail.page` | members (`authGuard`) |
 | `/social-events/:id/guests/new` | `features/guests/social-guest-registration.page` | everyone |
+| `/events` | `features/admin/events/event-list.page` | admins (`adminGuard`) |
+| `/events/new` (`?date=YYYY-MM-DD`) | `features/admin/events/event-create.page` | admins |
+| `/events/bulk/new` | `features/admin/events/bulk-create.page` (form, then preview) | admins |
+| `/events/:id/admin` | `features/admin/events/event-admin.page` | admins |
+| `/events/:id/guests/:guestId/edit` | `features/admin/events/guest-edit.page` | admins |
+| `/social-events/new` (`?tournamentId=`) | `features/admin/social-events/social-event-create.page` | admins |
+| `/social-events/:id/admin` | `features/admin/social-events/social-event-admin.page` | admins |
+| `/users` | `features/admin/users/user-list.page` | admins |
+| `/users/new` | `features/admin/users/user-create.page` | admins |
+| `/users/:id/edit` | `features/admin/users/user-edit.page` | admins |
 | anything else | `features/not-found/not-found.page` | everyone |
 
 `RegistrationFlow` (`features/events/registration-flow.ts`) holds register / unregister / comment update
@@ -45,6 +55,12 @@ detail page both use it. Each method resolves with the fresh detail DTO, or `nul
 `ConfirmService.choose({ message, actions })` is the general dialog: it resolves with the `value` of the
 chosen action, or `null` when cancelled (`ask()` is the yes/no shortcut). The unregister dialog uses it for
 "tournament only" / "tournament & dinner".
+
+Admin pages share form components (`event-form`, `social-event-form`, `user-form`) that emit the request
+body; the pages own the API call. A 422 is shown under the matching input (`app-field-error` in
+`shared/forms/`), every other error (e.g. 409 with params) reaches the global error handler as a toast. The
+administration pages write the DTO returned by each mutation back into their `resource`, but re-seed the edit
+form only on load and after its own save, so unsaved edits survive other actions (lock, registrations, …).
 
 ## Rules
 

@@ -43,6 +43,16 @@ export const routes: Routes = [
     loadComponent: () => import('./features/events/event-detail.page').then((m) => m.EventDetailPage),
   },
   {
+    path: 'social-events/new',
+    canActivate: [adminGuard],
+    loadComponent: () => import('./features/admin/social-events/social-event-create.page').then((m) => m.SocialEventCreatePage),
+  },
+  {
+    path: 'social-events/:id/admin',
+    canActivate: [adminGuard],
+    loadComponent: () => import('./features/admin/social-events/social-event-admin.page').then((m) => m.SocialEventAdminPage),
+  },
+  {
     path: 'social-events/:id/guests/new',
     loadComponent: () =>
       import('./features/guests/social-guest-registration.page').then((m) => m.SocialGuestRegistrationPage),
@@ -52,6 +62,21 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () =>
       import('./features/social-events/social-event-detail.page').then((m) => m.SocialEventDetailPage),
+  },
+  {
+    path: 'users',
+    canActivate: [adminGuard],
+    loadComponent: () => import('./features/admin/users/user-list.page').then((m) => m.UserListPage),
+  },
+  {
+    path: 'users/new',
+    canActivate: [adminGuard],
+    loadComponent: () => import('./features/admin/users/user-create.page').then((m) => m.UserCreatePage),
+  },
+  {
+    path: 'users/:id/edit',
+    canActivate: [adminGuard],
+    loadComponent: () => import('./features/admin/users/user-edit.page').then((m) => m.UserEditPage),
   },
   { path: '**', loadComponent: () => import('./features/not-found/not-found.page').then((m) => m.NotFoundPage) },
 ];
