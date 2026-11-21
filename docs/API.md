@@ -23,6 +23,11 @@ The Angular frontend talks to PHP through a JSON API under `/api/*`. API control
 `error` and every `fields.*.key` are translation keys (`frontend/src/i18n/*.json`); the frontend
 translates them. Use `Response::apiError($key, $status, $validation->fieldErrors())`.
 
+Errors that are not tied to a field may carry `params` for the translation, e.g.
+`{ "error": "social_events.menu_in_use", "params": { "menu": "Fisch", "count": 3 } }`. Repository
+code throws `UserFacingException($key, $params)` for such cases; the controller returns it with
+`Response::apiError($e->key, HttpStatus::CONFLICT, [], $e->params)`.
+
 | Status | Meaning | Typical key |
 |---|---|---|
 | 400 | Body is not valid JSON | `errors.invalid_json` |
@@ -90,6 +95,62 @@ rejected on locked events unless the caller is an admin; email and handicap are 
 
 Registering when already registered returns the current detail (idempotent). Events without menus
 ignore `menuId`.
+
+## Admin endpoints
+
+Admin routes live in separate controllers (`EventAdminController`, `SocialEventAdminController`,
+`UserAdminController`) with `CsrfMiddleware` and `AdminMiddleware` at class level, under the same
+REST paths as the member API: anonymous gets 401, a member 403. Date-time inputs use
+`YYYY-MM-DDTHH:MM` (HTML `datetime-local`); they are stored as `YYYY-MM-DD HH:MM:00`. Booleans
+(`male`, `mixed`) must be present in the body (missing: 422 `validation.required`).
+
+**Route order:** routes are sorted by specificity when loaded (literal segments before `{param}`
+segments), so declaration order no longer matters.
+
+**`#[RawResponse]`:** marks a route that returns a non-JSON body (CSV export). The TypeScript
+generator skips it; the UI links to the URL directly.
+
+### Tournaments (`/api/events`)
+
+| Route | Body | Returns | Notes / errors |
+|---|---|---|---|
+| `GET /` | – | `EventSummaryDto[]` | all events by date |
+| `POST /` | `EventRequest` | `EventAdminDto` | 422 (name, date, capacity >= 1) |
+| `GET /{id}/admin` | – | `EventAdminDto` | 404 `events.not_found` |
+| `PUT /{id}` | `EventUpdateRequest` | `EventAdminDto` | 404; 422; the date is not editable |
+| `DELETE /{id}` | – | 204 | 404 |
+| `PUT /{id}/lock`, `DELETE /{id}/lock` | – | `EventAdminDto` | lock / unlock |
+| `GET /{id}/export` | – | CSV (`#[RawResponse]`) | same file as the legacy export |
+| `POST /{id}/registrations/{userId}` | `RegisterRequest` | `EventAdminDto` | 404 event / `users.not_found`; 409 `events.locked_message` |
+| `PATCH /{id}/registrations/{userId}` | `CommentRequest` | `EventAdminDto` | 404 `auth.not_registered`; 409 locked |
+| `DELETE /{id}/registrations/{userId}` | – | `EventAdminDto` | 409 locked; promotes from the waitlist |
+| `GET /{id}/guests/{guestId}` | – | `AdminGuestDto` | 404 `events.not_found` / `guests.not_found` (also for another event's guest) |
+| `PUT /{id}/guests/{guestId}` | `GuestRegistrationRequest` | `AdminGuestDto` | email/handicap optional; 404; 422 |
+| `DELETE /{id}/guests/{guestId}` | – | 204 | 404 |
+| `POST /bulk/preview` | `BulkRequest` | `BulkPreviewDto` | computes the events, stores nothing; 422 |
+| `POST /bulk` | `BulkCreateRequest` | `BulkResultDto` | the client sends the (edited) preview list back; events start locked; 422 per `events.N.field` |
+
+### Social events (`/api/social-events`)
+
+| Route | Body | Returns | Notes / errors |
+|---|---|---|---|
+| `POST /` | `SocialEventRequest` | `SocialEventAdminDto` | name and date required; 422; `tournamentId` optional |
+| `GET /{id}/admin` | – | `SocialEventAdminDto` | 404 `social_events.not_found`; `menus` / `tables` are the comma-separated edit strings |
+| `PUT /{id}` | `SocialEventRequest` | `SocialEventAdminDto` | `tournamentId` ignored; 409 with `params` for `social_events.menu_in_use`, `table_in_use`, `table_capacity_too_low` |
+| `DELETE /{id}` | – | 204 | 404 |
+| `PUT /{id}/lock`, `DELETE /{id}/lock` | – | `SocialEventAdminDto` | lock / unlock |
+| `DELETE /{id}/registrations/{registrationId}` | – | `SocialEventAdminDto` | 404 when the registration belongs to another social event |
+
+### Users (`/api/users`)
+
+| Route | Body | Returns | Notes / errors |
+|---|---|---|---|
+| `GET /` | – | `AdminUserDto[]` | ordered by last name, first name, username |
+| `POST /` | `UserCreateRequest` | `AdminUserDto` | 422; taken username: `fields.username = { key: "users.username_taken", params: { username } }` |
+| `GET /{id}` | – | `AdminUserDto` | 404 `users.not_found` |
+| `PUT /{id}` | `UserUpdateRequest` | `AdminUserDto` | empty/missing `password` keeps the old one; 422 as above (own username is fine) |
+| `PUT /{id}/admin`, `DELETE /{id}/admin` | – | `AdminUserDto` | grant / revoke admin |
+| `DELETE /{id}` | – | 204 | 409 `errors.forbidden` when an admin deletes themselves |
 
 ## Testing
 

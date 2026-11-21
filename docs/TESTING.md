@@ -434,7 +434,7 @@ Step 3: Cleaning up test database...
 
 Typical test execution time:
 - Database initialization: ~1 second
-- Test suite execution: ~40-45 seconds (571 tests)
+- Test suite execution: ~40-45 seconds (631 tests)
 - **Total: ~45 seconds**
 
 ## Best Practices
