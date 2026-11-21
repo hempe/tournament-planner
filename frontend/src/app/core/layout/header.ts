@@ -10,19 +10,33 @@ import { TranslatePipe } from '../i18n/translate.pipe';
   imports: [RouterLink, RouterLinkActive, HlmButtonImports, TranslatePipe],
   template: `
     <header class="border-b border-border bg-background">
-      <nav class="mx-auto flex max-w-5xl flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3">
-        <a routerLink="/" class="font-semibold tracking-wide">{{ 'app.name' | t }}</a>
-        @if (session.loggedIn()) {
-          @if (session.isAdmin()) {
-            <a routerLink="/events" routerLinkActive="text-primary">{{ 'nav.events' | t }}</a>
-            <a routerLink="/users" routerLinkActive="text-primary">{{ 'nav.users' | t }}</a>
+      <!-- Branding as on the previous site: logo 100px (75px below md), club name 21px/13px Hind Guntur -->
+      <div class="flex flex-wrap items-start gap-x-4 gap-y-2 p-[10px]">
+        <div class="flex min-w-0 gap-5">
+          <a href="https://www.golfelfaro.es" class="shrink-0">
+            <img src="/favicon.svg" alt="EL FARO GOLF" class="size-[75px] md:size-[100px]" />
+          </a>
+          <a
+            routerLink="/"
+            class="site-name min-w-0 basis-[300px] pt-[27px] text-[13px] leading-[1.1em] md:pt-[35px] md:text-[21px]"
+            data-testid="site-name"
+          >
+            {{ 'app.club_name_line1' | t }}<br />{{ 'app.club_name_line2' | t }}
+          </a>
+        </div>
+        <nav class="ml-auto flex flex-wrap items-center gap-x-4 gap-y-2 pt-1">
+          @if (session.loggedIn()) {
+            @if (session.isAdmin()) {
+              <a routerLink="/events" routerLinkActive="text-primary">{{ 'nav.events' | t }}</a>
+              <a routerLink="/users" routerLinkActive="text-primary">{{ 'nav.users' | t }}</a>
+            }
+            <span class="text-sm text-muted-foreground">{{ session.user()?.displayName }}</span>
+            <button hlmBtn variant="ghost" size="sm" type="button" (click)="logout()">{{ 'nav.logout' | t }}</button>
+          } @else {
+            <a hlmBtn size="sm" routerLink="/login">{{ 'auth.login' | t }}</a>
           }
-          <span class="ml-auto text-sm text-muted-foreground">{{ session.user()?.displayName }}</span>
-          <button hlmBtn variant="ghost" size="sm" type="button" (click)="logout()">{{ 'nav.logout' | t }}</button>
-        } @else {
-          <a hlmBtn size="sm" class="ml-auto" routerLink="/login">{{ 'auth.login' | t }}</a>
-        }
-      </nav>
+        </nav>
+      </div>
     </header>
   `,
 })

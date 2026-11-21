@@ -102,3 +102,9 @@
   --destructive: #b6334d;
   --social: #2272b6;
 }
+
+/* Branding: the whole app uses the club font (loaded in index.html) */
+html,
+body {
+  font-family: var(--font-sans);
+}

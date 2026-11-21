@@ -1,7 +1,9 @@
 {
     "app": {
         "name": "GOLF EL FARO",
-        "welcome": "Welcome to GOLF EL FARO"
+        "welcome": "Welcome to GOLF EL FARO",
+        "club_name_line1": "CLUB DEPORTIVO DE GOLF",
+        "club_name_line2": "EL FARO DE MASPALOMAS"
     },
     "nav": {
         "home": "Home",

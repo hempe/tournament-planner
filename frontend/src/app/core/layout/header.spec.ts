@@ -26,10 +26,25 @@ describe('Header', () => {
       ],
     });
     TestBed.inject(I18n).use('de', {
-      app: { name: 'GOLF EL FARO' },
+      app: { name: 'GOLF EL FARO', club_name_line1: 'CLUB DEPORTIVO DE GOLF', club_name_line2: 'EL FARO DE MASPALOMAS' },
       nav: { events: 'Anlässe', users: 'Benutzer', logout: 'Abmelden' },
       auth: { login: 'Mitglieder Anmeldung', logout_success: 'Erfolgreich abgemeldet' },
     });
+  });
+
+  it('shows the club logo (linking to the club website) and the two-line club name', async () => {
+    const fixture = TestBed.createComponent(Header);
+    await fixture.whenStable();
+    const el: HTMLElement = fixture.nativeElement;
+
+    const logo = el.querySelector('img');
+    expect(logo?.getAttribute('src')).toBe('/favicon.svg');
+    expect(logo?.closest('a')?.getAttribute('href')).toBe('https://www.golfelfaro.es');
+    const name = el.querySelector('[data-testid="site-name"]');
+    expect(name?.textContent).toContain('CLUB DEPORTIVO DE GOLF');
+    expect(name?.textContent).toContain('EL FARO DE MASPALOMAS');
+    expect(name?.querySelector('br')).not.toBeNull();
+    expect(name?.getAttribute('href')).toBe('/');
   });
 
   it('shows only the login link when logged out', async () => {
