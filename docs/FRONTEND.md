@@ -13,6 +13,7 @@ The new UI lives in `frontend/` — an Angular 22 single-page app that talks to 
 | `npm run check:i18n` | fail on translation keys that don't exist |
 | `npm run build` | regenerate the API client, then production build |
 | `npm run api` | regenerate `src/app/core/api/generated.ts` |
+| `npm run e2e` | Playwright E2E against Apache + MariaDB in Docker (needs Docker; see `docs/TESTING.md`) |
 
 From the repository root, `./run.sh` starts PHP and the Angular dev server together.
 
@@ -88,3 +89,20 @@ npm uninstall @spartan-ng/cli
 ```
 
 Available names: see `npx ng g @spartan-ng/cli:ui --help` while the CLI is installed.
+
+## PWA and update prompt
+
+The production build registers the Angular service worker (`ngsw-worker.js`, `registerWhenStable:30000`;
+disabled in dev mode). `ngsw-config.json`: the `core` group (index, manifest, main/polyfills/styles bundles) is
+prefetched; everything else under `/app/**` and the icons are cached lazily. `/api/**` is never cached, and
+navigation requests fall back to `index.html`.
+
+`build.sh` puts all hashed assets in `app/<version>/` (the build sets `--deploy-url=/app/<version>/`) and keeps
+`index.html`, `ngsw.json` and `version.txt` at the root; they are uploaded last (see `docs/DEPLOYMENT.md`) and
+served with `Cache-Control: no-cache`.
+
+`UpdateService` (`core/update/`) calls `SwUpdate.checkForUpdate()` on start and whenever the tab becomes visible
+again. When a new release is ready it shows a persistent toast ("Neue Version verfügbar" / "Neu laden"); the action
+calls `activateUpdate()` and reloads. Without a service worker, the toast is offered when the `X-App-Version` header of
+an API response differs from the version compiled into the app (`APP_BUILD_VERSION`, `core/version.ts`). The version is
+also shown in the footer.

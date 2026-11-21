@@ -1,8 +1,7 @@
 # JSON API
 
 The Angular frontend talks to PHP through a JSON API under `/api/*`. API controllers live in
-`src/Controllers/Api/`. The old HTML controllers remain until the UI cut-over (see
-`docs/superpowers/specs/2026-11-20-ui-refactor-design.md`).
+`src/Controllers/Api/`. PHP serves nothing but this API and `/health`; the UI is the Angular app in `frontend/`.
 
 ## Conventions
 
@@ -120,7 +119,7 @@ generator skips it; the UI links to the URL directly.
 | `PUT /{id}` | `EventUpdateRequest` | `EventAdminDto` | 404; 422; the date is not editable |
 | `DELETE /{id}` | – | 204 | 404 |
 | `PUT /{id}/lock`, `DELETE /{id}/lock` | – | `EventAdminDto` | lock / unlock |
-| `GET /{id}/export` | – | CSV (`#[RawResponse]`) | same file as the legacy export |
+| `GET /{id}/export` | – | CSV (`#[RawResponse]`) | CSV file download |
 | `POST /{id}/registrations/{userId}` | `RegisterRequest` | `EventAdminDto` | 404 event / `users.not_found`; 409 `events.locked_message` |
 | `PATCH /{id}/registrations/{userId}` | `CommentRequest` | `EventAdminDto` | 404 `auth.not_registered`; 409 locked |
 | `DELETE /{id}/registrations/{userId}` | – | `EventAdminDto` | 409 locked; promotes from the waitlist |

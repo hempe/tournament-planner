@@ -358,7 +358,7 @@ npm run e2e       # Docker + build + Playwright
 - Sessions stay valid (same cookie).
 - Stale open pages submitting legacy forms get a 303 to the new screen.
 - **Cut-over checklist**
-  1. `/admin/migrate-names` shows 0 pending on production.
+  1. Optional: run `/admin/migrate-names` once on the current production (it no longer exists afterwards) to fill first/last names of older accounts.
   2. Run DB migrations, if any.
   3. Deploy per §6.5.
   4. Delete legacy files on the server: `styles/`, `src/scripts/`, `src/Views/`, `src/Components/`,

@@ -4,113 +4,87 @@ A modern PHP web application for managing golf event registrations.
 
 ## What is this?
 
-Tournament Planner is a web application that allows:
-- **Users** to view and register for golf events
-- **Admins** to create events and manage registrations
-- **Calendar view** of all upcoming tournaments
+Tournament Planner is a web application for a golf club:
+- **Members** view the calendar and register for tournaments and social events (dinners)
+- **Guests** register without an account
+- **Admins** create events (also in bulk), manage registrations, guests and users
 
-Built with modern PHP 8.1+, clean MVC architecture, and zero external dependencies.
+It is an Angular single-page app (installable PWA) on top of a PHP JSON API.
 
 ## Quick Start
 
 ```bash
 # 1. Configure database
-cp .env.example .env
-# Edit .env with your database credentials
+# create .env with DB_HOST, DB_PORT, DB_NAME, DB_USERNAME, DB_PASSWORD (see CLAUDE.md)
 
 # 2. Initialize database
 mysql -u root -p < database/init.sql
 
-# 3. Start server
-php -S localhost:5000 -c php.ini
+# 3. Install the frontend dependencies once
+(cd frontend && npm ci)
 
-# 4. Open browser
-# http://localhost:5000
-# Login: admin / Admin123!
+# 4. Start PHP (:5000) and the Angular dev server (:4200)
+./run.sh
+
+# 5. Open http://localhost:4200 - Login: admin / Admin123!
 ```
-
-That's it! 🚀
 
 ## Documentation
 
-### Getting Started
 - **[docs/INSTALLATION.md](docs/INSTALLATION.md)** - Complete installation guide
-- **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)** - Production deployment instructions
-
-### For Developers
-- **[docs/TESTING.md](docs/TESTING.md)** - Testing guide and code coverage
-- **[docs/ROUTING.md](docs/ROUTING.md)** - Routing and middleware system
-- **[docs/COMPONENTS.md](docs/COMPONENTS.md)** - UI component system
-
-### For AI Assistants
+- **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)** - Build, manual upload, rollback and cut-over checklist
+- **[docs/FRONTEND.md](docs/FRONTEND.md)** - Angular app, screens, PWA
+- **[docs/API.md](docs/API.md)** - JSON API
+- **[docs/ROUTING.md](docs/ROUTING.md)** - Routing and middleware
+- **[docs/TESTING.md](docs/TESTING.md)** - PHPUnit, Vitest and Playwright
 - **[CLAUDE.md](CLAUDE.md)** - Development guide for Claude Code
 
 ## Requirements
 
-- PHP 8.1+
+- PHP 8.3+ (production runs 8.3)
 - MySQL 8.0+ or MariaDB 10.6+
 - Extensions: `pdo_mysql`, `mysqli`
-- Node.js 26+ (development and build only — not needed on the server)
+- Apache with `mod_rewrite` (and optionally `mod_headers`) for production
+- Node.js 26+ for development and building only - not needed on the server
+- Docker for the end-to-end tests and the PHP 8.3 lint in `build.sh`
 
 ## Tech Stack
 
-- **Backend**: Pure PHP 8.1+ (no frameworks, zero dependencies)
-- **Database**: MySQL with repository pattern
-- **Architecture**: Modern MVC with Request/Response pattern
-- **Routing**: Custom router with middleware support
-- **Authentication**: Session-based with Argon2ID password hashing
+- **Frontend**: Angular 22 (signals, signal forms), Spartan UI, service worker (PWA)
+- **Backend**: PHP 8.3 JSON API with attribute-based routing, middleware and generated TypeScript client
+- **Database**: MySQL/MariaDB with repository pattern
+- **Authentication**: Session-based with Argon2ID password hashing, CSRF protection
 
 ## Features
 
-✅ Tournament event management (create, edit, delete, lock/unlock)
-✅ Social events linked to tournaments (menu + table selection, no waitlist)
-✅ User authentication and admin roles
-✅ Event registration with waitlist support
-✅ Free-text event prices (e.g. "CHF 80 inkl. Apéro") and descriptions, also in bulk create
-✅ Guest registration (no account required)
-✅ Calendar view showing both event types
-✅ Multi-language support (German/English/Spanish)
-✅ Responsive design
-✅ User-friendly error pages (404, 403, 500)
-✅ Health monitoring endpoint
-✅ Comprehensive test suite (631 tests)
+- Tournament management (create, edit, delete, lock/unlock, CSV export, bulk create)
+- Social events linked to tournaments (menu + table selection, no waitlist)
+- User authentication and admin roles
+- Event registration with waitlist support
+- Free-text event prices and descriptions
+- Guest registration (no account required)
+- Calendar view showing both event types
+- German/English/Spanish
+- Responsive, installable PWA with an in-app update prompt
+- Health monitoring endpoint (`/health`)
+- Test suites: 383 PHPUnit, 239 Vitest, 55 Playwright E2E tests
 
 ## Testing
 
 ```bash
-# Run all tests
-composer test
-
-# Run with code coverage
-composer test:coverage
-
-# Generate HTML coverage report
-composer test:coverage-html
+composer test                  # PHPUnit
+composer test:coverage-check   # with coverage, >= 85 %
+cd frontend && npm test        # Vitest
+cd frontend && npm run e2e     # Playwright against Apache + MariaDB in Docker
 ```
 
-See [TESTING.md](docs/TESTING.md) for detailed testing documentation.
+See [docs/TESTING.md](docs/TESTING.md) for details.
 
 ## Deploying to Production
 
-**Always deploy `dist/`, never the source root.**
-
-```bash
-# 1. Build
-./build.sh
-
-# 2. Upload dist/ contents to the server (not the dist/ folder itself)
-rsync -av dist/ user@server:/var/www/html/
-
-# 3. Ensure the server .env contains (create it if missing — it is NOT in dist/):
-#   APP_ENV=production
-#   DB_HOST=...
-#   DB_PORT=3306
-#   DB_NAME=...
-#   DB_USERNAME=...
-#   DB_PASSWORD=...
-```
-
-The build step combines and fingerprints CSS/JS, pre-builds the route cache, and strips dev dependencies. Shipping the source instead of `dist/` will serve unminified individual files, miss the route cache, and include dev-only composer packages.
+Run `./build.sh` on a clean git tree and upload the two folders it creates (`dist/1-upload-first/`, then
+`dist/2-upload-last/`) to the web root. Never upload the source tree. The full procedure, rollback and the
+one-time cut-over checklist are in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
 ## Quick Links
 

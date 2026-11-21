@@ -15,7 +15,7 @@ The test suite provides comprehensive integration tests that verify the complete
 
 ## Requirements
 
-- PHP 8.1 or higher with `mysqli` extension enabled
+- PHP 8.3 or higher with `mysqli` extension enabled
 - PCOV extension for code coverage (install via: `yay -S php-pcov` on Arch/Manjaro)
 - MySQL/MariaDB database server
 - Composer (for installing PHPUnit)
@@ -130,137 +130,45 @@ php -d pcov.enabled=1 vendor/bin/phpunit --coverage-text
 vendor/bin/phpunit --testsuite integration
 
 # Run a specific test file
-vendor/bin/phpunit tests/Integration/Controllers/AuthControllerTest.php
+vendor/bin/phpunit tests/Integration/Api/AuthApiTest.php
 
 # Run a specific test method
-vendor/bin/phpunit --filter testLoginWithValidCredentials
+vendor/bin/phpunit --filter testLoginWithValidCredentials   # any test method name
 ```
 
 ## Test Structure
 
-### Directory Layout
+Three layers; run all of them for cross-cutting changes.
+
+| Layer | Command | Count |
+|---|---|---|
+| PHPUnit (API, core, models, security) | `composer test` | 383 tests |
+| Vitest (Angular unit/component tests) | `cd frontend && npm test` | 239 tests in 39 files |
+| Playwright E2E (Apache + MariaDB in Docker) | `cd frontend && npm run e2e` | 55 tests (desktop + iPhone 13) |
+
+Never run PHPUnit in parallel (or alongside `npm run e2e`): all suites share the test database `TP_test`.
 
 ```
-tests/
-├── bootstrap.php                        # Test bootstrapper
-├── init-test-db.sh                      # Database initialization script
-├── cleanup-test-db.sh                   # Database cleanup script
-├── grant-test-permissions.sh            # DB permission setup
-└── Integration/
-    ├── IntegrationTestCase.php          # Base test class
-    ├── EventManagementTest.php          # Event workflow (DB-level)
-    ├── LocalizationTest.php             # Translation and locale tests
-    ├── TranslationValidationTest.php    # Translation key completeness
-    ├── Controllers/
-    │   ├── AuthControllerTest.php            # Authentication endpoints
-    │   ├── EventControllerTest.php           # Event CRUD, register, lock, bulk
-    │   ├── GuestControllerTest.php           # Guest registration and management
-    │   ├── HomeControllerTest.php            # Home page and guest redirect
-    │   ├── LanguageControllerTest.php        # Language switching
-    │   ├── SocialEventControllerTest.php     # Social event CRUD, register, guests
-    │   └── UserControllerTest.php            # User CRUD, admin toggle, password
-    ├── Core/
-    │   ├── ConfigTest.php               # Config singleton and env access
-    │   ├── DateTimeHelperTest.php       # Date formatting helpers
-    │   ├── RequestTest.php              # Request parsing and sanitization
-    │   ├── ResponseTest.php             # Response status, redirect, json
-    │   ├── RouteCacheTest.php           # Route cache read/write/invalidate
-    │   └── ValidatorTest.php            # All validation rules
-    ├── Models/
-    │   └── EventRepositoryTest.php      # Repository-level tests
-    └── Security/
-        └── SecurityTest.php             # CSRF, hashing, escaping, rate limit
+tests/Integration/
+├── IntegrationTestCase.php      # Base class: DB reset, login helpers, request() dispatcher
+├── Api/                         # One file per API area (auth, calendar, events, social events,
+│                                #   admin endpoints, guests, CSRF, middleware, generated client, health, ...)
+├── Core/                        # Config, Request, Response, Router, RouteCache, Translator, Validator, ...
+├── Models/                      # Repository tests
+├── Security/SecurityTest.php    # Hashing, escaping, rate limit
+├── Services/                    # Recurring events
+├── LocalizationTest.php
+└── TranslationValidationTest.php
 ```
 
-### Test Files
-
-#### `IntegrationTestCase.php`
-
-Base class for all integration tests providing:
-- Automatic test database setup and teardown
-- Helper methods for simulating HTTP requests
-- Authentication helpers (`loginAsAdmin()`, `loginAs()`)
-- Database cleanup utilities
-
-#### `EventManagementTest.php`
-
-Comprehensive integration tests covering:
-
-1. **Complete Workflow Test** (`testCompleteEventManagementWorkflow`)
-   - Creates a regular user
-   - Creates a single event
-   - Bulk creates weekly recurring events
-   - Tests lock/unlock functionality
-   - Tests user registration and unregistration
-   - Tests waitlist functionality and automatic promotion
-
-2. **User Management Test** (`testUserCreationAndDeletion`)
-   - Creates users via API
-   - Verifies user in database
-   - Deletes users
-
-3. **Event Management Test** (`testEventUpdateAndDelete`)
-   - Updates event name and capacity
-   - Deletes events
-
-## What Gets Tested
-
-### User Management
-- ✅ Create new user with username and password
-- ✅ Verify user exists in database
-- ✅ Delete user
-- ✅ User creation with duplicate username (validation)
-
-### Single Event Creation
-- ✅ Create event with name, date, and capacity
-- ✅ Event is created unlocked by default
-- ✅ Event appears in event list
-- ✅ Event data is correctly stored
-
-### Bulk Event Creation
-- ✅ Create multiple recurring events (e.g., every Wednesday)
-- ✅ Correct date calculation for day-of-week
-- ✅ All bulk events are created as locked
-- ✅ Event count matches expected number
-
-### Lock/Unlock Functionality
-- ✅ Lock an event
-- ✅ Verify event is locked in database
-- ✅ Unlock an event
-- ✅ Verify event is unlocked
-- ✅ Locked status prevents registration (application-level check)
-
-### User Registration
-- ✅ Register user for an event
-- ✅ Registration includes optional comment
-- ✅ Registration state is "confirmed" (state = 1)
-- ✅ Multiple users can register up to capacity
-
-### Waitlist Functionality
-- ✅ Users beyond capacity go to waitlist (state = 2)
-- ✅ Waitlisted users don't count toward capacity
-- ✅ When a confirmed user unregisters, waitlisted user is automatically promoted
-- ✅ Promotion maintains timestamp order (first in waitlist promoted first)
-
-### Unregistration
-- ✅ User can unregister from event
-- ✅ Registration is completely removed
-- ✅ Waitlist users are promoted when spots open
-
-### Event Updates
-- ✅ Update event name
-- ✅ Update event capacity
-- ✅ Capacity changes trigger waitlist recalculation
-
-### Event Deletion
-- ✅ Delete event
-- ✅ Event registrations are cascade deleted (foreign key)
+`GeneratedApiTest` fails when `frontend/src/app/core/api/generated.ts` is stale (`composer api:generate`).
+`composer test:coverage-check` fails below 85 % line coverage.
 
 ## Test Database Lifecycle
 
 ### Initialization
 The test database is automatically created and seeded with:
-- Clean schema (tables: users, events, event_users)
+- Clean schema from `database/init.sql`
 - Default admin user (username: `admin`, password: `Admin123!`)
 
 ### Per-Test Cleanup
@@ -318,11 +226,7 @@ $this->loginAs($username, $password);
 $this->cleanDatabase();  // Truncate all tables, re-seed admin
 
 // HTTP Requests (if needed in future)
-$response = $this->request('POST', '/events/new', [
-    'name' => 'Event',
-    'date' => '2026-01-01',
-    'capacity' => 20
-]);
+$response = $this->request('POST', '/api/events', [...]);  // see tests/Integration/Api for examples
 ```
 
 ## Common Issues
@@ -439,126 +343,20 @@ Typical test execution time:
 
 ## Best Practices
 
-1. **Always run tests before committing** to catch regressions early
-2. **Keep tests independent** - each test should work in isolation
-3. **Use descriptive test names** - clearly state what is being tested
-4. **Add echo statements** for verbose output showing test progress
-5. **Clean database before each test** to ensure consistent state
-6. **Test both success and failure cases** where applicable
-
-## Test Coverage Details
-
-### Controller Tests
-
-**AuthController** (89.66% coverage):
-- ✅ Login form display (anonymous, logged in)
-- ✅ Login with valid/invalid credentials
-- ✅ Missing username/password validation
-- ✅ Logout functionality (admin, regular user, anonymous)
-
-**HomeController** (100.00% coverage):
-- ✅ Home page for all three roles (anonymous, regular user, admin)
-- ✅ Date parameter handling
-- ✅ `/guest` redirect with and without query params
-
-**LanguageController** (100.00% coverage):
-- ✅ Switch between all languages (de, en, es)
-- ✅ Invalid locale rejection
-- ✅ Custom redirect handling
-- ✅ Current language API endpoint
-
-**UserController** (75.61% coverage):
-- ✅ User list, create form, user creation with validation
-- ✅ Duplicate username prevention
-- ✅ User deletion, admin toggle, password change
-- ✅ RFEG and member number updates
-- ✅ Anonymous access redirects (all routes)
-- ✅ Regular user forbidden (all routes)
-
-**EventController** (83.96% coverage):
-- ✅ Event listing, detail views, create/update/delete
-- ✅ Lock/unlock, registration/unregistration, comment updates
-- ✅ Bulk event creation (preview → store)
-- ✅ CSV export with registrations and guests
-- ✅ Admin-on-behalf-of-user operations
-- ✅ Anonymous access redirects (all routes)
-- ✅ Regular user forbidden (all admin-only routes)
-- ✅ Not found (404) for all ID-based routes
-
-**GuestController** (88.37% coverage):
-- ✅ Public guest registration form (anonymous, user, admin)
-- ✅ Guest creation with full and optional fields
-- ✅ Admin edit/update/delete of guests
-- ✅ Not found for event and guest IDs
-- ✅ Anonymous returns 403 on admin-only routes
-
-**SocialEventController** (56 tests):
-- ✅ Create/update/delete social events (admin only)
-- ✅ Menu and table creation from comma-separated strings
-- ✅ Linking social event to a tournament
-- ✅ Detail view (auth required), admin view
-- ✅ Member registration with menu + table selection
-- ✅ Capacity enforcement (full = no more registrations)
-- ✅ Table capacity enforcement
-- ✅ Menu/table validation (must belong to event)
-- ✅ Lock/unlock
-- ✅ Guest registration (public, no auth)
-- ✅ Admin deletion of individual registrations
-- ✅ Calendar integration (event appears for correct month/year)
-
-### Localization Tests
-
-- ✅ Language switching (German, English, Spanish)
-- ✅ Translation loading and fallbacks
-- ✅ Session persistence
-- ✅ Translation key consistency across languages
-- ✅ Empty translation detection
-- ✅ Required key validation
-
-## Error Pages
-
-User-friendly error pages with navigation:
-
-**404 - Page Not Found** (`src/Views/Errors/404.php`):
-- Clear "page not found" message
-- Navigation buttons to Home, Events, or Login
-- Translated into all supported languages
-
-**403 - Access Denied** (`src/Views/Errors/403.php`):
-- "Access denied" message
-- Navigation back to safe pages
-
-**500 - Server Error** (`src/Views/Errors/500.php`):
-- Friendly error message
-- Try Again and Home buttons
-- Automatic error logging
+1. Run the tests before committing.
+2. Keep tests independent; call `cleanDatabase()` in `setUp()`.
+3. Cover success and failure paths, and anonymous / member / admin access for every route.
+4. `IntegrationTestCase::request()` resets `$_GET` and `$_POST` on every call; use `$_SESSION = []` to log out within a test.
 
 ## Frontend tests
 
-The Angular app in `frontend/` has its own tests (see `docs/FRONTEND.md`). Run inside `frontend/`:
+The Angular app in `frontend/` has its own tests (see [FRONTEND.md](FRONTEND.md)). Run inside `frontend/`:
 
 | Command | What it does |
 |---|---|
 | `npm test` | Vitest unit/component tests |
 | `npm run lint` | ESLint (incl. the RxJS/HttpClient ban) |
 | `npm run check:i18n` | fail on translation keys that don't exist |
-
-## Future Enhancements
-
-Potential additions to the test suite:
-
-- [ ] CSRF token validation tests
-- [ ] Browser automation tests (Selenium/Playwright)
-- [ ] Component unit tests
-- [ ] Performance/load tests
-
-## Support
-
-For issues or questions about testing:
-1. Check this documentation
-2. Review test output for error messages
-3. Check database logs: `sudo journalctl -u mysql`
-4. Open an issue on GitHub with test output
 
 ## End-to-end tests (Playwright)
 

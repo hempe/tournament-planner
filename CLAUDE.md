@@ -1,183 +1,82 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Guidance for Claude Code (claude.ai/code) when working in this repository.
 
-## Development Commands
+## Commands
 
-**Start development server:**
 ```bash
-php -S localhost:5000 -c php.ini
+./run.sh                         # PHP API on :5000 + Angular dev server on :4200 (proxies /api)
+composer test                    # PHPUnit (needs MySQL/MariaDB; never run two PHPUnit processes at once)
+composer test:coverage-check     # PHPUnit with PCOV, fails below 85 % line coverage
+composer api:generate            # regenerate frontend/src/app/core/api/generated.ts from the PHP DTOs
+composer api:check               # fail if generated.ts is stale (also a PHPUnit test and part of build.sh)
+./build.sh                       # production build -> dist/1-upload-first + dist/2-upload-last (clean git tree required; --dirty to override)
+mysql < database/init.sql        # create/upgrade the schema (./migrate.sh does the same from .env)
 ```
 
-**Quick run script:**
-```bash
-./run.sh
-```
+Inside `frontend/`: `npm test` (Vitest), `npm run lint`, `npm run check:i18n`, `npx ng build`, `npm run e2e`
+(Playwright against Apache + MariaDB in Docker, builds two releases itself; `E2E_SKIP_SLOW=1` skips the update spec).
 
-**Database initialization:**
-```bash
-mysql < database/init.sql
-```
+`.env` holds `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USERNAME`, `DB_PASSWORD`; production also needs `APP_ENV=production`.
 
-**Run tests:**
-```bash
-composer test              # Run all tests
-composer test:coverage     # Run with code coverage
-```
+## Architecture
 
-**Frontend (Angular, in `frontend/`):**
-```bash
-./run.sh                   # PHP on :5000 + Angular dev server on :4200
-cd frontend && npm test    # Vitest
-npm run lint               # includes the no-RxJS / no-HttpClient rule
-npm run check:i18n         # unknown translation keys
-composer api:generate      # regenerate frontend/src/app/core/api/generated.ts after DTO changes
-```
+Golf event management: tournaments (`events`) and social events (`social_events`, always linked to a tournament;
+menus and tables, no waitlist).
 
-**Environment setup:**
-Copy `.env` file and configure database credentials:
-```bash
-# .env file should contain:
-DB_HOST=localhost
-DB_PORT=3306
-DB_NAME=TPDb
-DB_USERNAME=TP
-DB_PASSWORD=your_password
-```
+- **Frontend** — Angular 22 single-page app in `frontend/` (signals, signal forms, Spartan UI components in
+  `src/app/ui/`, no RxJS, no `HttpClient`). Features are lazy-loaded from `app.routes.ts`. It is a PWA
+  (service worker, update prompt). See [docs/FRONTEND.md](docs/FRONTEND.md).
+- **Backend** — PHP 8.3 JSON API under `/api` in `src/Controllers/Api/`. `index.php` only serves `/api/*` and
+  `/health`; there is no server-rendered HTML. See [docs/API.md](docs/API.md).
+- **DTOs and client** — `src/Api/Dto/` define request/response shapes; routes declare them with `#[Returns]` /
+  `#[Body]`. `bin/generate-api.php` turns them into `frontend/src/app/core/api/generated.ts`
+  (commit it; the frontend never hand-writes API types).
+- **Routing** — PHP 8 attributes (`#[Get]`, `#[Post]`, `#[RoutePrefix]`, `#[Middleware]`) discovered by
+  `RouteLoader`, cached in production. See [docs/ROUTING.md](docs/ROUTING.md).
+- **Middleware** — `AuthMiddleware` (401 for anonymous), `AdminMiddleware` (403), `CsrfMiddleware` (every API controller).
+- **Errors** — API errors are `{ "error": "<i18n key>", "fields": {...}, "params": {...} }`; the frontend translates the keys.
+- **Database** — repositories behind `src/Models/DB.php` (`DB::$events`, `DB::$users`, `DB::$guests`, `DB::$socialEvents`).
+  Session-based auth (`User::loggedIn()`, `User::admin()`).
+- **i18n** — `frontend/src/i18n/{de,en,es}.json`, read by the frontend and by PHP (copied to `resources/i18n/` in `dist/`).
+  All user-facing text goes through a key; never hardcode German in code or templates. Keys are checked by `npm run check:i18n`.
+- **Build/deploy** — `build.sh` builds into a version folder `app/<version>/` and splits the output into two manual
+  uploads. See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md). Server `.htaccess`: only `index.php` runs, `/api/*` goes to PHP,
+  everything else is an Angular route.
 
-## Architecture Overview
+### Directory structure
 
-This is a PHP web application for golf event management with a modern MVC architecture:
+- `src/Controllers/Api/`, `src/Api/Dto/`, `src/Core/`, `src/Models/`, `src/Middleware/`, `src/Services/` — backend
+- `frontend/src/app/` — `core/` (api, auth, i18n, layout, update), `features/`, `shared/`, `ui/`
+- `frontend/e2e/`, `e2e/` — Playwright specs, Docker stack (Apache + PHP 8.3 + MariaDB), seed data
+- `tests/Integration/` — PHPUnit tests (API, core, models, security)
+- `bin/` — generator, route cache, dist verification, coverage check
+- `database/` — `init.sql` schema and migrations
 
-### Core Architecture
+## Testing policy
 
-- **Entry Point**: `index.php` - Defines routes using Request/Response pattern and starts the application
-- **Routing System**: Modern router in `src/Core/Router.php` with middleware support and parameter extraction
-- **Request/Response**: PSR-7-like Request and Response objects for HTTP handling
-- **Component System**: Base component class in `src/Core/Component.php` for reusable UI elements
-- **Database Layer**: Repository pattern with `src/Models/DB.php` as main database facade
-- **Configuration**: Environment-based config in `.env` file, loaded by `src/Core/Config.php`
+Every change is tested, no exceptions:
 
-### Key Patterns
+- Run `composer test` for PHP changes and `npm test`, `npm run lint`, `npm run check:i18n` in `frontend/` for frontend changes;
+  run `composer api:check` after touching DTOs or API routes.
+- Add or update tests for modified or new behavior: PHPUnit for API/backend, Vitest for frontend.
+- Cross-cutting, routing, `.htaccess`, build or deploy changes also need `npm run e2e` (and an E2E spec when behavior is new).
+- All tests must pass; pre-existing failures are acceptable, new ones are not.
+- Never run PHPUnit in parallel (shared test DB `TP_test`) — also not alongside `npm run e2e`.
+- Current counts: 383 PHPUnit tests, 239 Vitest tests, 55 Playwright tests (desktop + iPhone 13 projects). PHP coverage must stay >= 85 %.
+- Test DB: `TP_test`, admin seeded as `admin` / `Admin123!`. `IntegrationTestCase::request()` resets `$_GET`/`$_POST` on every call.
+  Details: [docs/TESTING.md](docs/TESTING.md).
 
-**Routing**: Routes are defined via PHP 8 attributes on controller classes/methods, loaded by `RouteLoader`:
-- `#[Get('/path')]`, `#[Post('/path')]` on methods — register GET/POST routes
-- `#[RoutePrefix('/prefix')]` on class — prefix all routes in that class
-- `#[Middleware(SomeMiddleware::class)]` on class or method — attach middleware
-- Routes support URL parameters like `/{id}` which are passed as `$params` array
-- `index.php` bootstraps the app and calls `$routeLoader->load($router)` to discover all attribute-based routes
+## Documentation policy
 
-**Authentication**: Session-based authentication with `User` class providing static methods:
-- `User::loggedIn()` - Check if user is authenticated
-- `User::admin()` - Check admin privileges
-- `User::canEdit($userId)` - Check if user can edit specific user data
+Update docs with every change: [docs/API.md](docs/API.md) for endpoints, [docs/FRONTEND.md](docs/FRONTEND.md) for
+screens and frontend rules, [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for build/deploy, `README.md` for features, and the
+test counts here and in `docs/TESTING.md` after larger changes. New translation keys go into all three `i18n/*.json` files.
 
-**Controllers**: All controllers follow pattern `(Request $request, array $params): Response`
-- Controllers return Response objects (ok, redirect, json, notFound, etc.)
-- Validation handled via `$request->validate()` with ValidationRule objects
+## PHP gotchas (8.3 in production, strict types)
 
-**JSON API**: New API controllers live in `src/Controllers/Api/` under `/api/*` and return DTOs (`final readonly class` in `src/Api/Dto/`) via `Response::json()`, or errors via `Response::apiError()`. Errors are translation keys, never translated text. Every API controller needs `#[Middleware(CsrfMiddleware::class)]`. See [docs/API.md](docs/API.md).
-
-**Components**: All UI Components extend `Component` base class and implement `template()` method. Components support nested rendering and automatic output buffering. See [docs/COMPONENTS.md](docs/COMPONENTS.md) for comprehensive component documentation.
-
-**Translation System**: All user-facing text uses `__('key')` function for internationalization. Translations are defined in `frontend/src/i18n/{de,en,es}.json` (single source for PHP and the Angular app; German is the primary language; keep all three in sync). Never hardcode German text in views.
-
-**Database**: Repository pattern with static instances accessible via `DB::$events`, `DB::$users`, `DB::$guests`, and `DB::$socialEvents`. Database connection configured in `.env` file.
-
-**Testing**: Comprehensive test suite with 631 tests covering controllers, localization, core classes, and event management. Tests use PCOV for fast coverage analysis. All routes have tests for anonymous, regular user, and admin access.
-
-**Error Handling**: User-friendly error pages for 404 (Not Found), 403 (Forbidden), and 500 (Server Error) with navigation buttons to help users get back to safety.
-
-### Directory Structure
-
-- `src/Core/` - Core framework classes (Router, Request, Response, Config, Validator, etc.)
-- `src/Controllers/` - HTTP controllers handling requests
-- `src/Models/` - Database models and repositories
-- `src/Middleware/` - Route middleware (AuthMiddleware, AdminMiddleware)
-- `src/Views/` - View templates organized by feature (Events, Users, Home, SocialEvents)
-- `src/Components/` - Reusable UI Components
-- `src/Layout/` - Header and footer templates
-- `styles/` - CSS files
-- `src/scripts/` - JavaScript files
-
-### Database Setup
-
-Requires MySQL with extensions `pdo_mysql` and `mysqli` enabled. Database schema defined in `database/init.sql` with tables for users, events, event registrations, and social events. Configure database credentials in `.env` file.
-
-## Documentation
-
-- **[Frontend](docs/FRONTEND.md)** - Angular app, rules, generated API client
-- **[Component System](docs/COMPONENTS.md)** - Comprehensive guide to UI components
-  - [Table Component](docs/components/Table.md) - Data tables and form tables
-  - [Page Component](docs/components/Page.md) - Page layout and navigation
-  - [Form Component](docs/components/Form.md) - Forms with CSRF protection
-  - [Card Component](docs/components/Card.md) - Content cards
-- **[Translation System](frontend/src/i18n/de.json)** - i18n strings
-- **[JSON API](docs/API.md)** - API conventions, errors, CSRF
-- **[Testing Guide](docs/TESTING.md)** - Test suite documentation and code coverage
-
-## Important Reminders
-
-### Testing Policy
-
-**Every change must be tested — no exceptions:**
-- Run `composer test` after every PHP change and `npm test && npm run lint && npm run check:i18n` (in `frontend/`) after every frontend change
-- Add or update tests to cover any modified or new behavior
-- All tests must pass (pre-existing failures are acceptable, but do not introduce new ones)
-- New views/features: add integration tests verifying the page renders and contains key content
-- New cross-resource links: add tests verifying the link URL and linked name appear in both directions
-
-### Documentation Policy
-
-**Update docs alongside every change:**
-- New translation keys: they are self-documenting via `frontend/src/i18n/`
-- New `Color` cases: update `docs/COMPONENTS.md` if behavior differs from existing cases
-- New CSS version bumps: bump `?v=X` in `src/Layout/header.php` whenever a CSS file changes
-- After larger feature additions: update `README.md` feature list and `docs/TESTING.md` test count
-
-### Component Usage
-
-**✅ DO:**
-- Use `yield` in generator functions passed to components
-- Use distinct item values in Table (e.g., `[0, 1, 2]` not `[null, null, null]`)
-- Use `__()` for all user-facing text
-- Check component documentation before using
-
-**❌ DON'T:**
-- Use `echo` in generator functions (won't render)
-- Assume Table projection receives index parameter (only receives item)
-- Add parameters that don't exist (e.g., `footer` on Table)
-- Hardcode German text in views
-- Pass translated strings directly as Table cell labels without checking — `is_callable('Date')` returns `true` in PHP because `date()` is a built-in. `Component::captureOutput` uses `instanceof \Closure` (not `is_callable`) to avoid this, but any similar pattern outside Component must also avoid `is_callable` on arbitrary strings.
-
-### Common Patterns
-
-**Multiple items in Page:**
-```php
-<?= new Page(function () {
-    yield new Card('Title 1', 'Content 1');
-    yield new Card('Title 2', 'Content 2');
-}) ?>
-```
-
-**Table with data:**
-```php
-new Table(
-    columns: ['Name', 'Email'],
-    items: $users,
-    projection: fn($user) => [$user->name, $user->email]
-)
-```
-
-**Form table (multiple rows):**
-```php
-new Table(
-    columns: ['Label', 'Input'],
-    items: [0, 1, 2],  // Row indices
-    projection: fn($i) => match($i) {
-        0 => ['Field 1', '<input name="field1">'],
-        1 => ['Field 2', '<input name="field2">'],
-        2 => ['', new IconButton(...)]
-    }
-)
-```
+- `array_map()` does not accept named args for built-in functions.
+- Operator precedence: `$a ?? false || $b === 'x'` returns the string value of `$a` — use `!empty($a) || ...`.
+- Null-guard `$_GET` values before `strtotime()` / `htmlspecialchars()` (deprecated with null).
+- Never use `is_callable` on arbitrary strings (`is_callable('Date')` is true because `date()` exists).
+- Do not use syntax newer than PHP 8.3; `build.sh` lints with `php:8.3-cli` when Docker is available.

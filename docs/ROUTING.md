@@ -159,65 +159,15 @@ $data = $request->getValidatedData();
 ```php
 Response::ok(string $content = ''): Response          // 200
 Response::redirect(string $url): Response             // 303
-Response::json(array $data): Response                 // 200 application/json
+Response::json(array|object $data): Response          // 200 application/json
 Response::unauthorized(): Response                    // 401
-Response::notFound(string $message = ''): Response    // 404 with error page
-Response::forbidden(): Response                       // 403 with error page
+Response::notFound(string $message = ''): Response    // 404 text/plain
+Response::forbidden(): Response                       // 403 text/plain
 ```
 
-`notFound()` and `forbidden()` render full HTML error pages (via `src/Views/Errors/`).
+`notFound()`, `forbidden()` and `unauthorized()` return a plain-text body; API controllers use `Response::apiError()` for JSON errors.
 
-## All Registered Routes
+## Registered Routes
 
-| Method | Pattern | Controller::method | Middleware |
-|--------|---------|-------------------|------------|
-| GET | `/health` | closure | - |
-| GET | `/` | HomeController::index | Auth |
-| GET | `/login` | AuthController::loginForm | - |
-| POST | `/login` | AuthController::login | - |
-| POST | `/logout` | AuthController::logout | Auth |
-| POST | `/language/switch` | LanguageController::switchLanguage | - |
-| GET | `/language/current` | LanguageController::getCurrentLanguage | - |
-| GET | `/events` | EventController::index | Auth |
-| GET | `/events/new` | EventController::create | Auth, Admin |
-| POST | `/events/new` | EventController::store | Auth, Admin |
-| GET | `/events/bulk/new` | EventController::bulkCreate | Auth, Admin |
-| POST | `/events/bulk/preview` | EventController::bulkPreview | Auth, Admin |
-| POST | `/events/bulk/store` | EventController::bulkStore | Auth, Admin |
-| GET | `/events/{id}` | EventController::detail | Auth |
-| GET | `/events/{id}/admin` | EventController::admin | Auth, Admin |
-| POST | `/events/{id}` | EventController::update | Auth, Admin |
-| POST | `/events/{id}/delete` | EventController::delete | Auth, Admin |
-| POST | `/events/{id}/lock` | EventController::lock | Auth, Admin |
-| POST | `/events/{id}/unlock` | EventController::unlock | Auth, Admin |
-| POST | `/events/{id}/register` | EventController::register | Auth |
-| POST | `/events/{id}/unregister` | EventController::unregister | Auth |
-| POST | `/events/{id}/comment` | EventController::updateComment | Auth |
-| GET | `/users` | UserController::index | Auth, Admin |
-| GET | `/users/new` | UserController::create | Auth, Admin |
-| POST | `/users` | UserController::store | Auth, Admin |
-| POST | `/users/{id}/delete` | UserController::delete | Auth, Admin |
-| POST | `/users/{id}/admin` | UserController::toggleAdmin | Auth, Admin |
-| POST | `/users/{id}/password` | UserController::changePassword | Auth, Admin |
-| GET | `/events/{id}/export` | EventController::export | Auth, Admin |
-| POST | `/events/{id}/register` | EventController::register | Auth |
-| POST | `/events/{id}/unregister` | EventController::unregister | Auth |
-| POST | `/events/{id}/comment` | EventController::updateComment | Auth |
-| GET | `/events/{id}/guests/new` | GuestController::create | - |
-| POST | `/events/{id}/guests/new` | GuestController::store | - |
-| GET | `/events/{id}/guests/{gid}/edit` | GuestController::edit | Admin |
-| POST | `/events/{id}/guests/{gid}` | GuestController::update | Admin |
-| POST | `/events/{id}/guests/{gid}/delete` | GuestController::delete | Admin |
-| GET | `/social-events/new` | SocialEventController::create | Admin |
-| POST | `/social-events/new` | SocialEventController::store | Admin |
-| GET | `/social-events/{id}` | SocialEventController::detail | Auth |
-| GET | `/social-events/{id}/admin` | SocialEventController::admin | Admin |
-| POST | `/social-events/{id}` | SocialEventController::update | Admin |
-| POST | `/social-events/{id}/delete` | SocialEventController::delete | Admin |
-| POST | `/social-events/{id}/lock` | SocialEventController::lock | Admin |
-| POST | `/social-events/{id}/unlock` | SocialEventController::unlock | Admin |
-| POST | `/social-events/{id}/register` | SocialEventController::register | Auth |
-| POST | `/social-events/{id}/unregister` | SocialEventController::unregister | Auth |
-| GET | `/social-events/{id}/guests/new` | SocialEventController::createGuest | - |
-| POST | `/social-events/{id}/guests/new` | SocialEventController::storeGuest | - |
-| POST | `/social-events/{id}/registrations/{rid}/delete` | SocialEventController::deleteRegistration | Admin |
+All application routes are JSON endpoints under `/api` (see [API.md](API.md)),
+plus the public `GET /health`. Every other URL is an Angular route served by `.htaccess` (`index.html`).

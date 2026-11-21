@@ -1,569 +1,99 @@
 # Deployment Guide
 
-Production deployment guide for Tournament Planner.
+Tournament Planner is deployed by hand: build on your machine, upload two folders to the web root
+(plain file upload, no shell needed on the server). Never upload the source tree.
 
-## Pre-Deployment Checklist
+## Server requirements
 
-- [ ] Database configured with strong password
-- [ ] `.env` file configured for production
-- [ ] SSL certificate ready
-- [ ] Web server (Apache/Nginx) installed
-- [ ] PHP 8.1+ with required extensions
-- [ ] Logs directory writable
-- [ ] Backups configured
+- PHP 8.3+ with `pdo_mysql` and `mysqli` (production runs 8.3.37; check the version in the hosting panel before uploading).
+- MySQL 8.0+ / MariaDB 10.6+.
+- Apache with `mod_rewrite` (required) and `mod_headers` (optional, sets the cache headers; without it the app
+  works but browsers may cache `index.html` heuristically, which delays updates). `AllowOverride` must permit
+  the `.htaccess` that ships in the build.
+- `logs/` and `storage/cache/` writable by PHP.
+- HTTPS.
 
-## Production Environment Setup
+### What the shipped `.htaccess` does
 
-### 1. Configure Production .env
+- Only `index.php` is executable: every other `.php` file, dotfiles, `*.ini`, `*.lock`, `*.md`, `*.sh`, `*.log`
+  and the folders `src`, `vendor`, `config`, `resources`, `storage`, `logs` answer 404.
+- `/api/*` and `/health` go to `index.php`; real files (`app/<version>/*`, icons, manifest, service worker) are served directly.
+- A non-GET request to any other URL (a form of a page that was open before the switch) gets `303` to the same
+  URL; the Angular app then sends the user to the matching page.
+- Everything else serves `index.html` (the Angular routes).
+- With `mod_headers`: `/app/*` is `public, max-age=31536000, immutable`; `index.html`, `ngsw.json`,
+  `ngsw-worker.js`, `site.webmanifest` and `version.txt` are `no-cache`.
+- `/health` is public; anonymous callers only get `{"status":"ok"}` (`"error"` when the database is unreachable).
+  Logged-in admins see more details.
+
+### `.env` on the server
+
+The `.env` file lives only on the server and is never part of the build or touched by an upload. It must contain:
 
 ```env
 APP_ENV=production
-APP_NAME="GOLF EL FARO"
-APP_URL=https://yourdomain.com
-APP_TIMEZONE=Europe/Zurich
-APP_LOCALE=de
-
 DB_HOST=localhost
 DB_PORT=3306
-DB_NAME=TPDb
-DB_USERNAME=TP
-DB_PASSWORD=strong_production_password
-DB_CHARSET=utf8mb4
-
-LOG_LEVEL=INFO
-LOG_FILE=/var/www/golf-el-faro/logs/app.log
-
-SESSION_LIFETIME=3600
+DB_NAME=...
+DB_USERNAME=...
+DB_PASSWORD=...
 ```
 
-### 2. Apache Configuration
+`APP_SECURE=true` (secure session cookies) is already the default in production; set `APP_SECURE=false` only if
+the site is served without HTTPS. Without `APP_ENV=production` the app runs in development mode.
 
-Create `/etc/apache2/sites-available/golf-el-faro.conf`:
+## Release procedure
 
-```apache
-<VirtualHost *:80>
-    ServerName yourdomain.com
-    ServerAlias www.yourdomain.com
-    DocumentRoot /var/www/golf-el-faro
+1. **Build** on a clean git tree (commit first; `--dirty` is for experiments only):
 
-    # Redirect to HTTPS
-    Redirect permanent / https://yourdomain.com/
-</VirtualHost>
-
-<VirtualHost *:443>
-    ServerName yourdomain.com
-    ServerAlias www.yourdomain.com
-    DocumentRoot /var/www/golf-el-faro
-
-    # SSL Configuration
-    SSLEngine on
-    SSLCertificateFile /etc/letsencrypt/live/yourdomain.com/fullchain.pem
-    SSLCertificateKeyFile /etc/letsencrypt/live/yourdomain.com/privkey.pem
-
-    <Directory /var/www/golf-el-faro>
-        Options -Indexes +FollowSymLinks
-        AllowOverride All
-        Require all granted
-
-        # Route all requests through index.php
-        RewriteEngine On
-        RewriteCond %{REQUEST_FILENAME} !-f
-        RewriteCond %{REQUEST_FILENAME} !-d
-        RewriteRule ^ index.php [L]
-    </Directory>
-
-    # Security Headers
-    Header always set X-Frame-Options "SAMEORIGIN"
-    Header always set X-Content-Type-Options "nosniff"
-    Header always set X-XSS-Protection "1; mode=block"
-    Header always set Referrer-Policy "strict-origin-when-cross-origin"
-    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
-
-    # Hide PHP version
-    Header unset X-Powered-By
-    ServerSignature Off
-
-    # Logging
-    ErrorLog ${APACHE_LOG_DIR}/golf-el-faro-error.log
-    CustomLog ${APACHE_LOG_DIR}/golf-el-faro-access.log combined
-</VirtualHost>
-```
-
-Enable required modules:
-```bash
-a2enmod rewrite ssl headers
-a2ensite golf-el-faro
-systemctl restart apache2
-```
-
-### 3. Nginx Configuration
-
-Create `/etc/nginx/sites-available/golf-el-faro`:
-
-```nginx
-# Redirect HTTP to HTTPS
-server {
-    listen 80;
-    listen [::]:80;
-    server_name yourdomain.com www.yourdomain.com;
-    return 301 https://$server_name$request_uri;
-}
-
-server {
-    listen 443 ssl http2;
-    listen [::]:443 ssl http2;
-    server_name yourdomain.com www.yourdomain.com;
-
-    root /var/www/golf-el-faro;
-    index index.php;
-
-    # SSL Configuration
-    ssl_certificate /etc/letsencrypt/live/yourdomain.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/yourdomain.com/privkey.pem;
-    ssl_protocols TLSv1.2 TLSv1.3;
-    ssl_ciphers HIGH:!aNULL:!MD5;
-    ssl_prefer_server_ciphers on;
-
-    # Security Headers
-    add_header X-Frame-Options "SAMEORIGIN" always;
-    add_header X-Content-Type-Options "nosniff" always;
-    add_header X-XSS-Protection "1; mode=block" always;
-    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
-
-    # Hide server version
-    server_tokens off;
-
-    # Main location
-    location / {
-        try_files $uri $uri/ /index.php?$query_string;
-    }
-
-    # PHP-FPM
-    location ~ \.php$ {
-        include snippets/fastcgi-php.conf;
-        fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-        include fastcgi_params;
-    }
-
-    # Deny access to sensitive files
-    location ~ /\.env {
-        deny all;
-    }
-
-    location ~ /\.git {
-        deny all;
-    }
-
-    # Logging
-    access_log /var/log/nginx/golf-el-faro-access.log;
-    error_log /var/log/nginx/golf-el-faro-error.log;
-}
-```
-
-Enable site:
-```bash
-ln -s /etc/nginx/sites-available/golf-el-faro /etc/nginx/sites-enabled/
-nginx -t
-systemctl restart nginx
-```
-
-### 4. File Permissions
-
-Set proper ownership and permissions:
-
-```bash
-# Set ownership
-chown -R www-data:www-data /var/www/golf-el-faro
-
-# Application files (read-only)
-find /var/www/golf-el-faro -type f -exec chmod 644 {} \;
-find /var/www/golf-el-faro -type d -exec chmod 755 {} \;
-
-# Make PHP files executable
-chmod 755 /var/www/golf-el-faro/index.php
-chmod 755 /var/www/golf-el-faro/bootstrap.php
-
-# Writable logs directory
-chmod 775 /var/www/golf-el-faro/logs
-chown -R www-data:www-data /var/www/golf-el-faro/logs
-
-# Protect sensitive files
-chmod 600 /var/www/golf-el-faro/.env
-```
-
-### 5. SSL Certificate (Let's Encrypt)
-
-Install Certbot:
-```bash
-# Ubuntu/Debian
-apt-get install certbot python3-certbot-apache
-# or
-apt-get install certbot python3-certbot-nginx
-```
-
-Obtain certificate:
-```bash
-# For Apache
-certbot --apache -d yourdomain.com -d www.yourdomain.com
-
-# For Nginx
-certbot --nginx -d yourdomain.com -d www.yourdomain.com
-```
-
-Set up auto-renewal:
-```bash
-# Test renewal
-certbot renew --dry-run
-
-# Auto-renewal should already be set up via systemd timer
-systemctl status certbot.timer
-```
-
-### 6. Database Optimization
-
-Add indexes for production:
-```sql
-USE TPDb;
-
-CREATE INDEX idx_events_date ON events(date);
-CREATE INDEX idx_event_users_event_id ON event_users(eventId);
-CREATE INDEX idx_event_users_user_id ON event_users(userId);
-CREATE INDEX idx_users_username ON users(username);
-
--- Verify indexes
-SHOW INDEX FROM events;
-SHOW INDEX FROM event_users;
-SHOW INDEX FROM users;
-```
-
-Configure MySQL for production:
-```ini
-# /etc/mysql/mysql.conf.d/mysqld.cnf
-[mysqld]
-max_connections = 100
-innodb_buffer_pool_size = 256M
-innodb_log_file_size = 64M
-query_cache_type = 1
-query_cache_size = 32M
-```
-
-Restart MySQL:
-```bash
-systemctl restart mysql
-```
-
-### 7. PHP Configuration
-
-Production php.ini settings:
-```ini
-; Security
-expose_php = Off
-display_errors = Off
-log_errors = On
-error_log = /var/log/php/error.log
-
-; Performance
-memory_limit = 256M
-max_execution_time = 30
-upload_max_filesize = 10M
-post_max_size = 10M
-
-; Session Security
-session.cookie_httponly = 1
-session.cookie_secure = 1
-session.cookie_samesite = Strict
-session.use_strict_mode = 1
-session.gc_maxlifetime = 3600
-
-; OpCache (for performance)
-opcache.enable = 1
-opcache.memory_consumption = 128
-opcache.interned_strings_buffer = 8
-opcache.max_accelerated_files = 10000
-opcache.validate_timestamps = 0
-```
-
-Restart PHP-FPM:
-```bash
-systemctl restart php8.1-fpm
-```
-
-### 8. Log Rotation
-
-Create `/etc/logrotate.d/golf-el-faro`:
-```
-/var/www/golf-el-faro/logs/*.log {
-    daily
-    rotate 14
-    compress
-    delaycompress
-    notifempty
-    create 0640 www-data www-data
-    sharedscripts
-    postrotate
-        systemctl reload php8.1-fpm > /dev/null 2>&1 || true
-    endscript
-}
-```
-
-Test log rotation:
-```bash
-logrotate -d /etc/logrotate.d/golf-el-faro
-```
-
-### 9. Firewall Configuration
-
-Configure UFW (Ubuntu):
-```bash
-ufw allow 'Nginx Full'  # or 'Apache Full'
-ufw allow OpenSSH
-ufw enable
-ufw status
-```
-
-Or iptables:
-```bash
-iptables -A INPUT -p tcp --dport 80 -j ACCEPT
-iptables -A INPUT -p tcp --dport 443 -j ACCEPT
-iptables-save > /etc/iptables/rules.v4
-```
-
-### 10. Monitoring Setup
-
-#### Health Check Monitoring
-
-Add to cron (`/etc/cron.d/golf-el-faro-health`):
-```
-*/5 * * * * www-data curl -sf https://yourdomain.com/health > /dev/null || echo "Health check failed" | mail -s "GOLF EL FARO Down" admin@example.com
-```
-
-#### Log Monitoring
-
-Watch for errors:
-```bash
-tail -f /var/www/golf-el-faro/logs/app.log | grep ERROR
-```
-
-#### Disk Space Monitoring
-
-```bash
-df -h /var/www/golf-el-faro
-```
-
-## Backup Strategy
-
-### Database Backups
-
-Create backup script `/usr/local/bin/backup-golf-db.sh`:
-```bash
-#!/bin/bash
-BACKUP_DIR="/var/backups/golf-el-faro"
-DATE=$(date +%Y%m%d_%H%M%S)
-
-mkdir -p $BACKUP_DIR
-
-mysqldump -u TP -p'password' TPDb \
-    | gzip > $BACKUP_DIR/db_backup_$DATE.sql.gz
-
-# Keep only last 30 days
-find $BACKUP_DIR -name "db_backup_*.sql.gz" -mtime +30 -delete
-```
-
-Add to cron (daily at 2 AM):
-```bash
-0 2 * * * /usr/local/bin/backup-golf-db.sh
-```
-
-### File Backups
-
-```bash
-#!/bin/bash
-BACKUP_DIR="/var/backups/golf-el-faro"
-DATE=$(date +%Y%m%d_%H%M%S)
-
-tar -czf $BACKUP_DIR/files_$DATE.tar.gz \
-    /var/www/golf-el-faro \
-    --exclude='/var/www/golf-el-faro/logs' \
-    --exclude='/var/www/golf-el-faro/cache'
-
-# Keep only last 7 days
-find $BACKUP_DIR -name "files_*.tar.gz" -mtime +7 -delete
-```
-
-## Deployment Process
-
-### Initial Deployment
-
-```bash
-# 1. Upload code
-git clone https://github.com/your-repo/tournament-planner.git /var/www/golf-el-faro
-
-# 2. Configure environment
-cp .env.example .env
-nano .env
-
-# 3. Set permissions
-chown -R www-data:www-data /var/www/golf-el-faro
-chmod 600 .env
-
-# 4. Initialize database
-mysql -u root -p < database/init.sql
-
-# 5. Test
-curl https://yourdomain.com/health
-```
-
-### Updates/Redeployment
-
-```bash
-# 1. Backup first!
-/usr/local/bin/backup-golf-db.sh
-
-# 2. Put site in maintenance mode (optional)
-# Create maintenance.html in document root
-
-# 3. Pull latest code
-cd /var/www/golf-el-faro
-git pull origin main
-
-# 4. Update database if needed
-mysql -u TP -p TPDb < migrations/migration_YYYYMMDD.sql
-
-# 5. Clear PHP OpCache
-systemctl reload php8.1-fpm
-
-# 6. Verify
-curl https://yourdomain.com/health
-
-# 7. Remove maintenance mode
-```
-
-## Post-Deployment Verification
-
-### Checklist
-
-- [ ] Site accessible via HTTPS
-- [ ] HTTP redirects to HTTPS
-- [ ] `/health` endpoint returns `{"status":"ok"}`
-- [ ] Can login with admin account
-- [ ] Database queries working
-- [ ] Logs being written to `logs/app.log`
-- [ ] SSL certificate valid
-- [ ] Security headers present
-- [ ] No PHP errors in logs
-
-### Test Commands
-
-```bash
-# Check HTTPS
-curl -I https://yourdomain.com
-
-# Check health
-curl https://yourdomain.com/health
-
-# Check security headers
-curl -I https://yourdomain.com | grep -E "(X-Frame-Options|X-Content-Type-Options)"
-
-# Check logs
-tail -20 /var/www/golf-el-faro/logs/app.log
-
-# Check database
-mysql -u TP -p TPDb -e "SELECT COUNT(*) FROM users;"
-```
-
-## Troubleshooting
-
-### Site Not Accessible
-
-1. Check web server status:
    ```bash
-   systemctl status apache2  # or nginx
+   ./build.sh
    ```
 
-2. Check logs:
-   ```bash
-   tail -50 /var/log/apache2/error.log  # or /var/log/nginx/error.log
-   ```
+   It checks that `generated.ts` is current, lints PHP with PHP 8.3 (Docker, if available), builds the Angular app
+   into a version folder `app/<version>/` (`<version>` = `YYYY-MM-DD-<git hash>`), assembles the PHP backend with
+   production-only Composer packages and a pre-built route cache, verifies the structure and prints the upload
+   instructions. It also keeps a copy of step 2 in `releases/<version>/` (git-ignored) for rollback.
 
-3. Verify DNS:
-   ```bash
-   dig yourdomain.com
-   ```
+2. **Database migrations**: if the release changed the schema, run the new `ALTER` statements from
+   `database/init.sql` on the production database first (the old release keeps working with the added columns).
 
-### 500 Internal Server Error
+3. **Upload step 1**: the contents of `dist/1-upload-first/` into the web root (merge into the existing
+   files; keep `.env` and the existing `app/` folders). This is safe at any time: it adds `app/<version>/` and the
+   new PHP code, users still see the old version.
 
-1. Check PHP logs:
-   ```bash
-   tail -50 /var/www/golf-el-faro/logs/app.log
-   ```
+4. **Upload step 2**: the contents of `dist/2-upload-last/` (`index.html`, `ngsw.json`, `version.txt`) into the
+   web root. **The new version goes live now.** Always upload this folder last: `index.html` points at the new
+   `app/<version>/` files, which must already exist.
 
-2. Check PHP-FPM status:
-   ```bash
-   systemctl status php8.1-fpm
-   ```
+5. **Check the version**: open `https://<your-domain>/version.txt` (it must show the new version; the app footer shows
+   it too) and click through the calendar and a login. Open apps pick up the release on their next start or when
+   the tab becomes visible again and show "Neue Version verfügbar".
 
-3. Check file permissions:
-   ```bash
-   ls -la /var/www/golf-el-faro
-   ```
+6. **Clean up**: in `app/` on the server delete all version folders except the newest 3 (names sort by date). Do not
+   delete the version you may want to roll back to.
 
-### Database Connection Issues
+### Rollback
 
-1. Test connection:
-   ```bash
-   mysql -u TP -p -h localhost TPDb
-   ```
+Upload the contents of `releases/<previous version>/` (from your machine) into the web root. This works as long as
+`app/<previous version>/` still exists on the server (hence keeping the newest 3). The build prints the previous
+version. The PHP code is rolled back by checking out the old commit, running `./build.sh` and uploading both folders
+again. Database changes are not rolled back (additive migrations are compatible with the old release).
 
-2. Check `.env` configuration
+## One-time cut-over checklist (old PHP UI to the Angular app)
 
-3. Verify user permissions:
-   ```sql
-   SHOW GRANTS FOR 'TP'@'localhost';
-   ```
+Do this once, for the first Angular release.
 
-## Security Hardening
-
-### Additional Measures
-
-1. **Rate Limiting** (Nginx):
-   ```nginx
-   limit_req_zone $binary_remote_addr zone=one:10m rate=10r/s;
-   limit_req zone=one burst=20;
-   ```
-
-2. **Fail2ban** for failed login attempts
-
-3. **Regular Security Updates**:
-   ```bash
-   apt-get update && apt-get upgrade
-   ```
-
-4. **Database User Restrictions**:
-   ```sql
-   REVOKE ALL PRIVILEGES ON *.* FROM 'TP'@'localhost';
-   GRANT SELECT, INSERT, UPDATE, DELETE ON TPDb.* TO 'TP'@'localhost';
-   ```
-
-## Rollback Procedure
-
-If deployment fails:
-
-```bash
-# 1. Restore database
-mysql -u TP -p TPDb < /var/backups/golf-el-faro/db_backup_LATEST.sql.gz
-
-# 2. Restore code
-cd /var/www/golf-el-faro
-git checkout previous-stable-tag
-
-# 3. Restart services
-systemctl restart apache2 php8.1-fpm
-```
-
-## Next Steps
-
-- [Monitor application health](README.md#monitoring)
-- [Review application logs regularly](INSTALLATION.md#watch-logs)
-- [Set up automated backups](#backup-strategy)
-- [Configure monitoring alerts](#health-check-monitoring)
+1. [ ] **Optional**: to fill first/last names of older accounts from their usernames, open
+   `/admin/migrate-names` on the **current** production (while the old release is still live) and run it once before
+   uploading the new release (the page no longer exists afterwards). Users without a first name are shown by username
+   and can be edited under Benutzer.
+2. [ ] Check the PHP version in the hosting panel: 8.3 or newer.
+3. [ ] Check that `.env` on the server contains `APP_ENV=production` and the database settings.
+4. [ ] Run the database migrations, if any (`database/init.sql` contains them).
+5. [ ] Build (`./build.sh`) and deploy as described above (step 1 folder, then step 2 folder).
+6. [ ] Check `/version.txt`, `/health` (`{"status":"ok"}`), log in, open the calendar and a tournament.
+7. [ ] Delete the legacy files on the server: `styles/`, `src/scripts/`, `src/Views/`, `src/Components/`,
+   `src/Layout/`, `resources/lang/`. (Their routes are blocked by `.htaccess` or no longer referenced, but they should not stay.)
+8. [ ] Open the app on a phone that still has the old home-screen shortcut and check that it loads the new app.
+   Sessions and URLs stay valid; pages that were open during the switch redirect to the matching screen when submitted.

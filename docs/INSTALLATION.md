@@ -5,7 +5,7 @@ Complete guide for installing Tournament Planner on your local machine or develo
 ## Prerequisites
 
 ### Required Software
-- **PHP 8.1 or higher**
+- **PHP 8.3 or higher**
   ```bash
   php -v  # Check version
   ```
@@ -118,7 +118,8 @@ Start the development server:
 php -S localhost:5000 -c php.ini
 ```
 
-Open http://localhost:5000 in your browser.
+This serves the JSON API and `/health`. For the UI run `./run.sh` instead (PHP on :5000 plus the Angular dev
+server on http://localhost:4200, needs Node.js 26+; see [FRONTEND.md](FRONTEND.md)) and open http://localhost:4200.
 
 ### 6. First Login
 
@@ -136,14 +137,9 @@ Default admin credentials:
 curl http://localhost:5000/health
 ```
 
-Expected response:
+Expected response (anonymous callers only get the status; logged-in admins also see PHP version, environment, etc.):
 ```json
-{
-  "status": "ok",
-  "database": "connected",
-  "php_version": "8.1.x",
-  "environment": "development"
-}
+{"status":"ok"}
 ```
 
 ### Test Database Connection
@@ -193,7 +189,7 @@ VALUES
 2. Enable extensions in `php.ini`:
    - Find php.ini location: `php --ini`
    - Uncomment or add: `extension=mysqli`
-3. Restart PHP: `sudo systemctl restart php8.1-fpm` (if using PHP-FPM)
+3. Restart PHP: `sudo systemctl restart php8.3-fpm` (if using PHP-FPM)
 
 ### Port Already in Use
 
@@ -262,13 +258,7 @@ mysql -u root -p TPDb < database/init.sql
 
 ### Quick Run Script
 
-Create `run.sh`:
-```bash
-#!/bin/bash
-php -S localhost:5000 -c php.ini
-```
-
-Make it executable:
+`run.sh` starts PHP and the Angular dev server together. Make it executable if needed:
 ```bash
 chmod +x run.sh
 ./run.sh
@@ -296,7 +286,7 @@ mysql -u TP -p TPDb < backup_YYYYMMDD_HHMMSS.sql
 
 - [Deploy to production](DEPLOYMENT.md)
 - [Routing system](ROUTING.md)
-- [Component system](COMPONENTS.md)
+- [Frontend (Angular)](FRONTEND.md)
 
 ## Getting Help
 
