@@ -3,6 +3,7 @@
 # Build script — produces dist/1-upload-first/ and dist/2-upload-last/.
 #   ./build.sh            clean working tree required
 #   ./build.sh --dirty    allow uncommitted changes (version gets a -dirty suffix)
+#   BUILD_VERSION=x ./build.sh   override the date-commit part of the version (used by the E2E run)
 
 set -euo pipefail
 
@@ -21,7 +22,7 @@ FIRST="$DIST/1-upload-first"
 LAST="$DIST/2-upload-last"
 
 # 1. Version
-VERSION="$(date +%Y-%m-%d)-$(git rev-parse --short HEAD)"
+VERSION="${BUILD_VERSION:-$(date +%Y-%m-%d)-$(git rev-parse --short HEAD)}"
 STATUS="$(git status --porcelain)"
 if [ -n "$STATUS" ]; then
     if [ "$DIRTY" -eq 0 ]; then

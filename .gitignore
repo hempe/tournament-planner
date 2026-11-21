@@ -45,3 +45,9 @@ coverage-cobertura.xml
 
 # Rollback copies (written by build.sh)
 /releases/
+e2e/.site/
+
+# Playwright
+frontend/test-results/
+frontend/playwright-report/
+e2e/.dist-v*/
