@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, resource, signal } from '@angular/core';
+import { Component, computed, inject, input, resource, signal, untracked } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { HlmButtonImports } from '@ui/button';
 import { HlmCardImports } from '@ui/card';
@@ -57,15 +57,7 @@ interface GuestGroup {
           <div hlmCardContent>
             <app-event-form
               mode="edit"
-              [initial]="{
-                name: d.event.name,
-                capacity: d.event.capacity,
-                mixed: d.mixed,
-                description: d.description,
-                priceMembers: d.priceMembers,
-                priceGuests: d.priceGuests,
-                registrationClose: d.registrationClose
-              }"
+              [initial]="formInitial()"
               [error]="formError()"
               [busy]="busy()"
               (save)="saveEvent($event)"
@@ -213,6 +205,25 @@ export class EventAdminPage {
   /** Unsaved comment inputs: 'r<userId>' for registrations, 'u<userId>' for users to add. */
   private readonly drafts = signal<Record<string, string>>({});
 
+  /** Bumped after the form's own save so the form is re-seeded only then (and on load), never by other actions. */
+  private readonly seedVersion = signal(0);
+  protected readonly formInitial = computed(() => {
+    this.seedVersion();
+    const d = this.detail.hasValue() ? untracked(() => this.detail.value()) : undefined;
+    if (!d) {
+      return {};
+    }
+    return {
+      name: d.event.name,
+      capacity: d.event.capacity,
+      mixed: d.mixed,
+      description: d.description,
+      priceMembers: d.priceMembers,
+      priceGuests: d.priceGuests,
+      registrationClose: d.registrationClose,
+    };
+  });
+
   protected readonly exportUrl = computed(() => `/api/events/${this.id()}/export`);
   protected readonly errorKey = computed(() => {
     const error = asApiError(this.detail.error());
@@ -279,6 +290,7 @@ export class EventAdminPage {
       async () => {
         const fresh = await eventAdminApi(this.api).update(this.id(), body as EventUpdateRequest);
         this.notify.success('events.update_success');
+        this.seedVersion.update((v) => v + 1);
         return fresh;
       },
       (error) => this.formError.set(error),

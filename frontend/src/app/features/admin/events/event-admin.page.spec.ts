@@ -218,6 +218,20 @@ describe('EventAdminPage', () => {
     expect(api.get).toHaveBeenCalledTimes(1);
   });
 
+  it('keeps unsaved event form edits when another action refreshes the DTO', async () => {
+    // The returned DTO also carries a changed form value (e.g. edited elsewhere in the meantime).
+    api.put.mockResolvedValue(dto({ priceMembers: 'CHF 60' }, { isLocked: true }));
+    const { el, buttonIn, click, type } = await render();
+
+    type(el.querySelector<HTMLInputElement>('#name')!, 'Ungespeichert');
+    await click(buttonIn(el, 'Sperren'));
+
+    expect(api.put).toHaveBeenCalledWith('/events/3/lock', undefined, undefined);
+    expect(buttonIn(el, 'Entsperren')).toBeDefined();
+    expect(el.querySelector<HTMLInputElement>('#name')!.value).toBe('Ungespeichert');
+    expect(el.querySelector<HTMLInputElement>('#priceMembers')!.value).toBe('CHF 50');
+  });
+
   it('saves the event form with the update body', async () => {
     api.put.mockResolvedValue(dto());
     const { fixture, el, type } = await render();
