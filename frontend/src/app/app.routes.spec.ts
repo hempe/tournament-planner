@@ -8,6 +8,7 @@ describe('routes', () => {
       ['login', [guestGuard]],
       ['events', [adminGuard]],
       ['events/new', [adminGuard]],
+      ['events/bulk/new', [adminGuard]],
       ['events/:id/admin', [adminGuard]],
       ['events/:id/guests/:guestId/edit', [adminGuard]],
       ['events/:id/guests/new', undefined],

@@ -19,6 +19,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/admin/events/event-create.page').then((m) => m.EventCreatePage),
   },
   {
+    path: 'events/bulk/new',
+    canActivate: [adminGuard],
+    loadComponent: () => import('./features/admin/events/bulk-create.page').then((m) => m.BulkCreatePage),
+  },
+  {
     path: 'events/:id/admin',
     canActivate: [adminGuard],
     loadComponent: () => import('./features/admin/events/event-admin.page').then((m) => m.EventAdminPage),
