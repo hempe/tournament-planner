@@ -170,6 +170,7 @@
         "integer": "Das Feld :field muss eine ganze Zahl sein.",
         "email": "Das Feld :field muss eine gültige E-Mail-Adresse sein.",
         "min": "Das Feld :field muss mindestens :min Zeichen haben.",
+        "min_value": "Das Feld :field muss mindestens :min sein.",
         "max": "Das Feld :field darf höchstens :max Zeichen haben.",
         "date": "Das Feld :field muss ein gültiges Datum sein.",
         "boolean": "Das Feld :field muss wahr oder falsch sein.",

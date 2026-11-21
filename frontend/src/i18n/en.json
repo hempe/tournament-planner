@@ -170,6 +170,7 @@
         "integer": "The :field field must be an integer.",
         "email": "The :field field must be a valid email address.",
         "min": "The :field field must be at least :min characters.",
+        "min_value": "The :field field must be at least :min.",
         "max": "The :field field must not exceed :max characters.",
         "date": "The :field field must be a valid date.",
         "boolean": "The :field field must be true or false.",

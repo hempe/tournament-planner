@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard, guestGuard } from './core/auth/guards';
+import { adminGuard, authGuard, guestGuard } from './core/auth/guards';
 
 export const routes: Routes = [
   { path: '', loadComponent: () => import('./features/calendar/calendar.page').then((m) => m.CalendarPage) },
@@ -7,6 +7,16 @@ export const routes: Routes = [
     path: 'login',
     canActivate: [guestGuard],
     loadComponent: () => import('./features/login/login.page').then((m) => m.LoginPage),
+  },
+  {
+    path: 'events',
+    canActivate: [adminGuard],
+    loadComponent: () => import('./features/admin/events/event-list.page').then((m) => m.EventListPage),
+  },
+  {
+    path: 'events/new',
+    canActivate: [adminGuard],
+    loadComponent: () => import('./features/admin/events/event-create.page').then((m) => m.EventCreatePage),
   },
   {
     path: 'events/:id/guests/new',

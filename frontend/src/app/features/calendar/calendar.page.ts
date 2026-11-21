@@ -2,7 +2,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import { Component, computed, inject, input, resource } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideChevronLeft, lucideChevronRight } from '@ng-icons/lucide';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { HlmButtonImports } from '@ui/button';
 import { HlmSpinner } from '@ui/spinner';
 import { ApiClient } from '../../core/api/api-client';
@@ -22,7 +22,7 @@ type DayItem =
 
 @Component({
   selector: 'app-calendar-page',
-  imports: [NgTemplateOutlet, NgIcon, HlmButtonImports, HlmSpinner, TranslatePipe, EventCard, SocialEventCard],
+  imports: [NgTemplateOutlet, NgIcon, RouterLink, HlmButtonImports, HlmSpinner, TranslatePipe, EventCard, SocialEventCard],
   providers: [provideIcons({ lucideChevronLeft, lucideChevronRight })],
   template: `
     <div class="mx-auto max-w-5xl">
@@ -68,7 +68,17 @@ type DayItem =
             @for (day of week; track $index) {
               <div class="min-h-24 rounded-md border border-border p-1" [class.bg-muted]="day === null" [class.border-transparent]="day === null">
                 @if (day) {
-                  <div class="mb-1 text-xs text-muted-foreground">{{ dayNumber(day) }}</div>
+                  <div class="mb-1 flex items-center justify-between text-xs text-muted-foreground">
+                    <span>{{ dayNumber(day) }}</span>
+                    @if (session.isAdmin()) {
+                      <a
+                        routerLink="/events/new"
+                        [queryParams]="{ date: day }"
+                        [attr.aria-label]="'events.new_for_date' | t: { date: dayHeading(day) }"
+                        class="inline-flex size-6 items-center justify-center rounded-md border border-border hover:bg-accent"
+                      >+</a>
+                    }
+                  </div>
                   <ng-container *ngTemplateOutlet="items; context: { $implicit: day }" />
                 }
               </div>

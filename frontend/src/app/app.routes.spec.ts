@@ -1,11 +1,13 @@
-import { authGuard, guestGuard } from './core/auth/guards';
+import { adminGuard, authGuard, guestGuard } from './core/auth/guards';
 import { routes } from './app.routes';
 
 describe('routes', () => {
-  it('lists the member and guest screens in order with the right guards', () => {
+  it('lists the member, guest and admin screens in order with the right guards', () => {
     expect(routes.map((r) => [r.path, r.canActivate])).toEqual([
       ['', undefined],
       ['login', [guestGuard]],
+      ['events', [adminGuard]],
+      ['events/new', [adminGuard]],
       ['events/:id/guests/new', undefined],
       ['events/:id', [authGuard]],
       ['social-events/:id/guests/new', undefined],

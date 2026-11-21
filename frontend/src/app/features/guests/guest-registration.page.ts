@@ -14,8 +14,8 @@ import { Notify } from '../../core/feedback/notify';
 import { formatDate, formatDateTime } from '../../core/format/dates';
 import { I18n } from '../../core/i18n/i18n';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-import { SELECT_CLASSES } from '../social-events/social-event-detail.page';
-import { translateFieldErrors } from './field-errors';
+import { translateFieldErrors } from '../../shared/forms/field-errors';
+import { SELECT_CLASSES } from '../../shared/forms/select';
 
 @Component({
   selector: 'app-guest-registration-page',

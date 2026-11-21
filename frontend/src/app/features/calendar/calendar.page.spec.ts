@@ -38,12 +38,14 @@ function calendar(over: Partial<CalendarDto> = {}): CalendarDto {
 
 describe('CalendarPage', () => {
   const loggedIn = signal(false);
+  const isAdmin = signal(false);
   let api: { get: ReturnType<typeof vi.fn> };
   let flow: { register: ReturnType<typeof vi.fn> };
   let navigate: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
     loggedIn.set(false);
+    isAdmin.set(false);
     api = { get: vi.fn().mockResolvedValue(calendar()) };
     flow = { register: vi.fn().mockResolvedValue(null) };
     TestBed.configureTestingModule({
@@ -51,7 +53,7 @@ describe('CalendarPage', () => {
         provideRouter([]),
         { provide: ApiClient, useValue: api },
         { provide: RegistrationFlow, useValue: flow },
-        { provide: SessionStore, useValue: { loggedIn } },
+        { provide: SessionStore, useValue: { loggedIn, isAdmin } },
       ],
     });
     TestBed.inject(I18n).use('de', {
@@ -59,7 +61,7 @@ describe('CalendarPage', () => {
       events: {
         registered: 'Angemeldet', on_waitlist: 'Auf Warteliste', locked: 'Gesperrt',
         waitlist_available: 'Warteliste verfügbar', spot_available: ':count Platz frei',
-        spots_available: ':count Plätze frei', register: 'Anmelden', waitlist: 'Warteliste',
+        spots_available: ':count Plätze frei', register: 'Anmelden', waitlist: 'Warteliste', new_for_date: 'Neuer Anlass: :date',
       },
       social_events: { registered: 'Angemeldet', full: 'Ausgebucht', available: ':count Plätze verfügbar' },
       errors: { general: 'Fehler' },
@@ -157,6 +159,23 @@ describe('CalendarPage', () => {
     expect(card('Registriert').querySelector('button')).toBeNull();
     expect(card('Gesperrt').querySelector('button')).toBeNull();
     expect(card('Voll').querySelector('button')?.textContent?.trim()).toBe('Warteliste');
+  });
+
+  it('admin: every day cell gets a plus link to the create page with the date prefilled', async () => {
+    isAdmin.set(true);
+    loggedIn.set(true);
+    const { el } = await render();
+
+    const link = el.querySelector('a[href="/events/new?date=2099-06-15"]');
+    expect(link?.getAttribute('aria-label')).toMatch(/^Neuer Anlass: .*15/);
+    expect(el.querySelectorAll('a[href^="/events/new?date=2099-06-"]')).toHaveLength(30);
+  });
+
+  it('non-admin members get no plus links', async () => {
+    loggedIn.set(true);
+    const { el } = await render();
+
+    expect(el.querySelector('a[href^="/events/new"]')).toBeNull();
   });
 
   it('shows the translated API error', async () => {

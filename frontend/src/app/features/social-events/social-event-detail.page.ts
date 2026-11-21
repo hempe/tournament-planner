@@ -13,10 +13,7 @@ import { ConfirmService } from '../../core/feedback/confirm.service';
 import { formatDate, formatDateTime } from '../../core/format/dates';
 import { I18n } from '../../core/i18n/i18n';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
-
-/** Same look as hlmInput, for native <select>. */
-export const SELECT_CLASSES =
-  'border-input h-9 w-full rounded-md border bg-transparent px-3 text-sm shadow-xs outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:opacity-50';
+import { SELECT_CLASSES } from '../../shared/forms/select';
 
 @Component({
   selector: 'app-social-event-detail-page',
