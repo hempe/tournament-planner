@@ -27,35 +27,6 @@ class SecurityTest extends IntegrationTestCase
         parent::tearDown();
     }
 
-    // CSRF Token Tests
-
-    public function testGenerateCsrfTokenCreatesValidToken(): void
-    {
-        $token = $this->security->generateCsrfToken();
-
-        $this->assertNotEmpty($token);
-        $this->assertEquals(64, strlen($token)); // 32 bytes = 64 hex chars
-        $this->assertMatchesRegularExpression('/^[a-f0-9]{64}$/', $token);
-    }
-
-    public function testGenerateCsrfTokenStoresInSession(): void
-    {
-        $token = $this->security->generateCsrfToken();
-
-        $this->assertArrayHasKey('csrf_tokens', $_SESSION);
-        $this->assertArrayHasKey('_token', $_SESSION['csrf_tokens']);
-        $this->assertEquals($token, $_SESSION['csrf_tokens']['_token']);
-    }
-
-    public function testGenerateCsrfTokenCreatesUniqueTokens(): void
-    {
-        $token1 = $this->security->generateCsrfToken();
-        $_SESSION = []; // Clear session
-        $token2 = $this->security->generateCsrfToken();
-
-        $this->assertNotEquals($token1, $token2);
-    }
-
     // Password Hashing Tests
 
     public function testHashPasswordCreatesValidHash(): void
@@ -105,15 +76,5 @@ class SecurityTest extends IntegrationTestCase
         $isValid = $this->security->verifyPassword('password', $hash);
 
         $this->assertFalse($isValid);
-    }
-
-    // Global Helper Function Tests
-
-    public function testCsrfTokenHelperFunction(): void
-    {
-        $token = csrf_token();
-
-        $this->assertNotEmpty($token);
-        $this->assertEquals(64, strlen($token));
     }
 }

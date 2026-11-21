@@ -165,7 +165,6 @@ class ConfigTest extends TestCase
         $config = Config::getInstance();
 
         $this->assertIsInt($config->get('security.session_lifetime'));
-        $this->assertIsString($config->get('security.csrf_token_name'));
         $this->assertIsInt($config->get('security.password_min_length'));
     }
 

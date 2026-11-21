@@ -25,23 +25,19 @@ class EventRepositoryTest extends IntegrationTestCase
         DB::$events->add('March Event', '2099-03-15', 20);
         DB::$events->add('April Event', '2099-04-10', 20);
 
-        // Trigger all() with a date via the home page
-        $response = $this->request('GET', '/', ['date' => '2099-03-01']);
+        $names = array_map(fn($e) => $e->name, DB::$events->all(new \DateTime('2099-03-01')));
 
-        $this->assertEquals(200, $response->statusCode);
-        $this->assertStringContainsString('March Event', $response->body);
+        $this->assertSame(['March Event'], $names);
     }
 
     public function testAllForGuestWithDateReturnsEventsForThatMonth(): void
     {
-        // Not logged in — guest view uses allForGuest($date)
         DB::$events->add('March Event', '2099-03-15', 20);
         DB::$events->add('April Event', '2099-04-10', 20);
 
-        $response = $this->request('GET', '/', ['date' => '2099-03-01']);
+        $names = array_map(fn($e) => $e->name, DB::$events->allForGuest(new \DateTime('2099-03-01')));
 
-        $this->assertEquals(200, $response->statusCode);
-        $this->assertStringContainsString('March Event', $response->body);
+        $this->assertSame(['March Event'], $names);
     }
 
     public function testRegisteredEventsReturnsEventsForUser(): void

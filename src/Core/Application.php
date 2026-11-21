@@ -186,29 +186,9 @@ final class Application
 
         if (!headers_sent()) {
             http_response_code(500);
-            header('Content-Type: text/html; charset=UTF-8');
+            header('Content-Type: text/plain; charset=UTF-8');
         }
 
-        if ($this->config->isDevelopment()) {
-            echo $this->renderDebugError($e);
-        } else {
-            echo $this->renderProductionError();
-        }
-    }
-
-    private function renderDebugError(Throwable $e): string
-    {
-        return sprintf(
-            '<h1>Application Error</h1><h2>%s</h2><p><strong>File:</strong> %s:%d</p><pre>%s</pre>',
-            htmlspecialchars($e->getMessage()),
-            htmlspecialchars($e->getFile()),
-            $e->getLine(),
-            htmlspecialchars($e->getTraceAsString())
-        );
-    }
-
-    private function renderProductionError(): string
-    {
-        return '<h1>Internal Server Error</h1><p>Something went wrong. Please try again later.</p>';
+        echo 'Internal Server Error';
     }
 }

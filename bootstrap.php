@@ -43,9 +43,6 @@ spl_autoload_register(function (string $className): void {
 // Load global helper functions
 require_once __DIR__ . '/src/helpers.php';
 
-// Load legacy Component class for backward compatibility
-require_once __DIR__ . '/src/Core/Component.php';
-
 // Boot the application
 $app = \TP\Core\Application::getInstance();
 $app->boot();

@@ -66,24 +66,12 @@ final class Response
 
     public static function notFound(string $message = 'Not Found'): Response
     {
-        ob_start();
-        require __DIR__ . '/../Layout/header.php';
-        require __DIR__ . '/../Views/Errors/404.php';
-        require __DIR__ . '/../Layout/footer.php';
-        $content = ob_get_clean();
-
-        return new Response($content, HttpStatus::NOT_FOUND);
+        return new Response($message, HttpStatus::NOT_FOUND, ['Content-Type' => 'text/plain; charset=UTF-8']);
     }
 
     public static function forbidden(string $message = 'Forbidden'): Response
     {
-        ob_start();
-        require __DIR__ . '/../Layout/header.php';
-        require __DIR__ . '/../Views/Errors/403.php';
-        require __DIR__ . '/../Layout/footer.php';
-        $content = ob_get_clean();
-
-        return new Response($content, HttpStatus::FORBIDDEN);
+        return new Response($message, HttpStatus::FORBIDDEN, ['Content-Type' => 'text/plain; charset=UTF-8']);
     }
 
     public static function unauthorized(string $message = 'Unauthorized'): Response

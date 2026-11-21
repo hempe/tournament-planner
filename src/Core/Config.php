@@ -94,7 +94,6 @@ final class Config
             ],
             'security' => [
                 'session_lifetime' => (int) ($_ENV['SESSION_LIFETIME'] ?? 3600),
-                'csrf_token_name' => $_ENV['CSRF_TOKEN_NAME'] ?? '_token',
                 'password_min_length' => (int) ($_ENV['PASSWORD_MIN_LENGTH'] ?? 8),
             ],
             'routing' => [

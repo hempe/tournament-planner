@@ -19,12 +19,13 @@ class ApiBasicsTest extends IntegrationTestCase
         $this->assertSame(['error' => 'errors.not_found'], $response->json());
     }
 
-    public function testUnknownHtmlPathStillReturnsHtml404(): void
+    public function testUnknownNonApiPathReturnsPlainText404(): void
     {
-        $response = $this->request('GET', '/does-not-exist');
+        $response = $this->json('GET', '/does-not-exist');
 
         $this->assertSame(404, $response->statusCode);
-        $this->assertStringContainsString('<html', $response->body);
+        $this->assertSame('Page not found', $response->body);
+        $this->assertSame('text/plain; charset=UTF-8', $response->headers['Content-Type']);
     }
 
     public function testApiResponsesCarryVersionAndNoStoreHeaders(): void
@@ -35,9 +36,9 @@ class ApiBasicsTest extends IntegrationTestCase
         $this->assertSame('no-store', $response->headers['Cache-Control']);
     }
 
-    public function testHtmlResponsesHaveNoVersionHeader(): void
+    public function testNonApiResponsesHaveNoVersionHeader(): void
     {
-        $response = $this->request('GET', '/login');
+        $response = $this->json('GET', '/does-not-exist');
 
         $this->assertArrayNotHasKey('X-App-Version', $response->headers);
     }

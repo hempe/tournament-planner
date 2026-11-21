@@ -57,11 +57,4 @@ class ApiMiddlewareTest extends IntegrationTestCase
 
         $this->assertSame(['ok' => true], $this->json('GET', '/api/test/admin-only')->json());
     }
-
-    public function testHtmlRoutesKeepRedirectBehaviour(): void
-    {
-        $response = $this->request('GET', '/events');
-
-        $this->assertSame(303, $response->statusCode);
-    }
 }

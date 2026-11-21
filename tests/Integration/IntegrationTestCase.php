@@ -149,53 +149,6 @@ abstract class IntegrationTestCase extends TestCase
     }
 
     /**
-     * Simulate HTTP request
-     */
-    protected function request(
-        string $method,
-        string $uri,
-        array $data = [],
-        array $headers = []
-    ): TestResponse {
-        // Reset state that a previous json() call may have left behind
-        unset($_SERVER['CONTENT_TYPE'], $_SERVER['HTTP_X_XSRF_TOKEN'], $_SERVER['HTTP_X_REQUESTED_WITH']);
-        Request::setRawBodyForTesting(null);
-        Response::resetLastSent();
-
-        // Set up request globals
-        $_SERVER['REQUEST_METHOD'] = $method;
-        $_SERVER['REQUEST_URI'] = $uri;
-        $_SERVER['HTTP_HOST'] = 'localhost';
-
-        foreach ($headers as $key => $value) {
-            $_SERVER['HTTP_' . strtoupper(str_replace('-', '_', $key))] = $value;
-        }
-
-        $_GET = [];
-        $_POST = [];
-
-        if ($method === 'POST' || $method === 'PUT' || $method === 'PATCH') {
-            $_POST = $data;
-        } else {
-            $_GET = $data;
-        }
-
-        // Capture output
-        ob_start();
-
-        try {
-            require __DIR__ . '/../../index.php';
-            $output = ob_get_clean();
-        } catch (\Exception $e) {
-            ob_end_clean();
-            throw $e;
-        }
-
-        $sent = Response::lastSent();
-        return new TestResponse($output, http_response_code(), $sent['headers'] ?? [], $sent['cookies'] ?? []);
-    }
-
-    /**
      * Simulate a JSON API request. Sends the session's XSRF token unless
      * $withCsrf is false.
      */
@@ -249,17 +202,11 @@ abstract class IntegrationTestCase extends TestCase
     }
 
     /**
-     * Login as a user
+     * Login as a user (through the JSON API)
      */
     protected function loginAs(string $username, string $password): void
     {
-        $_POST['username'] = $username;
-        $_POST['password'] = $password;
-
-        $response = $this->request('POST', '/login', [
-            'username' => $username,
-            'password' => $password
-        ]);
+        $this->apiLoginAs($username, $password);
     }
 
     /**
@@ -299,14 +246,6 @@ class TestResponse
     {
         if ($this->statusCode !== 200) {
             throw new \RuntimeException("Expected status 200, got {$this->statusCode}");
-        }
-        return $this;
-    }
-
-    public function assertRedirect(): self
-    {
-        if ($this->statusCode !== 302 && $this->statusCode !== 301) {
-            throw new \RuntimeException("Expected redirect, got status {$this->statusCode}");
         }
         return $this;
     }

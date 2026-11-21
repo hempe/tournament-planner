@@ -15,12 +15,9 @@ final class AdminMiddleware implements MiddlewareInterface
     public function handle(Request $request, callable $next): Response
     {
         if (!User::admin()) {
-            if ($request->isApi()) {
-                return User::loggedIn()
-                    ? Response::apiError('errors.forbidden', HttpStatus::FORBIDDEN)
-                    : Response::apiError('auth.login_required', HttpStatus::UNAUTHORIZED);
-            }
-            return Response::forbidden(__('errors.unauthorized'));
+            return User::loggedIn()
+                ? Response::apiError('errors.forbidden', HttpStatus::FORBIDDEN)
+                : Response::apiError('auth.login_required', HttpStatus::UNAUTHORIZED);
         }
 
         return $next($request);

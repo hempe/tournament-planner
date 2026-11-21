@@ -24,26 +24,6 @@ echo "Copying PHP source..."
 cp index.php bootstrap.php .htaccess "$DIST/"
 cp -r src "$DIST/src"
 
-# Assets — combine + minify + fingerprint CSS
-echo "Building CSS bundle..."
-mkdir -p "$DIST/styles"
-CSS_FILES="styles/style.css styles/calendar.css styles/confirm.css styles/error.css styles/success.css"
-MINIFIED=$(php bin/minify-css.php $CSS_FILES)
-CSS_HASH=$(echo "$MINIFIED" | php -r "echo substr(hash('sha256', stream_get_contents(STDIN)), 0, 16);")
-echo "$MINIFIED" > "$DIST/styles/styles.${CSS_HASH}.css"
-echo "  → styles.${CSS_HASH}.css"
-
-# Combine + minify + fingerprint JS
-echo "Building JS bundle..."
-JS_FILES="src/scripts/social-prompt.js src/scripts/confirm.js src/scripts/error.js src/scripts/success.js src/scripts/fieldset.js src/scripts/scroll.js src/scripts/form-state.js"
-JS_MINIFIED=$(php bin/minify-js.php $JS_FILES)
-JS_HASH=$(echo "$JS_MINIFIED" | php -r "echo substr(hash('sha256', stream_get_contents(STDIN)), 0, 16);")
-mkdir -p "$DIST/src/scripts"
-echo "$JS_MINIFIED" > "$DIST/src/scripts/scripts.${JS_HASH}.js"
-echo "  → scripts.${JS_HASH}.js"
-# Remove the individual files that were copied with src/
-rm -f $(for f in $JS_FILES; do echo "$DIST/$f"; done)
-
 # Translations (single source in the Angular workspace; PHP reads them from resources/i18n)
 mkdir -p "$DIST/resources/i18n"
 cp frontend/src/i18n/*.json "$DIST/resources/i18n/"
