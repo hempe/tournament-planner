@@ -110,6 +110,28 @@ final class UserRepository
         return (int) ($row['cnt'] ?? 0);
     }
 
+    /**
+     * Split a legacy username into [first name, last name]: titles (Dr, Prof, Mag, with or
+     * without dot, as ", Dr." suffix or leading "Dr.") are dropped, the last word is the
+     * last name, everything before it the first name.
+     *
+     * @return array{0: string, 1: string}
+     */
+    public static function splitUsername(string $raw): array
+    {
+        $titles = '(?:Dr|Prof|Mag)\.?';
+        $cleaned = preg_replace("/,\s*{$titles}(?=\s|,|$)/iu", '', $raw) ?? $raw;
+        $cleaned = preg_replace("/^{$titles}\s+/iu", '', $cleaned) ?? $cleaned;
+        $cleaned = trim($cleaned);
+        if ($cleaned === '') {
+            $cleaned = $raw;
+        }
+
+        $parts = preg_split('/\s+/u', $cleaned, -1, PREG_SPLIT_NO_EMPTY) ?: [$raw];
+        $lastName = (string) array_pop($parts);
+        return [implode(' ', $parts), $lastName];
+    }
+
     /** @return array<array{id:int, username:string, first:string, last:string, status:string}> */
     public function seedNamesFromUsernames(): array
     {
@@ -121,20 +143,7 @@ final class UserRepository
         $results = [];
         while ($row = $result->fetch_assoc()) {
             $raw = $row['username'];
-
-            // Strip title suffixes: ", Dr.", ", Dr", ", Prof.", ", Prof"
-            $cleaned = preg_replace('/,\s*(Dr\.|Dr|Prof\.|Prof)\b/i', '', $raw) ?? $raw;
-            // Strip leading titles
-            $cleaned = preg_replace('/^(Dr\.|Dr|Prof\.|Prof)\s+/i', '', $cleaned) ?? $cleaned;
-            $cleaned = trim($cleaned);
-
-            if ($cleaned === '') {
-                $cleaned = $raw;
-            }
-
-            $parts    = preg_split('/\s+/', $cleaned, -1, PREG_SPLIT_NO_EMPTY) ?: [$raw];
-            $lastName  = array_pop($parts);
-            $firstName = implode(' ', $parts);
+            [$firstName, $lastName] = self::splitUsername($raw);
 
             $stmt = $this->conn->prepare("UPDATE users SET first_name = ?, last_name = ? WHERE id = ?");
             if (!$stmt) {

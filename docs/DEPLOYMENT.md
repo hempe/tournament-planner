@@ -84,10 +84,15 @@ again. Database changes are not rolled back (additive migrations are compatible 
 
 Do this once, for the first Angular release.
 
-1. [ ] **Optional**: to fill first/last names of older accounts from their usernames, open
-   `/admin/migrate-names` on the **current** production (while the old release is still live) and run it once before
-   uploading the new release (the page no longer exists afterwards). Users without a first name are shown by username
-   and can be edited under Benutzer.
+1. [ ] **Names (optional, recommended):**
+   - If you want first/last names filled for older accounts and haven't done so yet: open `/admin/migrate-names`
+     on the **current** production (while the old release is still live) and run it once — the page no longer
+     exists in the new release.
+   - Then (also if names were split earlier) run `database/fix-title-names.sql` in the database tool of the
+     hosting panel (e.g. phpMyAdmin): the old migration left a stray dot after titles ("Karl-Uwe, Dr. Bäcker" →
+     first name "Karl-Uwe.") and didn't recognise "Mag.". Run the `SELECT` at the top first to see the affected
+     rows; the `UPDATE`s only touch rows still in that broken state and can be run more than once.
+   - Users without a first name are shown by username and can be edited under Benutzer.
 2. [ ] Check the PHP version in the hosting panel: 8.3 or newer.
 3. [ ] Check that `.env` on the server contains `APP_ENV=production` and the database settings.
 4. [ ] Run the database migrations, if any (`database/init.sql` contains them).
