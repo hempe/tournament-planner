@@ -34,12 +34,12 @@ import { Page, PageHeader } from '../../../shared/ui/page';
           <table class="block w-full text-sm sm:table">
             <thead class="hidden sm:table-header-group">
               <tr class="border-b border-border bg-muted/60 text-left text-xs text-muted-foreground">
-                <th class="py-2.5 pr-2 pl-4 font-medium">{{ 'events.date' | t }}</th>
-                <th class="px-2 py-2.5 font-medium">{{ 'events.name' | t }}</th>
-                <th class="px-2 py-2.5 text-right font-medium">{{ 'events.max_participants' | t }}</th>
-                <th class="px-2 py-2.5 text-right font-medium">{{ 'events.registered' | t }}</th>
-                <th class="px-2 py-2.5 text-right font-medium">{{ 'events.waitlist' | t }}</th>
-                <th class="w-12 py-2.5 pr-3 pl-2"><span class="sr-only">{{ 'events.delete' | t }}</span></th>
+                <th class="pt-3.5 pb-2 pr-2 pl-4 font-medium">{{ 'events.date' | t }}</th>
+                <th class="px-2 pt-3.5 pb-2 font-medium">{{ 'events.name' | t }}</th>
+                <th class="px-2 pt-3.5 pb-2 text-right font-medium">{{ 'events.max_participants' | t }}</th>
+                <th class="px-2 pt-3.5 pb-2 text-right font-medium">{{ 'events.registered' | t }}</th>
+                <th class="px-2 pt-3.5 pb-2 text-right font-medium">{{ 'events.waitlist' | t }}</th>
+                <th class="w-12 pt-3.5 pb-2 pr-3 pl-2"><span class="sr-only">{{ 'events.delete' | t }}</span></th>
               </tr>
             </thead>
             <tbody class="flex flex-col gap-2 sm:table-row-group">
