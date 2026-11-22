@@ -1,6 +1,6 @@
 # Amigos + El Faro: one code base, two flavours — design (DRAFT, brainstorming in progress)
 
-Status: **sections 1–2 agreed with the user; section 3 (migration) and later sections not yet presented.**
+Status: **sections 1–2 agreed with the user; next: present section 3 (migration), then 4 and 5.**
 Continue the brainstorming flow (present remaining sections → finalize this spec → user review → writing-plans).
 
 ## Background
@@ -77,13 +77,13 @@ El Faro: all features on, `waitlistOrder: "timestamp"`, `userFields: []`, `usern
   route attribute like `#[Feature('guests')]` → **404**. Angular hides the matching UI from the same switches.
 - **Tests:** PHPUnit and Vitest run per flavour in CI; E2E covers the Amigos-specific parts.
 
-## Section 2 — Amigos-specific behaviour (agreed, one open question)
+## Section 2 — Amigos-specific behaviour (agreed)
 
 - **Priority waitlist** (`waitlistOrder: "priority"`): promotion by `prio` ascending, ties by registration time. The
   waitlist on the tournament page is shown in promotion order. Priority editable in the admin user form (hidden in El Faro).
-- **Phone + handicap:** editable by admins in the user form; admins see the phone as a `tel:` link in participant lists;
-  members see the handicap next to names. Hidden in El Faro.
-  **OPEN: should members also see phone numbers, or only admins?** (asked, not yet answered)
+- **Phone + handicap (as in Amigos today):** phone only in the admin user list/form (Amigos `event.php` selects it but
+  never shows it) — never in participant lists. Handicap shown in participant lists (Amigos `event.php` has a Handicap
+  column), edited by admins in the user form. Both hidden in El Faro.
 - **Locked message:** no setting — Amigos overrides the text in its `i18n/de.json` ("…Arno anrufen!").
 - **"Spieler" wording:** via the text overrides.
 - **Dark mode with photo:** only in `amigos/theme.css` (phones in dark mode, background photo, translucent cards).
@@ -108,4 +108,3 @@ El Faro: all features on, `waitlistOrder: "timestamp"`, `userFields: []`, `usern
 2. Section 4 — hosting: Amigos host must run **PHP ≥ 8.3** (user to check Hostpoint panel); `.env` per host;
    cut-over steps for Amigos (old plain-PHP files replaced; old URLs like `event.php?id=` → legacy redirects?).
 3. Section 5 — testing/CI per flavour, docs (`DEPLOYMENT.md` per flavour, `README.md`, `WHATS-NEW`-style note for Amigos).
-4. Open question above (phone visibility).
