@@ -80,6 +80,13 @@ final class User
 
         $userRepo = \TP\Models\DB::$users;
         [$user, $hashedPassword] = $userRepo->getWithPassword($username);
+        if ($user === null) {
+            // Not a login name: try "first last" / "last first", but never guess between several people
+            $matches = $userRepo->findByName($username);
+            if (count($matches) === 1) {
+                [$user, $hashedPassword] = $matches[0];
+            }
+        }
 
         if ($user && $hashedPassword && \TP\Core\Security::getInstance()->verifyPassword($password, $hashedPassword)) {
             return $user;

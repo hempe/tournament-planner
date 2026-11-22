@@ -231,6 +231,33 @@ final class UserRepository
         return $users;
     }
 
+    /**
+     * Users whose "first last" or "last first" equals $name (case-insensitive, whitespace-normalised).
+     *
+     * @return list<array{0: User, 1: string}> [user, password hash]
+     */
+    public function findByName(string $name): array
+    {
+        $normalized = mb_strtolower(trim((string) preg_replace('/\s+/u', ' ', $name)));
+        if ($normalized === '' || !str_contains($normalized, ' ')) {
+            return [];
+        }
+        $stmt = $this->conn->prepare(
+            "SELECT " . self::COLUMNS . ", password FROM users
+             WHERE first_name <> '' AND last_name <> ''
+               AND (LOWER(CONCAT(TRIM(first_name), ' ', TRIM(last_name))) = ?
+                 OR LOWER(CONCAT(TRIM(last_name), ' ', TRIM(first_name))) = ?)"
+        );
+        if (!$stmt) {
+            throw new Exception("Prepare statement failed: " . $this->conn->error);
+        }
+        $stmt->bind_param('ss', $normalized, $normalized);
+        $stmt->execute();
+        $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+        return array_map(fn(array $row) => [self::map($row), $row['password']], $rows);
+    }
+
     /** @return array{0: User|null, 1: string|null} */
     public function getWithPassword(string $username): array
     {

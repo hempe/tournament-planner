@@ -28,7 +28,7 @@
     "auth": {
         "login": "Acceso para Socios",
         "welcome": "Bienvenido a GOLF EL FARO",
-        "username": "Usuario",
+        "username": "Usuario o nombre y apellido",
         "password": "Contraseña",
         "login_failed": "Error de inicio de sesión",
         "too_many_attempts": "Demasiados intentos de inicio de sesión. Inténtalo de nuevo en :minutes minutos.",

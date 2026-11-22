@@ -28,7 +28,7 @@
     "auth": {
         "login": "Member Login",
         "welcome": "Welcome to GOLF EL FARO",
-        "username": "Username",
+        "username": "Username or first and last name",
         "password": "Password",
         "login_failed": "Login failed",
         "too_many_attempts": "Too many login attempts. Please try again in :minutes minutes.",

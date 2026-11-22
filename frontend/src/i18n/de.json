@@ -28,7 +28,7 @@
     "auth": {
         "login": "Mitglieder Anmeldung",
         "welcome": "Willkomen bei GOLF EL FARO",
-        "username": "Benutzername",
+        "username": "Benutzername oder Vor- und Nachname",
         "password": "Passwort",
         "login_failed": "Anmeldung fehlgeschlagen",
         "too_many_attempts": "Zu viele Anmeldeversuche. Bitte in :minutes Minuten erneut versuchen.",
