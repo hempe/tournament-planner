@@ -204,6 +204,15 @@ final class Request
             $this->server['REMOTE_ADDR'] ?? '';
     }
 
+    /**
+     * The TCP peer address. Unlike getIp() this cannot be spoofed with request headers,
+     * so use it for rate limiting.
+     */
+    public function clientIp(): string
+    {
+        return $this->server['REMOTE_ADDR'] ?? '';
+    }
+
     public function validate(array $rules): ValidationResult
     {
         $validator = new Validator();

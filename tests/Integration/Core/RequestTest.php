@@ -317,4 +317,21 @@ class RequestTest extends TestCase
             $this->assertSame($method, $this->makeRequest($method, '/api/x')->getMethod()->value);
         }
     }
+
+    public function testClientIpIgnoresForwardedHeaders(): void
+    {
+        $req = $this->makeRequest('GET', '/', [], [], [
+            'REMOTE_ADDR' => '10.0.0.1',
+            'HTTP_X_FORWARDED_FOR' => '6.6.6.6',
+            'HTTP_X_REAL_IP' => '7.7.7.7',
+        ]);
+
+        $this->assertSame('10.0.0.1', $req->clientIp());
+        $this->assertSame('6.6.6.6', $req->getIp());
+    }
+
+    public function testClientIpIsEmptyWithoutRemoteAddr(): void
+    {
+        $this->assertSame('', $this->makeRequest()->clientIp());
+    }
 }
