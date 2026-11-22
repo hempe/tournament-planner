@@ -258,6 +258,29 @@ final class UserRepository
         return array_map(fn(array $row) => [self::map($row), $row['password']], $rows);
     }
 
+    /**
+     * Ids of users whose name ("first last" / "last first") would make a name login ambiguous:
+     * another user has the same name pair, or another user's username equals it.
+     *
+     * @return array<int, true>
+     */
+    public function nameConflicts(): array
+    {
+        $result = $this->conn->query(
+            "SELECT DISTINCT a.id FROM users a JOIN users b ON a.id <> b.id
+             WHERE a.first_name <> '' AND a.last_name <> '' AND (
+                (LOWER(TRIM(a.first_name)) = LOWER(TRIM(b.first_name)) AND LOWER(TRIM(a.last_name)) = LOWER(TRIM(b.last_name)))
+                OR LOWER(TRIM(b.username)) IN (
+                    LOWER(CONCAT(TRIM(a.first_name), ' ', TRIM(a.last_name))),
+                    LOWER(CONCAT(TRIM(a.last_name), ' ', TRIM(a.first_name)))))"
+        );
+        $ids = [];
+        foreach ($result ? $result->fetch_all() : [] as [$id]) {
+            $ids[(int) $id] = true;
+        }
+        return $ids;
+    }
+
     /** @return array{0: User|null, 1: string|null} */
     public function getWithPassword(string $username): array
     {

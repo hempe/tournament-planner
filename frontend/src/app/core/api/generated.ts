@@ -47,6 +47,7 @@ export interface AdminUserDto {
   phone: string | null;
   handicap: number | null;
   priority: number | null;
+  nameConflict: boolean;
 }
 
 export interface BulkCreateRequest {

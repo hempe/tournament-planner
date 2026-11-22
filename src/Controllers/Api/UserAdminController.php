@@ -34,7 +34,11 @@ final class UserAdminController
     #[Returns(AdminUserDto::class, list: true)]
     public function index(Request $request): Response
     {
-        return Response::json(array_map(AdminUserDto::fromUser(...), DB::$users->all()));
+        $conflicts = DB::$users->nameConflicts();
+        return Response::json(array_map(
+            fn(User $u) => AdminUserDto::fromUser($u, isset($conflicts[$u->id])),
+            DB::$users->all(),
+        ));
     }
 
     #[Post('')]
@@ -62,14 +66,14 @@ final class UserAdminController
         );
         DB::$users->updateExtra($id, $this->extraFields($request));
 
-        return Response::json(AdminUserDto::fromUser(DB::$users->get($id)));
+        return Response::json($this->dto(DB::$users->get($id)));
     }
 
     #[Get('/{id}')]
     #[Returns(AdminUserDto::class)]
     public function show(Request $request, array $params): Response
     {
-        return $this->withUser($params, fn(User $user) => Response::json(AdminUserDto::fromUser($user)));
+        return $this->withUser($params, fn(User $user) => Response::json($this->dto($user)));
     }
 
     #[Put('/{id}')]
@@ -104,7 +108,7 @@ final class UserAdminController
                 DB::$users->setPassword($user->id, $password);
             }
 
-            return Response::json(AdminUserDto::fromUser(DB::$users->get($user->id)));
+            return Response::json($this->dto(DB::$users->get($user->id)));
         });
     }
 
@@ -114,7 +118,7 @@ final class UserAdminController
     {
         return $this->withUser($params, function (User $user) {
             DB::$users->setAdmin($user->id, true);
-            return Response::json(AdminUserDto::fromUser(DB::$users->get($user->id)));
+            return Response::json($this->dto(DB::$users->get($user->id)));
         });
     }
 
@@ -124,7 +128,7 @@ final class UserAdminController
     {
         return $this->withUser($params, function (User $user) {
             DB::$users->setAdmin($user->id, false);
-            return Response::json(AdminUserDto::fromUser(DB::$users->get($user->id)));
+            return Response::json($this->dto(DB::$users->get($user->id)));
         });
     }
 
@@ -139,6 +143,11 @@ final class UserAdminController
             DB::$users->delete($user->id);
             return Response::noContent();
         });
+    }
+
+    private function dto(User $user): AdminUserDto
+    {
+        return AdminUserDto::fromUser($user, isset(DB::$users->nameConflicts()[$user->id]));
     }
 
     /** Run `$action($user)` if the user exists, else 404. */

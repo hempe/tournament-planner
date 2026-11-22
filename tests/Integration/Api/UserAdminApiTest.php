@@ -219,4 +219,22 @@ class UserAdminApiTest extends IntegrationTestCase
         $this->assertSame('errors.forbidden', $response->json()['error']);
         $this->assertNotNull(DB::$users->get($adminId));
     }
+
+    public function testNameConflictFlag(): void
+    {
+        $this->admin();
+        $a = DB::$users->create('max1', 'Pass123!', true, null, null, 'Max', 'Muster');
+        $b = DB::$users->create('max2', 'Pass123!', true, null, null, 'Max', 'Muster');
+        $c = DB::$users->create('Bea Beispiel', 'Pass123!', true, null, null, 'X', 'Y');
+        $d = DB::$users->create('bea', 'Pass123!', true, null, null, 'Bea', 'Beispiel');
+        $e = DB::$users->create('solo', 'Pass123!', true, null, null, 'Solo', 'Single');
+
+        $flags = array_column($this->json('GET', '/api/users')->json(), 'nameConflict', 'id');
+
+        $this->assertTrue($flags[$a]);
+        $this->assertTrue($flags[$b]);
+        $this->assertTrue($flags[$d], 'name equals another user\'s login');
+        $this->assertFalse($flags[$e]);
+        $this->assertTrue($this->json('GET', "/api/users/{$d}")->json()['nameConflict']);
+    }
 }

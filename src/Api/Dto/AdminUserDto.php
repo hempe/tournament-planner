@@ -22,10 +22,12 @@ final readonly class AdminUserDto
         public ?string $phone,
         public ?float $handicap,
         public ?int $priority,
+        /** Another user has the same name (or uses it as login): logging in by name is ambiguous for this user. */
+        public bool $nameConflict,
     ) {
     }
 
-    public static function fromUser(User $u): self
+    public static function fromUser(User $u, bool $nameConflict = false): self
     {
         return new self(
             $u->id,
@@ -41,6 +43,7 @@ final readonly class AdminUserDto
             Flavor::hasUserField('phone') ? $u->phone : null,
             Flavor::hasUserField('handicap') ? $u->handicap : null,
             Flavor::hasUserField('priority') ? $u->priority : null,
+            $nameConflict,
         );
     }
 }
