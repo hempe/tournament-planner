@@ -1,28 +1,41 @@
 #!/bin/bash
 
-# Build script — produces dist/1-upload-first/ and dist/2-upload-last/.
-#   ./build.sh            clean working tree required
-#   ./build.sh --dirty    allow uncommitted changes (version gets a -dirty suffix)
-#   BUILD_VERSION=x ./build.sh   override the date-commit part of the version (used by the E2E run)
+# Build script — produces dist/<flavor>/1-upload-first/ and dist/<flavor>/2-upload-last/.
+#   ./build.sh --flavor elfaro           clean working tree required; the flavour is required
+#   ./build.sh --flavor amigos --dirty   allow uncommitted changes (version gets a -dirty suffix)
+#   BUILD_VERSION=x ./build.sh --flavor elfaro   override the date-commit part of the version (E2E run)
 
 set -euo pipefail
+cd "$(dirname "$0")"
 
 DIRTY=0
-for arg in "$@"; do
-    case "$arg" in
+FLAVOR=""
+FLAVORS="$(ls frontend/flavors | tr '\n' ' ')"
+while [ $# -gt 0 ]; do
+    case "$1" in
         --dirty) DIRTY=1 ;;
-        *) echo "Unknown argument: $arg" >&2; exit 2 ;;
+        --flavor) FLAVOR="${2:-}"; shift ;;
+        --flavor=*) FLAVOR="${1#*=}" ;;
+        *) echo "Unknown argument: $1" >&2; exit 2 ;;
     esac
+    shift
 done
+if [ -z "$FLAVOR" ]; then
+    echo "Missing --flavor <name> (one of: $FLAVORS)" >&2
+    exit 2
+fi
+if [ ! -f "frontend/flavors/$FLAVOR/flavor.json" ]; then
+    echo "Unknown flavour: $FLAVOR (one of: $FLAVORS)" >&2
+    exit 2
+fi
 
-cd "$(dirname "$0")"
-DIST="dist"
+DIST="dist/$FLAVOR"
 STAGE="$DIST/.stage-frontend"
 FIRST="$DIST/1-upload-first"
 LAST="$DIST/2-upload-last"
 
 # 1. Version
-VERSION="${BUILD_VERSION:-$(date +%Y-%m-%d)-$(git rev-parse --short HEAD)}"
+VERSION="${BUILD_VERSION:-$(date +%Y-%m-%d)-$(git rev-parse --short HEAD)}-$FLAVOR"
 STATUS="$(git status --porcelain)"
 if [ -n "$STATUS" ]; then
     if [ "$DIRTY" -eq 0 ]; then
@@ -34,7 +47,7 @@ if [ -n "$STATUS" ]; then
 fi
 
 echo "======================================"
-echo "  Tournament Planner Build $VERSION"
+echo "  Tournament Planner Build $VERSION ($FLAVOR)"
 echo "======================================"
 
 # Lint PHP against production's PHP version (8.3)
@@ -60,7 +73,7 @@ composer api:check
 
 # 3. Frontend
 echo "Building frontend..."
-(cd frontend && npm ci && npx ng build --configuration production \
+(cd frontend && npm ci && npx ng build --configuration "production,$FLAVOR" \
     --deploy-url="/app/$VERSION/" \
     --define "APP_BUILD_VERSION='\"$VERSION\"'")
 BROWSER="frontend/dist/tournament-planner-ui/browser"
@@ -69,17 +82,27 @@ BROWSER="frontend/dist/tournament-planner-ui/browser"
 rm -rf "$DIST"
 mkdir -p "$STAGE/app/$VERSION"
 cp "$BROWSER/index.html" "$STAGE/index.html"
+# The flavour's static files (icons, manifest, …) stay at the web root, everything else is versioned
+ASSETS="frontend/flavors/$FLAVOR/assets"
+ROOT_FILES="$(cd "$ASSETS" && find . -type f ! -name .gitkeep | sed 's|^\./||')"
 (cd "$BROWSER" && find . -type f \
     ! -name index.html ! -name ngsw.json ! -name ngsw-worker.js \
     ! -name safety-worker.js ! -name worker-basic.min.js -print0 \
     | while IFS= read -r -d '' f; do
+        if printf '%s\n' "$ROOT_FILES" | grep -qxF "${f#./}"; then
+            continue
+        fi
         mkdir -p "$OLDPWD/$STAGE/app/$VERSION/$(dirname "$f")"
         cp "$f" "$OLDPWD/$STAGE/app/$VERSION/$f"
     done)
 for f in ngsw-worker.js safety-worker.js worker-basic.min.js; do
     [ -f "$BROWSER/$f" ] && cp "$BROWSER/$f" "$STAGE/$f"
 done
-cp site.webmanifest browserconfig.xml favicon* *.png *.svg "$STAGE/" 2>/dev/null || true
+while IFS= read -r f; do
+    [ -n "$f" ] || continue
+    mkdir -p "$STAGE/$(dirname "$f")"
+    cp "$BROWSER/$f" "$STAGE/$f"
+done <<< "$ROOT_FILES"
 
 # index.html must reference only /app/<version>/ assets (or root-level static files / external URLs)
 BAD=""
@@ -107,6 +130,11 @@ cp -r src "$FIRST/src"
 mkdir -p "$FIRST/resources/i18n" "$FIRST/config"
 cp frontend/src/i18n/*.json "$FIRST/resources/i18n/"
 cp config/production.php "$FIRST/config/"
+# Flavour: config/flavor.json (with its id) and the text overrides, read by TP\Core\Flavor / Translator
+php -r '$f = json_decode(file_get_contents($argv[1]), true, 32, JSON_THROW_ON_ERROR); $f["id"] = $argv[2]; echo json_encode($f, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), "\n";' \
+    "frontend/flavors/$FLAVOR/flavor.json" "$FLAVOR" > "$FIRST/config/flavor.json"
+mkdir -p "$FIRST/resources/i18n/flavor"
+cp frontend/flavors/"$FLAVOR"/i18n/*.json "$FIRST/resources/i18n/flavor/"
 grep -v 'xdebug' php.ini > "$FIRST/php.ini"
 mkdir -p "$FIRST/storage/cache" "$FIRST/logs"
 touch "$FIRST/storage/cache/.gitkeep" "$FIRST/logs/.gitkeep"
@@ -132,13 +160,14 @@ rm -rf "releases/$VERSION"
 cp -r "$LAST" "releases/$VERSION"
 
 # 9. Verify
-php bin/verify-dist.php "$DIST"
+php bin/verify-dist.php "$DIST" "$FLAVOR"
 
 # 10. Instructions
-PREVIOUS="$(ls -1t releases | grep -vxF "$VERSION" | head -1 || true)"
+PREVIOUS="$(ls -1t releases | grep -e "-$FLAVOR\(-dirty\)\?$" | grep -vxF "$VERSION" | head -1 || true)"
 echo ""
 echo "======================================"
 echo "  Build complete: $VERSION"
+echo "  Flavour: $FLAVOR — upload to the $FLAVOR host only"
 echo "======================================"
 echo ""
 echo "Upload (in this order):"
