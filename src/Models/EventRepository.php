@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace TP\Models;
 
 use DateTime;
+use TP\Core\Flavor;
 use Exception;
 
 final class EventRepository extends BaseRepository
@@ -163,7 +164,10 @@ final class EventRepository extends BaseRepository
             FROM event_users AS r
             JOIN users AS u ON r.userId = u.id
             WHERE r.eventId = ?
-            ORDER BY r.state, u.male DESC, u.last_name, u.first_name";
+            ORDER BY r.state, " . (Flavor::waitlistByPriority()
+                // waitlist in promotion order (see promotionOrder())
+                ? "IF(r.state = 2, u.prio IS NULL, 0), IF(r.state = 2, u.prio, 0), IF(r.state = 2, r.timestamp, 0), "
+                : "") . "u.male DESC, u.last_name, u.first_name";
 
         return $this->fetchMappedRows(
             $query,
@@ -280,6 +284,33 @@ final class EventRepository extends BaseRepository
         );
     }
 
+    /** Tests and data fixes: set the registration time used for waitlist ordering. */
+    public function setRegistrationTimestamp(int $eventId, int $userId, string $timestamp): void
+    {
+        $this->executeUpdateQuery(
+            "UPDATE event_users SET timestamp = ? WHERE eventId = ? AND userId = ?",
+            "sii",
+            [$timestamp, $eventId, $userId]
+        );
+        $this->fix($eventId);
+    }
+
+    /** Waitlist promotion order (first = promoted first): Amigos by priority (none = last), else first come first served. */
+    private static function promotionOrder(): string
+    {
+        return Flavor::waitlistByPriority()
+            ? "u.prio IS NULL, u.prio ASC, eu_inner.timestamp ASC"
+            : "eu_inner.timestamp ASC";
+    }
+
+    /** Demotion order when the capacity shrinks (first = demoted first): the reverse. */
+    private static function demotionOrder(): string
+    {
+        return Flavor::waitlistByPriority()
+            ? "u.prio IS NULL DESC, u.prio DESC, eu_inner.timestamp DESC"
+            : "eu_inner.timestamp DESC";
+    }
+
     private function fix(int $eventId): void
     {
         $available = $this->fetchSingleValue(
@@ -296,7 +327,7 @@ final class EventRepository extends BaseRepository
                     FROM event_users AS eu_inner
                     INNER JOIN users AS u ON eu_inner.userId = u.id
                     WHERE eu_inner.state = 2 AND eu_inner.eventId = ?
-                    ORDER BY eu_inner.timestamp ASC
+                    ORDER BY " . self::promotionOrder() . "
                     LIMIT ?
                 ) AS subquery ON eu.id = subquery.id
                 SET eu.state = 1",
@@ -311,7 +342,7 @@ final class EventRepository extends BaseRepository
                     FROM event_users AS eu_inner
                     INNER JOIN users AS u ON eu_inner.userId = u.id
                     WHERE eu_inner.state = 1 AND eu_inner.eventId = ?
-                    ORDER BY eu_inner.timestamp DESC
+                    ORDER BY " . self::demotionOrder() . "
                     LIMIT ?
                 ) AS subquery ON eu.id = subquery.id
                 SET eu.state = 2",
