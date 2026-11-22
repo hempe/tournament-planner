@@ -119,6 +119,9 @@ export class UserForm {
         lastName: m.lastName || null,
         rfeg: m.rfeg || null,
         memberNumber: m.memberNumber || null,
+        phone: null,
+        handicap: null,
+        priority: null,
       };
       this.save.emit(
         this.mode() === 'create' ? { ...common, password: m.password } : { ...common, password: m.password || null },

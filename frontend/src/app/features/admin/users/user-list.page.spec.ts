@@ -8,7 +8,7 @@ import { I18n } from '../../../core/i18n/i18n';
 import { UserListPage } from './user-list.page';
 
 function user(id: number, username: string, over: Partial<AdminUserDto> = {}): AdminUserDto {
-  return { id, username, firstName: 'Vor', lastName: `Name${id}`, displayName: `Vor Name${id}`, male: true, isAdmin: false, rfeg: null, memberNumber: null, ...over };
+  return { id, username, firstName: 'Vor', lastName: `Name${id}`, displayName: `Vor Name${id}`, male: true, isAdmin: false, rfeg: null, memberNumber: null, phone: null, handicap: null, priority: null, ...over };
 }
 
 describe('UserListPage', () => {

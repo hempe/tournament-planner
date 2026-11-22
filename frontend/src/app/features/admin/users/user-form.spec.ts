@@ -7,7 +7,7 @@ import { I18n } from '../../../core/i18n/i18n';
 import { UserCreatePage } from './user-create.page';
 import { UserEditPage } from './user-edit.page';
 
-const existing: AdminUserDto = { id: 5, username: 'bert', firstName: 'Bert', lastName: 'Beispiel', displayName: 'Bert Beispiel', male: false, isAdmin: false, rfeg: 'R1', memberNumber: 'M9' };
+const existing: AdminUserDto = { id: 5, username: 'bert', firstName: 'Bert', lastName: 'Beispiel', displayName: 'Bert Beispiel', male: false, isAdmin: false, rfeg: 'R1', memberNumber: 'M9', phone: null, handicap: null, priority: null };
 
 describe('user create and edit pages', () => {
   let api: Record<'get' | 'put' | 'post', ReturnType<typeof vi.fn>>;
@@ -74,7 +74,7 @@ describe('user create and edit pages', () => {
 
       expect(api.post).toHaveBeenCalledWith(
         '/users',
-        { male: true, username: 'neu', password: 'Geheim123!', firstName: 'Nina', lastName: null, rfeg: null, memberNumber: '42' },
+        { male: true, username: 'neu', password: 'Geheim123!', firstName: 'Nina', lastName: null, rfeg: null, memberNumber: '42', phone: null, handicap: null, priority: null },
         undefined,
       );
       expect(notify.success).toHaveBeenCalledWith('users.create_success');
@@ -127,7 +127,7 @@ describe('user create and edit pages', () => {
 
       expect(api.put).toHaveBeenCalledWith(
         '/users/5',
-        { male: false, username: 'bert', password: null, firstName: 'Bert', lastName: 'Neu', rfeg: 'R1', memberNumber: 'M9' },
+        { male: false, username: 'bert', password: null, firstName: 'Bert', lastName: 'Neu', rfeg: 'R1', memberNumber: 'M9', phone: null, handicap: null, priority: null },
         undefined,
       );
       expect(notify.success).toHaveBeenCalledWith('users.update_success');

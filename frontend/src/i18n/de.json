@@ -192,7 +192,8 @@
         "boolean": "Das Feld :field muss wahr oder falsch sein.",
         "in": "Das Feld :field muss einer der folgenden Werte sein: :values.",
         "failed": "Bitte überprüfe deine Eingaben.",
-        "max_value": "Das Feld :field darf höchstens :max sein."
+        "max_value": "Das Feld :field darf höchstens :max sein.",
+        "numeric": "Das Feld :field muss eine Zahl sein."
     },
     "errors": {
         "title": "Fehler",

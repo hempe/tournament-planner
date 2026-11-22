@@ -17,6 +17,9 @@ final class User
         public readonly ?string $memberNumber = null,
         public readonly ?string $firstName = null,
         public readonly ?string $lastName = null,
+        public readonly ?string $phone = null,
+        public readonly ?float $handicap = null,
+        public readonly ?int $priority = null,
     ) {
     }
 

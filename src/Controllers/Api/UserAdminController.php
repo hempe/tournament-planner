@@ -8,6 +8,7 @@ use TP\Api\Dto\AdminUserDto;
 use TP\Api\Dto\UserCreateRequest;
 use TP\Api\Dto\UserUpdateRequest;
 use TP\Core\Attributes\Body;
+use TP\Core\Flavor;
 use TP\Core\Attributes\Delete;
 use TP\Core\Attributes\Get;
 use TP\Core\Attributes\Middleware;
@@ -53,12 +54,13 @@ final class UserAdminController
         $id = DB::$users->create(
             $username,
             trim($request->getString('password')),
-            $request->getBool('male'),
-            $this->nullable($request, 'rfeg'),
-            $this->nullable($request, 'memberNumber'),
+            Flavor::enabled('genderSplit') ? $request->getBool('male') : true,
+            null,
+            null,
             $this->nullable($request, 'firstName'),
             $this->nullable($request, 'lastName'),
         );
+        DB::$users->updateExtra($id, $this->extraFields($request));
 
         return Response::json(AdminUserDto::fromUser(DB::$users->get($id)));
     }
@@ -91,13 +93,12 @@ final class UserAdminController
 
             DB::$users->update(
                 $user->id,
-                $request->getBool('male'),
+                Flavor::enabled('genderSplit') ? $request->getBool('male') : $user->male,
                 $username,
-                $this->nullable($request, 'rfeg'),
-                $this->nullable($request, 'memberNumber'),
                 $this->nullable($request, 'firstName'),
                 $this->nullable($request, 'lastName'),
             );
+            DB::$users->updateExtra($user->id, $this->extraFields($request));
             $password = $request->getString('password');
             if ($password !== '') {
                 DB::$users->setPassword($user->id, $password);
@@ -160,10 +161,65 @@ final class UserAdminController
         $errors = $request->validate($rules)->fieldErrors();
 
         // JSON `false` is sanitised to '', so check presence instead of using the boolean rule
-        if (!$request->has('male')) {
+        if (Flavor::enabled('genderSplit') && !$request->has('male')) {
             $errors = ['male' => ['key' => 'validation.required']] + $errors;
         }
+        if (Flavor::hasUserField('phone') && mb_strlen($request->getString('phone')) > 255) {
+            $errors['phone'] = ['key' => 'validation.max', 'params' => ['max' => 255]];
+        }
+        if (Flavor::hasUserField('handicap')) {
+            $error = $this->numberError($request->get('handicap'), -10, 54, false);
+            if ($error !== null) {
+                $errors['handicap'] = $error;
+            }
+        }
+        if (Flavor::hasUserField('priority')) {
+            $error = $this->numberError($request->get('priority'), 0, 99999, true);
+            if ($error !== null) {
+                $errors['priority'] = $error;
+            }
+        }
         return $errors;
+    }
+
+    /** @return array{key: string, params?: array<string, scalar>}|null error for an optional number field */
+    private function numberError(mixed $value, int $min, int $max, bool $integer): ?array
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+        if ($integer ? !(is_int($value) || (is_string($value) && ctype_digit($value))) : !is_numeric($value)) {
+            return ['key' => $integer ? 'validation.integer' : 'validation.numeric'];
+        }
+        if ($value < $min) {
+            return ['key' => 'validation.min_value', 'params' => ['min' => $min]];
+        }
+        if ($value > $max) {
+            return ['key' => 'validation.max_value', 'params' => ['max' => $max]];
+        }
+        return null;
+    }
+
+    /**
+     * The flavour's optional user fields from the request (others are left untouched in the database).
+     *
+     * @return array<string, string|null>
+     */
+    private function extraFields(Request $request): array
+    {
+        $extra = [];
+        foreach (Flavor::USER_FIELDS as $field) {
+            if (!Flavor::hasUserField($field)) {
+                continue;
+            }
+            $value = $request->get($field);
+            $extra[$field] = match (true) {
+                $value === null, $value === '' => null,
+                is_int($value), is_float($value) => (string) $value,
+                default => trim((string) $value) ?: null,
+            };
+        }
+        return $extra;
     }
 
     private function invalid(array $fields): Response

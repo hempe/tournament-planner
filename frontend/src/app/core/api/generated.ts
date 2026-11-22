@@ -44,6 +44,9 @@ export interface AdminUserDto {
   isAdmin: boolean;
   rfeg: string | null;
   memberNumber: string | null;
+  phone: string | null;
+  handicap: number | null;
+  priority: number | null;
 }
 
 export interface BulkCreateRequest {
@@ -297,13 +300,16 @@ export interface TableDto {
 }
 
 export interface UserCreateRequest {
-  male: boolean;
+  male: boolean | null;
   username: string;
   password: string;
   firstName: string | null;
   lastName: string | null;
   rfeg: string | null;
   memberNumber: string | null;
+  phone: string | null;
+  handicap: number | null;
+  priority: number | null;
 }
 
 export interface UserDto {
@@ -321,13 +327,16 @@ export interface UserOptionDto {
 }
 
 export interface UserUpdateRequest {
-  male: boolean;
+  male: boolean | null;
   username: string;
   password: string | null;
   firstName: string | null;
   lastName: string | null;
   rfeg: string | null;
   memberNumber: string | null;
+  phone: string | null;
+  handicap: number | null;
+  priority: number | null;
 }
 
 export function authApi(api: ApiClient) {

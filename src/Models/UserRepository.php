@@ -10,6 +10,26 @@ use mysqli;
 
 final class UserRepository
 {
+    private const COLUMNS = 'id, username, admin, male, rfeg, member_number, first_name, last_name, phone, handicap, prio';
+    /** Flavour-specific fields (API name => column) written by updateExtra(). */
+    private const EXTRA_COLUMNS = ['rfeg' => 'rfeg', 'memberNumber' => 'member_number', 'phone' => 'phone', 'handicap' => 'handicap', 'priority' => 'prio'];
+
+    private static function map(array $row): User
+    {
+        return new User(
+            (int) $row['id'],
+            $row['username'],
+            (bool) $row['admin'],
+            (bool) $row['male'],
+            $row['rfeg'] ?? null,
+            $row['member_number'] ?? null,
+            $row['first_name'] ?? null,
+            $row['last_name'] ?? null,
+            $row['phone'] ?? null,
+            isset($row['handicap']) ? (float) $row['handicap'] : null,
+            isset($row['prio']) ? (int) $row['prio'] : null,
+        );
+    }
     public function __construct(private readonly mysqli $conn)
     {
     }
@@ -49,7 +69,7 @@ final class UserRepository
 
     public function get(int $id): ?User
     {
-        $stmt = $this->conn->prepare("SELECT id, username, admin, male, rfeg, member_number, first_name, last_name FROM users WHERE id = ?");
+        $stmt = $this->conn->prepare("SELECT " . self::COLUMNS . " FROM users WHERE id = ?");
         if (!$stmt) {
             throw new Exception("Prepare statement failed: " . $this->conn->error);
         }
@@ -58,22 +78,38 @@ final class UserRepository
         $result = $stmt->get_result();
         $row = $result->fetch_assoc();
         $stmt->close();
-        if (!$row) {
-            return null;
-        }
-        return new User((int) $row['id'], $row['username'], (bool) $row['admin'], (bool) $row['male'], $row['rfeg'], $row['member_number'], $row['first_name'] ?? null, $row['last_name'] ?? null);
+        return $row ? self::map($row) : null;
     }
 
-    public function update(int $id, bool $male, string $username, ?string $rfeg, ?string $memberNumber, ?string $firstName, ?string $lastName): void
+    public function update(int $id, bool $male, string $username, ?string $firstName, ?string $lastName): void
     {
         $maleInt = $male ? 1 : 0;
-        $stmt = $this->conn->prepare("UPDATE users SET male = ?, username = ?, rfeg = ?, member_number = ?, first_name = ?, last_name = ? WHERE id = ?");
+        $stmt = $this->conn->prepare("UPDATE users SET male = ?, username = ?, first_name = ?, last_name = ? WHERE id = ?");
         if (!$stmt) {
             throw new Exception("Prepare statement failed: " . $this->conn->error);
         }
-        $stmt->bind_param("isssssi", $maleInt, $username, $rfeg, $memberNumber, $firstName, $lastName, $id);
+        $stmt->bind_param("isssi", $maleInt, $username, $firstName, $lastName, $id);
         $stmt->execute();
         $stmt->close();
+    }
+
+    /**
+     * Flavour-specific fields; only the keys present in $fields are written (null clears).
+     *
+     * @param array<string, string|null> $fields keys: rfeg, memberNumber, phone, handicap, priority
+     */
+    public function updateExtra(int $id, array $fields): void
+    {
+        foreach (array_intersect_key($fields, self::EXTRA_COLUMNS) as $key => $value) {
+            $column = self::EXTRA_COLUMNS[$key];
+            $stmt = $this->conn->prepare("UPDATE users SET {$column} = ? WHERE id = ?");
+            if (!$stmt) {
+                throw new Exception("Prepare statement failed: " . $this->conn->error);
+            }
+            $stmt->bind_param('si', $value, $id);
+            $stmt->execute();
+            $stmt->close();
+        }
     }
 
     public function setPassword(int $userId, string $password): void
@@ -179,7 +215,7 @@ final class UserRepository
     /** @return User[] */
     public function all(): array
     {
-        $stmt = $this->conn->prepare("SELECT id, username, admin, male, rfeg, member_number, first_name, last_name FROM users ORDER BY last_name, first_name, username");
+        $stmt = $this->conn->prepare("SELECT " . self::COLUMNS . " FROM users ORDER BY last_name, first_name, username");
         if (!$stmt) {
             throw new Exception("Prepare statement failed: " . $this->conn->error);
         }
@@ -188,7 +224,7 @@ final class UserRepository
         $users = [];
 
         while ($row = $result->fetch_assoc()) {
-            $users[] = new User((int) $row['id'], $row['username'], (bool) $row['admin'], (bool) $row['male'], $row['rfeg'], $row['member_number'], $row['first_name'] ?? null, $row['last_name'] ?? null);
+            $users[] = self::map($row);
         }
 
         $stmt->close();
@@ -198,7 +234,7 @@ final class UserRepository
     /** @return array{0: User|null, 1: string|null} */
     public function getWithPassword(string $username): array
     {
-        $stmt = $this->conn->prepare("SELECT id, password, admin, male, rfeg, member_number, first_name, last_name FROM users WHERE username = ?");
+        $stmt = $this->conn->prepare("SELECT " . self::COLUMNS . ", password FROM users WHERE username = ?");
         if (!$stmt) {
             throw new Exception("Prepare statement failed: " . $this->conn->error);
         }
@@ -207,7 +243,7 @@ final class UserRepository
         $result = $stmt->get_result();
 
         if ($row = $result->fetch_assoc()) {
-            $user = new User((int) $row['id'], $username, (bool) $row['admin'], (bool) $row['male'], $row['rfeg'], $row['member_number'], $row['first_name'] ?? null, $row['last_name'] ?? null);
+            $user = self::map($row);
             $stmt->close();
             return [$user, $row['password']];
         }
