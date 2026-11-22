@@ -46,6 +46,13 @@ import { TranslatePipe } from '../i18n/translate.pipe';
         @if (session.isAdmin()) {
           <!-- Admin navigation in the style of the website menu: active item green and underlined -->
           <nav class="flex w-full justify-center gap-5 text-[15px] md:ml-auto md:w-auto md:justify-end md:pr-2">
+            <a
+              routerLink="/"
+              routerLinkActive="text-primary! border-primary!"
+              [routerLinkActiveOptions]="{ exact: true }"
+              class="border-b-2 border-transparent py-2 hover:text-primary"
+              >{{ 'nav.home' | t }}</a
+            >
             <a routerLink="/events" routerLinkActive="text-primary! border-primary!" class="border-b-2 border-transparent py-2 hover:text-primary">{{ 'nav.events' | t }}</a>
             <a routerLink="/users" routerLinkActive="text-primary! border-primary!" class="border-b-2 border-transparent py-2 hover:text-primary">{{ 'nav.users' | t }}</a>
           </nav>

@@ -27,7 +27,7 @@ describe('Header', () => {
     });
     TestBed.inject(I18n).use('de', {
       app: { name: 'GOLF EL FARO', club_name_line1: 'CLUB DEPORTIVO DE GOLF', club_name_line2: 'EL FARO DE MASPALOMAS' },
-      nav: { events: 'Anlässe', users: 'Benutzer', logout: 'Abmelden' },
+      nav: { home: 'Startseite', events: 'Anlässe', users: 'Benutzer', logout: 'Abmelden' },
       auth: { login: 'Mitglieder Anmeldung', logout_success: 'Erfolgreich abgemeldet' },
     });
   });
@@ -65,14 +65,22 @@ describe('Header', () => {
 
     expect(text).toContain('Jane Doe');
     expect(text).toContain('Abmelden');
+    expect(text).not.toContain('Startseite');
     expect(text).not.toContain('Anlässe');
     expect(text).not.toContain('Benutzer');
 
     user.set({ ...user()!, isAdmin: true });
     await fixture.whenStable();
     text = fixture.nativeElement.textContent as string;
-    expect(text).toContain('Anlässe');
-    expect(text).toContain('Benutzer');
+    const tabs = Array.from(fixture.nativeElement.querySelectorAll('nav a') as NodeListOf<HTMLAnchorElement>).map((a) => [
+      a.textContent?.trim(),
+      a.getAttribute('href'),
+    ]);
+    expect(tabs).toEqual([
+      ['Startseite', '/'],
+      ['Anlässe', '/events'],
+      ['Benutzer', '/users'],
+    ]);
   });
 
   it('logs out via the session store', async () => {
