@@ -14,6 +14,7 @@ use TP\Core\Attributes\Post;
 use TP\Core\Attributes\Returns;
 use TP\Core\Attributes\RoutePrefix;
 use TP\Core\HttpStatus;
+use TP\Core\RateLimiter;
 use TP\Core\Request;
 use TP\Core\Response;
 use TP\Core\ValidationRule;
@@ -26,6 +27,9 @@ use TP\Models\User;
 #[Middleware(CsrfMiddleware::class)]
 final class AuthController
 {
+    private const LOGIN_MAX_FAILURES = 5;
+    private const LOGIN_WINDOW_SECONDS = 900;
+
     #[Get('/me')]
     #[Returns(SessionDto::class)]
     public function me(Request $request): Response
@@ -60,11 +64,27 @@ final class AuthController
         }
 
         $data = $request->getValidatedData();
+
+        // Checked before the password so a blocked client learns nothing about correct guesses
+        $limiter = RateLimiter::fromEnvironment();
+        $limitKey = 'login:' . $request->clientIp() . ':' . mb_strtolower(trim($data['username']));
+        if ($limiter->tooMany($limitKey, self::LOGIN_MAX_FAILURES, self::LOGIN_WINDOW_SECONDS)) {
+            $minutes = (int) ceil($limiter->retryAfter($limitKey, self::LOGIN_WINDOW_SECONDS) / 60);
+            return Response::apiError(
+                'auth.too_many_attempts',
+                HttpStatus::TOO_MANY_REQUESTS,
+                params: ['minutes' => max(1, $minutes)],
+            );
+        }
+
         $user = User::authenticate($data['username'], $data['password']);
 
         if ($user === null) {
+            $limiter->hit($limitKey, self::LOGIN_MAX_FAILURES, self::LOGIN_WINDOW_SECONDS);
             return Response::apiError('auth.login_failed', HttpStatus::UNPROCESSABLE_ENTITY);
         }
+
+        $limiter->clear($limitKey);
 
         session_regenerate_id(true);
         User::setCurrent($user);

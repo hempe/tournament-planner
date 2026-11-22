@@ -131,4 +131,59 @@ class AuthApiTest extends IntegrationTestCase
         $this->assertSame(['user' => null], $this->json('GET', '/api/auth/me')->json());
         $this->assertArrayNotHasKey('user_id', $_SESSION);
     }
+
+    public function testSixthLoginAttemptIsRateLimitedEvenWithCorrectPassword(): void
+    {
+        for ($i = 0; $i < 5; $i++) {
+            $this->assertSame(422, $this->apiLoginAs('admin', 'wrong')->statusCode);
+        }
+
+        $response = $this->apiLoginAs('admin', 'Admin123!');
+
+        $this->assertSame(429, $response->statusCode);
+        $body = $response->json();
+        $this->assertSame('auth.too_many_attempts', $body['error']);
+        $this->assertSame(['minutes' => 15], $body['params']);
+        $this->assertArrayNotHasKey('user_id', $_SESSION);
+    }
+
+    public function testRateLimitIsPerUsernameCaseInsensitive(): void
+    {
+        for ($i = 0; $i < 5; $i++) {
+            $this->apiLoginAs('Admin', 'wrong');
+        }
+
+        $this->assertSame(429, $this->apiLoginAs('ADMIN', 'Admin123!')->statusCode);
+
+        DB::$users->create('jane', 'Pass123!', firstName: 'Jane', lastName: 'Doe');
+        $this->assertSame(200, $this->apiLoginAs('jane', 'Pass123!')->statusCode);
+    }
+
+    public function testSuccessfulLoginClearsTheCounter(): void
+    {
+        for ($i = 0; $i < 4; $i++) {
+            $this->apiLoginAs('admin', 'wrong');
+        }
+        $this->assertSame(200, $this->apiLoginAs('admin', 'Admin123!')->statusCode);
+        $_SESSION = [];
+
+        for ($i = 0; $i < 5; $i++) {
+            $this->assertSame(422, $this->apiLoginAs('admin', 'wrong')->statusCode);
+        }
+        $this->assertSame(429, $this->apiLoginAs('admin', 'wrong')->statusCode);
+    }
+
+    public function testDifferentIpIsNotAffected(): void
+    {
+        for ($i = 0; $i < 5; $i++) {
+            $this->apiLoginAs('admin', 'wrong');
+        }
+
+        $_SERVER['REMOTE_ADDR'] = '203.0.113.9';
+        try {
+            $this->assertSame(200, $this->apiLoginAs('admin', 'Admin123!')->statusCode);
+        } finally {
+            unset($_SERVER['REMOTE_ADDR']);
+        }
+    }
 }

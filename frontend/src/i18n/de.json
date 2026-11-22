@@ -31,6 +31,7 @@
         "username": "Benutzername",
         "password": "Passwort",
         "login_failed": "Anmeldung fehlgeschlagen",
+        "too_many_attempts": "Zu viele Anmeldeversuche. Bitte in :minutes Minuten erneut versuchen.",
         "required_fields": "Benutzername und Passwort sind erforderlich",
         "logout_success": "Erfolgreich abgemeldet",
         "login_required": "Anmeldung erforderlich",

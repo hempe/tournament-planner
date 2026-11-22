@@ -31,6 +31,7 @@
         "username": "Usuario",
         "password": "Contraseña",
         "login_failed": "Error de inicio de sesión",
+        "too_many_attempts": "Demasiados intentos de inicio de sesión. Inténtalo de nuevo en :minutes minutos.",
         "required_fields": "Usuario y contraseña son obligatorios",
         "logout_success": "Sesión cerrada correctamente",
         "login_required": "Inicio de sesión requerido",

@@ -31,6 +31,7 @@
         "username": "Username",
         "password": "Password",
         "login_failed": "Login failed",
+        "too_many_attempts": "Too many login attempts. Please try again in :minutes minutes.",
         "required_fields": "Username and password are required",
         "logout_success": "Successfully logged out",
         "login_required": "Login required",

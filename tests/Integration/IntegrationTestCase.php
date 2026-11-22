@@ -16,6 +16,7 @@ use TP\Models\DB;
 abstract class IntegrationTestCase extends TestCase
 {
     protected static bool $databaseInitialized = false;
+    private string $rateLimitDir = '';
 
     /**
      * Set up test database before running tests
@@ -38,6 +39,23 @@ abstract class IntegrationTestCase extends TestCase
         parent::setUp();
         $_SESSION = [];
         $_COOKIE = [];
+
+        // Fresh, empty rate-limit storage per test (never touches storage/cache)
+        $this->rateLimitDir = sys_get_temp_dir() . '/tp-ratelimit-' . bin2hex(random_bytes(6));
+        $_ENV['RATE_LIMIT_DIR'] = $this->rateLimitDir;
+    }
+
+    protected function tearDown(): void
+    {
+        foreach (glob($this->rateLimitDir . '/*') ?: [] as $file) {
+            unlink($file);
+        }
+        if (is_dir($this->rateLimitDir)) {
+            rmdir($this->rateLimitDir);
+        }
+        unset($_ENV['RATE_LIMIT_DIR']);
+
+        parent::tearDown();
     }
 
     /**
