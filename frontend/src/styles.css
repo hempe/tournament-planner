@@ -4,6 +4,11 @@
 @import 'tailwindcss/utilities.css';
 
 @import '@spartan-ng/brain/hlm-tailwind-preset.css';
+
+@import '@fontsource/hind-guntur/400.css';
+@import '@fontsource/hind-guntur/500.css';
+@import '@fontsource/hind-guntur/600.css';
+@import '@fontsource/hind-guntur/700.css';
 /* You can add global styles to this file, and also import other style files */
 
 :root {

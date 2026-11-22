@@ -26,7 +26,8 @@ merge_dist() {
 down() {
     docker rm -f "$WEB" "$DB" >/dev/null 2>&1 || true
     docker network rm "$NET" >/dev/null 2>&1 || true
-    rm -rf "$SITE"
+    # Files the app wrote at runtime (rate limits, logs) belong to www-data inside the container
+    rm -rf "$SITE" 2>/dev/null || docker run --rm -v "$PWD/e2e:/e2e" --entrypoint rm mariadb:11 -rf /e2e/.site
 }
 
 case "${1:-}" in

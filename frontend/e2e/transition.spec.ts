@@ -120,3 +120,16 @@ test('caching headers: versioned assets are immutable, index.html is not cached'
 
   expect((await request.get('/version.txt')).headers()['cache-control']).toContain('no-cache');
 });
+
+test('the font is hosted with the app: no request to Google Fonts', async ({ page }) => {
+  const external: string[] = [];
+  page.on('request', (request) => {
+    const host = new URL(request.url()).hostname;
+    if (host.endsWith('googleapis.com') || host.endsWith('gstatic.com')) external.push(request.url());
+  });
+  await page.goto('/');
+  await expect(page.locator('app-header')).toBeVisible();
+  await page.evaluate(() => document.fonts.ready);
+  expect(await page.evaluate(() => document.fonts.check('16px "Hind Guntur"'))).toBe(true);
+  expect(external).toEqual([]);
+});
