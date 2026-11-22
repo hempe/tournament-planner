@@ -44,7 +44,7 @@ test('after the 303 the browser lands on the page the form belonged to', async (
 });
 
 test('the web manifest is unchanged', async ({ request }) => {
-  const repoManifest = JSON.parse(readFileSync(join(__dirname, '..', '..', 'site.webmanifest'), 'utf8'));
+  const repoManifest = JSON.parse(readFileSync(join(__dirname, '..', 'flavors', 'elfaro', 'assets', 'site.webmanifest'), 'utf8'));
   const response = await request.get('/site.webmanifest');
   expect(response.status()).toBe(200);
   const served = await response.json();
@@ -132,4 +132,19 @@ test('the font is hosted with the app: no request to Google Fonts', async ({ pag
   await page.evaluate(() => document.fonts.ready);
   expect(await page.evaluate(() => document.fonts.check('16px "Hind Guntur"'))).toBe(true);
   expect(external).toEqual([]);
+});
+
+test('old Amigos links redirect permanently', async ({ request }) => {
+  const event = await request.get('/event.php?id=1', { maxRedirects: 0 });
+  expect(event.status()).toBe(301);
+  expect(new URL(event.headers()['location'], 'http://x').pathname).toBe('/events/1');
+
+  for (const path of ['/index.php', '/login.php', '/add-event.php?date=2099-01-01', '/admin/users.php']) {
+    const res = await request.get(path, { maxRedirects: 0 });
+    expect(res.status(), path).toBe(301);
+    expect(new URL(res.headers()['location'], 'http://x').pathname, path).toBe('/');
+  }
+
+  // the API still runs through index.php (internal rewrite, no redirect)
+  expect((await request.get('/api/auth/me')).status()).toBe(200);
 });

@@ -7,6 +7,15 @@ RewriteEngine On
 # Internal folders are never served
 RewriteRule ^(src|vendor|config|resources|storage|logs)(/|$) - [R=404,L]
 
+# Links of the old Amigos app (event.php?id=N etc.) → new addresses.
+# /index.php only redirects for direct requests (REDIRECT_STATUS empty), never for the internal /api rewrite.
+RewriteCond %{QUERY_STRING} (^|&)id=(\d+)(&|$)
+RewriteRule ^event\.php$ /events/%2? [R=301,L]
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
+RewriteRule ^index\.php$ /? [R=301,L]
+RewriteRule ^(login|logout|add-event|register|fixEvent)\.php$ /? [R=301,L]
+RewriteRule ^admin/[a-z-]+\.php$ /? [R=301,L]
+
 # Only index.php may run; config, hidden and tooling files are never served
 # (php.ini sits next to index.php for hosts that read per-directory php.ini)
 RewriteRule (^|/)\.(?!well-known/) - [R=404,L]
