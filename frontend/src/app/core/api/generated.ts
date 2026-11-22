@@ -89,6 +89,13 @@ export interface CalendarDto {
   socialEvents: SocialEventSummaryDto[];
 }
 
+export interface ClientErrorReport {
+  message: string;
+  stack: string | null;
+  url: string;
+  appVersion: string;
+}
+
 export interface CommentRequest {
   comment: string;
 }
@@ -338,6 +345,13 @@ export function calendarApi(api: ApiClient) {
   return {
     month: (month: number | string, options?: RequestOptions): Promise<CalendarDto> =>
       api.get<CalendarDto>(`/calendar/${encodeURIComponent(month)}`, options),
+  };
+}
+
+export function clientErrorApi(api: ApiClient) {
+  return {
+    report: (body: ClientErrorReport, options?: RequestOptions): Promise<void> =>
+      api.post<void>('/client-errors', body, options),
   };
 }
 
