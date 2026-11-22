@@ -1,5 +1,10 @@
 import { adminGuard, authGuard, guestGuard } from './core/auth/guards';
 import { routes as allRoutes } from './app.routes';
+import { featureGuard } from './core/flavor/flavor';
+import { TestBed } from '@angular/core/testing';
+import { Router, provideRouter } from '@angular/router';
+import { FLAVOR } from './core/flavor/flavor';
+import { amigosFlavor } from './core/flavor/testing';
 
 // Legacy form-action redirects are tested in legacy-redirects.spec.ts.
 const routes = allRoutes.filter((r) => r.redirectTo === undefined);
@@ -13,16 +18,17 @@ describe('routes', () => {
       ['events/new', [adminGuard]],
       ['events/bulk/new', [adminGuard]],
       ['events/:id/admin', [adminGuard]],
-      ['events/:id/guests/:guestId/edit', [adminGuard]],
-      ['events/:id/guests/new', undefined],
+      ['events/:id/guests/:guestId/edit', [featureGuard('guests'), adminGuard]],
+      ['events/:id/guests/new', [featureGuard('guests')]],
       ['events/:id', [authGuard]],
-      ['social-events/new', [adminGuard]],
-      ['social-events/:id/admin', [adminGuard]],
-      ['social-events/:id/guests/new', undefined],
-      ['social-events/:id', [authGuard]],
+      ['social-events/new', [featureGuard('socialEvents'), adminGuard]],
+      ['social-events/:id/admin', [featureGuard('socialEvents'), adminGuard]],
+      ['social-events/:id/guests/new', [featureGuard('socialEvents'), featureGuard('guests')]],
+      ['social-events/:id', [featureGuard('socialEvents'), authGuard]],
       ['users', [adminGuard]],
       ['users/new', [adminGuard]],
       ['users/:id/edit', [adminGuard]],
+      ['not-found', undefined],
       ['**', undefined],
     ]);
   });
@@ -36,5 +42,15 @@ describe('routes', () => {
 
   it('lazy-loads every route', () => {
     expect(routes.every((r) => typeof r.loadComponent === 'function')).toBe(true);
+  });
+
+  it('switched-off features lead to the not-found page', async () => {
+    TestBed.configureTestingModule({ providers: [provideRouter(allRoutes), { provide: FLAVOR, useValue: amigosFlavor }] });
+    const router = TestBed.inject(Router);
+
+    await router.navigateByUrl('/events/1/guests/new');
+    expect(router.url).toBe('/not-found');
+    await router.navigateByUrl('/social-events/1/guests/new');
+    expect(router.url).toBe('/not-found');
   });
 });

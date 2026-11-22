@@ -35,7 +35,14 @@ export class Features {
   }
 }
 
-/** Route guard: switched-off features look like unknown pages. */
+const guards = new Map<FeatureSwitch, CanActivateFn>();
+
+/** Route guard: switched-off features look like unknown pages. One instance per feature (comparable in specs). */
 export function featureGuard(feature: FeatureSwitch): CanActivateFn {
-  return () => inject(Features).has(feature) || inject(Router).parseUrl('/not-found');
+  let guard = guards.get(feature);
+  if (!guard) {
+    guard = () => inject(Features).has(feature) || inject(Router).parseUrl('/not-found');
+    guards.set(feature, guard);
+  }
+  return guard;
 }

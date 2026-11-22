@@ -1,4 +1,5 @@
-import { Component, input, linkedSignal, output } from '@angular/core';
+import { Component, inject, input, linkedSignal, output } from '@angular/core';
+import { Features } from '../../../core/flavor/flavor';
 import { FormField, form, min, required, submit } from '@angular/forms/signals';
 import { HlmButtonImports } from '@ui/button';
 import { HlmInputImports } from '@ui/input';
@@ -54,32 +55,40 @@ interface FormModel {
         <input hlmInput id="capacity" type="number" inputmode="numeric" [formField]="eventForm.capacity" />
         <app-field-error field="capacity" label="events.max_participants" [error]="error()" [control]="eventForm.capacity()" />
       </div>
-      <label class="flex items-center gap-2 text-sm">
-        <input id="mixed" type="checkbox" class="size-4 accent-primary" [formField]="eventForm.mixed" />
-        {{ 'events.play_together' | t }}
-      </label>
-      <div class="flex flex-col gap-2">
-        <label hlmLabel for="description">{{ 'events.description' | t }}</label>
-        <textarea hlmInput id="description" rows="3" class="h-auto" [formField]="eventForm.description"></textarea>
-        <app-field-error field="description" label="events.description" [error]="error()" />
-      </div>
-      <div class="grid gap-4 sm:grid-cols-2">
+      @if (features.has('genderSplit')) {
+        <label class="flex items-center gap-2 text-sm">
+          <input id="mixed" type="checkbox" class="size-4 accent-primary" [formField]="eventForm.mixed" />
+          {{ 'events.play_together' | t }}
+        </label>
+      }
+      @if (features.has('description')) {
         <div class="flex flex-col gap-2">
-          <label hlmLabel for="priceMembers">{{ 'events.price_members' | t }}</label>
-          <input hlmInput id="priceMembers" [formField]="eventForm.priceMembers" />
-          <app-field-error field="priceMembers" label="events.price_members" [error]="error()" />
+          <label hlmLabel for="description">{{ 'events.description' | t }}</label>
+          <textarea hlmInput id="description" rows="3" class="h-auto" [formField]="eventForm.description"></textarea>
+          <app-field-error field="description" label="events.description" [error]="error()" />
         </div>
+      }
+      @if (features.has('prices')) {
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="flex flex-col gap-2">
+            <label hlmLabel for="priceMembers">{{ 'events.price_members' | t }}</label>
+            <input hlmInput id="priceMembers" [formField]="eventForm.priceMembers" />
+            <app-field-error field="priceMembers" label="events.price_members" [error]="error()" />
+          </div>
+          <div class="flex flex-col gap-2">
+            <label hlmLabel for="priceGuests">{{ 'events.price_guests' | t }}</label>
+            <input hlmInput id="priceGuests" [formField]="eventForm.priceGuests" />
+            <app-field-error field="priceGuests" label="events.price_guests" [error]="error()" />
+          </div>
+        </div>
+      }
+      @if (features.has('deadline')) {
         <div class="flex flex-col gap-2">
-          <label hlmLabel for="priceGuests">{{ 'events.price_guests' | t }}</label>
-          <input hlmInput id="priceGuests" [formField]="eventForm.priceGuests" />
-          <app-field-error field="priceGuests" label="events.price_guests" [error]="error()" />
+          <label hlmLabel for="registrationClose">{{ 'events.registration_close' | t }}</label>
+          <input hlmInput id="registrationClose" type="datetime-local" [formField]="eventForm.registrationClose" />
+          <app-field-error field="registrationClose" label="events.registration_close" [error]="error()" />
         </div>
-      </div>
-      <div class="flex flex-col gap-2">
-        <label hlmLabel for="registrationClose">{{ 'events.registration_close' | t }}</label>
-        <input hlmInput id="registrationClose" type="datetime-local" [formField]="eventForm.registrationClose" />
-        <app-field-error field="registrationClose" label="events.registration_close" [error]="error()" />
-      </div>
+      }
       <button hlmBtn type="submit" class="w-full sm:w-auto sm:self-start" [disabled]="busy()">
         {{ 'events.save' | t }}
       </button>
@@ -87,6 +96,7 @@ interface FormModel {
   `,
 })
 export class EventForm {
+  protected readonly features = inject(Features);
   readonly initial = input<Partial<EventFormValue>>({});
   readonly mode = input<'create' | 'edit'>('create');
   /** 422 from the last save. */
@@ -122,7 +132,8 @@ export class EventForm {
       const body: EventUpdateRequest = {
         name: m.name,
         capacity: Number(m.capacity),
-        mixed: m.mixed,
+        // Without a gender split every event is one mixed list
+        mixed: this.features.has('genderSplit') ? m.mixed : true,
         description: m.description || null,
         priceMembers: m.priceMembers || null,
         priceGuests: m.priceGuests || null,

@@ -2,9 +2,13 @@ import { TestBed } from '@angular/core/testing';
 import { ApiError } from '../../../core/api/api-client';
 import { I18n } from '../../../core/i18n/i18n';
 import { EventForm } from './event-form';
+import { amigosFlavor, provideTestFlavor, setTestFlavor } from '../../../core/flavor/testing';
 
 describe('EventForm', () => {
+  afterEach(() => setTestFlavor(null));
+
   beforeEach(() => {
+    TestBed.configureTestingModule({ providers: [provideTestFlavor()] });
     TestBed.inject(I18n).use('de', {
       validation: { required: 'Das Feld :field ist erforderlich.', min: 'Das Feld :field ist zu klein.', min_value: 'Das Feld :field muss mindestens :min sein.' },
       events: {
@@ -114,5 +118,20 @@ describe('EventForm', () => {
     const error = new ApiError(422, 'validation.failed', { capacity: { key: 'validation.min' } });
     const { el } = await render({ error });
     expect(el.querySelector('#capacity-error')?.textContent).toContain('Das Feld Max. Teilnehmer ist zu klein.');
+  });
+
+  it('hides gender split, description, prices and deadline when the flavour has them off; sends mixed', async () => {
+    setTestFlavor(amigosFlavor);
+    const { el, type, submit, saved } = await render({ mode: 'create' });
+
+    for (const id of ['mixed', 'description', 'priceMembers', 'priceGuests', 'registrationClose']) {
+      expect(el.querySelector(`#${id}`), id).toBeNull();
+    }
+    type('name', 'Monatsturnier');
+    type('date', '2099-05-01');
+    type('capacity', '20');
+    await submit();
+
+    expect(saved).toEqual([expect.objectContaining({ name: 'Monatsturnier', mixed: true, description: null, priceMembers: null, registrationClose: null })]);
   });
 });

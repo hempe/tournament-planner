@@ -1,4 +1,5 @@
 import { Component, computed, inject, linkedSignal, signal } from '@angular/core';
+import { Features } from '../../../core/flavor/flavor';
 import { FormField, form, min, required, submit } from '@angular/forms/signals';
 import { Router } from '@angular/router';
 import { HlmButtonImports } from '@ui/button';
@@ -49,7 +50,9 @@ interface FormModel {
                 <span class="text-muted-foreground sm:w-56">{{ formatDate(e.date) }}</span>
                 <span class="font-medium sm:flex-1">{{ e.name }}</span>
                 <span class="text-muted-foreground tabular-nums sm:w-12 sm:text-right sm:text-foreground">{{ e.capacity }}</span>
-                <span class="text-xs text-muted-foreground sm:w-64 sm:text-sm">{{ e.registrationClose ? formatDateTime(e.registrationClose) : '–' }}</span>
+                @if (features.has('deadline')) {
+                    <span class="text-xs text-muted-foreground sm:w-64 sm:text-sm">{{ e.registrationClose ? formatDateTime(e.registrationClose) : '–' }}</span>
+                }
               </li>
             }
           </ul>
@@ -99,27 +102,34 @@ interface FormModel {
               <input hlmInput id="capacity" type="number" inputmode="numeric" [formField]="bulkForm.capacity" />
               <app-field-error field="capacity" label="events.max_participants" [error]="error()" [control]="bulkForm.capacity()" />
             </div>
-            <label class="flex items-center gap-2 text-sm">
-              <input id="mixed" type="checkbox" class="size-4 accent-primary" [formField]="bulkForm.mixed" />
-              {{ 'events.play_together' | t }}
-            </label>
-            <div class="flex flex-col gap-2">
-              <label hlmLabel for="description">{{ 'events.description' | t }}</label>
-              <textarea hlmInput id="description" rows="3" class="h-auto" [formField]="bulkForm.description"></textarea>
-              <app-field-error field="description" label="events.description" [error]="error()" />
-            </div>
-            <div class="grid gap-4 sm:grid-cols-2">
+            @if (features.has('genderSplit')) {
+              <label class="flex items-center gap-2 text-sm">
+                <input id="mixed" type="checkbox" class="size-4 accent-primary" [formField]="bulkForm.mixed" />
+                {{ 'events.play_together' | t }}
+              </label>
+            }
+            @if (features.has('description')) {
               <div class="flex flex-col gap-2">
-                <label hlmLabel for="priceMembers">{{ 'events.price_members' | t }}</label>
-                <input hlmInput id="priceMembers" [formField]="bulkForm.priceMembers" />
-                <app-field-error field="priceMembers" label="events.price_members" [error]="error()" />
+                <label hlmLabel for="description">{{ 'events.description' | t }}</label>
+                <textarea hlmInput id="description" rows="3" class="h-auto" [formField]="bulkForm.description"></textarea>
+                <app-field-error field="description" label="events.description" [error]="error()" />
               </div>
-              <div class="flex flex-col gap-2">
-                <label hlmLabel for="priceGuests">{{ 'events.price_guests' | t }}</label>
-                <input hlmInput id="priceGuests" [formField]="bulkForm.priceGuests" />
-                <app-field-error field="priceGuests" label="events.price_guests" [error]="error()" />
+            }
+            @if (features.has('prices')) {
+              <div class="grid gap-4 sm:grid-cols-2">
+                <div class="flex flex-col gap-2">
+                  <label hlmLabel for="priceMembers">{{ 'events.price_members' | t }}</label>
+                  <input hlmInput id="priceMembers" [formField]="bulkForm.priceMembers" />
+                  <app-field-error field="priceMembers" label="events.price_members" [error]="error()" />
+                </div>
+                <div class="flex flex-col gap-2">
+                  <label hlmLabel for="priceGuests">{{ 'events.price_guests' | t }}</label>
+                  <input hlmInput id="priceGuests" [formField]="bulkForm.priceGuests" />
+                  <app-field-error field="priceGuests" label="events.price_guests" [error]="error()" />
+                </div>
               </div>
-            </div>
+            }
+            @if (features.has('deadline')) {
             <div class="grid gap-4 sm:grid-cols-2">
               <div class="flex flex-col gap-2">
                 <label hlmLabel for="registrationCloseDays">{{ 'events.bulk_registration_close_days' | t }}</label>
@@ -132,6 +142,7 @@ interface FormModel {
                 <app-field-error field="registrationCloseTime" label="events.bulk_registration_close_time" [error]="error()" />
               </div>
             </div>
+            }
             <button hlmBtn type="submit" class="w-full sm:w-auto sm:self-start" [disabled]="busy()">{{ 'events.bulk_preview' | t }}</button>
           </form>
         </section>
@@ -140,6 +151,7 @@ interface FormModel {
   `,
 })
 export class BulkCreatePage {
+  protected readonly features = inject(Features);
   private readonly api = inject(ApiClient);
   private readonly router = inject(Router);
   private readonly notify = inject(Notify);
@@ -201,7 +213,7 @@ export class BulkCreatePage {
         dayOfWeek: Number(m.dayOfWeek),
         name: m.name,
         capacity: Number(m.capacity),
-        mixed: m.mixed,
+        mixed: this.features.has('genderSplit') ? m.mixed : true,
         description: m.description || null,
         priceMembers: m.priceMembers || null,
         priceGuests: m.priceGuests || null,

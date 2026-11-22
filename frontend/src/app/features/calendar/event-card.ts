@@ -1,4 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
+import { Features } from '../../core/flavor/flavor';
 import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -95,6 +96,7 @@ export class EventCard {
   readonly registered = output<void>();
 
   private readonly flow = inject(RegistrationFlow);
+  private readonly features = inject(Features);
   protected readonly busy = signal(false);
 
   private readonly past = computed(() => {
@@ -154,7 +156,11 @@ export class EventCard {
     if (this.loggedIn()) {
       return ['/events', String(e.id)];
     }
-    return !this.closed() && e.available > 0 ? ['/events', String(e.id), 'guests', 'new'] : null;
+    if (this.closed() || e.available <= 0) {
+      return null;
+    }
+    // Without guest registration, anonymous visitors go to the event (the auth guard asks them to log in)
+    return this.features.has('guests') ? ['/events', String(e.id), 'guests', 'new'] : ['/events', String(e.id)];
   });
 
   protected async register(): Promise<void> {

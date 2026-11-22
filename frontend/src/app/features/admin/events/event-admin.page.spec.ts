@@ -7,6 +7,7 @@ import { Notify } from '../../../core/feedback/notify';
 import { formatDateTime } from '../../../core/format/dates';
 import { I18n } from '../../../core/i18n/i18n';
 import { EventAdminPage } from './event-admin.page';
+import { amigosFlavor, provideTestFlavor, setTestFlavor } from '../../../core/flavor/testing';
 
 function reg(userId: number, name: string, male: boolean, state: 'registered' | 'waitlist', comment = ''): AdminRegistrationDto {
   return { userId, name, male, state, comment, registeredAt: '2099-05-01T10:30:00', rfeg: null, memberNumber: null };
@@ -43,6 +44,8 @@ describe('EventAdminPage', () => {
   let notify: { success: ReturnType<typeof vi.fn> };
   let navigate: ReturnType<typeof vi.spyOn>;
 
+  afterEach(() => setTestFlavor(null));
+
   beforeEach(() => {
     api = { get: vi.fn().mockResolvedValue(dto()), put: vi.fn(), post: vi.fn(), patch: vi.fn(), delete: vi.fn() };
     confirm = { ask: vi.fn().mockResolvedValue(true) };
@@ -50,6 +53,7 @@ describe('EventAdminPage', () => {
     TestBed.configureTestingModule({
       providers: [
         provideRouter([]),
+        provideTestFlavor(),
         { provide: ApiClient, useValue: api },
         { provide: ConfirmService, useValue: confirm },
         { provide: Notify, useValue: notify },
@@ -371,5 +375,17 @@ describe('EventAdminPage', () => {
     const { el } = await render();
 
     expect(el.textContent).toContain('Anlass nicht gefunden');
+  });
+
+  it('Amigos: no guest section and no social-event link', async () => {
+    setTestFlavor(amigosFlavor);
+    const fixture = TestBed.createComponent(EventAdminPage);
+    fixture.componentRef.setInput('id', '3');
+    await fixture.whenStable();
+    const el: HTMLElement = fixture.nativeElement;
+
+    expect(el.querySelector('[data-guests]')).toBeNull();
+    expect(el.querySelector('a[href^="/social-events"]')).toBeNull();
+    expect(el.querySelector('#capacity')).not.toBeNull();
   });
 });

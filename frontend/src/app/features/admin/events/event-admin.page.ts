@@ -1,4 +1,5 @@
 import { LoadError } from '../../../shared/ui/load-error';
+import { Features } from '../../../core/flavor/flavor';
 import { Component, computed, inject, input, resource, signal, untracked } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -90,12 +91,14 @@ interface GuestGroup {
           </div>
         </section>
 
-        @if (d.socialEvent; as social) {
-          <app-social-event-row [event]="social" [link]="['/social-events', social.id, 'admin']" note="social_events.edit" />
-        } @else {
-          <a hlmBtn variant="outline" size="sm" class="self-start" routerLink="/social-events/new" [queryParams]="{ tournamentId: d.event.id }">
-            {{ 'social_events.new' | t }}
-          </a>
+        @if (features.has('socialEvents')) {
+          @if (d.socialEvent; as social) {
+            <app-social-event-row [event]="social" [link]="['/social-events', social.id, 'admin']" note="social_events.edit" />
+          } @else {
+            <a hlmBtn variant="outline" size="sm" class="self-start" routerLink="/social-events/new" [queryParams]="{ tournamentId: d.event.id }">
+              {{ 'social_events.new' | t }}
+            </a>
+          }
         }
 
         <section hlmCard data-registrations>
@@ -241,68 +244,70 @@ interface GuestGroup {
           </div>
         </section>
 
-        <section hlmCard data-guests>
-          <div hlmCardHeader>
-            <h2 hlmCardTitle>{{ 'guests.title' | t }} ({{ d.guests.length }})</h2>
-            <a hlmCardAction hlmBtn variant="outline" size="sm" [routerLink]="['/events', d.event.id, 'guests', 'new']">
-              <ng-icon name="lucidePlus" />{{ 'guests.add' | t }}
-            </a>
-          </div>
-          <div hlmCardContent class="flex flex-col gap-4">
-            @for (g of guestGroups(); track g.key) {
-              @if (g.rows.length > 0) {
-                <div data-guest-group>
-                  @if (g.key) {
-                    <h3 class="mb-1 text-xs font-medium tracking-wide text-muted-foreground uppercase">{{ g.key | t }} ({{ g.rows.length }})</h3>
-                  }
-                  <ul class="divide-y">
-                    @for (guest of g.rows; track guest.id) {
-                      <li data-guest class="flex items-center gap-2 py-1.5">
-                        <div class="flex min-w-0 flex-1 flex-col pt-[0.3em]">
-                          <div class="flex flex-wrap items-baseline gap-x-2">
-                            <span class="font-medium">{{ guest.firstName }} {{ guest.lastName }}</span>
-                            <span class="text-xs text-muted-foreground">{{ formatDateTime(guest.registeredAt) }}</span>
-                          </div>
-                          <span class="text-sm break-words text-muted-foreground">
-                            {{ guestDetails(guest) }}
-                          </span>
-                        </div>
-                        <div class="flex shrink-0 gap-0.5">
-                          <a
-                            hlmBtn
-                            variant="ghost"
-                            size="icon-sm"
-                            [attr.aria-label]="'guests.edit' | t"
-                            [attr.title]="'guests.edit' | t"
-                            [routerLink]="['/events', d.event.id, 'guests', guest.id, 'edit']"
-                          >
-                            <ng-icon name="lucidePencil" />
-                          </a>
-                          <button
-                            hlmBtn
-                            variant="ghost"
-                            size="icon-sm"
-                            type="button"
-                            class="text-destructive hover:text-destructive"
-                            [attr.aria-label]="'events.delete' | t"
-                            [attr.title]="'events.delete' | t"
-                            [disabled]="busy()"
-                            (click)="deleteGuest(guest)"
-                          >
-                            <ng-icon name="lucideTrash2" />
-                          </button>
-                        </div>
-                      </li>
+        @if (features.has('guests')) {
+          <section hlmCard data-guests>
+            <div hlmCardHeader>
+              <h2 hlmCardTitle>{{ 'guests.title' | t }} ({{ d.guests.length }})</h2>
+              <a hlmCardAction hlmBtn variant="outline" size="sm" [routerLink]="['/events', d.event.id, 'guests', 'new']">
+                <ng-icon name="lucidePlus" />{{ 'guests.add' | t }}
+              </a>
+            </div>
+            <div hlmCardContent class="flex flex-col gap-4">
+              @for (g of guestGroups(); track g.key) {
+                @if (g.rows.length > 0) {
+                  <div data-guest-group>
+                    @if (g.key) {
+                      <h3 class="mb-1 text-xs font-medium tracking-wide text-muted-foreground uppercase">{{ g.key | t }} ({{ g.rows.length }})</h3>
                     }
-                  </ul>
-                </div>
+                    <ul class="divide-y">
+                      @for (guest of g.rows; track guest.id) {
+                        <li data-guest class="flex items-center gap-2 py-1.5">
+                          <div class="flex min-w-0 flex-1 flex-col pt-[0.3em]">
+                            <div class="flex flex-wrap items-baseline gap-x-2">
+                              <span class="font-medium">{{ guest.firstName }} {{ guest.lastName }}</span>
+                              <span class="text-xs text-muted-foreground">{{ formatDateTime(guest.registeredAt) }}</span>
+                            </div>
+                            <span class="text-sm break-words text-muted-foreground">
+                              {{ guestDetails(guest) }}
+                            </span>
+                          </div>
+                          <div class="flex shrink-0 gap-0.5">
+                            <a
+                              hlmBtn
+                              variant="ghost"
+                              size="icon-sm"
+                              [attr.aria-label]="'guests.edit' | t"
+                              [attr.title]="'guests.edit' | t"
+                              [routerLink]="['/events', d.event.id, 'guests', guest.id, 'edit']"
+                            >
+                              <ng-icon name="lucidePencil" />
+                            </a>
+                            <button
+                              hlmBtn
+                              variant="ghost"
+                              size="icon-sm"
+                              type="button"
+                              class="text-destructive hover:text-destructive"
+                              [attr.aria-label]="'events.delete' | t"
+                              [attr.title]="'events.delete' | t"
+                              [disabled]="busy()"
+                              (click)="deleteGuest(guest)"
+                            >
+                              <ng-icon name="lucideTrash2" />
+                            </button>
+                          </div>
+                        </li>
+                      }
+                    </ul>
+                  </div>
+                }
               }
-            }
-            @if (d.guests.length === 0) {
-              <p class="text-muted-foreground">{{ 'events.no_participants' | t }}</p>
-            }
-          </div>
-        </section>
+              @if (d.guests.length === 0) {
+                <p class="text-muted-foreground">{{ 'events.no_participants' | t }}</p>
+              }
+            </div>
+          </section>
+        }
       </div>
     } @else if (detail.error()) {
       <div appPage>
@@ -314,6 +319,7 @@ interface GuestGroup {
   `,
 })
 export class EventAdminPage {
+  protected readonly features = inject(Features);
   /** From the route (withComponentInputBinding). */
   readonly id = input.required<string>();
 

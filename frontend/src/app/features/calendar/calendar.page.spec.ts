@@ -8,6 +8,7 @@ import { I18n } from '../../core/i18n/i18n';
 import { RegistrationFlow } from '../events/registration-flow';
 import { CalendarPage } from './calendar.page';
 import { monthOf } from './month';
+import { amigosFlavor, provideTestFlavor, setTestFlavor } from '../../core/flavor/testing';
 
 function ev(id: number, name: string, over: Partial<EventSummaryDto> = {}): EventSummaryDto {
   return {
@@ -44,6 +45,8 @@ describe('CalendarPage', () => {
   let flow: { register: ReturnType<typeof vi.fn> };
   let navigate: ReturnType<typeof vi.spyOn>;
 
+  afterEach(() => setTestFlavor(null));
+
   beforeEach(() => {
     loggedIn.set(false);
     isAdmin.set(false);
@@ -58,6 +61,7 @@ describe('CalendarPage', () => {
     TestBed.configureTestingModule({
       providers: [
         provideRouter([]),
+        provideTestFlavor(),
         { provide: ApiClient, useValue: api },
         { provide: RegistrationFlow, useValue: flow },
         { provide: SessionStore, useValue: { loggedIn, isAdmin } },
@@ -326,5 +330,12 @@ describe('CalendarPage', () => {
 
       expect(el.querySelector('[data-my-registrations]')).toBeNull();
     });
+  });
+
+  it('anonymous without guest registration (Amigos): open tournaments link to the event (login)', async () => {
+    setTestFlavor(amigosFlavor);
+    const { card } = await render();
+
+    expect(card('Offen').querySelector('a')?.getAttribute('href')).toBe('/events/3');
   });
 });

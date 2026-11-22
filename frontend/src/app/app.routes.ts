@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { adminGuard, authGuard, guestGuard } from './core/auth/guards';
+import { featureGuard } from './core/flavor/flavor';
 import { legacyRedirects } from './legacy-redirects';
 
 export const routes: Routes = [
@@ -32,11 +33,12 @@ export const routes: Routes = [
   },
   {
     path: 'events/:id/guests/:guestId/edit',
-    canActivate: [adminGuard],
+    canActivate: [featureGuard('guests'), adminGuard],
     loadComponent: () => import('./features/admin/events/guest-edit.page').then((m) => m.GuestEditPage),
   },
   {
     path: 'events/:id/guests/new',
+    canActivate: [featureGuard('guests')],
     loadComponent: () => import('./features/guests/guest-registration.page').then((m) => m.GuestRegistrationPage),
   },
   {
@@ -46,22 +48,23 @@ export const routes: Routes = [
   },
   {
     path: 'social-events/new',
-    canActivate: [adminGuard],
+    canActivate: [featureGuard('socialEvents'), adminGuard],
     loadComponent: () => import('./features/admin/social-events/social-event-create.page').then((m) => m.SocialEventCreatePage),
   },
   {
     path: 'social-events/:id/admin',
-    canActivate: [adminGuard],
+    canActivate: [featureGuard('socialEvents'), adminGuard],
     loadComponent: () => import('./features/admin/social-events/social-event-admin.page').then((m) => m.SocialEventAdminPage),
   },
   {
     path: 'social-events/:id/guests/new',
+    canActivate: [featureGuard('socialEvents'), featureGuard('guests')],
     loadComponent: () =>
       import('./features/guests/social-guest-registration.page').then((m) => m.SocialGuestRegistrationPage),
   },
   {
     path: 'social-events/:id',
-    canActivate: [authGuard],
+    canActivate: [featureGuard('socialEvents'), authGuard],
     loadComponent: () =>
       import('./features/social-events/social-event-detail.page').then((m) => m.SocialEventDetailPage),
   },
@@ -80,5 +83,6 @@ export const routes: Routes = [
     canActivate: [adminGuard],
     loadComponent: () => import('./features/admin/users/user-edit.page').then((m) => m.UserEditPage),
   },
+  { path: 'not-found', loadComponent: () => import('./features/not-found/not-found.page').then((m) => m.NotFoundPage) },
   { path: '**', loadComponent: () => import('./features/not-found/not-found.page').then((m) => m.NotFoundPage) },
 ];
