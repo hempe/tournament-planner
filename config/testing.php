@@ -7,7 +7,6 @@ return [
         'debug' => true,
     ],
     'database' => [
-        'host' => 'localhost',
         'name' => 'TP_test',
     ],
     'logging' => [

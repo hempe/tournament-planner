@@ -379,7 +379,7 @@ passed to Playwright, e.g. `npm run e2e -- admin.spec.ts`. Requires Docker and `
 | `e2e` | manually only | the Playwright suite above (Docker on the runner) |
 
 The tests read their database settings from `$_ENV`; `phpunit.xml` does not override variables that already exist in
-the environment, so the workflow sets `DB_*` for the MariaDB service (and `variables_order=EGPCS` so PHP fills `$_ENV`).
+the environment (and `config/testing.php` no longer hard-codes the host), so the workflow sets `DB_*` for the MariaDB service (and `variables_order=EGPCS` so PHP fills `$_ENV`).
 
 To start the E2E job: GitHub > Actions > CI > Run workflow > tick "e2e" (or
 `gh workflow run ci.yml --ref <branch> -f e2e=true`).
