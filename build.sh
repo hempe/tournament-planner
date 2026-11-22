@@ -40,6 +40,8 @@ echo "======================================"
 # Lint PHP against production's PHP version (8.3)
 if command -v docker >/dev/null 2>&1 && docker info >/dev/null 2>&1; then
     echo "Linting PHP with php:8.3-cli..."
+    # Pull first: the progress output of an implicit pull would end up in LINT_OUT and fail the build
+    docker image inspect php:8.3-cli >/dev/null 2>&1 || docker pull -q php:8.3-cli >/dev/null
     LINT_OUT="$(docker run --rm -v "$PWD":/app -w /app php:8.3-cli sh -c \
         'for f in $(find src bin -name "*.php") index.php bootstrap.php; do php -l "$f"; done' 2>&1 \
         | grep -v '^No syntax errors detected' || true)"
