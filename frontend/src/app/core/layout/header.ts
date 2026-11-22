@@ -4,6 +4,7 @@ import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideLogIn, lucideLogOut } from '@ng-icons/lucide';
 import { HlmButtonImports } from '@ui/button';
 import { SessionStore } from '../auth/session.store';
+import { FLAVOR } from '../flavor/flavor';
 import { Notify } from '../feedback/notify';
 import { TranslatePipe } from '../i18n/translate.pipe';
 
@@ -32,9 +33,12 @@ import { TranslatePipe } from '../i18n/translate.pipe';
       <!-- Branding as on the previous site: logo 100px (75px below md), club name 21px/13px Hind Guntur -->
       <div class="flex flex-wrap items-center gap-x-4 gap-y-2 p-[10px]">
         <div class="flex min-w-0 gap-5">
-          <a href="https://www.golfelfaro.es" class="shrink-0">
-            <img src="/favicon.svg" alt="EL FARO GOLF" class="size-[75px] md:size-[100px]" />
-          </a>
+          <!-- Logo = the flavour's favicon.svg; links to the club website when the flavour has one -->
+          @if (flavor.website; as website) {
+            <a [href]="website" class="shrink-0"><img src="/favicon.svg" [alt]="flavor.name" class="size-[75px] md:size-[100px]" /></a>
+          } @else {
+            <a routerLink="/" class="shrink-0"><img src="/favicon.svg" [alt]="flavor.name" class="size-[75px] md:size-[100px]" /></a>
+          }
           <a
             routerLink="/"
             class="site-name min-w-0 basis-[300px] pt-[27px] text-[13px] leading-[1.1em] md:pt-[35px] md:text-[21px]"
@@ -67,6 +71,7 @@ import { TranslatePipe } from '../i18n/translate.pipe';
 })
 export class Header {
   protected readonly session = inject(SessionStore);
+  protected readonly flavor = inject(FLAVOR);
   private readonly notify = inject(Notify);
   private readonly router = inject(Router);
 

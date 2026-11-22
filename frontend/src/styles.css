@@ -5,10 +5,6 @@
 
 @import '@spartan-ng/brain/hlm-tailwind-preset.css';
 
-@import '@fontsource/hind-guntur/400.css';
-@import '@fontsource/hind-guntur/500.css';
-@import '@fontsource/hind-guntur/600.css';
-@import '@fontsource/hind-guntur/700.css';
 /* You can add global styles to this file, and also import other style files */
 
 :root {
@@ -97,31 +93,4 @@
   }
 }
 
-/* Club theme (GOLF EL FARO) — overrides the generated neutral theme. Light only. */
-:root {
-  --font-sans: 'Hind Guntur', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --foreground: #333333;
-  --primary: #87b723;
-  --primary-foreground: #ffffff;
-  --ring: #87b723;
-  --destructive: #b6334d;
-  --social: #2272b6;
-}
-
-/* Branding: the whole app uses the club font (loaded in index.html) */
-html,
-body {
-  font-family: var(--font-sans);
-}
-
-/* Calendar state colours of the previous site: light = registered, dark = open for registration */
-:root {
-  --primary-light: #d4e1af;
-  --social-light: #cce0f5;
-  --social-foreground: #ffffff;
-}
-
-/* Desktop page background: a hint of the club green so white panels stand out */
-:root {
-  --page-bg: #f5f7f0;
-}
+/* Club colours, fonts and page background come from frontend/flavors/<name>/theme.css (angular.json configuration). */

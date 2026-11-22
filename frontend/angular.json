@@ -21,13 +21,8 @@
           "builder": "@angular/build:application",
           "options": {
             "browser": "src/main.ts",
+            "index": "flavors/elfaro/index.html",
             "tsConfig": "tsconfig.app.json",
-            "assets": [
-              {
-                "glob": "**/*",
-                "input": "public"
-              }
-            ],
             "styles": [
               "src/styles.css"
             ]
@@ -54,21 +49,38 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            // Club flavours (frontend/flavors/<name>): combine with production/development, e.g. -c production,amigos
+            "elfaro": {
+              "index": "flavors/elfaro/index.html",
+              "assets": [{ "glob": "**/*", "input": "flavors/elfaro/assets" }],
+              "styles": ["src/styles.css", "flavors/elfaro/theme.css"]
+            },
+            "amigos": {
+              "index": "flavors/amigos/index.html",
+              "assets": [{ "glob": "**/*", "input": "flavors/amigos/assets", "ignore": [".gitkeep"] }],
+              "styles": ["src/styles.css", "flavors/amigos/theme.css"],
+              "fileReplacements": [
+                { "replace": "src/app/core/flavor/active-flavor.ts", "with": "src/app/core/flavor/active-flavor.amigos.ts" }
+              ]
             }
           },
-          "defaultConfiguration": "production"
+          "defaultConfiguration": "production,elfaro"
         },
         "serve": {
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "tournament-planner-ui:build:production"
+              "buildTarget": "tournament-planner-ui:build:production,elfaro"
             },
-            "development": {
-              "buildTarget": "tournament-planner-ui:build:development"
+            "development-elfaro": {
+              "buildTarget": "tournament-planner-ui:build:development,elfaro"
+            },
+            "development-amigos": {
+              "buildTarget": "tournament-planner-ui:build:development,amigos"
             }
           },
-          "defaultConfiguration": "development",
+          "defaultConfiguration": "development-elfaro",
           "options": {
             "proxyConfig": "proxy.conf.json"
           }

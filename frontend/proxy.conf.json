@@ -2,33 +2,5 @@
   "/api": {
     "target": "http://localhost:5000",
     "secure": false
-  },
-  "/favicon.svg": {
-    "target": "http://localhost:5000",
-    "secure": false
-  },
-  "/favicon.ico": {
-    "target": "http://localhost:5000",
-    "secure": false
-  },
-  "/favicon-96x96.png": {
-    "target": "http://localhost:5000",
-    "secure": false
-  },
-  "/apple-touch-icon.png": {
-    "target": "http://localhost:5000",
-    "secure": false
-  },
-  "/site.webmanifest": {
-    "target": "http://localhost:5000",
-    "secure": false
-  },
-  "/web-app-manifest-192x192.png": {
-    "target": "http://localhost:5000",
-    "secure": false
-  },
-  "/web-app-manifest-512x512.png": {
-    "target": "http://localhost:5000",
-    "secure": false
   }
 }
