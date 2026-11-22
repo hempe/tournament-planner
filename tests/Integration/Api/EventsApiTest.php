@@ -233,4 +233,18 @@ class EventsApiTest extends IntegrationTestCase
         $this->assertSame($socialId, $data['socialEvent']['id']);
         $this->assertFalse($data['socialEvent']['userRegistered']);
     }
+
+    public function testParticipantHandicapOnlyWhenTheFlavourHasIt(): void
+    {
+        $userId = DB::$users->create('hcp', 'Pass123!', true, null, null, 'Hans', 'Hcp');
+        DB::$users->updateExtra($userId, ['handicap' => '12.4']);
+        $eventId = DB::$events->add('Hcp', '2099-05-01', 10);
+        DB::$events->register($eventId, $userId, '');
+        $this->apiLoginAs('hcp', 'Pass123!');
+
+        $this->assertNull($this->json('GET', "/api/events/{$eventId}")->json()['participants'][0]['handicap']);
+
+        \TP\Core\Flavor::override(['userFields' => ['handicap']]);
+        $this->assertSame(12.4, $this->json('GET', "/api/events/{$eventId}")->json()['participants'][0]['handicap']);
+    }
 }

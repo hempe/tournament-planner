@@ -195,6 +195,7 @@ export interface MyRegistrationDto {
 export interface ParticipantDto {
   name: string;
   state: RegistrationState;
+  handicap: number | null;
 }
 
 export interface PublicEventDto {

@@ -160,7 +160,8 @@ final class EventRepository extends BaseRepository
                 u.last_name,
                 u.male,
                 u.rfeg,
-                u.member_number
+                u.member_number,
+                u.handicap
             FROM event_users AS r
             JOIN users AS u ON r.userId = u.id
             WHERE r.eventId = ?
@@ -185,6 +186,7 @@ final class EventRepository extends BaseRepository
                     (bool) $row['male'],
                     $row['rfeg'] ?? null,
                     $row['member_number'] ?? null,
+                    $row['handicap'] === null ? null : (float) $row['handicap'],
                 );
             }
         );

@@ -20,8 +20,8 @@ function detail(over: Partial<EventDetailDto> = {}, eventOver: Partial<EventDeta
     registrationClose: '2099-05-30T12:00:00',
     myRegistration: null,
     participants: [
-      { name: 'Anna', state: 'registered' },
-      { name: 'Ben', state: 'waitlist' },
+      { name: 'Anna', state: 'registered', handicap: null },
+      { name: 'Ben', state: 'waitlist', handicap: null },
     ],
     guests: [{ firstName: 'Gus', lastName: 'Guest' }],
     socialEvent: null,
