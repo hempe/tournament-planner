@@ -367,3 +367,19 @@ everything down. Seed data lives in `e2e/seed.sql` (logins `admin` / `member` / 
 mutating spec resets the database first. `update.spec.ts` (tagged `@slow`) deploys the second release into the running
 site and checks the service-worker update prompt; skip it with `E2E_SKIP_SLOW=1 npm run e2e`. Extra arguments are
 passed to Playwright, e.g. `npm run e2e -- admin.spec.ts`. Requires Docker and `npx playwright install chromium` once.
+
+## Continuous integration (GitHub Actions)
+
+`.github/workflows/ci.yml`:
+
+| Job | Runs | What it does |
+|---|---|---|
+| `php` | every push and pull request | PHP 8.3 + MariaDB 11 service; `composer api:check` (generated TypeScript types are current), then `composer test:coverage-check` (PHPUnit with PCOV, coverage >= 85 %). PHPUnit's known deprecations do not fail the build, test failures do. |
+| `frontend` | every push and pull request | Node 26; `npm run lint`, `npm run check:i18n`, `npm test`, `npx ng build --configuration production` |
+| `e2e` | manually only | the Playwright suite above (Docker on the runner) |
+
+The tests read their database settings from `$_ENV`; `phpunit.xml` does not override variables that already exist in
+the environment, so the workflow sets `DB_*` for the MariaDB service (and `variables_order=EGPCS` so PHP fills `$_ENV`).
+
+To start the E2E job: GitHub > Actions > CI > Run workflow > tick "e2e" (or
+`gh workflow run ci.yml --ref <branch> -f e2e=true`).
