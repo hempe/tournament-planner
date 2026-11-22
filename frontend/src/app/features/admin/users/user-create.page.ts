@@ -36,8 +36,11 @@ export class UserCreatePage {
     this.error.set(null);
     this.busy.set(true);
     try {
-      await userAdminApi(this.api).create(body as UserCreateRequest);
+      const created = await userAdminApi(this.api).create(body as UserCreateRequest);
       this.notify.success('users.create_success');
+      if (created.nameConflict) {
+        this.notify.info('users.name_conflict');
+      }
       await this.router.navigateByUrl('/users');
     } catch (e) {
       if (e instanceof ApiError && e.status === 422) {

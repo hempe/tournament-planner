@@ -136,7 +136,8 @@
         "no_member_found": "Kein Mitglied gefunden.",
         "more_matches": ":count weitere Treffer – Suche verfeinern",
         "all_members_registered": "Alle Mitglieder sind bereits angemeldet.",
-        "edit_comment": "Kommentar bearbeiten"
+        "edit_comment": "Kommentar bearbeiten",
+        "handicap_short": "HCP"
     },
     "users": {
         "title": "Benutzer",
@@ -178,7 +179,12 @@
         "edit": "Bearbeiten",
         "not_found": "Benutzer nicht gefunden",
         "search": "Benutzer suchen",
-        "no_users_found": "Keine Benutzer gefunden."
+        "no_users_found": "Keine Benutzer gefunden.",
+        "phone": "Telefon",
+        "handicap": "Handicap",
+        "priority": "Priorität (kleiner = zuerst von der Warteliste)",
+        "priority_short": "Prio",
+        "name_conflict": "Gleicher Name wie ein anderer Benutzer – Anmeldung mit dem Namen ist dann nicht möglich, nur mit dem Benutzernamen."
     },
     "validation": {
         "required": "Das Feld :field ist erforderlich.",

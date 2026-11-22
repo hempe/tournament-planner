@@ -52,6 +52,7 @@ describe('EventDetailPage', () => {
     TestBed.inject(I18n).use('de', {
       nav: { back: 'Zurück' },
       events: {
+        handicap_short: 'HCP',
         registered: 'Angemeldet', on_waitlist: 'Auf Warteliste', waitlist: 'Warteliste', register: 'Anmelden',
         unregister: 'Turnier abmelden', save: 'Speichern', edit: 'Bearbeiten', comment: 'Kommentar',
         description: 'Beschreibung', price_members: 'Preis für Mitglieder', price_guests: 'Preis für Gäste',
@@ -204,5 +205,16 @@ describe('EventDetailPage', () => {
 
     expect(el.textContent).toContain('Anlass nicht gefunden');
     expect(el.querySelector('a[href="/"]')).not.toBeNull();
+  });
+
+  it('shows the handicap next to the name when the API sends one, and still highlights the own entry', async () => {
+    api.get.mockResolvedValue(
+      detail({ participants: [{ name: 'Anna', state: 'registered', handicap: 12.4 }, { name: 'Ben', state: 'waitlist', handicap: null }] }),
+    );
+    const { el } = await render();
+
+    const names = Array.from(el.querySelectorAll('[data-participant-group] li')).map((li) => li.textContent?.trim());
+    expect(names).toContain('Anna · HCP 12.4');
+    expect(names).toContain('Ben');
   });
 });

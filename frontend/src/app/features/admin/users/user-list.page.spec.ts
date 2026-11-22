@@ -6,6 +6,7 @@ import { ConfirmService } from '../../../core/feedback/confirm.service';
 import { Notify } from '../../../core/feedback/notify';
 import { I18n } from '../../../core/i18n/i18n';
 import { UserListPage } from './user-list.page';
+import { amigosFlavor, provideTestFlavor, setTestFlavor } from '../../../core/flavor/testing';
 
 function user(id: number, username: string, over: Partial<AdminUserDto> = {}): AdminUserDto {
   return { id, username, firstName: 'Vor', lastName: `Name${id}`, displayName: `Vor Name${id}`, male: true, isAdmin: false, rfeg: null, memberNumber: null, phone: null, handicap: null, priority: null, nameConflict: false, ...over };
@@ -17,12 +18,14 @@ describe('UserListPage', () => {
   let notify: { success: ReturnType<typeof vi.fn> };
   const users = [user(1, 'anna', { isAdmin: true }), user(2, 'bert')];
 
+  afterEach(() => setTestFlavor(null));
+
   beforeEach(() => {
     api = { get: vi.fn().mockResolvedValue(users), put: vi.fn(), post: vi.fn(), delete: vi.fn() };
     confirm = { ask: vi.fn().mockResolvedValue(true) };
     notify = { success: vi.fn() };
     TestBed.configureTestingModule({
-      providers: [provideRouter([]), { provide: ApiClient, useValue: api }, { provide: ConfirmService, useValue: confirm }, { provide: Notify, useValue: notify }],
+      providers: [provideRouter([]), provideTestFlavor(), { provide: ApiClient, useValue: api }, { provide: ConfirmService, useValue: confirm }, { provide: Notify, useValue: notify }],
     });
     TestBed.inject(I18n).use('de', {
       users: {
@@ -143,5 +146,20 @@ describe('UserListPage', () => {
     const { el } = await render();
 
     expect(Array.from(el.querySelectorAll('[data-username]')).map((u) => u.textContent?.trim())).toEqual(['anna']);
+  });
+
+  it('marks name conflicts; shows phone and priority only in the Amigos flavour', async () => {
+    api.get.mockResolvedValue([user(1, 'anna', { nameConflict: true, phone: '+34 600', priority: 1000 }), user(2, 'bert')]);
+    const elfaro = await render();
+    expect(elfaro.row('anna').querySelector('[data-name-conflict]')).not.toBeNull();
+    expect(elfaro.row('bert').querySelector('[data-name-conflict]')).toBeNull();
+    expect(elfaro.el.querySelector('[data-phone]')).toBeNull();
+
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({ providers: [provideRouter([]), provideTestFlavor(), { provide: ApiClient, useValue: api }, { provide: ConfirmService, useValue: confirm }, { provide: Notify, useValue: notify }] });
+    setTestFlavor(amigosFlavor);
+    const amigos = await render();
+    expect(amigos.row('anna').querySelector('[data-phone]')?.getAttribute('href')).toBe('tel:+34 600');
+    expect(amigos.row('anna').querySelector('[data-priority]')?.textContent).toContain('1000');
   });
 });

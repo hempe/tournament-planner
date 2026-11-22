@@ -54,8 +54,11 @@ export class UserEditPage {
     this.error.set(null);
     this.busy.set(true);
     try {
-      await userAdminApi(this.api).update(this.id(), body as UserUpdateRequest);
+      const updated = await userAdminApi(this.api).update(this.id(), body as UserUpdateRequest);
       this.notify.success('users.update_success');
+      if (updated.nameConflict) {
+        this.notify.info('users.name_conflict');
+      }
       await this.router.navigateByUrl('/users');
     } catch (e) {
       if (e instanceof ApiError && e.status === 422) {

@@ -6,7 +6,7 @@ import { HlmCardImports } from '@ui/card';
 import { HlmInputImports } from '@ui/input';
 import { HlmSpinner } from '@ui/spinner';
 import { ApiClient } from '../../core/api/api-client';
-import { EventDetailDto, eventsApi } from '../../core/api/generated';
+import { EventDetailDto, ParticipantDto, eventsApi } from '../../core/api/generated';
 import { SessionStore } from '../../core/auth/session.store';
 import { formatDate, formatDateTime } from '../../core/format/dates';
 import { I18n } from '../../core/i18n/i18n';
@@ -136,7 +136,7 @@ import { RegistrationFlow } from './registration-flow';
                     @for (name of g.names; track $index) {
                       <li
                         class="-mx-2 break-inside-avoid rounded-md px-2 py-0.5 data-own:bg-primary/10 data-own:font-medium"
-                        [attr.data-own]="name === ownName() ? '' : null"
+                        [attr.data-own]="isOwn(name) ? '' : null"
                       >{{ name }}</li>
                     }
                   </ul>
@@ -179,17 +179,25 @@ export class EventDetailPage {
   protected readonly changed = computed(() => this.comment() !== (this.current()?.myRegistration?.comment ?? ''));
   /** The logged-in member's own entry is highlighted in the participant list. */
   protected readonly ownName = computed(() => this.session.user()?.displayName ?? null);
+  protected isOwn(label: string): boolean {
+    const own = this.ownName();
+    return own !== null && (label === own || label.startsWith(`${own} · `));
+  }
   protected readonly participantGroups = computed(() => {
     const d = this.current();
     if (!d) {
       return [];
     }
     return [
-      { key: 'events.registered', names: d.participants.filter((p) => p.state === 'registered').map((p) => p.name) },
-      { key: 'events.waitlist', names: d.participants.filter((p) => p.state === 'waitlist').map((p) => p.name) },
+      { key: 'events.registered', names: d.participants.filter((p) => p.state === 'registered').map((p) => this.label(p)) },
+      { key: 'events.waitlist', names: d.participants.filter((p) => p.state === 'waitlist').map((p) => this.label(p)) },
       { key: 'guests.title', names: d.guests.map((g) => `${g.firstName} ${g.lastName}`) },
     ];
   });
+  /** "Max Muster · HCP 12.4" when the flavour shows handicaps (the API sends null otherwise). */
+  private label(p: ParticipantDto): string {
+    return p.handicap === null ? p.name : `${p.name} · ${this.i18n.t('events.handicap_short')} ${p.handicap}`;
+  }
   protected readonly participantCount = computed(() => this.participantGroups().reduce((sum, g) => sum + g.names.length, 0));
 
 

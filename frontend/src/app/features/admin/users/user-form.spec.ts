@@ -6,6 +6,7 @@ import { Notify } from '../../../core/feedback/notify';
 import { I18n } from '../../../core/i18n/i18n';
 import { UserCreatePage } from './user-create.page';
 import { UserEditPage } from './user-edit.page';
+import { amigosFlavor, provideTestFlavor, setTestFlavor } from '../../../core/flavor/testing';
 
 const existing: AdminUserDto = { id: 5, username: 'bert', firstName: 'Bert', lastName: 'Beispiel', displayName: 'Bert Beispiel', male: false, isAdmin: false, rfeg: 'R1', memberNumber: 'M9', phone: null, handicap: null, priority: null, nameConflict: false };
 
@@ -14,10 +15,12 @@ describe('user create and edit pages', () => {
   let notify: { success: ReturnType<typeof vi.fn> };
   let navigate: ReturnType<typeof vi.spyOn>;
 
+  afterEach(() => setTestFlavor(null));
+
   beforeEach(() => {
     api = { get: vi.fn().mockResolvedValue(existing), put: vi.fn().mockResolvedValue(existing), post: vi.fn().mockResolvedValue(existing) };
     notify = { success: vi.fn() };
-    TestBed.configureTestingModule({ providers: [provideRouter([]), { provide: ApiClient, useValue: api }, { provide: Notify, useValue: notify }] });
+    TestBed.configureTestingModule({ providers: [provideRouter([]), provideTestFlavor(), { provide: ApiClient, useValue: api }, { provide: Notify, useValue: notify }] });
     TestBed.inject(I18n).use('de', {
       validation: { required: 'Das Feld :field ist erforderlich.' },
       users: {
@@ -156,6 +159,43 @@ describe('user create and edit pages', () => {
       const { el } = await render(UserEditPage, '5');
 
       expect(el.textContent).toContain('Benutzer nicht gefunden');
+    });
+  });
+
+  describe('Amigos flavour', () => {
+    beforeEach(() => setTestFlavor(amigosFlavor));
+
+    it('shows phone, handicap and priority instead of salutation, member number and RFEG, and posts them', async () => {
+      const { el, type, submit } = await render(UserCreatePage);
+      for (const id of ['male', 'memberNumber', 'rfeg']) {
+        expect(el.querySelector(`#${id}`), id).toBeNull();
+      }
+      type('username', 'Muster Max');
+      type('password', 'Geheim123!');
+      type('phone', ' +34 600 ');
+      type('handicap', '12.4');
+      type('priority', '1200');
+      await submit();
+
+      expect(api.post).toHaveBeenCalledWith(
+        '/users',
+        { male: null, username: 'Muster Max', password: 'Geheim123!', firstName: null, lastName: null, rfeg: null, memberNumber: null, phone: '+34 600', handicap: 12.4, priority: 1200 },
+        undefined,
+      );
+    });
+
+    it('fills the fields from the user and warns about a name conflict after saving', async () => {
+      api.put.mockResolvedValue({ ...existing, nameConflict: true });
+      api.get.mockResolvedValue({ ...existing, phone: '+34 1', handicap: 7.5, priority: 900 });
+      notify = Object.assign(notify, { info: vi.fn() });
+      const { el, submit } = await render(UserEditPage, '5');
+
+      expect(el.querySelector<HTMLInputElement>('#handicap')!.value).toBe('7.5');
+      expect(el.querySelector<HTMLInputElement>('#priority')!.value).toBe('900');
+      await submit();
+
+      expect(api.put).toHaveBeenCalledWith('/users/5', expect.objectContaining({ phone: '+34 1', handicap: 7.5, priority: 900, male: null }), undefined);
+      expect((notify as unknown as { info: ReturnType<typeof vi.fn> }).info).toHaveBeenCalledWith('users.name_conflict');
     });
   });
 });

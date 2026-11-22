@@ -136,7 +136,8 @@
         "no_member_found": "No member found.",
         "more_matches": ":count more matches – refine the search",
         "all_members_registered": "All members are already registered.",
-        "edit_comment": "Edit comment"
+        "edit_comment": "Edit comment",
+        "handicap_short": "HCP"
     },
     "users": {
         "title": "Users",
@@ -178,7 +179,12 @@
         "edit": "Edit",
         "not_found": "User not found",
         "search": "Search users",
-        "no_users_found": "No users found."
+        "no_users_found": "No users found.",
+        "phone": "Phone",
+        "handicap": "Handicap",
+        "priority": "Priority (lower = first off the waitlist)",
+        "priority_short": "Prio",
+        "name_conflict": "Same name as another user – logging in by name is then not possible, only with the username."
     },
     "validation": {
         "required": "The :field field is required.",

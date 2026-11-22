@@ -11,6 +11,7 @@ import { AdminUserDto, userAdminApi } from '../../../core/api/generated';
 import { ConfirmService } from '../../../core/feedback/confirm.service';
 import { Notify } from '../../../core/feedback/notify';
 import { I18n } from '../../../core/i18n/i18n';
+import { Features } from '../../../core/flavor/flavor';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { matchesWords, queryWords } from '../../../shared/search';
 import { Badge } from '../../../shared/ui/badge';
@@ -52,9 +53,24 @@ import { Page, PageHeader } from '../../../shared/ui/page';
                     @if (u.isAdmin) {
                       <span appBadge variant="outline" data-admin-badge>{{ 'users.admin' | t }}</span>
                     }
+                    @if (u.nameConflict) {
+                      <span
+                        data-name-conflict
+                        class="rounded-md border border-destructive/40 px-1.5 text-xs text-destructive"
+                        [attr.title]="'users.name_conflict' | t"
+                        [attr.aria-label]="'users.name_conflict' | t"
+                        >!</span
+                      >
+                    }
                   </span>
                   @if (u.username !== u.displayName) {
                     <span data-username class="truncate text-sm text-muted-foreground">{{ u.username }}</span>
+                  }
+                  @if (features.userField('phone') && u.phone) {
+                    <a data-phone class="truncate text-sm text-muted-foreground hover:underline" [href]="'tel:' + u.phone">{{ u.phone }}</a>
+                  }
+                  @if (features.userField('priority') && u.priority !== null) {
+                    <span data-priority class="text-sm text-muted-foreground tabular-nums">{{ 'users.priority_short' | t }} {{ u.priority }}</span>
                   }
                 </div>
                 <div class="flex shrink-0 gap-0.5">
@@ -98,6 +114,7 @@ import { Page, PageHeader } from '../../../shared/ui/page';
   `,
 })
 export class UserListPage {
+  protected readonly features = inject(Features);
   private readonly api = inject(ApiClient);
   private readonly confirm = inject(ConfirmService);
   private readonly notify = inject(Notify);
