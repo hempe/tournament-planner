@@ -1,0 +1,17 @@
+{
+  "name": "Amigos de Tauro",
+  "shortName": "Amigos",
+  "timezone": "Atlantic/Canary",
+  "usernameOrder": "lastFirst",
+  "website": null,
+  "features": {
+    "socialEvents": false,
+    "guests": false,
+    "prices": false,
+    "description": false,
+    "deadline": false,
+    "genderSplit": false,
+    "waitlistOrder": "priority",
+    "userFields": ["phone", "handicap", "priority"]
+  }
+}

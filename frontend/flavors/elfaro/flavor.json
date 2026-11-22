@@ -1,0 +1,17 @@
+{
+  "name": "GOLF EL FARO",
+  "shortName": "el faro",
+  "timezone": "Europe/Zurich",
+  "usernameOrder": "firstLast",
+  "website": "https://www.golfelfaro.es",
+  "features": {
+    "socialEvents": true,
+    "guests": true,
+    "prices": true,
+    "description": true,
+    "deadline": true,
+    "genderSplit": true,
+    "waitlistOrder": "timestamp",
+    "userFields": ["rfeg", "memberNumber"]
+  }
+}

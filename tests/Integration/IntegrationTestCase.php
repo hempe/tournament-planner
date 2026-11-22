@@ -39,6 +39,7 @@ abstract class IntegrationTestCase extends TestCase
         parent::setUp();
         $_SESSION = [];
         $_COOKIE = [];
+        \TP\Core\Flavor::reset();
 
         // Fresh, empty rate-limit storage per test (never touches storage/cache)
         $this->rateLimitDir = sys_get_temp_dir() . '/tp-ratelimit-' . bin2hex(random_bytes(6));
