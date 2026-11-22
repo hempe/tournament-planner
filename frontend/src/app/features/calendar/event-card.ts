@@ -16,35 +16,20 @@ import { RegistrationFlow } from '../events/registration-flow';
   template: `
     <ng-template #body>
       <span class="block font-medium [overflow-wrap:anywhere] hyphens-auto">{{ event().name }}</span>
-      <span class="block text-xs opacity-80">{{ status().key | t: status().params }}</span>
+      <span class="block pr-10 text-xs opacity-80">{{ status().key | t: status().params }}</span>
     </ng-template>
-    <!--
-      Colours as on the previous site: light green = registered / waitlist,
-      dark green = open for registration, grey = not open (locked, deadline or date passed).
-    -->
-    <div
-      data-card
-      [attr.data-state]="state()"
-      class="flex items-start gap-1 rounded-md text-sm"
-      [class]="stateClasses()"
-    >
-      @if (link(); as target) {
-        <a [routerLink]="target" class="min-w-0 flex-1 p-2"><ng-container *ngTemplateOutlet="body" /></a>
-      } @else {
-        <div class="min-w-0 flex-1 p-2"><ng-container *ngTemplateOutlet="body" /></div>
-      }
-      <span class="flex shrink-0 items-center p-1.5">
-        @switch (state()) {
+    <ng-template #icons>
+      @switch (state()) {
           @case ('registered') {
             <ng-icon name="lucideUserCheck" size="18" [attr.aria-label]="'events.registered' | t" />
             @if (event().isLocked) {
-              <ng-icon name="lucideLock" size="16" class="ml-1" [attr.aria-label]="'events.locked' | t" />
+              <ng-icon name="lucideLock" size="16" [attr.aria-label]="'events.locked' | t" />
             }
           }
           @case ('waitlist') {
             <ng-icon name="lucideHourglass" size="18" [attr.aria-label]="'events.on_waitlist' | t" />
             @if (event().isLocked) {
-              <ng-icon name="lucideLock" size="16" class="ml-1" [attr.aria-label]="'events.locked' | t" />
+              <ng-icon name="lucideLock" size="16" [attr.aria-label]="'events.locked' | t" />
             }
           }
           @case ('closed') {
@@ -68,7 +53,26 @@ import { RegistrationFlow } from '../events/registration-flow';
               <ng-icon name="lucideUserPlus" size="18" aria-hidden="true" />
             }
           }
-        }
+      }
+    </ng-template>
+    <!--
+      Colours as on the previous site: light green = registered / waitlist,
+      dark green = open for registration, grey = not open (locked, deadline or date passed).
+    -->
+    <div
+      data-card
+      [attr.data-state]="state()"
+      class="relative rounded-md text-sm"
+      [class]="stateClasses()"
+    >
+      <!-- Name gets the full width; the state icon / register button sits bottom right -->
+      @if (link(); as target) {
+        <a [routerLink]="target" class="block p-2"><ng-container *ngTemplateOutlet="body" /></a>
+      } @else {
+        <div class="p-2"><ng-container *ngTemplateOutlet="body" /></div>
+      }
+      <span class="absolute right-1.5 bottom-1.5 flex items-center gap-1">
+        <ng-container *ngTemplateOutlet="icons" />
       </span>
     </div>
   `,

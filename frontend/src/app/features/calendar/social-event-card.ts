@@ -14,26 +14,26 @@ import { socialStatus } from '../social-events/social-status';
   imports: [RouterLink, NgIcon, TranslatePipe, ChoicePipe],
   providers: [provideIcons({ lucideCheck, lucidePlus, lucideLock })],
   template: `
-    <div data-card [attr.data-state]="state()" class="rounded-md text-sm" [class]="stateClasses()">
-      <a [routerLink]="['/social-events', event().id]" class="flex items-start gap-1 p-2">
-        <span class="min-w-0 flex-1">
-          <span class="block font-medium [overflow-wrap:anywhere] hyphens-auto">{{ event().name }}</span>
-          @if (status(); as s) {
-            <span class="block text-xs opacity-80">
-              @if (s.count === undefined) {
-                {{ s.key | t }}
-              } @else {
-                {{ s.key | tc: s.count }}
-              }
-            </span>
-          }
-        </span>
-        <span class="flex shrink-0 items-center pt-0.5">
+    <div data-card [attr.data-state]="state()" class="relative rounded-md text-sm" [class]="stateClasses()">
+      <a [routerLink]="['/social-events', event().id]" class="block p-2">
+        <span class="block font-medium [overflow-wrap:anywhere] hyphens-auto">{{ event().name }}</span>
+        @if (status(); as s) {
+          <span class="block pr-8 text-xs opacity-80">
+            @if (s.count === undefined) {
+              {{ s.key | t }}
+            } @else {
+              {{ s.key | tc: s.count }}
+            }
+          </span>
+        } @else {
+          <span class="block h-4"></span>
+        }
+        <span class="absolute right-2 bottom-1.5 flex items-center gap-1">
           @switch (state()) {
             @case ('registered') {
               <ng-icon name="lucideCheck" size="18" [attr.aria-label]="'social_events.registered' | t" />
               @if (event().isLocked) {
-                <ng-icon name="lucideLock" size="16" class="ml-1" [attr.aria-label]="'events.locked' | t" />
+                <ng-icon name="lucideLock" size="16" [attr.aria-label]="'events.locked' | t" />
               }
             }
             @case ('open') {
