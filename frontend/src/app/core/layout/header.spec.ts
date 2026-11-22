@@ -61,7 +61,7 @@ describe('Header', () => {
     user.set({ id: 1, username: 'jane', firstName: 'Jane', lastName: 'Doe', displayName: 'Jane Doe', isAdmin: false });
     const fixture = TestBed.createComponent(Header);
     await fixture.whenStable();
-    let text = fixture.nativeElement.textContent as string;
+    const text = fixture.nativeElement.textContent as string;
 
     expect(text).toContain('Jane Doe');
     expect(text).toContain('Abmelden');
@@ -71,7 +71,6 @@ describe('Header', () => {
 
     user.set({ ...user()!, isAdmin: true });
     await fixture.whenStable();
-    text = fixture.nativeElement.textContent as string;
     const tabs = Array.from(fixture.nativeElement.querySelectorAll('nav a:not([hidden])') as NodeListOf<HTMLAnchorElement>).map((a) => [
       a.textContent?.trim(),
       a.getAttribute('href'),

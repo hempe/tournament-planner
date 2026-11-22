@@ -1,7 +1,7 @@
 import { LoadError } from '../../../shared/ui/load-error';
 import { Component, inject, input, linkedSignal, resource, signal } from '@angular/core';
 import { FormField, form, required, submit } from '@angular/forms/signals';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { HlmButtonImports } from '@ui/button';
 import { HlmCardImports } from '@ui/card';
 import { HlmInputImports } from '@ui/input';

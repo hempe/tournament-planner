@@ -48,8 +48,8 @@ function isoToday(): string {
               type="button"
               data-view="list"
               class="flex items-center gap-1.5 rounded px-2.5 py-1 text-sm"
-              [class]="view() === 'list' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'"
-              [attr.aria-pressed]="view() === 'list'"
+              [class]="currentView() === 'list' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'"
+              [attr.aria-pressed]="currentView() === 'list'"
               (click)="setView('list')"
             >
               <ng-icon name="lucideList" size="16" aria-hidden="true" /><span class="pt-[0.3em]">{{ 'calendar.view_list' | t }}</span>
@@ -58,8 +58,8 @@ function isoToday(): string {
               type="button"
               data-view="month"
               class="flex items-center gap-1.5 rounded px-2.5 py-1 text-sm"
-              [class]="view() === 'month' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'"
-              [attr.aria-pressed]="view() === 'month'"
+              [class]="currentView() === 'month' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'"
+              [attr.aria-pressed]="currentView() === 'month'"
               (click)="setView('month')"
             >
               <ng-icon name="lucideCalendarDays" size="16" aria-hidden="true" /><span class="pt-[0.3em]">{{ 'calendar.view_month' | t }}</span>
@@ -96,7 +96,7 @@ function isoToday(): string {
           }
         </div>
 
-        @if (view() === 'list') {
+        @if (currentView() === 'list') {
           <!-- md and up, list view: agenda + sidebar -->
           <div data-agenda class="hidden gap-6 md:grid lg:grid-cols-[minmax(0,1fr)_18rem]">
             <div class="flex flex-col gap-3">
@@ -254,7 +254,7 @@ export class CalendarPage {
   /** Legacy ?date=YYYY-MM-D from old bookmarks. */
   readonly date = input<string>();
   /** ?view=list|month — desktop layout; falls back to the last choice in this browser, then "month". */
-  readonly viewParam = input<string | undefined>(undefined, { alias: 'view' });
+  readonly view = input<string>();
 
   protected readonly session = inject(SessionStore);
   private readonly api = inject(ApiClient);
@@ -262,8 +262,8 @@ export class CalendarPage {
   private readonly i18n = inject(I18n);
 
   protected readonly today = isoToday();
-  protected readonly view = computed<CalendarView>(() => {
-    const fromUrl = this.viewParam();
+  protected readonly currentView = computed<CalendarView>(() => {
+    const fromUrl = this.view();
     return fromUrl === 'list' || fromUrl === 'month' ? fromUrl : readView();
   });
   /** Day picked in the mini month (admins get an "add event" action for it). */
@@ -369,7 +369,7 @@ export class CalendarPage {
 
   protected pick(day: string): void {
     this.selected.set(day);
-    document.getElementById('day-' + day)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById('day-' + day)?.scrollIntoView?.({ behavior: 'smooth', block: 'start' });
   }
 
   protected reload(): void {
