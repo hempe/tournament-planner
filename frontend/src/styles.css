@@ -108,3 +108,10 @@ html,
 body {
   font-family: var(--font-sans);
 }
+
+/* Calendar state colours of the previous site: light = registered, dark = open for registration */
+:root {
+  --primary-light: #d4e1af;
+  --social-light: #cce0f5;
+  --social-foreground: #ffffff;
+}

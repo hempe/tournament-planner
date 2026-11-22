@@ -174,7 +174,13 @@ describe('CalendarPage', () => {
     // registered / locked tournaments offer no quick register
     expect(card('Registriert').querySelector('button')).toBeNull();
     expect(card('Gesperrt').querySelector('button')).toBeNull();
-    expect(card('Voll').querySelector('button')?.textContent?.trim()).toBe('Warteliste');
+    expect(card('Voll').querySelector('button')?.getAttribute('aria-label')).toBe('Warteliste');
+    // colours of the previous site: light = registered, dark = open, grey = not open
+    expect(card('Registriert').getAttribute('data-state')).toBe('registered');
+    expect(card('Offen').getAttribute('data-state')).toBe('open');
+    expect(card('Offen').className).toContain('bg-primary');
+    expect(card('Gesperrt').getAttribute('data-state')).toBe('closed');
+    expect(card('Gesperrt').className).toContain('bg-muted');
   });
 
   it('admin: every day cell gets a plus link to the create page with the date prefilled', async () => {

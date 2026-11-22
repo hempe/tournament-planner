@@ -1,6 +1,8 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { lucideHourglass, lucideLock, lucideUserCheck, lucideUserPlus } from '@ng-icons/lucide';
 import { HlmButtonImports } from '@ui/button';
 import { EventSummaryDto } from '../../core/api/generated';
 import { parseApiDate } from '../../core/format/dates';
@@ -9,31 +11,65 @@ import { RegistrationFlow } from '../events/registration-flow';
 
 @Component({
   selector: 'app-event-card',
-  imports: [NgTemplateOutlet, RouterLink, HlmButtonImports, TranslatePipe],
+  imports: [NgTemplateOutlet, RouterLink, NgIcon, HlmButtonImports, TranslatePipe],
+  providers: [provideIcons({ lucideUserCheck, lucideHourglass, lucideUserPlus, lucideLock })],
   template: `
     <ng-template #body>
-      <span class="block font-medium">{{ event().name }}</span>
-      <span class="block text-xs" [class.text-muted-foreground]="!highlighted()">{{ status().key | t: status().params }}</span>
+      <span class="block font-medium [overflow-wrap:anywhere] hyphens-auto">{{ event().name }}</span>
+      <span class="block text-xs opacity-80">{{ status().key | t: status().params }}</span>
     </ng-template>
+    <!--
+      Colours as on the previous site: light green = registered / waitlist,
+      dark green = open for registration, grey = not open (locked, deadline or date passed).
+    -->
     <div
       data-card
-      class="rounded-md border bg-card text-sm"
-      [class.border-primary]="highlighted()"
-      [class.border-2]="highlighted()"
-      [class.opacity-60]="closed()"
+      [attr.data-state]="state()"
+      class="flex items-start gap-1 rounded-md text-sm"
+      [class]="stateClasses()"
     >
       @if (link(); as target) {
-        <a [routerLink]="target" class="block p-2"><ng-container *ngTemplateOutlet="body" /></a>
+        <a [routerLink]="target" class="min-w-0 flex-1 p-2"><ng-container *ngTemplateOutlet="body" /></a>
       } @else {
-        <div class="p-2"><ng-container *ngTemplateOutlet="body" /></div>
+        <div class="min-w-0 flex-1 p-2"><ng-container *ngTemplateOutlet="body" /></div>
       }
-      @if (loggedIn() && canRegister()) {
-        <div class="px-2 pb-2">
-          <button hlmBtn size="sm" variant="outline" type="button" class="w-full" [disabled]="busy()" (click)="register()">
-            {{ (event().available <= 0 ? 'events.waitlist' : 'events.register') | t }}
-          </button>
-        </div>
-      }
+      <span class="flex shrink-0 items-center p-1.5">
+        @switch (state()) {
+          @case ('registered') {
+            <ng-icon name="lucideUserCheck" size="18" [attr.aria-label]="'events.registered' | t" />
+            @if (event().isLocked) {
+              <ng-icon name="lucideLock" size="16" class="ml-1" [attr.aria-label]="'events.locked' | t" />
+            }
+          }
+          @case ('waitlist') {
+            <ng-icon name="lucideHourglass" size="18" [attr.aria-label]="'events.on_waitlist' | t" />
+            @if (event().isLocked) {
+              <ng-icon name="lucideLock" size="16" class="ml-1" [attr.aria-label]="'events.locked' | t" />
+            }
+          }
+          @case ('closed') {
+            @if (event().isLocked) {
+              <ng-icon name="lucideLock" size="16" [attr.aria-label]="'events.locked' | t" />
+            }
+          }
+          @case ('open') {
+            @if (loggedIn()) {
+              <button
+                type="button"
+                class="flex size-8 items-center justify-center rounded-md bg-white/20 hover:bg-white/35 disabled:opacity-50"
+                [attr.aria-label]="(event().available <= 0 ? 'events.waitlist' : 'events.register') | t"
+                [title]="(event().available <= 0 ? 'events.waitlist' : 'events.register') | t"
+                [disabled]="busy()"
+                (click)="register()"
+              >
+                <ng-icon name="lucideUserPlus" size="18" />
+              </button>
+            } @else {
+              <ng-icon name="lucideUserPlus" size="18" aria-hidden="true" />
+            }
+          }
+        }
+      </span>
     </div>
   `,
 })
@@ -51,8 +87,31 @@ export class EventCard {
     return parseApiDate(this.event().date) < new Date(today.getFullYear(), today.getMonth(), today.getDate());
   });
   protected readonly closed = computed(() => this.event().isLocked || this.past());
-  protected readonly highlighted = computed(() => this.event().userState !== 'none');
-  protected readonly canRegister = computed(() => this.event().userState === 'none' && !this.closed());
+  /** registered / waitlist (light), open (dark, can register), closed (grey). Guests can only join with free spots. */
+  protected readonly state = computed<'registered' | 'waitlist' | 'open' | 'closed'>(() => {
+    const e = this.event();
+    if (e.userState === 'registered') {
+      return 'registered';
+    }
+    if (e.userState === 'waitlist') {
+      return 'waitlist';
+    }
+    if (this.closed() || (!this.loggedIn() && e.available <= 0)) {
+      return 'closed';
+    }
+    return 'open';
+  });
+  protected readonly stateClasses = computed(() => {
+    switch (this.state()) {
+      case 'registered':
+      case 'waitlist':
+        return 'bg-[var(--primary-light)] text-foreground';
+      case 'open':
+        return 'bg-primary text-primary-foreground';
+      default:
+        return 'bg-muted text-muted-foreground';
+    }
+  });
 
   protected readonly status = computed<{ key: string; params?: { count: number } }>(() => {
     const e = this.event();
