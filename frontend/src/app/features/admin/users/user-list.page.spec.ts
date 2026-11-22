@@ -137,4 +137,11 @@ describe('UserListPage', () => {
 
     expect(api.delete).not.toHaveBeenCalled();
   });
+
+  it('shows the username only when it differs from the display name', async () => {
+    api.get.mockResolvedValue([user(1, 'anna'), user(2, 'Vor Name2')]);
+    const { el } = await render();
+
+    expect(Array.from(el.querySelectorAll('[data-username]')).map((u) => u.textContent?.trim())).toEqual(['anna']);
+  });
 });

@@ -72,7 +72,7 @@ describe('Header', () => {
     user.set({ ...user()!, isAdmin: true });
     await fixture.whenStable();
     text = fixture.nativeElement.textContent as string;
-    const tabs = Array.from(fixture.nativeElement.querySelectorAll('nav a') as NodeListOf<HTMLAnchorElement>).map((a) => [
+    const tabs = Array.from(fixture.nativeElement.querySelectorAll('nav a:not([hidden])') as NodeListOf<HTMLAnchorElement>).map((a) => [
       a.textContent?.trim(),
       a.getAttribute('href'),
     ]);

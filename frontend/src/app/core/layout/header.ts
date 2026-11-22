@@ -53,7 +53,11 @@ import { TranslatePipe } from '../i18n/translate.pipe';
               class="border-b-2 border-transparent py-2 hover:text-primary"
               >{{ 'nav.home' | t }}</a
             >
-            <a routerLink="/events" routerLinkActive="text-primary! border-primary!" class="border-b-2 border-transparent py-2 hover:text-primary">{{ 'nav.events' | t }}</a>
+            <!-- active for /events/* and /social-events/* (RouterLinkActive on a wrapper checks all links inside) -->
+            <span routerLinkActive="[&>a:first-child]:text-primary! [&>a:first-child]:border-primary!" class="contents">
+              <a routerLink="/events" class="border-b-2 border-transparent py-2 hover:text-primary">{{ 'nav.events' | t }}</a>
+              <a routerLink="/social-events" hidden tabindex="-1" aria-hidden="true"></a>
+            </span>
             <a routerLink="/users" routerLinkActive="text-primary! border-primary!" class="border-b-2 border-transparent py-2 hover:text-primary">{{ 'nav.users' | t }}</a>
           </nav>
         }

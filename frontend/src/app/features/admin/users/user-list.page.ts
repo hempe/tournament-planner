@@ -43,7 +43,7 @@ import { Page, PageHeader } from '../../../shared/ui/page';
         @if (filtered().length === 0) {
           <p class="text-muted-foreground">{{ 'users.no_users_found' | t }}</p>
         } @else {
-          <ul class="divide-y rounded-xl bg-card px-3 text-sm shadow-xs ring-1 ring-foreground/10 sm:px-4">
+          <ul class="divide-y divide-border rounded-lg border border-border bg-background px-3 text-sm shadow-xs sm:px-4">
             @for (u of filtered(); track u.id) {
               <li data-user class="flex items-center gap-2 py-2">
                 <div class="flex min-w-0 flex-1 flex-col pt-[0.3em] sm:flex-row sm:items-baseline sm:gap-3">
@@ -53,7 +53,9 @@ import { Page, PageHeader } from '../../../shared/ui/page';
                       <span appBadge variant="outline" data-admin-badge>{{ 'users.admin' | t }}</span>
                     }
                   </span>
-                  <span data-username class="truncate text-sm text-muted-foreground">{{ u.username }}</span>
+                  @if (u.username !== u.displayName) {
+                    <span data-username class="truncate text-sm text-muted-foreground">{{ u.username }}</span>
+                  }
                 </div>
                 <div class="flex shrink-0 gap-0.5">
                   <a hlmBtn variant="ghost" size="icon-sm" [routerLink]="['/users', u.id, 'edit']" [attr.aria-label]="'users.edit' | t" [attr.title]="'users.edit' | t">

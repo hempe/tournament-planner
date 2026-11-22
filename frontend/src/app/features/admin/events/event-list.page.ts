@@ -29,6 +29,8 @@ import { Page, PageHeader } from '../../../shared/ui/page';
       @if (events.hasValue()) {
         <ng-template #list let-rows>
           <!-- below sm every row is a compact stacked card -->
+          <!-- sm and up: same white panel as the user list and the calendar -->
+          <div class="sm:rounded-lg sm:border sm:border-border sm:bg-background sm:px-2 sm:shadow-xs">
           <table class="block w-full text-sm sm:table">
             <thead class="hidden sm:table-header-group">
               <tr class="border-b text-left text-xs text-muted-foreground">
@@ -44,20 +46,20 @@ import { Page, PageHeader } from '../../../shared/ui/page';
               @for (e of rows; track e.id) {
                 <tr
                   data-event-row
-                  class="relative block cursor-pointer rounded-lg border bg-card py-2 pr-11 pl-3 hover:bg-muted/50 sm:table-row sm:rounded-none sm:border-0 sm:border-b sm:bg-transparent sm:p-0"
+                  class="relative block cursor-pointer rounded-lg border bg-card py-2 pr-11 pl-3 hover:bg-muted/50 sm:table-row sm:rounded-none sm:border-0 sm:border-b sm:bg-transparent sm:p-0 sm:last:border-b-0"
                   (click)="open(e)"
                 >
-                  <td class="block text-xs text-muted-foreground sm:table-cell sm:px-2 sm:py-1.5 sm:text-sm sm:whitespace-nowrap">{{ formatDate(e.date) }}</td>
-                  <td class="block font-medium sm:table-cell sm:px-2 sm:py-1.5">
+                  <td class="block text-xs text-muted-foreground sm:table-cell sm:px-2 sm:py-2.5 sm:text-sm sm:whitespace-nowrap">{{ formatDate(e.date) }}</td>
+                  <td class="block font-medium sm:table-cell sm:px-2 sm:py-2.5">
                     <a class="hover:underline" [routerLink]="['/events', e.id, 'admin']" (click)="$event.stopPropagation()">{{ e.name }}</a>
                   </td>
-                  <td class="inline text-xs text-muted-foreground tabular-nums sm:table-cell sm:px-2 sm:py-1.5 sm:text-right sm:text-sm sm:text-foreground">
+                  <td class="inline text-xs text-muted-foreground tabular-nums sm:table-cell sm:px-2 sm:py-2.5 sm:text-right sm:text-sm sm:text-foreground">
                     <span class="sm:hidden">{{ 'events.max_participants' | t }}: </span>{{ e.capacity }}
                   </td>
-                  <td class="inline text-xs text-muted-foreground tabular-nums sm:table-cell sm:px-2 sm:py-1.5 sm:text-right sm:text-sm sm:text-foreground">
+                  <td class="inline text-xs text-muted-foreground tabular-nums sm:table-cell sm:px-2 sm:py-2.5 sm:text-right sm:text-sm sm:text-foreground">
                     <span class="sm:hidden"> · {{ 'events.registered' | t }}: </span>{{ e.joined }}
                   </td>
-                  <td class="inline text-xs text-muted-foreground tabular-nums sm:table-cell sm:px-2 sm:py-1.5 sm:text-right sm:text-sm sm:text-foreground">
+                  <td class="inline text-xs text-muted-foreground tabular-nums sm:table-cell sm:px-2 sm:py-2.5 sm:text-right sm:text-sm sm:text-foreground">
                     <span class="sm:hidden"> · {{ 'events.waitlist' | t }}: </span>{{ e.waitlist }}
                   </td>
                   <td class="absolute top-1/2 right-1.5 -translate-y-1/2 sm:static sm:table-cell sm:translate-y-0 sm:px-2 sm:py-1 sm:text-right">
@@ -78,6 +80,7 @@ import { Page, PageHeader } from '../../../shared/ui/page';
               }
             </tbody>
           </table>
+          </div>
         </ng-template>
 
         @if (upcoming().length > 0) {
