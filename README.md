@@ -33,6 +33,7 @@ mysql -u root -p < database/init.sql
 
 - **[docs/INSTALLATION.md](docs/INSTALLATION.md)** - Complete installation guide
 - **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)** - Build, manual upload, rollback and cut-over checklist
+- **[docs/WHATS-NEW.md](docs/WHATS-NEW.md)** - What changed for members, guests and admins in the Angular release, and ideas for later
 - **[docs/FRONTEND.md](docs/FRONTEND.md)** - Angular app, screens, PWA
 - **[docs/API.md](docs/API.md)** - JSON API
 - **[docs/ROUTING.md](docs/ROUTING.md)** - Routing and middleware
