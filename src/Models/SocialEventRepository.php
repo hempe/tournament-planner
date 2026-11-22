@@ -144,6 +144,9 @@ final class SocialEventRepository extends BaseRepository
 
     public function delete(int $id): void
     {
+        // Registrations first: social_registrations.menuId references social_menus without an
+        // ON DELETE rule, so letting the cascade remove menus and registrations together fails.
+        $this->executeUpdateQuery("DELETE FROM social_registrations WHERE socialEventId = ?", 'i', [$id]);
         $this->executeUpdateQuery("DELETE FROM social_events WHERE id = ?", 'i', [$id]);
     }
 

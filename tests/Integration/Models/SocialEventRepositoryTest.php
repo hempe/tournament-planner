@@ -49,4 +49,20 @@ class SocialEventRepositoryTest extends IntegrationTestCase
         $this->assertTrue(DB::$socialEvents->isTableFull($tables[0]->id));
         $this->assertFalse(DB::$socialEvents->isTableFull($tables[1]->id));
     }
+
+    public function testDeleteWorksWhenRegistrationsReferenceMenus(): void
+    {
+        // social_registrations.menuId has no ON DELETE rule, so the cascade from
+        // social_events to social_menus used to fail as soon as someone picked a menu.
+        $userId = DB::$users->create('diner', 'Pass123!');
+        $id = DB::$socialEvents->add('Dinner', '2099-06-01', null, null, null, 'Fisch,Fleisch', '4');
+        $menu = DB::$socialEvents->menus($id)[0];
+        DB::$socialEvents->register($id, $userId, $menu->id, null);
+        DB::$socialEvents->registerGuest($id, 'Gus', 'Guest', 'g@example.com', $menu->id, null);
+
+        DB::$socialEvents->delete($id);
+
+        $this->assertNull(DB::$socialEvents->get($id, 0));
+        $this->assertSame([], DB::$socialEvents->registrations($id));
+    }
 }
