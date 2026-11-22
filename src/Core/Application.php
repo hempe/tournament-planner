@@ -55,7 +55,7 @@ final class Application
         }
 
         // Set timezone
-        date_default_timezone_set($this->config->get('app.timezone', 'UTC'));
+        date_default_timezone_set(self::timezone());
 
         // Start session with secure settings
         $this->configureSession();
@@ -78,6 +78,13 @@ final class Application
 
         $this->booted = true;
         $this->logger->info('Application booted successfully');
+    }
+
+    /** APP_TIMEZONE wins (server override), otherwise the flavour's timezone. */
+    public static function timezone(): string
+    {
+        $configured = $_ENV['APP_TIMEZONE'] ?? null;
+        return is_string($configured) && $configured !== '' ? $configured : Flavor::timezone();
     }
 
     public function getRouter(): Router

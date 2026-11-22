@@ -145,7 +145,6 @@ class ConfigTest extends TestCase
 
         $this->assertIsString($config->get('app.name'));
         $this->assertIsString($config->get('app.url'));
-        $this->assertIsString($config->get('app.timezone'));
         $this->assertIsString($config->get('app.locale'));
     }
 
@@ -354,5 +353,16 @@ class ConfigTest extends TestCase
             $_ENV['APP_ENV'] = 'testing';
             unset($_ENV['APP_SECURE']);
         }
+    }
+
+    public function testTimezoneComesFromTheFlavourUnlessConfigured(): void
+    {
+        unset($_ENV['APP_TIMEZONE']);
+        \TP\Core\Flavor::reset();
+        $this->assertSame('Europe/Zurich', \TP\Core\Application::timezone());
+
+        $_ENV['APP_TIMEZONE'] = 'UTC';
+        $this->assertSame('UTC', \TP\Core\Application::timezone());
+        unset($_ENV['APP_TIMEZONE']);
     }
 }

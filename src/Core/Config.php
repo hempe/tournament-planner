@@ -73,7 +73,6 @@ final class Config
             'app' => [
                 'name' => $_ENV['APP_NAME'] ?? 'GOLF EL FARO',
                 'url' => $_ENV['APP_URL'] ?? 'http://localhost:5000',
-                'timezone' => $_ENV['APP_TIMEZONE'] ?? 'Europe/Zurich',
                 'locale' => $_ENV['APP_LOCALE'] ?? 'de',
                 'secure' => filter_var(
                     $_ENV['APP_SECURE'] ?? ($this->isProduction() ? 'true' : 'false'),
