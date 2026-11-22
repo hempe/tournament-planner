@@ -1,4 +1,5 @@
 import { Injectable, signal } from '@angular/core';
+import { loadFlavorTexts } from '../flavor/active-flavor';
 
 export const LOCALES = ['de', 'en', 'es'] as const;
 export type Locale = (typeof LOCALES)[number];
@@ -34,11 +35,28 @@ export function interpolate(text: string, params: Params): string {
   );
 }
 
-/** Each language file becomes its own lazy chunk. */
-export async function loadLocale(locale: Locale): Promise<Translations> {
-  const module = (await import(`../../../i18n/${locale}.json`)) as { default: Translations };
-  return module.default;
+/** Deep merge: string leaves of `override` replace those of `base` (same rule as PHP Translator::merge). */
+export function mergeTexts(base: Translations, override: Translations): Translations {
+  const out: Translations = { ...base };
+  for (const [key, value] of Object.entries(override)) {
+    const current = out[key];
+    out[key] =
+      typeof value === 'object' && value !== null && typeof current === 'object' && current !== null
+        ? mergeTexts(current as Translations, value as Translations)
+        : value;
+  }
+  return out;
 }
+
+/** Each language file (and its flavour override) becomes its own lazy chunk. */
+export async function loadLocale(locale: Locale): Promise<Translations> {
+  const [base, override] = await Promise.all([
+    import(`../../../i18n/${locale}.json`).then((m: { default: Translations }) => m.default),
+    loadFlavorTexts(locale),
+  ]);
+  return mergeTexts(base, override);
+}
+
 
 @Injectable({ providedIn: 'root' })
 export class I18n {
