@@ -25,6 +25,7 @@ use TP\Api\Dto\SocialEventSummaryDto;
 use TP\Api\Dto\UserOptionDto;
 use TP\Core\Attributes\Body;
 use TP\Core\Attributes\Delete;
+use TP\Core\Attributes\Feature;
 use TP\Core\Attributes\Get;
 use TP\Core\Attributes\Middleware;
 use TP\Core\Attributes\Patch;
@@ -212,6 +213,7 @@ final class EventAdminController
         });
     }
 
+    #[Feature('guests')]
     #[Get('/{id}/guests/{guestId}')]
     #[Returns(AdminGuestDto::class)]
     public function showGuest(Request $request, array $params): Response
@@ -221,6 +223,7 @@ final class EventAdminController
         ));
     }
 
+    #[Feature('guests')]
     #[Put('/{id}/guests/{guestId}')]
     #[Body(GuestRegistrationRequest::class)]
     #[Returns(AdminGuestDto::class)]
@@ -260,6 +263,7 @@ final class EventAdminController
         });
     }
 
+    #[Feature('guests')]
     #[Delete('/{id}/guests/{guestId}')]
     public function deleteGuest(Request $request, array $params): Response
     {

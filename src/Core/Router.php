@@ -45,6 +45,7 @@ final class Router
                 'handler' => $route['handler'],
                 'middleware' => $route['middleware'],
                 'name' => $route['name'] ?? '',
+                'features' => $route['features'] ?? [],
             ];
         }
         $this->sortBySpecificity();
@@ -88,6 +89,15 @@ final class Router
             $params = $this->matchRoute($route['pattern'], $path);
             if ($params === null) {
                 continue;
+            }
+
+            // Switched-off flavour features look like unknown routes (checked before auth)
+            foreach ($route['features'] ?? [] as $feature) {
+                if (!Flavor::enabled($feature)) {
+                    return $request->isApi()
+                        ? Response::apiError('errors.not_found', HttpStatus::NOT_FOUND)
+                        : Response::notFound('Page not found');
+                }
             }
 
             // Build middleware pipeline - instantiate class names if needed
@@ -137,6 +147,7 @@ final class Router
             'handler' => $handler,
             'middleware' => $allMiddleware,
             'name' => $name,
+            'features' => [],
         ];
 
         $this->sortBySpecificity();

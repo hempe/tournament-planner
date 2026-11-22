@@ -13,6 +13,7 @@ use TP\Api\Dto\SocialEventSummaryDto;
 use TP\Api\Dto\TableDto;
 use TP\Core\Attributes\Body;
 use TP\Core\Attributes\Delete;
+use TP\Core\Attributes\Feature;
 use TP\Core\Attributes\Get;
 use TP\Core\Attributes\Middleware;
 use TP\Core\Attributes\Post;
@@ -29,6 +30,7 @@ use TP\Middleware\CsrfMiddleware;
 use TP\Models\DB;
 use TP\Models\User;
 
+#[Feature('socialEvents')]
 #[RoutePrefix('/api/social-events')]
 #[Middleware(CsrfMiddleware::class)]
 #[Middleware(AdminMiddleware::class)]

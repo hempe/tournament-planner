@@ -14,6 +14,7 @@ use TP\Core\Attributes\Delete;
 use TP\Core\Attributes\Patch;
 use TP\Core\Attributes\RoutePrefix;
 use TP\Core\Attributes\Middleware;
+use TP\Core\Attributes\Feature;
 
 final class RouteScanner
 {
@@ -21,7 +22,7 @@ final class RouteScanner
      * Scan a controller class for route attributes.
      *
      * @param class-string $controllerClass
-     * @return array<array{method: string, pattern: string, handler: array, middleware: array, name: string}>
+     * @return array<array{method: string, pattern: string, handler: array, middleware: array, name: string, features: list<string>}>
      */
     public function scan(string $controllerClass): array
     {
@@ -31,6 +32,7 @@ final class RouteScanner
         // Get class-level prefix and middleware
         $classPrefix = $this->getClassPrefix($reflection);
         $classMiddleware = $this->getClassMiddleware($reflection);
+        $classFeatures = $this->featureNames($reflection->getAttributes(Feature::class));
 
         // Scan all public methods
         foreach ($reflection->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
@@ -39,7 +41,7 @@ final class RouteScanner
                 continue;
             }
 
-            $methodRoutes = $this->scanMethod($method, $controllerClass, $classPrefix, $classMiddleware);
+            $methodRoutes = $this->scanMethod($method, $controllerClass, $classPrefix, $classMiddleware, $classFeatures);
             $routes = array_merge($routes, $methodRoutes);
         }
 
@@ -84,15 +86,20 @@ final class RouteScanner
     /**
      * Scan a method for route attributes.
      *
-     * @return array<array{method: string, pattern: string, handler: array, middleware: array, name: string}>
+     * @return array<array{method: string, pattern: string, handler: array, middleware: array, name: string, features: list<string>}>
      */
     private function scanMethod(
         ReflectionMethod $method,
         string $controllerClass,
         string $classPrefix,
-        array $classMiddleware
+        array $classMiddleware,
+        array $classFeatures = []
     ): array {
         $routes = [];
+        $features = array_values(array_unique([
+            ...$classFeatures,
+            ...$this->featureNames($method->getAttributes(Feature::class)),
+        ]));
         $methodMiddleware = $this->getMethodMiddleware($method);
 
         // Combine class and method middleware
@@ -119,6 +126,7 @@ final class RouteScanner
                 'handler' => [$controllerClass, $method->getName()],
                 'middleware' => $allMiddleware,
                 'name' => $instance->name,
+                'features' => $features,
             ];
         }
 
@@ -181,5 +189,14 @@ final class RouteScanner
         }
 
         return $path;
+    }
+
+    /**
+     * @param array<\ReflectionAttribute<Feature>> $attributes
+     * @return list<string>
+     */
+    private function featureNames(array $attributes): array
+    {
+        return array_map(fn(\ReflectionAttribute $a) => $a->newInstance()->name, $attributes);
     }
 }

@@ -16,6 +16,7 @@ use TP\Api\Dto\TableDto;
 use TP\Api\Dto\ApiDate;
 use TP\Core\Attributes\Body;
 use TP\Core\Attributes\Delete;
+use TP\Core\Attributes\Feature;
 use TP\Core\Attributes\Get;
 use TP\Core\Attributes\Middleware;
 use TP\Core\Attributes\Post;
@@ -31,6 +32,7 @@ use TP\Middleware\CsrfMiddleware;
 use TP\Models\DB;
 use TP\Models\User;
 
+#[Feature('socialEvents')]
 #[RoutePrefix('/api/social-events')]
 #[Middleware(CsrfMiddleware::class)]
 final class SocialEventsController
@@ -105,6 +107,7 @@ final class SocialEventsController
         return Response::json($this->detail($id, $userId));
     }
 
+    #[Feature('guests')]
     #[Get('/{id}/guest-info')]
     #[Returns(SocialGuestInfoDto::class)]
     public function guestInfo(Request $request, array $params): Response
@@ -123,6 +126,7 @@ final class SocialEventsController
         ));
     }
 
+    #[Feature('guests')]
     #[Post('/{id}/guests')]
     #[Body(SocialGuestRequest::class)]
     public function addGuest(Request $request, array $params): Response

@@ -17,6 +17,7 @@ use TP\Api\Dto\RegisterRequest;
 use TP\Api\Dto\SocialEventSummaryDto;
 use TP\Core\Attributes\Body;
 use TP\Core\Attributes\Delete;
+use TP\Core\Attributes\Feature;
 use TP\Core\Attributes\Get;
 use TP\Core\Attributes\Middleware;
 use TP\Core\Attributes\Patch;
@@ -116,6 +117,7 @@ final class EventsController
         return Response::json($this->detail($eventId, $userId));
     }
 
+    #[Feature('guests')]
     #[Get('/{id}/guest-info')]
     #[Returns(PublicEventDto::class)]
     public function guestInfo(Request $request, array $params): Response
@@ -127,6 +129,7 @@ final class EventsController
             : Response::json(PublicEventDto::fromEvent($event));
     }
 
+    #[Feature('guests')]
     #[Post('/{id}/guests')]
     #[Body(GuestRegistrationRequest::class)]
     public function addGuest(Request $request, array $params): Response
