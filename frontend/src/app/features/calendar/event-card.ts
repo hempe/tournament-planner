@@ -17,6 +17,15 @@ import { RegistrationFlow } from '../events/registration-flow';
     <ng-template #body>
       <span class="block font-medium [overflow-wrap:anywhere] hyphens-auto">{{ event().name }}</span>
       <span class="block pr-10 text-xs opacity-80">{{ status().key | t: status().params }}</span>
+      @if (detailed()) {
+        <!-- capacity: registered of places (desktop list only) -->
+        <span data-capacity class="mt-2 flex items-center gap-2 pr-10 text-xs opacity-80">
+          <span class="h-1.5 flex-1 overflow-hidden rounded-full bg-current/20">
+            <span class="block h-full rounded-full bg-current/70" [style.width.%]="fill()"></span>
+          </span>
+          <span class="shrink-0 tabular-nums">{{ 'calendar.participants' | t: { joined: event().joined, capacity: event().capacity } }}</span>
+        </span>
+      }
     </ng-template>
     <ng-template #icons>
       @switch (state()) {
@@ -67,9 +76,9 @@ import { RegistrationFlow } from '../events/registration-flow';
     >
       <!-- Name gets the full width; the state icon / register button sits bottom right -->
       @if (link(); as target) {
-        <a [routerLink]="target" class="block p-2"><ng-container *ngTemplateOutlet="body" /></a>
+        <a [routerLink]="target" class="block p-2" [class.p-3]="detailed()"><ng-container *ngTemplateOutlet="body" /></a>
       } @else {
-        <div class="p-2"><ng-container *ngTemplateOutlet="body" /></div>
+        <div class="p-2" [class.p-3]="detailed()"><ng-container *ngTemplateOutlet="body" /></div>
       }
       <span class="absolute right-1.5 bottom-1.5 flex items-center gap-1">
         <ng-container *ngTemplateOutlet="icons" />
@@ -80,6 +89,8 @@ import { RegistrationFlow } from '../events/registration-flow';
 export class EventCard {
   readonly event = input.required<EventSummaryDto>();
   readonly loggedIn = input(false);
+  /** Desktop list view: larger card with a capacity bar. */
+  readonly detailed = input(false);
   /** Emitted after a successful quick registration so the calendar can reload. */
   readonly registered = output<void>();
 
@@ -89,6 +100,10 @@ export class EventCard {
   private readonly past = computed(() => {
     const today = new Date();
     return parseApiDate(this.event().date) < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  });
+  protected readonly fill = computed(() => {
+    const e = this.event();
+    return e.capacity > 0 ? Math.min(100, Math.round((e.joined / e.capacity) * 100)) : 0;
   });
   protected readonly closed = computed(() => this.event().isLocked || this.past());
   /** registered / waitlist (light), open (dark, can register), closed (grey). Guests can only join with free spots. */

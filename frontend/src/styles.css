@@ -115,3 +115,8 @@ body {
   --social-light: #cce0f5;
   --social-foreground: #ffffff;
 }
+
+/* Desktop page background: a hint of the club green so white panels stand out */
+:root {
+  --page-bg: #f5f7f0;
+}

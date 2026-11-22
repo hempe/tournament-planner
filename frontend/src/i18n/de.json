@@ -249,7 +249,19 @@
             "saturday": "Samstag",
             "sunday": "Sonntag"
         },
-        "no_events": "Keine Anlässe in diesem Monat."
+        "no_events": "Keine Anlässe in diesem Monat.",
+        "view_list": "Liste",
+        "view_month": "Monat",
+        "my_registrations": "Meine nächsten Anmeldungen",
+        "no_registrations": "Keine bevorstehenden Anmeldungen.",
+        "legend": "Legende",
+        "legend_registered": "Angemeldet",
+        "legend_open": "Anmeldung offen",
+        "legend_closed": "Geschlossen",
+        "legend_social": "Gesellschaftlicher Anlass",
+        "add_event_on": "Anlass am :date hinzufügen",
+        "today": "Heute",
+        "participants": ":joined von :capacity"
     },
     "guests": {
         "title": "Gäste",

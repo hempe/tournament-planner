@@ -249,7 +249,19 @@
             "saturday": "Sábado",
             "sunday": "Domingo"
         },
-        "no_events": "No hay eventos este mes."
+        "no_events": "No hay eventos este mes.",
+        "view_list": "Lista",
+        "view_month": "Mes",
+        "my_registrations": "Mis próximas inscripciones",
+        "no_registrations": "No hay inscripciones próximas.",
+        "legend": "Leyenda",
+        "legend_registered": "Inscrito",
+        "legend_open": "Inscripción abierta",
+        "legend_closed": "Cerrado",
+        "legend_social": "Evento social",
+        "add_event_on": "Añadir evento el :date",
+        "today": "Hoy",
+        "participants": ":joined de :capacity"
     },
     "guests": {
         "title": "Invitados",

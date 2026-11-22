@@ -249,7 +249,19 @@
             "saturday": "Saturday",
             "sunday": "Sunday"
         },
-        "no_events": "No events this month."
+        "no_events": "No events this month.",
+        "view_list": "List",
+        "view_month": "Month",
+        "my_registrations": "My next registrations",
+        "no_registrations": "No upcoming registrations.",
+        "legend": "Legend",
+        "legend_registered": "Registered",
+        "legend_open": "Open for registration",
+        "legend_closed": "Closed",
+        "legend_social": "Social event",
+        "add_event_on": "Add event on :date",
+        "today": "Today",
+        "participants": ":joined of :capacity"
     },
     "guests": {
         "title": "Guests",
