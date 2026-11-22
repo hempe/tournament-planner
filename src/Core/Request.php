@@ -181,11 +181,6 @@ final class Request
         return $this->headers;
     }
 
-    public function isAjax(): bool
-    {
-        return $this->getHeader('x-requested-with') === 'XMLHttpRequest';
-    }
-
     public function isSecure(): bool
     {
         return !empty($this->server['HTTPS']) ||

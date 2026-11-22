@@ -165,18 +165,6 @@ class RequestTest extends TestCase
         $this->assertEquals(['x-custom' => 'value'], $req->getHeaders());
     }
 
-    public function testIsAjaxReturnsTrueWithXmlHttpRequest(): void
-    {
-        $req = $this->makeRequest('GET', '/', [], [], [], ['x-requested-with' => 'XMLHttpRequest']);
-        $this->assertTrue($req->isAjax());
-    }
-
-    public function testIsAjaxReturnsFalseWithoutHeader(): void
-    {
-        $req = $this->makeRequest('GET', '/');
-        $this->assertFalse($req->isAjax());
-    }
-
     public function testIsSecureWithHttps(): void
     {
         $req = $this->makeRequest('GET', '/', [], [], ['HTTPS' => 'on']);

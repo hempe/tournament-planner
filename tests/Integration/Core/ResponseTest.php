@@ -28,12 +28,6 @@ class ResponseTest extends TestCase
         $this->assertEquals(HttpStatus::BAD_REQUEST, $response->getStatus());
     }
 
-    public function testUnauthorizedCreates401Response(): void
-    {
-        $response = Response::unauthorized('Access denied');
-        $this->assertEquals(HttpStatus::UNAUTHORIZED, $response->getStatus());
-    }
-
     public function testIsRedirectForSeeOther(): void
     {
         $response = Response::redirect('/somewhere');
@@ -66,7 +60,7 @@ class ResponseTest extends TestCase
 
     public function testIsRedirectReturnsFalseFor404(): void
     {
-        $response = Response::unauthorized();
+        $response = Response::json([], HttpStatus::NOT_FOUND);
         $this->assertFalse($response->isRedirect());
     }
 

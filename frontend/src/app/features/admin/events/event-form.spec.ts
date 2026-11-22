@@ -8,7 +8,7 @@ describe('EventForm', () => {
     TestBed.inject(I18n).use('de', {
       validation: { required: 'Das Feld :field ist erforderlich.', min: 'Das Feld :field ist zu klein.', min_value: 'Das Feld :field muss mindestens :min sein.' },
       events: {
-        name: 'Name', date: 'Datum', max_participants: 'Max. Teilnehmer', play_together: 'Mixed', description: 'Beschreibung',
+        name: 'Name', date: 'Datum', max_participants: 'Max. Teilnehmer', play_together: 'Gemischt', description: 'Beschreibung',
         price_members: 'Preis für Mitglieder', price_guests: 'Preis für Gäste', registration_close: 'Anmeldeschluss', save: 'Speichern',
       },
     });

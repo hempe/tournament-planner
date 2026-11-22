@@ -59,7 +59,7 @@ describe('EventAdminPage', () => {
       nav: { back: 'Zurück' },
       validation: { required: 'Das Feld :field ist erforderlich.' },
       events: {
-        name: 'Name', date: 'Datum', max_participants: 'Max. Teilnehmer', play_together: 'Mixed', description: 'Beschreibung',
+        name: 'Name', date: 'Datum', max_participants: 'Max. Teilnehmer', play_together: 'Gemischt', description: 'Beschreibung',
         price_members: 'Preis für Mitglieder', price_guests: 'Preis für Gäste', registration_close: 'Anmeldeschluss', save: 'Speichern',
         lock: 'Sperren', unlock: 'Entsperren', lock_confirm: 'Termin sperren?', unlock_confirm: 'Termin entsperren?',
         delete: 'Löschen', delete_confirm_short: 'Termin definitiv löschen?', export: 'Exportieren', participants: 'Teilnehmer',

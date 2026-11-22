@@ -74,11 +74,6 @@ final class Response
         return new Response($message, HttpStatus::FORBIDDEN, ['Content-Type' => 'text/plain; charset=UTF-8']);
     }
 
-    public static function unauthorized(string $message = 'Unauthorized'): Response
-    {
-        return new Response($message, HttpStatus::UNAUTHORIZED);
-    }
-
     public function getStatus(): HttpStatus
     {
         return $this->status;

@@ -30,7 +30,7 @@ describe('BulkCreatePage', () => {
         bulk_create: 'Mehrfache Termine erstellen', bulk_start_date: 'Startdatum', bulk_end_date: 'Enddatum', bulk_day_of_week: 'Wochentag',
         bulk_select_day: 'Bitte wählen', bulk_preview: 'Vorschau anzeigen', bulk_preview_title: 'Vorschau: :count Termine werden erstellt',
         bulk_create_all: 'Alle erstellen', bulk_no_events_message: 'Keine passenden Termine.', bulk_registration_close_days: 'Tage vorher',
-        bulk_registration_close_time: 'Uhrzeit', name: 'Name', max_participants: 'Max. Teilnehmer', play_together: 'Mixed',
+        bulk_registration_close_time: 'Uhrzeit', name: 'Name', max_participants: 'Max. Teilnehmer', play_together: 'Gemischt',
         description: 'Beschreibung', price_members: 'Preis Mitglieder', price_guests: 'Preis Gäste', date: 'Datum',
         registration_close: 'Anmeldeschluss',
       },
