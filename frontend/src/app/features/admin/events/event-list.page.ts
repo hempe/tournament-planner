@@ -1,3 +1,4 @@
+import { LoadError } from '../../../shared/ui/load-error';
 import { Component, computed, inject, resource } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
@@ -6,7 +7,6 @@ import { lucideChevronRight, lucidePlus, lucideTrash2 } from '@ng-icons/lucide';
 import { HlmButtonImports } from '@ui/button';
 import { HlmSpinner } from '@ui/spinner';
 import { ApiClient } from '../../../core/api/api-client';
-import { asApiError } from '../../../core/api/api-error';
 import { EventSummaryDto, eventAdminApi } from '../../../core/api/generated';
 import { ConfirmService } from '../../../core/feedback/confirm.service';
 import { Notify } from '../../../core/feedback/notify';
@@ -17,7 +17,7 @@ import { Page, PageHeader } from '../../../shared/ui/page';
 
 @Component({
   selector: 'app-event-list-page',
-  imports: [NgTemplateOutlet, RouterLink, NgIcon, HlmButtonImports, HlmSpinner, TranslatePipe, Page, PageHeader],
+  imports: [LoadError, NgTemplateOutlet, RouterLink, NgIcon, HlmButtonImports, HlmSpinner, TranslatePipe, Page, PageHeader],
   providers: [provideIcons({ lucideChevronRight, lucidePlus, lucideTrash2 })],
   template: `
     <div appPage width="wide">
@@ -101,7 +101,7 @@ import { Page, PageHeader } from '../../../shared/ui/page';
           </details>
         }
       } @else if (events.error()) {
-        <p role="alert" class="text-destructive">{{ errorKey() | t }}</p>
+        <app-load-error [error]="events.error()" (retry)="events.reload()" />
       } @else {
         <div class="flex justify-center p-8"><hlm-spinner /></div>
       }
@@ -118,7 +118,6 @@ export class EventListPage {
   protected readonly events = resource({
     loader: ({ abortSignal }) => eventAdminApi(this.api).index({ signal: abortSignal }),
   });
-  protected readonly errorKey = computed(() => asApiError(this.events.error())?.error ?? 'errors.general');
 
   /** Upcoming events (today included) oldest first, past events newest first. The API already sorts by date. */
   private readonly today = toApiDate(new Date());

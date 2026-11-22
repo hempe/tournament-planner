@@ -86,6 +86,7 @@ Use these instead of hand-rolled markup so pages look the same:
 | `<app-page-header [title] [subtitle]>` | page heading: optional date line above the `h1`, badges in a `<div meta>` child, any other content becomes the right-aligned actions (use `size="sm"` buttons) |
 | `<app-back-link [link] [queryParams]>` | "‹ Zurück" above the heading, flush with the content's left edge |
 | `<span appBadge variant="primary\|secondary\|outline\|social">` | status pills ("Angemeldet", "Admin", "Gast") |
+| `<app-load-error [error]="r.error()" (retry)="r.reload()" notFoundKey="…" [showHome]>` | failed data load: message + "Nochmal versuchen" (not for 404/401/403); use it for every `resource()` error state |
 | `<dl appDetailList><div><dt/><dd/></div></dl>` | label/value pairs: 10rem label column from `sm` up, stacked on phones |
 
 Hind Guntur draws its glyphs high in the line box. Buttons, inputs, selects and badges compensate with

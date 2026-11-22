@@ -1,3 +1,4 @@
+import { LoadError } from '../../shared/ui/load-error';
 import { Component, computed, inject, input, linkedSignal, resource, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { HlmButtonImports } from '@ui/button';
@@ -5,7 +6,6 @@ import { HlmCardImports } from '@ui/card';
 import { HlmInputImports } from '@ui/input';
 import { HlmSpinner } from '@ui/spinner';
 import { ApiClient } from '../../core/api/api-client';
-import { asApiError } from '../../core/api/api-error';
 import { EventDetailDto, eventsApi } from '../../core/api/generated';
 import { SessionStore } from '../../core/auth/session.store';
 import { formatDate, formatDateTime } from '../../core/format/dates';
@@ -20,7 +20,7 @@ import { RegistrationFlow } from './registration-flow';
 
 @Component({
   selector: 'app-event-detail-page',
-  imports: [
+  imports: [LoadError, 
     RouterLink,
     HlmButtonImports,
     HlmCardImports,
@@ -151,8 +151,7 @@ import { RegistrationFlow } from './registration-flow';
       </div>
     } @else if (detail.error()) {
       <div appPage>
-        <p class="text-lg">{{ errorKey() | t }}</p>
-        <a hlmBtn class="self-start" routerLink="/">{{ 'navigation.home' | t }}</a>
+        <app-load-error [error]="detail.error()" notFoundKey="events.not_found" [showHome]="true" (retry)="detail.reload()" />
       </div>
     } @else {
       <div class="flex justify-center p-8"><hlm-spinner /></div>
@@ -193,10 +192,6 @@ export class EventDetailPage {
   });
   protected readonly participantCount = computed(() => this.participantGroups().reduce((sum, g) => sum + g.names.length, 0));
 
-  protected readonly errorKey = computed(() => {
-    const error = asApiError(this.detail.error());
-    return error?.status === 404 ? 'events.not_found' : (error?.error ?? 'errors.general');
-  });
 
   protected formatDate(value: string): string {
     return formatDate(value, this.i18n.locale());

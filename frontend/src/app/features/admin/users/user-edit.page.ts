@@ -1,10 +1,10 @@
-import { Component, computed, inject, input, resource, signal } from '@angular/core';
+import { LoadError } from '../../../shared/ui/load-error';
+import { Component, inject, input, resource, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { HlmCardImports } from '@ui/card';
 import { HlmButtonImports } from '@ui/button';
 import { HlmSpinner } from '@ui/spinner';
 import { ApiClient, ApiError } from '../../../core/api/api-client';
-import { asApiError } from '../../../core/api/api-error';
 import { UserCreateRequest, UserUpdateRequest, userAdminApi } from '../../../core/api/generated';
 import { Notify } from '../../../core/feedback/notify';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
@@ -14,7 +14,7 @@ import { Page, PageHeader } from '../../../shared/ui/page';
 
 @Component({
   selector: 'app-user-edit-page',
-  imports: [RouterLink, HlmButtonImports, HlmSpinner, UserForm, TranslatePipe, HlmCardImports, BackLink, Page, PageHeader],
+  imports: [LoadError, RouterLink, HlmButtonImports, HlmSpinner, UserForm, TranslatePipe, HlmCardImports, BackLink, Page, PageHeader],
   template: `
     <div appPage>
       <app-back-link link="/users" />
@@ -26,8 +26,8 @@ import { Page, PageHeader } from '../../../shared/ui/page';
           </div>
         </section>
       } @else if (user.error()) {
-        <p class="text-lg">{{ errorKey() | t }}</p>
-        <a hlmBtn class="self-start" routerLink="/users">{{ 'nav.users' | t }}</a>
+        <app-load-error [error]="user.error()" notFoundKey="users.not_found" (retry)="user.reload()" />
+        <a hlmBtn variant="outline" class="self-start" routerLink="/users">{{ 'nav.users' | t }}</a>
       } @else {
         <div class="flex justify-center p-8"><hlm-spinner /></div>
       }
@@ -49,10 +49,6 @@ export class UserEditPage {
 
   protected readonly error = signal<ApiError | null>(null);
   protected readonly busy = signal(false);
-  protected readonly errorKey = computed(() => {
-    const error = asApiError(this.user.error());
-    return error?.status === 404 ? 'users.not_found' : (error?.error ?? 'errors.general');
-  });
 
   protected async update(body: UserCreateRequest | UserUpdateRequest): Promise<void> {
     this.error.set(null);

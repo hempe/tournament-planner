@@ -1,4 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
+import { LoadError } from '../../shared/ui/load-error';
 import { Component, computed, inject, input, resource } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideChevronLeft, lucideChevronRight, lucidePlus } from '@ng-icons/lucide';
@@ -6,7 +7,6 @@ import { Router, RouterLink } from '@angular/router';
 import { HlmButtonImports } from '@ui/button';
 import { HlmSpinner } from '@ui/spinner';
 import { ApiClient } from '../../core/api/api-client';
-import { asApiError } from '../../core/api/api-error';
 import { EventSummaryDto, SocialEventSummaryDto, calendarApi } from '../../core/api/generated';
 import { SessionStore } from '../../core/auth/session.store';
 import { formatDate, formatMonth, parseApiDate } from '../../core/format/dates';
@@ -23,7 +23,7 @@ type DayItem =
 
 @Component({
   selector: 'app-calendar-page',
-  imports: [NgTemplateOutlet, NgIcon, RouterLink, HlmButtonImports, HlmSpinner, TranslatePipe, EventCard, SocialEventCard, Page],
+  imports: [LoadError, NgTemplateOutlet, NgIcon, RouterLink, HlmButtonImports, HlmSpinner, TranslatePipe, EventCard, SocialEventCard, Page],
   providers: [provideIcons({ lucideChevronLeft, lucideChevronRight, lucidePlus })],
   template: `
     <div appPage width="wide">
@@ -89,7 +89,7 @@ type DayItem =
           }
         </div>
       } @else if (calendar.error()) {
-        <p role="alert" class="text-destructive">{{ errorKey() | t }}</p>
+        <app-load-error [error]="calendar.error()" (retry)="calendar.reload()" />
       } @else {
         <div class="flex justify-center p-8"><hlm-spinner /></div>
       }
@@ -116,7 +116,6 @@ export class CalendarPage {
     loader: ({ params, abortSignal }) => calendarApi(this.api).month(params.month, { signal: abortSignal }),
   });
 
-  protected readonly errorKey = computed(() => asApiError(this.calendar.error())?.error ?? 'errors.general');
 
   protected readonly weekdays = computed(() => {
     const format = new Intl.DateTimeFormat(this.i18n.locale(), { weekday: 'short' });

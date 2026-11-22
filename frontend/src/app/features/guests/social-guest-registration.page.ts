@@ -1,3 +1,4 @@
+import { LoadError } from '../../shared/ui/load-error';
 import { Component, computed, inject, input, resource, signal } from '@angular/core';
 import { FormField, form, required, submit } from '@angular/forms/signals';
 import { Router, RouterLink } from '@angular/router';
@@ -7,7 +8,6 @@ import { HlmInputImports } from '@ui/input';
 import { HlmLabelImports } from '@ui/label';
 import { HlmSpinner } from '@ui/spinner';
 import { ApiClient, ApiError } from '../../core/api/api-client';
-import { asApiError } from '../../core/api/api-error';
 import { socialEventsApi } from '../../core/api/generated';
 import { SessionStore } from '../../core/auth/session.store';
 import { Notify } from '../../core/feedback/notify';
@@ -21,7 +21,7 @@ import { SELECT_CLASSES } from '../../shared/forms/select';
 
 @Component({
   selector: 'app-social-guest-registration-page',
-  imports: [FormField, RouterLink, HlmButtonImports, HlmCardImports, HlmInputImports, HlmLabelImports, HlmSpinner, TranslatePipe, BackLink, Page, PageHeader],
+  imports: [LoadError, FormField, HlmButtonImports, HlmCardImports, HlmInputImports, HlmLabelImports, HlmSpinner, TranslatePipe, BackLink, Page, PageHeader],
   template: `
     @if (info.hasValue()) {
       @let d = info.value();
@@ -102,8 +102,7 @@ import { SELECT_CLASSES } from '../../shared/forms/select';
       </div>
     } @else if (info.error()) {
       <div appPage>
-        <p class="text-lg">{{ errorKey() | t }}</p>
-        <a hlmBtn class="self-start" routerLink="/">{{ 'navigation.home' | t }}</a>
+        <app-load-error [error]="info.error()" notFoundKey="social_events.not_found" [showHome]="true" (retry)="info.reload()" />
       </div>
     } @else {
       <div class="flex justify-center p-8"><hlm-spinner /></div>
@@ -138,10 +137,6 @@ export class SocialGuestRegistrationPage {
   });
 
   protected readonly backLink = computed(() => (this.session.isAdmin() ? `/social-events/${this.id()}/admin` : '/'));
-  protected readonly errorKey = computed(() => {
-    const error = asApiError(this.info.error());
-    return error?.status === 404 ? 'social_events.not_found' : (error?.error ?? 'errors.general');
-  });
 
   protected formatDate(value: string): string {
     return formatDate(value, this.i18n.locale());

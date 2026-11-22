@@ -1,4 +1,5 @@
-import { Component, computed, inject, input, linkedSignal, resource, signal } from '@angular/core';
+import { LoadError } from '../../../shared/ui/load-error';
+import { Component, inject, input, linkedSignal, resource, signal } from '@angular/core';
 import { FormField, form, required, submit } from '@angular/forms/signals';
 import { Router, RouterLink } from '@angular/router';
 import { HlmButtonImports } from '@ui/button';
@@ -7,7 +8,6 @@ import { HlmInputImports } from '@ui/input';
 import { HlmLabelImports } from '@ui/label';
 import { HlmSpinner } from '@ui/spinner';
 import { ApiClient, ApiError } from '../../../core/api/api-client';
-import { asApiError } from '../../../core/api/api-error';
 import { eventAdminApi } from '../../../core/api/generated';
 import { ConfirmService } from '../../../core/feedback/confirm.service';
 import { Notify } from '../../../core/feedback/notify';
@@ -20,7 +20,7 @@ import { Page, PageHeader } from '../../../shared/ui/page';
 
 @Component({
   selector: 'app-guest-edit-page',
-  imports: [FormField, RouterLink, HlmButtonImports, HlmCardImports, HlmInputImports, HlmLabelImports, HlmSpinner, TranslatePipe, FieldError, BackLink, Page, PageHeader],
+  imports: [LoadError, FormField, HlmButtonImports, HlmCardImports, HlmInputImports, HlmLabelImports, HlmSpinner, TranslatePipe, FieldError, BackLink, Page, PageHeader],
   template: `
     @if (guest.hasValue()) {
       <div appPage>
@@ -77,8 +77,7 @@ import { Page, PageHeader } from '../../../shared/ui/page';
       </div>
     } @else if (guest.error()) {
       <div appPage>
-        <p class="text-lg">{{ errorKey() | t }}</p>
-        <a hlmBtn class="self-start" routerLink="/">{{ 'navigation.home' | t }}</a>
+        <app-load-error [error]="guest.error()" notFoundKey="guests.not_found" [showHome]="true" (retry)="guest.reload()" />
       </div>
     } @else {
       <div class="flex justify-center p-8"><hlm-spinner /></div>
@@ -121,10 +120,6 @@ export class GuestEditPage {
     required(path.lastName);
   });
 
-  protected readonly errorKey = computed(() => {
-    const error = asApiError(this.guest.error());
-    return error?.status === 404 ? 'guests.not_found' : (error?.error ?? 'errors.general');
-  });
 
   private back(): Promise<boolean> {
     return this.router.navigateByUrl(`/events/${this.id()}/admin`);

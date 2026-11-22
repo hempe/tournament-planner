@@ -1,3 +1,4 @@
+import { LoadError } from '../../../shared/ui/load-error';
 import { Component, computed, inject, input, resource, signal, untracked } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -7,7 +8,6 @@ import { HlmCardImports } from '@ui/card';
 import { HlmInputImports } from '@ui/input';
 import { HlmSpinner } from '@ui/spinner';
 import { ApiClient, ApiError } from '../../../core/api/api-client';
-import { asApiError } from '../../../core/api/api-error';
 import {
   AdminGuestDto,
   AdminRegistrationDto,
@@ -48,7 +48,7 @@ interface GuestGroup {
 
 @Component({
   selector: 'app-event-admin-page',
-  imports: [
+  imports: [LoadError, 
     RouterLink,
     NgIcon,
     HlmButtonImports,
@@ -306,8 +306,7 @@ interface GuestGroup {
       </div>
     } @else if (detail.error()) {
       <div appPage>
-        <p class="text-lg">{{ errorKey() | t }}</p>
-        <a hlmBtn class="self-start" routerLink="/">{{ 'navigation.home' | t }}</a>
+        <app-load-error [error]="detail.error()" notFoundKey="events.not_found" [showHome]="true" (retry)="detail.reload()" />
       </div>
     } @else {
       <div class="flex justify-center p-8"><hlm-spinner /></div>
@@ -364,10 +363,6 @@ export class EventAdminPage {
   });
 
   protected readonly exportUrl = computed(() => `/api/events/${this.id()}/export`);
-  protected readonly errorKey = computed(() => {
-    const error = asApiError(this.detail.error());
-    return error?.status === 404 ? 'events.not_found' : (error?.error ?? 'errors.general');
-  });
 
   protected readonly groups = computed<RegistrationGroup[]>(() => {
     if (!this.detail.hasValue()) {

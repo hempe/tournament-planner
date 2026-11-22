@@ -1,3 +1,4 @@
+import { LoadError } from '../../../shared/ui/load-error';
 import { Component, computed, inject, resource, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -6,7 +7,6 @@ import { HlmButtonImports } from '@ui/button';
 import { HlmInputImports } from '@ui/input';
 import { HlmSpinner } from '@ui/spinner';
 import { ApiClient } from '../../../core/api/api-client';
-import { asApiError } from '../../../core/api/api-error';
 import { AdminUserDto, userAdminApi } from '../../../core/api/generated';
 import { ConfirmService } from '../../../core/feedback/confirm.service';
 import { Notify } from '../../../core/feedback/notify';
@@ -18,7 +18,7 @@ import { Page, PageHeader } from '../../../shared/ui/page';
 
 @Component({
   selector: 'app-user-list-page',
-  imports: [RouterLink, NgIcon, HlmButtonImports, HlmInputImports, HlmSpinner, TranslatePipe, Badge, Page, PageHeader],
+  imports: [LoadError, RouterLink, NgIcon, HlmButtonImports, HlmInputImports, HlmSpinner, TranslatePipe, Badge, Page, PageHeader],
   providers: [provideIcons({ lucidePencil, lucidePlus, lucideSearch, lucideShieldMinus, lucideShieldPlus, lucideTrash2 })],
   template: `
     <div appPage width="wide">
@@ -88,7 +88,7 @@ import { Page, PageHeader } from '../../../shared/ui/page';
           </ul>
         }
       } @else if (users.error()) {
-        <p role="alert" class="text-destructive">{{ errorKey() | t }}</p>
+        <app-load-error [error]="users.error()" (retry)="users.reload()" />
       } @else {
         <div class="flex justify-center p-8"><hlm-spinner /></div>
       }
@@ -104,7 +104,6 @@ export class UserListPage {
   protected readonly users = resource({
     loader: ({ abortSignal }) => userAdminApi(this.api).index({ signal: abortSignal }),
   });
-  protected readonly errorKey = computed(() => asApiError(this.users.error())?.error ?? 'errors.general');
 
   /** Filters by display name and username (every word must match). */
   protected readonly query = signal('');

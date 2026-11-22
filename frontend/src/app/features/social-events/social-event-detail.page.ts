@@ -1,3 +1,4 @@
+import { LoadError } from '../../shared/ui/load-error';
 import { Component, computed, inject, input, resource, signal } from '@angular/core';
 import { FormField, form, required, submit } from '@angular/forms/signals';
 import { RouterLink } from '@angular/router';
@@ -6,7 +7,6 @@ import { HlmCardImports } from '@ui/card';
 import { HlmLabelImports } from '@ui/label';
 import { HlmSpinner } from '@ui/spinner';
 import { ApiClient, ApiError } from '../../core/api/api-client';
-import { asApiError } from '../../core/api/api-error';
 import { SocialEventDetailDto, TableDto, socialEventsApi } from '../../core/api/generated';
 import { SessionStore } from '../../core/auth/session.store';
 import { ConfirmService } from '../../core/feedback/confirm.service';
@@ -21,7 +21,7 @@ import { Page, PageHeader } from '../../shared/ui/page';
 
 @Component({
   selector: 'app-social-event-detail-page',
-  imports: [
+  imports: [LoadError, 
     FormField,
     RouterLink,
     HlmButtonImports,
@@ -167,8 +167,7 @@ import { Page, PageHeader } from '../../shared/ui/page';
       </div>
     } @else if (detail.error()) {
       <div appPage>
-        <p class="text-lg">{{ errorKey() | t }}</p>
-        <a hlmBtn class="self-start" routerLink="/">{{ 'navigation.home' | t }}</a>
+        <app-load-error [error]="detail.error()" notFoundKey="social_events.not_found" [showHome]="true" (retry)="detail.reload()" />
       </div>
     } @else {
       <div class="flex justify-center p-8"><hlm-spinner /></div>
@@ -201,10 +200,6 @@ export class SocialEventDetailPage {
     required(path.menuId, { when: () => (this.current()?.menus.length ?? 0) > 0 });
   });
 
-  protected readonly errorKey = computed(() => {
-    const error = asApiError(this.detail.error());
-    return error?.status === 404 ? 'social_events.not_found' : (error?.error ?? 'errors.general');
-  });
 
   protected readonly menuError = computed(() => {
     const field = this.registerForm.menuId();

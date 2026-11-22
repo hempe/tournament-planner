@@ -1,3 +1,4 @@
+import { LoadError } from '../../../shared/ui/load-error';
 import { Component, ErrorHandler, computed, inject, input, resource, signal, untracked } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -6,7 +7,6 @@ import { HlmButtonImports } from '@ui/button';
 import { HlmCardImports } from '@ui/card';
 import { HlmSpinner } from '@ui/spinner';
 import { ApiClient, ApiError } from '../../../core/api/api-client';
-import { asApiError } from '../../../core/api/api-error';
 import { AdminSocialRegistrationDto, SocialEventAdminDto, SocialEventRequest, socialEventAdminApi } from '../../../core/api/generated';
 import { ConfirmService } from '../../../core/feedback/confirm.service';
 import { Notify } from '../../../core/feedback/notify';
@@ -20,7 +20,7 @@ import { SocialEventForm } from './social-event-form';
 
 @Component({
   selector: 'app-social-event-admin-page',
-  imports: [RouterLink, NgIcon, HlmButtonImports, HlmCardImports, HlmSpinner, TranslatePipe, SocialEventForm, BackLink, Badge, Page, PageHeader],
+  imports: [LoadError, RouterLink, NgIcon, HlmButtonImports, HlmCardImports, HlmSpinner, TranslatePipe, SocialEventForm, BackLink, Badge, Page, PageHeader],
   providers: [provideIcons({ lucidePlus, lucideUserMinus })],
   template: `
     @if (detail.hasValue()) {
@@ -100,8 +100,7 @@ import { SocialEventForm } from './social-event-form';
       </div>
     } @else if (detail.error()) {
       <div appPage>
-        <p class="text-lg">{{ errorKey() | t }}</p>
-        <a hlmBtn class="self-start" routerLink="/">{{ 'navigation.home' | t }}</a>
+        <app-load-error [error]="detail.error()" notFoundKey="social_events.not_found" [showHome]="true" (retry)="detail.reload()" />
       </div>
     } @else {
       <div class="flex justify-center p-8"><hlm-spinner /></div>
@@ -150,10 +149,6 @@ export class SocialEventAdminPage {
     return tournamentId === null ? '/' : `/events/${tournamentId}/admin`;
   });
 
-  protected readonly errorKey = computed(() => {
-    const error = asApiError(this.detail.error());
-    return error?.status === 404 ? 'social_events.not_found' : (error?.error ?? 'errors.general');
-  });
 
   protected formatDate(value: string): string {
     return formatDate(value, this.i18n.locale());
