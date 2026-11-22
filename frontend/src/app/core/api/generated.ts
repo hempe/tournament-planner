@@ -164,6 +164,7 @@ export interface GuestRegistrationRequest {
   email: string | null;
   handicap: string | null;
   comment: string | null;
+  website: string | null;
 }
 
 export interface LoginRequest {
@@ -263,6 +264,7 @@ export interface SocialGuestRequest {
   email: string | null;
   menuId: number | null;
   tableId: number | null;
+  website: string | null;
 }
 
 export interface SocialParticipantDto {

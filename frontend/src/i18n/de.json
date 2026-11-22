@@ -206,6 +206,7 @@
         "500_title": "Serverfehler",
         "server_error": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.",
         "invalid_json": "Ungültige Anfrage.",
+        "too_many_requests": "Zu viele Anfragen. Bitte später erneut versuchen.",
         "network": "Keine Verbindung zum Server. Bitte versuche es erneut."
     },
     "success": {
@@ -266,6 +267,7 @@
     },
     "guests": {
         "title": "Gäste",
+        "website": "Website",
         "guest": "Gast",
         "add": "Gast hinzufügen",
         "edit": "Gast bearbeiten",

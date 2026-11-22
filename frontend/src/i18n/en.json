@@ -206,6 +206,7 @@
         "500_title": "Server Error",
         "server_error": "An unexpected error occurred. Please try again later.",
         "invalid_json": "Invalid request.",
+        "too_many_requests": "Too many requests. Please try again later.",
         "network": "No connection to the server. Please try again."
     },
     "success": {
@@ -266,6 +267,7 @@
     },
     "guests": {
         "title": "Guests",
+        "website": "Website",
         "guest": "Guest",
         "add": "Add Guest",
         "edit": "Edit Guest",

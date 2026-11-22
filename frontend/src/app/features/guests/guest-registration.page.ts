@@ -116,6 +116,10 @@ import { SELECT_CLASSES } from '../../shared/forms/select';
                   <p id="comment-error" class="text-sm text-destructive">{{ message }}</p>
                 }
               </div>
+              <div class="absolute -left-[9999px] h-px w-px overflow-hidden" aria-hidden="true">
+                <label hlmLabel for="website">{{ 'guests.website' | t }}</label>
+                <input hlmInput id="website" tabindex="-1" autocomplete="off" [formField]="guestForm.website" />
+              </div>
               <button hlmBtn type="submit" class="w-full sm:w-auto sm:self-start" [disabled]="busy()">
                 {{ 'guests.register' | t }}
               </button>
@@ -150,7 +154,7 @@ export class GuestRegistrationPage {
 
   protected readonly busy = signal(false);
   protected readonly serverErrors = signal<Record<string, string>>({});
-  protected readonly model = signal({ male: '', firstName: '', lastName: '', email: '', handicap: '', comment: '' });
+  protected readonly model = signal({ male: '', firstName: '', lastName: '', email: '', handicap: '', comment: '', website: '' });
   protected readonly guestForm = form(this.model, (path) => {
     required(path.male);
     required(path.firstName);
@@ -190,6 +194,7 @@ export class GuestRegistrationPage {
           email: m.email || null,
           handicap: m.handicap || null,
           comment: m.comment || null,
+          website: m.website,
         });
         this.notify.success('guests.register_success');
         await this.router.navigateByUrl(this.session.isAdmin() ? `/events/${this.id()}/admin` : '/');

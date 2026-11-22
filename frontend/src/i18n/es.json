@@ -206,6 +206,7 @@
         "500_title": "Error del Servidor",
         "server_error": "Ocurrió un error inesperado. Por favor, inténtelo más tarde.",
         "invalid_json": "Solicitud no válida.",
+        "too_many_requests": "Demasiadas solicitudes. Inténtalo de nuevo más tarde.",
         "network": "Sin conexión con el servidor. Inténtalo de nuevo."
     },
     "success": {
@@ -266,6 +267,7 @@
     },
     "guests": {
         "title": "Invitados",
+        "website": "Website",
         "guest": "Invitado",
         "add": "Añadir Invitado",
         "edit": "Editar Invitado",

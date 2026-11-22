@@ -138,6 +138,7 @@ export class GuestEditPage {
           email: m.email || null,
           handicap: m.handicap || null,
           comment: m.comment || null,
+          website: null,
         });
         this.notify.success('guests.update_success');
         await this.back();

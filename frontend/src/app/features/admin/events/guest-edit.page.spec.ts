@@ -86,7 +86,7 @@ describe('GuestEditPage', () => {
     await submit();
     expect(api.put).toHaveBeenCalledWith(
       '/events/3/guests/5',
-      { male: false, firstName: 'Gina', lastName: 'Guest', email: null, handicap: null, comment: 'Notiz' },
+      { male: false, firstName: 'Gina', lastName: 'Guest', email: null, handicap: null, comment: 'Notiz', website: null },
       undefined,
     );
   });
@@ -99,7 +99,7 @@ describe('GuestEditPage', () => {
 
     expect(api.put).toHaveBeenCalledWith(
       '/events/3/guests/5',
-      { male: false, firstName: 'Gina', lastName: 'Gast', email: 'gina@example.com', handicap: '12.4', comment: 'Notiz' },
+      { male: false, firstName: 'Gina', lastName: 'Gast', email: 'gina@example.com', handicap: '12.4', comment: 'Notiz', website: null },
       undefined,
     );
     expect(notify.success).toHaveBeenCalledWith('guests.update_success');

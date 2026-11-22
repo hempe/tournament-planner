@@ -13,6 +13,8 @@ final readonly class GuestRegistrationRequest
         public ?string $email,
         public ?string $handicap,
         public ?string $comment,
+        /** Honeypot: hidden in the UI; anything but empty means a bot. */
+        public ?string $website = null,
     ) {
     }
 }

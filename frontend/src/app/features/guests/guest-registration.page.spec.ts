@@ -40,7 +40,7 @@ describe('GuestRegistrationPage', () => {
       users: { salutation: 'Anrede', mr: 'Herr', mrs: 'Frau' },
       guests: {
         first_name: 'Vorname', last_name: 'Nachname', email: 'eMail', handicap: 'Handicap', comment: 'Kommentar',
-        register: 'Als Gast anmelden', register_success: 'Erfolgreich',
+        register: 'Als Gast anmelden', register_success: 'Erfolgreich', website: 'Website',
       },
       invalid: { email: 'Ungültige eMail' },
     });
@@ -86,6 +86,21 @@ describe('GuestRegistrationPage', () => {
     expect(comment?.textContent).not.toContain('*');
   });
 
+  it('has a honeypot field hidden from assistive tech and from the keyboard, sent empty', async () => {
+    const { el, fill, submit } = await render();
+
+    const input = el.querySelector<HTMLInputElement>('#website')!;
+    expect(input.closest('[aria-hidden="true"]')).not.toBeNull();
+    expect(input.tabIndex).toBe(-1);
+    expect(input.getAttribute('autocomplete')).toBe('off');
+    expect(input.value).toBe('');
+
+    fill();
+    await submit();
+
+    expect(api.post.mock.calls[0][1].website).toBe('');
+  });
+
   it('submitting empty shows required errors without calling the API', async () => {
     const { el, submit } = await render();
 
@@ -105,7 +120,7 @@ describe('GuestRegistrationPage', () => {
 
     expect(api.post).toHaveBeenCalledWith(
       '/events/3/guests',
-      { male: true, firstName: 'Gus', lastName: 'Guest', email: 'gus@example.com', handicap: '12.4', comment: 'Hallo' },
+      { male: true, firstName: 'Gus', lastName: 'Guest', email: 'gus@example.com', handicap: '12.4', comment: 'Hallo', website: '' },
       undefined,
     );
     expect(notify.success).toHaveBeenCalledWith('guests.register_success');
@@ -147,7 +162,7 @@ describe('GuestRegistrationPage', () => {
 
     expect(api.post).toHaveBeenCalledWith(
       '/events/3/guests',
-      { male: false, firstName: 'Gus', lastName: 'Guest', email: null, handicap: null, comment: null },
+      { male: false, firstName: 'Gus', lastName: 'Guest', email: null, handicap: null, comment: null, website: '' },
       undefined,
     );
     expect(navigate).toHaveBeenCalledWith('/events/3/admin');

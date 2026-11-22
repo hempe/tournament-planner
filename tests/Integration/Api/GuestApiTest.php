@@ -298,4 +298,100 @@ class GuestApiTest extends IntegrationTestCase
         $admin = $this->json('POST', "/api/social-events/{$id}/guests", $this->socialGuestBody());
         $this->assertSame(204, $admin->statusCode);
     }
+
+    public function testFilledHoneypotReturns204WithoutStoringAnything(): void
+    {
+        $eventId = DB::$events->add('Cup', '2099-06-01', 2);
+        $id = $this->dinner('', '4');
+        $this->csrf();
+
+        $event = $this->json('POST', "/api/events/{$eventId}/guests", $this->guestBody(['website' => 'http://spam.example']));
+        $social = $this->json('POST', "/api/social-events/{$id}/guests", $this->socialGuestBody(['website' => 'http://spam.example']));
+
+        $this->assertSame(204, $event->statusCode);
+        $this->assertSame(204, $social->statusCode);
+        $this->assertSame([], DB::$guests->allForEvent($eventId));
+        $this->assertSame([], DB::$socialEvents->registrations($id));
+    }
+
+    public function testEmptyHoneypotRegistersNormally(): void
+    {
+        $eventId = DB::$events->add('Cup', '2099-06-01', 2);
+        $this->csrf();
+
+        $response = $this->json('POST', "/api/events/{$eventId}/guests", $this->guestBody(['website' => '']));
+
+        $this->assertSame(204, $response->statusCode);
+        $this->assertCount(1, DB::$guests->allForEvent($eventId));
+    }
+
+    public function testEleventhGuestRegistrationPerHourIs429(): void
+    {
+        $eventId = DB::$events->add('Cup', '2099-06-01', 50);
+        $this->csrf();
+
+        for ($i = 0; $i < 10; $i++) {
+            $this->assertSame(204, $this->json('POST', "/api/events/{$eventId}/guests", $this->guestBody())->statusCode);
+        }
+        $response = $this->json('POST', "/api/events/{$eventId}/guests", $this->guestBody());
+
+        $this->assertSame(429, $response->statusCode);
+        $this->assertSame(['error' => 'errors.too_many_requests'], $response->json());
+        $this->assertCount(10, DB::$guests->allForEvent($eventId));
+    }
+
+    public function testGuestRateLimitIsSharedAcrossEventAndSocialRoutes(): void
+    {
+        $eventId = DB::$events->add('Cup', '2099-06-01', 50);
+        $id = $this->dinner('', '20');
+        $this->csrf();
+
+        for ($i = 0; $i < 5; $i++) {
+            $this->assertSame(204, $this->json('POST', "/api/events/{$eventId}/guests", $this->guestBody())->statusCode);
+            $this->assertSame(204, $this->json('POST', "/api/social-events/{$id}/guests", $this->socialGuestBody())->statusCode);
+        }
+
+        $this->assertSame(429, $this->json('POST', "/api/events/{$eventId}/guests", $this->guestBody())->statusCode);
+        $this->assertSame(429, $this->json('POST', "/api/social-events/{$id}/guests", $this->socialGuestBody())->statusCode);
+    }
+
+    public function testValidationErrorsDoNotCountTowardsTheGuestLimit(): void
+    {
+        $eventId = DB::$events->add('Cup', '2099-06-01', 50);
+        $this->csrf();
+
+        for ($i = 0; $i < 15; $i++) {
+            $this->assertSame(422, $this->json('POST', "/api/events/{$eventId}/guests", $this->guestBody(['email' => 'nope']))->statusCode);
+        }
+
+        $this->assertSame(204, $this->json('POST', "/api/events/{$eventId}/guests", $this->guestBody())->statusCode);
+    }
+
+    public function testGuestRateLimitIsPerClientIp(): void
+    {
+        $eventId = DB::$events->add('Cup', '2099-06-01', 50);
+        $this->csrf();
+        for ($i = 0; $i < 10; $i++) {
+            $this->json('POST', "/api/events/{$eventId}/guests", $this->guestBody());
+        }
+
+        $_SERVER['REMOTE_ADDR'] = '203.0.113.7';
+        try {
+            $this->assertSame(204, $this->json('POST', "/api/events/{$eventId}/guests", $this->guestBody())->statusCode);
+        } finally {
+            unset($_SERVER['REMOTE_ADDR']);
+        }
+    }
+
+    public function testAdminIsNotRateLimited(): void
+    {
+        $eventId = DB::$events->add('Cup', '2099-06-01', 50);
+        $id = $this->dinner('', '20');
+        $this->apiLoginAs('admin', 'Admin123!');
+
+        for ($i = 0; $i < 12; $i++) {
+            $this->assertSame(204, $this->json('POST', "/api/events/{$eventId}/guests", $this->guestBody())->statusCode);
+            $this->assertSame(204, $this->json('POST', "/api/social-events/{$id}/guests", $this->socialGuestBody())->statusCode);
+        }
+    }
 }

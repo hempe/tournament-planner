@@ -93,6 +93,10 @@ import { SELECT_CLASSES } from '../../shared/forms/select';
                   }
                 </div>
               }
+              <div class="absolute -left-[9999px] h-px w-px overflow-hidden" aria-hidden="true">
+                <label hlmLabel for="website">{{ 'guests.website' | t }}</label>
+                <input hlmInput id="website" tabindex="-1" autocomplete="off" [formField]="guestForm.website" />
+              </div>
               <button hlmBtn type="submit" class="w-full sm:w-auto sm:self-start" [disabled]="busy()">
                 {{ 'guests.register' | t }}
               </button>
@@ -128,7 +132,7 @@ export class SocialGuestRegistrationPage {
   private readonly current = computed(() => (this.info.hasValue() ? this.info.value() : undefined));
   protected readonly busy = signal(false);
   protected readonly serverErrors = signal<Record<string, string>>({});
-  protected readonly model = signal({ firstName: '', lastName: '', email: '', menuId: '', tableId: '' });
+  protected readonly model = signal({ firstName: '', lastName: '', email: '', menuId: '', tableId: '', website: '' });
   protected readonly guestForm = form(this.model, (path) => {
     required(path.firstName);
     required(path.lastName);
@@ -162,6 +166,7 @@ export class SocialGuestRegistrationPage {
           email: m.email || null,
           menuId: m.menuId === '' ? null : Number(m.menuId),
           tableId: m.tableId === '' ? null : Number(m.tableId),
+          website: m.website,
         });
         this.notify.success('social_events.guest_register_success');
         await this.router.navigateByUrl(this.session.isAdmin() ? `/social-events/${this.id()}/admin` : '/');

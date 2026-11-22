@@ -12,6 +12,8 @@ final readonly class SocialGuestRequest
         public ?string $email,
         public ?int $menuId,
         public ?int $tableId,
+        /** Honeypot: hidden in the UI; anything but empty means a bot. */
+        public ?string $website = null,
     ) {
     }
 }

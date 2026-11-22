@@ -24,6 +24,7 @@ use TP\Core\Attributes\Post;
 use TP\Core\Attributes\Returns;
 use TP\Core\Attributes\RoutePrefix;
 use TP\Core\HttpStatus;
+use TP\Core\RateLimiter;
 use TP\Core\Request;
 use TP\Core\Response;
 use TP\Core\ValidationRule;
@@ -136,6 +137,11 @@ final class EventsController
             return Response::apiError('events.not_found', HttpStatus::NOT_FOUND);
         }
 
+        // Honeypot: bots fill the hidden field. Pretend it worked, store nothing.
+        if ($request->getString('website') !== '') {
+            return Response::noContent();
+        }
+
         $isAdmin = User::admin();
         // Locked events (manual lock, date or deadline passed) only accept guests from admins
         if (!$isAdmin && DB::$events->isLocked($eventId)) {
@@ -152,6 +158,10 @@ final class EventsController
         ]);
         if (!$validation->isValid) {
             return Response::apiError('validation.failed', HttpStatus::UNPROCESSABLE_ENTITY, $validation->fieldErrors());
+        }
+
+        if (!$isAdmin && !RateLimiter::fromEnvironment()->hit('guest:' . $request->clientIp(), 10, 3600)) {
+            return Response::apiError('errors.too_many_requests', HttpStatus::TOO_MANY_REQUESTS);
         }
 
         $handicap = $request->getString('handicap');

@@ -47,7 +47,7 @@ describe('SocialGuestRegistrationPage', () => {
         select_menu: 'Menü auswählen', table: 'Tisch', table_number: 'Tisch :number', libero: 'Kein Wunsch',
         invalid_menu: 'Ungültige Menüauswahl.',
       },
-      guests: { first_name: 'Vorname', last_name: 'Nachname', email: 'eMail', register: 'Als Gast anmelden' },
+      guests: { first_name: 'Vorname', last_name: 'Nachname', email: 'eMail', register: 'Als Gast anmelden', website: 'Website' },
     });
     navigate = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
   });
@@ -89,6 +89,21 @@ describe('SocialGuestRegistrationPage', () => {
     expect(table?.textContent).not.toContain('*');
   });
 
+  it('has a honeypot field hidden from assistive tech and from the keyboard, sent empty', async () => {
+    const { el, fill, submit } = await render();
+
+    const input = el.querySelector<HTMLInputElement>('#website')!;
+    expect(input.closest('[aria-hidden="true"]')).not.toBeNull();
+    expect(input.tabIndex).toBe(-1);
+    expect(input.getAttribute('autocomplete')).toBe('off');
+    expect(input.value).toBe('');
+
+    fill();
+    await submit();
+
+    expect(api.post.mock.calls[0][1].website).toBe('');
+  });
+
   it('submitting empty shows required errors without calling the API', async () => {
     const { el, submit } = await render();
 
@@ -108,7 +123,7 @@ describe('SocialGuestRegistrationPage', () => {
 
     expect(api.post).toHaveBeenCalledWith(
       '/social-events/9/guests',
-      { firstName: 'Gus', lastName: 'Guest', email: 'gus@example.com', menuId: 2, tableId: 11 },
+      { firstName: 'Gus', lastName: 'Guest', email: 'gus@example.com', menuId: 2, tableId: 11, website: '' },
       undefined,
     );
     expect(notify.success).toHaveBeenCalledWith('social_events.guest_register_success');
@@ -127,7 +142,7 @@ describe('SocialGuestRegistrationPage', () => {
 
     expect(api.post).toHaveBeenCalledWith(
       '/social-events/9/guests',
-      { firstName: 'Gus', lastName: 'Guest', email: 'g@example.com', menuId: null, tableId: null },
+      { firstName: 'Gus', lastName: 'Guest', email: 'g@example.com', menuId: null, tableId: null, website: '' },
       undefined,
     );
   });
@@ -164,7 +179,7 @@ describe('SocialGuestRegistrationPage', () => {
 
     expect(api.post).toHaveBeenCalledWith(
       '/social-events/9/guests',
-      { firstName: 'Gus', lastName: 'Guest', email: null, menuId: null, tableId: null },
+      { firstName: 'Gus', lastName: 'Guest', email: null, menuId: null, tableId: null, website: '' },
       undefined,
     );
     expect(navigate).toHaveBeenCalledWith('/social-events/9/admin');
