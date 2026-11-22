@@ -30,16 +30,16 @@ import { Page, PageHeader } from '../../../shared/ui/page';
         <ng-template #list let-rows>
           <!-- below sm every row is a compact stacked card -->
           <!-- sm and up: same white panel as the user list and the calendar -->
-          <div class="sm:rounded-lg sm:border sm:border-border sm:bg-background sm:px-2 sm:shadow-xs">
+          <div class="sm:overflow-hidden sm:rounded-lg sm:border sm:border-border sm:bg-background sm:shadow-xs">
           <table class="block w-full text-sm sm:table">
             <thead class="hidden sm:table-header-group">
-              <tr class="border-b text-left text-xs text-muted-foreground">
-                <th class="px-2 py-1.5 font-medium">{{ 'events.date' | t }}</th>
-                <th class="px-2 py-1.5 font-medium">{{ 'events.name' | t }}</th>
-                <th class="px-2 py-1.5 text-right font-medium">{{ 'events.max_participants' | t }}</th>
-                <th class="px-2 py-1.5 text-right font-medium">{{ 'events.registered' | t }}</th>
-                <th class="px-2 py-1.5 text-right font-medium">{{ 'events.waitlist' | t }}</th>
-                <th class="w-10 px-2 py-1.5"><span class="sr-only">{{ 'events.delete' | t }}</span></th>
+              <tr class="border-b border-border bg-muted/60 text-left text-xs text-muted-foreground">
+                <th class="py-2.5 pr-2 pl-4 font-medium">{{ 'events.date' | t }}</th>
+                <th class="px-2 py-2.5 font-medium">{{ 'events.name' | t }}</th>
+                <th class="px-2 py-2.5 text-right font-medium">{{ 'events.max_participants' | t }}</th>
+                <th class="px-2 py-2.5 text-right font-medium">{{ 'events.registered' | t }}</th>
+                <th class="px-2 py-2.5 text-right font-medium">{{ 'events.waitlist' | t }}</th>
+                <th class="w-12 py-2.5 pr-3 pl-2"><span class="sr-only">{{ 'events.delete' | t }}</span></th>
               </tr>
             </thead>
             <tbody class="flex flex-col gap-2 sm:table-row-group">
@@ -49,7 +49,7 @@ import { Page, PageHeader } from '../../../shared/ui/page';
                   class="relative block cursor-pointer rounded-lg border bg-card py-2 pr-11 pl-3 hover:bg-muted/50 sm:table-row sm:rounded-none sm:border-0 sm:border-b sm:bg-transparent sm:p-0 sm:last:border-b-0"
                   (click)="open(e)"
                 >
-                  <td class="block text-xs text-muted-foreground sm:table-cell sm:px-2 sm:py-2.5 sm:text-sm sm:whitespace-nowrap">{{ formatDate(e.date) }}</td>
+                  <td class="block text-xs text-muted-foreground sm:table-cell sm:py-2.5 sm:pr-2 sm:pl-4 sm:text-sm sm:whitespace-nowrap">{{ formatDate(e.date) }}</td>
                   <td class="block font-medium sm:table-cell sm:px-2 sm:py-2.5">
                     <a class="hover:underline" [routerLink]="['/events', e.id, 'admin']" (click)="$event.stopPropagation()">{{ e.name }}</a>
                   </td>
@@ -62,7 +62,7 @@ import { Page, PageHeader } from '../../../shared/ui/page';
                   <td class="inline text-xs text-muted-foreground tabular-nums sm:table-cell sm:px-2 sm:py-2.5 sm:text-right sm:text-sm sm:text-foreground">
                     <span class="sm:hidden"> · {{ 'events.waitlist' | t }}: </span>{{ e.waitlist }}
                   </td>
-                  <td class="absolute top-1/2 right-1.5 -translate-y-1/2 sm:static sm:table-cell sm:translate-y-0 sm:px-2 sm:py-1 sm:text-right">
+                  <td class="absolute top-1/2 right-1.5 -translate-y-1/2 sm:static sm:table-cell sm:translate-y-0 sm:py-1 sm:pr-3 sm:pl-2 sm:text-right">
                     <button
                       hlmBtn
                       variant="ghost"
