@@ -59,6 +59,13 @@ ALTER TABLE events ADD COLUMN IF NOT EXISTS price_guests VARCHAR(100) NULL;
 ALTER TABLE events MODIFY COLUMN price_members VARCHAR(100) NULL;
 ALTER TABLE events MODIFY COLUMN price_guests VARCHAR(100) NULL;
 ALTER TABLE events ADD COLUMN IF NOT EXISTS registration_close DATETIME NULL;
+-- Amigos flavour fields (unused by El Faro): phone and handicap admin-only, prio = waitlist priority (lower first)
+ALTER TABLE users ADD COLUMN IF NOT EXISTS phone VARCHAR(255) NULL;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS handicap DECIMAL(4,1) NULL;
+ALTER TABLE users MODIFY COLUMN handicap DECIMAL(4,1) NULL;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS prio INT NULL;
+-- Older databases (the Amigos app) lack the key the registration upsert relies on
+ALTER TABLE event_users ADD UNIQUE KEY IF NOT EXISTS unique_user_event (userId, eventId);
 
 CREATE TABLE IF NOT EXISTS social_events (
     id INT AUTO_INCREMENT PRIMARY KEY,
