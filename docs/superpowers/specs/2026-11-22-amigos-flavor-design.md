@@ -1,7 +1,6 @@
-# Amigos + El Faro: one code base, two flavours — design (DRAFT, brainstorming in progress)
+# Amigos + El Faro: one code base, two flavours — design
 
-Status: **sections 1–2 agreed with the user; next: present section 3 (migration), then 4 and 5.**
-Continue the brainstorming flow (present remaining sections → finalize this spec → user review → writing-plans).
+Status: **all sections agreed with the user (2026-11-22); spec awaiting user review → then writing-plans.**
 
 ## Background
 
@@ -45,8 +44,8 @@ Continue the brainstorming flow (present remaining sections → finalize this sp
   women/men split are **off**, but they are generic switches (could be turned on later).
 - **Keep for Amigos:** priority waitlist, phone + handicap, dark mode with photo, "Spieler" wording.
 - **Data:** migrate `amigoDb` **in place** with a migration SQL (keep users, passwords, events, registrations,
-  priorities, phones, handicaps; drop `players`/`event_registration` after a backup). Test it against a real export
-  first — **the user must provide a phpMyAdmin SQL export of amigoDb** at implementation time.
+  priorities, phones, handicaps; drop `players`/`event_registration` after a backup). Test it against the real export
+  first (already provided, see "Real `amigoDb`"; take a fresh one right before the cut-over).
 - **Approach A (chosen):** flavour at **build time**. User: "I don't want to deploy the logos of both".
   Rejected: one build with runtime flavour (B), two git branches (C).
 - **Name login:** allowed for **both** flavours (user: "turn on for both sounds fine").
@@ -87,7 +86,7 @@ El Faro: all features on, `waitlistOrder: "timestamp"`, `userFields: []`, `usern
   elfaro; unknown name → error listing valid flavours.
 - **PHP:** upload contains `config/flavor.json`, read by a small `Flavor` class. Switched-off features are blocked with a
   route attribute like `#[Feature('guests')]` → **404**. Angular hides the matching UI from the same switches.
-- **Tests:** PHPUnit and Vitest run per flavour in CI; E2E covers the Amigos-specific parts.
+- **Tests:** see section 5 (each switch tested in both states within one run; builds and E2E per flavour).
 
 ## Section 2 — Amigos-specific behaviour (agreed)
 
@@ -102,7 +101,8 @@ El Faro: all features on, `waitlistOrder: "timestamp"`, `userFields: []`, `usern
   El Faro stays light-only.
 - **Names:** Amigos only has `username`. Migration splits by `usernameOrder`: `lastFirst` → first word = last name,
   rest = first name (El Faro rule `firstLast`: last word = last name, see `UserRepository::splitUsername()`).
-  The migration prints a list of every split so the user can fix multi-part names ("De la Fuente Juan") in the user list.
+  The migration lists every 1-word / 3+-word username so the user can fix multi-part names ("De la Fuente Juan")
+  in the user list (see section 3).
   Display/sorting uses stored first/last names; login names stay unchanged.
 - **Login by name (both flavours):** (1) exact `username` match first (unchanged); (2) otherwise match
   "first last" **or** "last first" against `first_name`/`last_name`, case-insensitive, whitespace-normalised;
@@ -111,12 +111,73 @@ El Faro: all features on, `waitlistOrder: "timestamp"`, `userFields: []`, `usern
   Today login matches only `username` (`UserRepository.php:201`, `AuthController::login`).
 - **Timezone** from `flavor.json`.
 
-## Still to present / decide
+## Section 3 — Database migration of `amigoDb` (agreed)
 
-1. Section 3 — **database migration** of `amigoDb` (schema diff Amigos → unified `init.sql`: add El Faro columns such as
-   `first_name`, `last_name`, `male`, `rfeg`, `member_number`, event `description`/prices/`registration_close`/`mixed`,
-   social tables; add `phone`, `handicap`, `prio` to the unified schema for both; map `event_users`; backup + drop
-   deprecated tables; dry run against the export; name-split report).
-2. Section 4 — hosting: PHP 8.3.37 / MariaDB 10.11 **confirmed** from the export header; `.env` per host;
-   cut-over steps for Amigos (old plain-PHP files replaced; old URLs like `event.php?id=` → legacy redirects?).
-3. Section 5 — testing/CI per flavour, docs (`DEPLOYMENT.md` per flavour, `README.md`, `WHATS-NEW`-style note for Amigos).
+Facts from the export (aggregates only): 111 users (2 admins), 64 events (2025-02-23 … 2027-04-27, 47 future),
+636 registrations, **0 duplicate user/event pairs**, no over-full events, no NULL timestamps, **all registrations
+state 1** (no waitlist in use today), `prio` 1000–2603 (4 users NULL), 31 users without handicap, **only 2 users with a
+phone**, usernames: 102 two words, 7 one word, 2 three+ words, passwords all bcrypt `$2y$` (work with
+`password_verify`), deprecated `players`/`event_registration` last written 2025-02-11, every player matches a user.
+
+1. **`database/init.sql` stays the only schema script** (idempotent). Run on `amigoDb` it adds all El Faro
+   tables/columns with today's defaults (`male=1`, `mixed=1`, no prices/deadline). Additions:
+   - `users`: `phone VARCHAR(255) NULL`, `handicap DECIMAL(4,1) NULL`, `prio INT NULL` (both flavours; El Faro leaves
+     them empty). `ADD COLUMN IF NOT EXISTS` plus `MODIFY` so Amigos' `DECIMAL(3,1)` handicap becomes `(4,1)`.
+   - `event_users`: `ADD UNIQUE KEY IF NOT EXISTS unique_user_event (userId, eventId)` — `amigoDb` lacks it, El Faro
+     code relies on it; the export has no duplicates.
+2. **`database/migrations/amigos-legacy.sql`** (one-off, run in phpMyAdmin after a backup):
+   - Name split in **plain SQL** (no shell on the host): first word of `username` → `last_name`, rest → `first_name`;
+     only for users with empty `first_name`/`last_name` (re-runnable). A one-word username → last name only.
+   - A closing `SELECT` lists users whose username has 1 or 3+ words, so the user can check them in phpMyAdmin and
+     fix them in the user list. No file with names is generated.
+   - `DROP TABLE IF EXISTS event_registration`, then `players`.
+3. **Waitlist with NULL priority:** promoted after everyone with a priority; ties by registration time.
+4. **`bin/amigos-dry-run.sh <export.sql>`:** loads the export into a throwaway MariaDB container, runs `init.sql` +
+   `amigos-legacy.sql`, prints before/after counts (users/events/registrations must be equal) and the split check list
+   for the user. Never prints other rows; the export never enters the repo.
+5. **PHPUnit migration test:** builds the legacy Amigos schema with made-up data, applies both scripts, asserts counts,
+   unique key, name split, dropped tables.
+6. Phone is kept (admin-only, cheap) even though only 2 users have one.
+
+## Section 4 — Hosting and cut-over for Amigos (agreed)
+
+Facts: host has PHP 8.3.37 / MariaDB 10.11. Old and new app both store the login in `$_SESSION['user_id']` with the
+default session cookie → logged-in users most likely stay logged in. Old manifest has no `start_url` → shortcuts open
+`/`. Old `.htaccess` only has the empty Hostpoint panel marker block. Old credentials live in
+`private/credential.live.php`; `php.ini` enables `intl`, `pdo_mysql`, `mysqli`.
+
+1. **`.env`** on the Amigos host (copied by hand from `private/credential.live.php`), as for El Faro.
+2. **Legacy URL redirects in the shared `.htaccess`** (harmless for El Faro), placed before the rule that 404s
+   `*.php`: `event.php?id=N` → `301 /events/N`; `index.php`, `login.php`, `add-event.php`, `admin/*.php` → `301 /`.
+3. **Cut-over checklist** (Amigos section in `DEPLOYMENT.md`):
+   1. Backup: phpMyAdmin export + FTP download of the old files.
+   2. Local dry run with that export (`bin/amigos-dry-run.sh`), counts must match.
+   3. Create `.env` (`APP_ENV=production` + DB settings).
+   4. phpMyAdmin: run `init.sql`, then `amigos-legacy.sql`; review the name list.
+   5. `./build.sh --flavor amigos`, upload both folders.
+   6. Delete the old files: `*.php` except `index.php`, `admin/`, `classes/`, `layout/`, `styles/`, `private/`,
+      `init.sql`, `o.db.php`, old logo/background images the new theme doesn't use.
+   7. Check `/health`, login, an old `event.php?id=` link, the phone shortcut.
+   8. Rollback: upload the old files again and import the backup.
+4. `php.ini` stays on the server (`*.ini` is blocked by `.htaccess`).
+
+## Section 5 — Tests, CI, docs (agreed)
+
+Replaces "PHPUnit and Vitest per flavour": every switch is tested **in both states within one run**.
+
+- **PHPUnit:** default is El Faro (all on); `Flavor::override([...])` in `setUp()` switches features. Cover:
+  `#[Feature]` → 404; priority vs. timestamp promotion (incl. NULL priority); `phone`/`handicap`/`prio` accepted and
+  returned only when in `userFields`; login by name incl. ambiguous match; `Flavor` with unknown flavour / broken
+  `flavor.json` fails loudly; the migration test (section 3). Coverage stays ≥ 85 %.
+- **Vitest:** switches come from an injection token; cover hidden UI (guests, social events, prices), priority field
+  in the user form, handicap column, phone only in the admin user list.
+- **i18n:** `npm run check:i18n` also checks that every key in `flavors/*/i18n` exists in the base texts.
+- **CI:** frontend job builds `elfaro` and `amigos`; `bin/verify-dist.php` fails if a dist contains assets of the other
+  flavour (logo, manifest name, theme).
+- **E2E:** existing specs stay on El Faro; new `amigos.spec.ts` against an Amigos build (logo/manifest, no guest/social
+  UI, guest API 404, priority waitlist order, locked text override, dark mode with photo via `colorScheme: 'dark'` on
+  the iPhone project); transition spec checks `event.php?id=N` → `/events/N`.
+- **Docs:** `DEPLOYMENT.md` (`--flavor`, two hosts, Amigos cut-over), `README.md` (flavours), `FRONTEND.md` (switches,
+  themes, text overrides), `API.md` (`#[Feature]` → 404, new user fields), `CLAUDE.md` + `TESTING.md` (commands
+  `./run.sh amigos`, `./build.sh --flavor`, test counts), `docs/WHATS-NEW-AMIGOS.md` (short German note for Amigos
+  members: new look, login with first and last name, installable app).
