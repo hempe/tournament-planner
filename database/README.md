@@ -14,6 +14,14 @@ Database schema initialization script. Creates the `TPDb` database and all requi
 mysql -u root -p < database/init.sql
 ```
 
+### migrations/amigos-legacy.sql (one-off, Amigos de Tauro only)
+
+Run once on the old Amigos database, **after** `init.sql` (`init.sql` adds all current tables and columns and the
+`unique_user_event` key the old database lacks). The script fills `first_name`/`last_name` from the
+`"Lastname Firstname"` logins (only for users without names, so it can be re-run), drops the abandoned
+`players`/`event_registration` tables and ends with a check list of one-word and multi-part names to fix in the app.
+Rehearse it first with `bin/amigos-dry-run.sh <export.sql>`; the full cut-over is in [docs/DEPLOYMENT.md](../docs/DEPLOYMENT.md).
+
 ---
 
 ## Schema
@@ -31,6 +39,11 @@ User accounts and authentication.
 | `male`          | BOOLEAN        | NOT NULL, DEFAULT 1      | Gender (1 = male, 0 = female)      |
 | `rfeg`          | VARCHAR(255)   | NULL                     | RFEG federation number             |
 | `member_number` | VARCHAR(255)   | NULL                     | Club membership number             |
+| `first_name`    | VARCHAR(255)   | NULL                     | First name                         |
+| `last_name`     | VARCHAR(255)   | NULL                     | Last name                          |
+| `phone`         | VARCHAR(255)   | NULL                     | Phone (Amigos flavour, admin-only) |
+| `handicap`      | DECIMAL(4,1)   | NULL                     | Handicap (Amigos flavour)          |
+| `prio`          | INT            | NULL                     | Waitlist priority, lower = first (Amigos flavour) |
 
 ---
 

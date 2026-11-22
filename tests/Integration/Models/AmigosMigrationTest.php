@@ -74,4 +74,47 @@ class AmigosMigrationTest extends TestCase
         }
         $this->assertSame(1, (int) $this->value('SELECT MIN(mixed) FROM events'));
     }
+
+    private function legacySql(): string
+    {
+        return (string) file_get_contents(__DIR__ . '/../../../database/migrations/amigos-legacy.sql');
+    }
+
+    public function testLegacyScriptSplitsNamesDropsOldTablesAndIsRerunnable(): void
+    {
+        $this->runSql($this->initSql());
+        $this->runSql($this->legacySql());
+        $this->conn->query("UPDATE users SET first_name = 'Juan', last_name = 'De la Fuente' WHERE id = 3"); // admin fix
+        $this->runSql($this->legacySql()); // must not overwrite the fix
+
+        $names = [];
+        foreach ($this->conn->query('SELECT username, first_name, last_name FROM users ORDER BY id')->fetch_all() as [$u, $f, $l]) {
+            $names[$u] = [$f, $l];
+        }
+        $this->assertSame([
+            'Muster Max' => ['Max', 'Muster'],
+            'Arno' => ['', 'Arno'],
+            'De la Fuente Juan' => ['Juan', 'De la Fuente'],
+            'Beispiel Bea' => ['Bea', 'Beispiel'],
+        ], $names);
+
+        foreach (['players', 'event_registration'] as $table) {
+            $this->assertSame(0, (int) $this->value(
+                "SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA = '" . self::DB . "' AND TABLE_NAME = '$table'"
+            ), $table);
+        }
+        $this->assertSame(3, (int) $this->value('SELECT COUNT(*) FROM event_users'));
+    }
+
+    public function testCheckListShowsOneAndThreePlusWordUsernames(): void
+    {
+        $this->runSql($this->initSql());
+        $sql = $this->legacySql();
+        $this->runSql($sql);
+        // the script's last statement is the check list
+        $statements = array_values(array_filter(array_map('trim', explode(';', $sql))));
+        $rows = $this->conn->query(end($statements))->fetch_all(MYSQLI_ASSOC);
+
+        $this->assertSame(['Arno', 'De la Fuente Juan'], array_column($rows, 'username'));
+    }
 }
