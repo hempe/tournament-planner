@@ -47,6 +47,26 @@ for (const file of sourceFiles(join(src, 'app'))) {
   }
 }
 
+// Flavour overrides may only replace existing keys
+const flavorsDir = new URL('../flavors/', import.meta.url).pathname;
+function leaves(node: Record<string, unknown>, prefix = ''): string[] {
+  return Object.entries(node).flatMap(([k, v]) =>
+    typeof v === 'object' && v !== null ? leaves(v as Record<string, unknown>, `${prefix}${k}.`) : [`${prefix}${k}`],
+  );
+}
+for (const flavor of readdirSync(flavorsDir)) {
+  for (const file of readdirSync(join(flavorsDir, flavor, 'i18n'))) {
+    const base = JSON.parse(readFileSync(join(src, 'i18n', file), 'utf8')) as Record<string, unknown>;
+    const override = JSON.parse(readFileSync(join(flavorsDir, flavor, 'i18n', file), 'utf8')) as Record<string, unknown>;
+    const known = new Set(leaves(base));
+    for (const key of leaves(override)) {
+      if (!known.has(key)) {
+        missing.push(`flavors/${flavor}/i18n/${file}: ${key} (not in base texts)`);
+      }
+    }
+  }
+}
+
 if (missing.length > 0) {
   console.error(`Unknown translation keys:\n${missing.join('\n')}`);
   process.exit(1);

@@ -142,13 +142,30 @@ final class Translator
             return;
         }
 
-        $translationFile = self::langDir() . "/{$locale}.json";
-
-        $this->translations[$locale] = file_exists($translationFile)
-            ? json_decode((string) file_get_contents($translationFile), true, 512, JSON_THROW_ON_ERROR)
-            : [];
-
+        $translations = self::readJson(self::langDir() . "/{$locale}.json");
+        $flavorDir = Flavor::textDir();
+        if ($flavorDir !== null) {
+            $translations = self::merge($translations, self::readJson("$flavorDir/{$locale}.json"));
+        }
+        $this->translations[$locale] = $translations;
         $this->loadedLocales[] = $locale;
+    }
+
+    /** @return array<string, mixed> */
+    private static function readJson(string $file): array
+    {
+        return file_exists($file)
+            ? (array) json_decode((string) file_get_contents($file), true, 512, JSON_THROW_ON_ERROR)
+            : [];
+    }
+
+    /** Deep merge: string leaves of $override replace those of $base (same rule as the frontend). */
+    public static function merge(array $base, array $override): array
+    {
+        foreach ($override as $key => $value) {
+            $base[$key] = is_array($value) && is_array($base[$key] ?? null) ? self::merge($base[$key], $value) : $value;
+        }
+        return $base;
     }
 
     private function getNestedValue(array $array, string $key): ?string
