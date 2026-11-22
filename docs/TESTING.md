@@ -142,9 +142,9 @@ Three layers; run all of them for cross-cutting changes.
 
 | Layer | Command | Count |
 |---|---|---|
-| PHPUnit (API, core, models, security) | `composer test` | 383 tests |
-| Vitest (Angular unit/component tests) | `cd frontend && npm test` | 239 tests in 39 files |
-| Playwright E2E (Apache + MariaDB in Docker) | `cd frontend && npm run e2e` | 55 tests (desktop + iPhone 13) |
+| PHPUnit (API, core, models, security) | `composer test` | 425 tests |
+| Vitest (Angular unit/component tests) | `cd frontend && npm test` | 292 tests in 44 files |
+| Playwright E2E (Apache + MariaDB in Docker) | `cd frontend && npm run e2e` | 58 tests (desktop + iPhone 13) |
 
 Never run PHPUnit in parallel (or alongside `npm run e2e`): all suites share the test database `TP_test`.
 

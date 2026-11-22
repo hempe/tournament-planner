@@ -35,7 +35,24 @@ code throws `UserFacingException($key, $params)` for such cases; the controller 
 | 404 | Unknown route or resource | `errors.not_found` |
 | 409 | Conflict (event full, locked, registration closed) | feature-specific |
 | 422 | Validation failed / wrong credentials | `validation.failed`, `auth.login_failed` |
+| 429 | Rate limit hit | `auth.too_many_attempts` (with `params.minutes`), `errors.too_many_requests` |
 | 500 | Unexpected error | `errors.server_error` |
+
+## Rate limits
+
+File-based (`src/Core/RateLimiter.php`, counters in `storage/cache/rate-limits/`), keyed by the client IP
+(`Request::clientIp()`, which ignores spoofable forwarding headers).
+
+| Where | Limit | When exceeded |
+|---|---|---|
+| `POST /api/auth/login` | 5 failed logins per IP and user name in 15 minutes; a successful login resets the counter | `429 auth.too_many_attempts` with `params.minutes` (wait time); checked before the password |
+| `POST .../{id}/guests` (tournament and social event, non-admins) | 10 registrations per IP and hour | `429 errors.too_many_requests` |
+| `POST /api/client-errors` | 20 reports per IP in 10 minutes | report silently dropped, still `204` |
+
+## Honeypot (guest registration)
+
+`GuestRegistrationRequest` and `SocialGuestRequest` have an optional `website` field. The forms render it
+hidden; humans leave it empty. If it is not empty the API answers `204` as if it worked and stores nothing.
 
 ## CSRF
 
@@ -53,6 +70,12 @@ fresh cookie, so clients retry once.
 | POST | `/api/auth/logout` | – | `204` (requires login) |
 
 `User` = `UserDto` = `{ id, username, firstName, lastName, displayName, isAdmin }`. Responses are DTOs from `src/Api/Dto/`, never hand-built arrays (plan 2 generates TypeScript from them).
+
+## Client error reports
+
+| Method | Path | Body | Response |
+|---|---|---|---|
+| POST | `/api/client-errors` | `ClientErrorReport` `{ message, stack?, url, appVersion }` | `204`; public; `422 validation.failed`. Sanitised and truncated, then written to the app log as `Client error` (with IP, user id, user agent) |
 
 ## Member endpoints
 

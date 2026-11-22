@@ -68,7 +68,7 @@ mysql -u root -p < database/init.sql
 - German/English/Spanish
 - Responsive, installable PWA with an in-app update prompt
 - Health monitoring endpoint (`/health`)
-- Test suites: 383 PHPUnit, 239 Vitest, 55 Playwright E2E tests
+- Test suites: 425 PHPUnit, 292 Vitest, 58 Playwright E2E tests
 
 ## Testing
 

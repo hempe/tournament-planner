@@ -117,9 +117,9 @@ For the switch itself see [DEPLOYMENT.md](DEPLOYMENT.md) (checklist "One-time cu
 - **PHP:** 8.3 required (production runs 8.3.37); the build checks the syntax with PHP 8.3.
 
 ### Quality
-- **PHP:** 396 API/model tests, line coverage 91 %.
-- **Frontend:** 285 tests.
-- **End to end:** 57 tests in a real browser against Apache + PHP 8.3 + MariaDB (desktop and
+- **PHP:** 425 API/model tests, line coverage 91 %.
+- **Frontend:** 292 tests.
+- **End to end:** 58 tests in a real browser against Apache + PHP 8.3 + MariaDB (desktop and
   iPhone).
 - **API types:** the TypeScript client is **generated from the PHP code**; a test fails when
   they drift apart.
@@ -158,15 +158,14 @@ Roughly by value for the club; none of this is started.
    registered!").
 4. **Overview page:** registrations of the coming weeks, full events, open waitlists.
 
-### Technical
-1. **Spam protection for guest registration** (it is public): honeypot field or rate limit.
-2. **Login rate limit** against password guessing.
-3. **Host the Hind Guntur font ourselves** instead of loading it from Google Fonts. In the EU,
-   loading Google Fonts without consent is a data-protection (GDPR) risk; it also works without
-   Google.
-4. **CI on GitHub** (tests on every push); deploying can stay manual.
-5. **Error reporting:** frontend errors are only in the browser console today; a small endpoint
-   that writes them to the server log would help with support.
-6. **Small clean-ups:**
-   - The label "Mixed" on the event form (German translation "Gemischt"?).
-   - Two unused PHP helpers (`Response::unauthorized`, `Request::isAjax`).
+### Technical (all done)
+1. ✅ **Spam protection for guest registration:** hidden honeypot field plus a limit of 10
+   registrations per hour and IP.
+2. ✅ **Login rate limit:** 5 failed attempts per IP and user name block further attempts for
+   15 minutes.
+3. ✅ **Hind Guntur font hosted with the app**; no request goes to Google any more.
+4. ✅ **CI on GitHub:** PHP tests and frontend checks on every push; the end-to-end suite can be
+   started by hand. Deploying stays manual.
+5. ✅ **Error reporting:** unexpected frontend errors are written to the server log
+   (`POST /api/client-errors`).
+6. ✅ **Small clean-ups:** "Gemischt" label, unused PHP helpers removed.
