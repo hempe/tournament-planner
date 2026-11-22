@@ -22,6 +22,8 @@ final class Event
         public readonly ?string $priceMembers = null,
         public readonly ?string $priceGuests = null,
         public readonly ?string $registrationClose = null,
+        /** Locked by an admin (isLocked is also true when the date or deadline passed). */
+        public readonly bool $manuallyLocked = false,
     ) {
         $this->available = $capacity - $joined;
     }

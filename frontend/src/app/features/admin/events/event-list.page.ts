@@ -1,9 +1,9 @@
 import { LoadError } from '../../../shared/ui/load-error';
-import { Component, computed, inject, resource } from '@angular/core';
+import { Component, computed, inject, resource, signal } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideChevronRight, lucidePlus, lucideTrash2 } from '@ng-icons/lucide';
+import { lucideChevronRight, lucideLock, lucideLockOpen, lucidePlus, lucideTrash2 } from '@ng-icons/lucide';
 import { HlmButtonImports } from '@ui/button';
 import { HlmSpinner } from '@ui/spinner';
 import { ApiClient } from '../../../core/api/api-client';
@@ -18,7 +18,7 @@ import { Page, PageHeader } from '../../../shared/ui/page';
 @Component({
   selector: 'app-event-list-page',
   imports: [LoadError, NgTemplateOutlet, RouterLink, NgIcon, HlmButtonImports, HlmSpinner, TranslatePipe, Page, PageHeader],
-  providers: [provideIcons({ lucideChevronRight, lucidePlus, lucideTrash2 })],
+  providers: [provideIcons({ lucideChevronRight, lucidePlus, lucideTrash2, lucideLock, lucideLockOpen })],
   template: `
     <div appPage width="wide">
       <app-page-header [title]="'events.title' | t">
@@ -39,19 +39,23 @@ import { Page, PageHeader } from '../../../shared/ui/page';
                 <th class="px-2 pt-3.5 pb-2 text-right font-medium">{{ 'events.max_participants' | t }}</th>
                 <th class="px-2 pt-3.5 pb-2 text-right font-medium">{{ 'events.registered' | t }}</th>
                 <th class="px-2 pt-3.5 pb-2 text-right font-medium">{{ 'events.waitlist' | t }}</th>
-                <th class="w-12 pt-3.5 pb-2 pr-3 pl-2"><span class="sr-only">{{ 'events.delete' | t }}</span></th>
+                <th class="w-20 pt-3.5 pb-2 pr-3 pl-2"><span class="sr-only">{{ 'events.delete' | t }}</span></th>
               </tr>
             </thead>
             <tbody class="flex flex-col gap-2 sm:table-row-group">
               @for (e of rows; track e.id) {
                 <tr
                   data-event-row
-                  class="relative block cursor-pointer rounded-lg border bg-card py-2 pr-11 pl-3 hover:bg-muted/50 sm:table-row sm:rounded-none sm:border-0 sm:border-b sm:bg-transparent sm:p-0 sm:last:border-b-0"
+                  class="relative block cursor-pointer rounded-lg border bg-card py-2 pr-20 pl-3 hover:bg-muted/50 sm:table-row sm:rounded-none sm:border-0 sm:border-b sm:bg-transparent sm:p-0 sm:last:border-b-0"
                   (click)="open(e)"
                 >
                   <td class="block text-xs text-muted-foreground sm:table-cell sm:py-2.5 sm:pr-2 sm:pl-4 sm:text-sm sm:whitespace-nowrap">{{ formatDate(e.date) }}</td>
                   <td class="block font-medium sm:table-cell sm:px-2 sm:py-2.5">
                     <a class="hover:underline" [routerLink]="['/events', e.id, 'admin']" (click)="$event.stopPropagation()">{{ e.name }}</a>
+                    @if (e.isLocked) {
+                      <!-- locked by hand, or registration deadline / date passed -->
+                      <ng-icon data-locked name="lucideLock" size="14" class="ml-1.5 align-[-2px] text-muted-foreground" [attr.aria-label]="'events.locked' | t" [attr.title]="'events.locked' | t" />
+                    }
                   </td>
                   <td class="inline text-xs text-muted-foreground tabular-nums sm:table-cell sm:px-2 sm:py-2.5 sm:text-right sm:text-sm sm:text-foreground">
                     <span class="sm:hidden">{{ 'events.max_participants' | t }}: </span>{{ e.capacity }}
@@ -62,7 +66,21 @@ import { Page, PageHeader } from '../../../shared/ui/page';
                   <td class="inline text-xs text-muted-foreground tabular-nums sm:table-cell sm:px-2 sm:py-2.5 sm:text-right sm:text-sm sm:text-foreground">
                     <span class="sm:hidden"> · {{ 'events.waitlist' | t }}: </span>{{ e.waitlist }}
                   </td>
-                  <td class="absolute top-1/2 right-1.5 -translate-y-1/2 sm:static sm:table-cell sm:translate-y-0 sm:py-1 sm:pr-3 sm:pl-2 sm:text-right">
+                  <td class="absolute top-1/2 right-1.5 -translate-y-1/2 flex gap-0.5 sm:static sm:table-cell sm:translate-y-0 sm:py-1 sm:pr-3 sm:pl-2 sm:text-right sm:whitespace-nowrap">
+                    <button
+                      hlmBtn
+                      variant="ghost"
+                      size="icon-sm"
+                      type="button"
+                      data-lock-toggle
+                      [class]="e.manuallyLocked ? 'text-destructive' : 'text-muted-foreground hover:text-foreground'"
+                      [attr.aria-label]="(e.manuallyLocked ? 'events.unlock' : 'events.lock') | t"
+                      [attr.title]="(e.manuallyLocked ? 'events.unlock' : 'events.lock') | t"
+                      [disabled]="busy() === e.id"
+                      (click)="toggleLock($event, e)"
+                    >
+                      <ng-icon [name]="e.manuallyLocked ? 'lucideLock' : 'lucideLockOpen'" />
+                    </button>
                     <button
                       hlmBtn
                       variant="ghost"
@@ -136,6 +154,23 @@ export class EventListPage {
 
   protected open(event: EventSummaryDto): void {
     void this.router.navigate(['/events', event.id, 'admin']);
+  }
+
+  /** Event id whose lock is being toggled (disables its button). */
+  protected readonly busy = signal<number | null>(null);
+
+  /** Quick lock/unlock: no confirmation (easy to undo); only the affected row is replaced. */
+  protected async toggleLock(click: Event, event: EventSummaryDto): Promise<void> {
+    click.stopPropagation();
+    this.busy.set(event.id);
+    try {
+      const admin = eventAdminApi(this.api);
+      const result = event.manuallyLocked ? await admin.unlock(event.id) : await admin.lock(event.id);
+      this.events.update((list) => list?.map((e) => (e.id === event.id ? result.event : e)));
+      this.notify.success(event.manuallyLocked ? 'events.unlock_success' : 'events.lock_success');
+    } finally {
+      this.busy.set(null);
+    }
   }
 
   protected async remove(click: Event, event: EventSummaryDto): Promise<void> {

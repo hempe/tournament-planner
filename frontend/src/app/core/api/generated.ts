@@ -139,6 +139,7 @@ export interface EventSummaryDto {
   available: number;
   isLocked: boolean;
   userState: RegistrationState;
+  manuallyLocked: boolean;
 }
 
 export interface EventUpdateRequest {

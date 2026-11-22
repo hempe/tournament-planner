@@ -18,7 +18,7 @@ function detail(over: Partial<EventDetailDto> = {}, eventOver: Partial<EventDeta
   return {
     event: {
       id: 3, name: 'Cup', date: '2099-06-01', capacity: 10, joined: 1, waitlist: 0,
-      available: 5, isLocked: false, userState: 'registered', ...eventOver,
+      available: 5, isLocked: false, manuallyLocked: false, userState: 'registered', ...eventOver,
     },
     description: null, priceMembers: null, priceGuests: null, registrationClose: null,
     myRegistration: { state: 'registered', comment: '' }, participants: [], guests: [], socialEvent: null,

@@ -8,16 +8,17 @@ import { I18n } from '../../../core/i18n/i18n';
 import { EventListPage } from './event-list.page';
 
 function ev(id: number, name: string, over: Partial<EventSummaryDto> = {}): EventSummaryDto {
-  return { id, name, date: '2099-06-05', capacity: 20, joined: 12, waitlist: 3, available: 8, isLocked: false, userState: 'none', ...over };
+  return { id, name, date: '2099-06-05', capacity: 20, joined: 12, waitlist: 3, available: 8, isLocked: false, userState: 'none', manuallyLocked: false, ...over };
 }
 
 describe('EventListPage', () => {
-  let api: { get: ReturnType<typeof vi.fn>; delete: ReturnType<typeof vi.fn> };
+  let api: { get: ReturnType<typeof vi.fn>; delete: ReturnType<typeof vi.fn>; put: ReturnType<typeof vi.fn> };
   let confirm: { ask: ReturnType<typeof vi.fn> };
   let notify: { success: ReturnType<typeof vi.fn> };
+  const adminDto = (event: EventSummaryDto) => ({ event, mixed: true, description: null, priceMembers: null, priceGuests: null, registrationClose: null, registrations: [], guests: [], availableUsers: [], socialEvent: null });
 
   beforeEach(() => {
-    api = { get: vi.fn().mockResolvedValue([ev(1, 'Frühlingscup'), ev(2, 'Herbstcup', { date: '2099-09-01', joined: 5, waitlist: 0 })]), delete: vi.fn().mockResolvedValue(undefined) };
+    api = { get: vi.fn().mockResolvedValue([ev(1, 'Frühlingscup'), ev(2, 'Herbstcup', { date: '2099-09-01', joined: 5, waitlist: 0 })]), delete: vi.fn().mockResolvedValue(undefined), put: vi.fn() };
     confirm = { ask: vi.fn().mockResolvedValue(true) };
     notify = { success: vi.fn() };
     TestBed.configureTestingModule({
@@ -31,7 +32,7 @@ describe('EventListPage', () => {
     TestBed.inject(I18n).use('de', {
       events: {
         title: 'Anlässe', date: 'Datum', name: 'Name', max_participants: 'Max. Teilnehmer', registered: 'Angemeldet',
-        waitlist: 'Warteliste', add: 'Anlass hinzufügen', bulk_create: 'Mehrfache Termine erstellen', delete: 'Löschen',
+        waitlist: 'Warteliste', add: 'Anlass hinzufügen', bulk_create: 'Mehrfache Termine erstellen', delete: 'Löschen', lock: 'Sperren', unlock: 'Entsperren', locked: 'Gesperrt', lock_success: 'Gesperrt.', unlock_success: 'Entsperrt.',
         delete_confirm: 'Termin :name definitiv löschen?', delete_success: 'Anlass gelöscht',
         upcoming_events: 'Kommende Anlässe', past_events: 'Vergangene Anlässe', no_events: 'Keine Anlässe vorhanden.',
       },
@@ -122,9 +123,70 @@ describe('EventListPage', () => {
     confirm.ask.mockResolvedValue(false);
     const { fixture, el } = await render();
 
-    el.querySelectorAll<HTMLButtonElement>('tbody button')[0].click();
+    el.querySelectorAll<HTMLButtonElement>('tbody button[aria-label="Löschen"]')[0].click();
     await fixture.whenStable();
 
     expect(api.delete).not.toHaveBeenCalled();
+  });
+
+  describe('quick lock / unlock', () => {
+    const rowOf = (el: HTMLElement, name: string) =>
+      Array.from(el.querySelectorAll<HTMLElement>('[data-event-row]')).find((r) => r.textContent?.includes(name))!;
+
+    it('locks an open event without a confirmation and updates only that row', async () => {
+      api.put.mockResolvedValue(adminDto(ev(1, 'Frühlingscup', { isLocked: true, manuallyLocked: true })));
+      const fixture = TestBed.createComponent(EventListPage);
+      await fixture.whenStable();
+      const el: HTMLElement = fixture.nativeElement;
+      const getCalls = api.get.mock.calls.length;
+
+      rowOf(el, 'Frühlingscup').querySelector<HTMLButtonElement>('button[aria-label="Sperren"]')!.click();
+      await fixture.whenStable();
+
+      expect(confirm.ask).not.toHaveBeenCalled();
+      expect(api.put).toHaveBeenCalledWith('/events/1/lock', undefined, undefined);
+      expect(notify.success).toHaveBeenCalledWith('events.lock_success');
+      expect(api.get.mock.calls.length).toBe(getCalls); // no reload, the row is replaced
+      expect(rowOf(el, 'Frühlingscup').querySelector('button[aria-label="Entsperren"]')).not.toBeNull();
+      expect(rowOf(el, 'Frühlingscup').querySelector('[data-locked]')).not.toBeNull();
+    });
+
+    it('unlocks a manually locked event', async () => {
+      api.get.mockResolvedValue([ev(1, 'Frühlingscup', { isLocked: true, manuallyLocked: true })]);
+      api.delete.mockResolvedValue(adminDto(ev(1, 'Frühlingscup')));
+      const fixture = TestBed.createComponent(EventListPage);
+      await fixture.whenStable();
+      const el: HTMLElement = fixture.nativeElement;
+
+      rowOf(el, 'Frühlingscup').querySelector<HTMLButtonElement>('button[aria-label="Entsperren"]')!.click();
+      await fixture.whenStable();
+
+      expect(api.delete).toHaveBeenCalledWith('/events/1/lock', undefined);
+      expect(notify.success).toHaveBeenCalledWith('events.unlock_success');
+      expect(rowOf(el, 'Frühlingscup').querySelector('button[aria-label="Sperren"]')).not.toBeNull();
+      expect(rowOf(el, 'Frühlingscup').querySelector('[data-locked]')).toBeNull();
+    });
+
+    it('an event closed by its deadline shows the lock hint but can still be locked by hand', async () => {
+      api.get.mockResolvedValue([ev(1, 'Frühlingscup', { isLocked: true, manuallyLocked: false })]);
+      const fixture = TestBed.createComponent(EventListPage);
+      await fixture.whenStable();
+      const row = rowOf(fixture.nativeElement, 'Frühlingscup');
+
+      expect(row.querySelector('[data-locked]')).not.toBeNull();
+      expect(row.querySelector('button[aria-label="Sperren"]')).not.toBeNull();
+    });
+
+    it('the lock button does not open the event (row click)', async () => {
+      api.put.mockResolvedValue(adminDto(ev(1, 'Frühlingscup', { isLocked: true, manuallyLocked: true })));
+      const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+      const fixture = TestBed.createComponent(EventListPage);
+      await fixture.whenStable();
+
+      rowOf(fixture.nativeElement, 'Frühlingscup').querySelector<HTMLButtonElement>('button[aria-label="Sperren"]')!.click();
+      await fixture.whenStable();
+
+      expect(navigate).not.toHaveBeenCalled();
+    });
   });
 });

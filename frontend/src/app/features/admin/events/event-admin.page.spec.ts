@@ -18,7 +18,7 @@ function guest(id: number, firstName: string, male: boolean): AdminGuestDto {
 
 function dto(over: Partial<EventAdminDto> = {}, eventOver: Partial<EventAdminDto['event']> = {}): EventAdminDto {
   return {
-    event: { id: 3, name: 'Frühlingscup', date: '2099-06-01', capacity: 10, joined: 2, waitlist: 2, available: 8, isLocked: false, userState: 'none', ...eventOver },
+    event: { id: 3, name: 'Frühlingscup', date: '2099-06-01', capacity: 10, joined: 2, waitlist: 2, available: 8, isLocked: false, manuallyLocked: false, userState: 'none', ...eventOver },
     mixed: false,
     description: 'Beschreibung X',
     priceMembers: 'CHF 50',

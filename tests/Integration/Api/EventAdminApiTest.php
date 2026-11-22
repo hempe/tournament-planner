@@ -184,6 +184,24 @@ class EventAdminApiTest extends IntegrationTestCase
         $this->assertSame(404, $this->json('PUT', '/api/events/99999/lock')->statusCode);
     }
 
+    public function testListTellsManualLockApartFromDeadlineLock(): void
+    {
+        $manual = DB::$events->add('Manual', '2099-06-01', 2);
+        DB::$events->lock($manual);
+        $deadline = DB::$events->add('Deadline', '2099-06-02', 2, false, true, null, null, null, '2000-01-01 00:00:00');
+        $open = DB::$events->add('Open', '2099-06-03', 2);
+        $this->admin();
+
+        $byName = array_column($this->json('GET', '/api/events')->json(), null, 'name');
+
+        $this->assertSame([true, true], [$byName['Manual']['isLocked'], $byName['Manual']['manuallyLocked']]);
+        $this->assertSame([true, false], [$byName['Deadline']['isLocked'], $byName['Deadline']['manuallyLocked']]);
+        $this->assertSame([false, false], [$byName['Open']['isLocked'], $byName['Open']['manuallyLocked']]);
+
+        $unlocked = $this->json('DELETE', "/api/events/{$manual}/lock")->json()['event'];
+        $this->assertFalse($unlocked['manuallyLocked']);
+    }
+
     public function testExportReturnsCsvWithOneLinePerRegistrationAndGuest(): void
     {
         $userId = $this->member();

@@ -12,6 +12,7 @@ final class EventRepository extends BaseRepository
     private const QUERY_EVENT = "SELECT
                 e.id,
                 (e.locked = 1 OR e.date < NOW() OR (e.registration_close IS NOT NULL AND e.registration_close < NOW())) AS isLocked,
+                e.locked AS manuallyLocked,
                 e.name,
                 e.date,
                 e.capacity,
@@ -53,6 +54,7 @@ final class EventRepository extends BaseRepository
             $row['price_members'] ?? null,
             $row['price_guests'] ?? null,
             $row['registration_close'] ?? null,
+            (bool) ($row['manuallyLocked'] ?? false),
         );
     }
 

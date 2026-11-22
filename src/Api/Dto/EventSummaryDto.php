@@ -18,6 +18,8 @@ final readonly class EventSummaryDto
         public int $available,
         public bool $isLocked,
         public RegistrationState $userState,
+        /** Locked by an admin; isLocked also covers a passed date or registration deadline. */
+        public bool $manuallyLocked,
     ) {
     }
 
@@ -33,6 +35,7 @@ final readonly class EventSummaryDto
             $event->available,
             $event->isLocked,
             RegistrationState::fromDb($event->userState),
+            $event->manuallyLocked,
         );
     }
 }

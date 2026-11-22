@@ -12,7 +12,7 @@ function detail(over: Partial<EventDetailDto> = {}, eventOver: Partial<EventDeta
   return {
     event: {
       id: 3, name: 'Frühlingscup', date: '2099-06-01', capacity: 10, joined: 2, waitlist: 1,
-      available: 8, isLocked: false, userState: 'none', ...eventOver,
+      available: 8, isLocked: false, manuallyLocked: false, userState: 'none', ...eventOver,
     },
     description: 'Zeile 1\nZeile 2',
     priceMembers: 'CHF 50',
@@ -180,7 +180,7 @@ describe('EventDetailPage', () => {
   });
 
   it('locked and registered: input and buttons are disabled', async () => {
-    api.get.mockResolvedValue(detail({ myRegistration: { state: 'registered', comment: 'x' } }, { isLocked: true, userState: 'registered' }));
+    api.get.mockResolvedValue(detail({ myRegistration: { state: 'registered', comment: 'x' } }, { isLocked: true, manuallyLocked: false, userState: 'registered' }));
     const { el, button } = await render();
 
     expect(el.textContent).toContain('Anmeldung geschlossen');

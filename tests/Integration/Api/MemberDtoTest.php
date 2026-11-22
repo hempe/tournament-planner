@@ -42,6 +42,7 @@ class MemberDtoTest extends TestCase
             [
                 'id' => 5, 'name' => 'Cup', 'date' => '2099-06-01', 'capacity' => 20, 'joined' => 18,
                 'waitlist' => 3, 'available' => 2, 'isLocked' => false, 'userState' => RegistrationState::Waitlist,
+                'manuallyLocked' => false,
             ],
             get_object_vars($dto)
         );

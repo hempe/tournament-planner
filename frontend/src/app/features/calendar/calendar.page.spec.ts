@@ -11,7 +11,7 @@ import { monthOf } from './month';
 
 function ev(id: number, name: string, over: Partial<EventSummaryDto> = {}): EventSummaryDto {
   return {
-    id, name, date: '2099-06-05', capacity: 10, joined: 3, waitlist: 0, available: 5, isLocked: false,
+    id, name, date: '2099-06-05', capacity: 10, joined: 3, waitlist: 0, available: 5, isLocked: false, manuallyLocked: false,
     userState: 'none', ...over,
   };
 }
