@@ -1,5 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { lucideLogIn, lucideLogOut } from '@ng-icons/lucide';
 import { HlmButtonImports } from '@ui/button';
 import { SessionStore } from '../auth/session.store';
 import { Notify } from '../feedback/notify';
@@ -7,11 +9,28 @@ import { TranslatePipe } from '../i18n/translate.pipe';
 
 @Component({
   selector: 'app-header',
-  imports: [RouterLink, RouterLinkActive, HlmButtonImports, TranslatePipe],
+  imports: [RouterLink, RouterLinkActive, NgIcon, HlmButtonImports, TranslatePipe],
+  providers: [provideIcons({ lucideLogIn, lucideLogOut })],
   template: `
     <header class="border-b border-border bg-background">
+      <!-- Green bar as on www.golfelfaro.es: account actions in white -->
+      <div class="bg-primary text-primary-foreground">
+        <div class="flex h-10 items-center justify-end gap-1 px-[10px] text-sm md:h-12">
+          @if (session.loggedIn()) {
+            <span data-user-name class="max-w-[14rem] truncate pt-[0.3em] opacity-90">{{ session.user()?.displayName }}</span>
+            <span class="mx-2 h-4 w-px bg-white/40" aria-hidden="true"></span>
+            <button type="button" class="flex items-center gap-1.5 rounded-md px-2 py-1 hover:bg-white/15" (click)="logout()">
+              <ng-icon name="lucideLogOut" size="16" aria-hidden="true" /><span class="pt-[0.3em]">{{ 'nav.logout' | t }}</span>
+            </button>
+          } @else {
+            <a routerLink="/login" class="flex items-center gap-1.5 rounded-md px-2 py-1 hover:bg-white/15">
+              <ng-icon name="lucideLogIn" size="16" aria-hidden="true" /><span class="pt-[0.3em]">{{ 'auth.login' | t }}</span>
+            </a>
+          }
+        </div>
+      </div>
       <!-- Branding as on the previous site: logo 100px (75px below md), club name 21px/13px Hind Guntur -->
-      <div class="flex flex-wrap items-start gap-x-4 gap-y-2 p-[10px]">
+      <div class="flex flex-wrap items-center gap-x-4 gap-y-2 p-[10px]">
         <div class="flex min-w-0 gap-5">
           <a href="https://www.golfelfaro.es" class="shrink-0">
             <img src="/favicon.svg" alt="EL FARO GOLF" class="size-[75px] md:size-[100px]" />
@@ -24,20 +43,13 @@ import { TranslatePipe } from '../i18n/translate.pipe';
             {{ 'app.club_name_line1' | t }}<br />{{ 'app.club_name_line2' | t }}
           </a>
         </div>
-        <!-- Phones: no room next to logo + name, so the nav gets its own centred row (as on the previous site) -->
-        <nav class="flex w-full flex-wrap items-center justify-center gap-1 md:ml-auto md:w-auto md:justify-end md:pt-1">
-          @if (session.loggedIn()) {
-            @if (session.isAdmin()) {
-              <a hlmBtn variant="ghost" size="sm" routerLink="/events" routerLinkActive="text-primary!">{{ 'nav.events' | t }}</a>
-              <a hlmBtn variant="ghost" size="sm" routerLink="/users" routerLinkActive="text-primary!">{{ 'nav.users' | t }}</a>
-              <span class="mx-1 h-4 w-px bg-border" aria-hidden="true"></span>
-            }
-            <span data-user-name class="max-w-[12rem] truncate px-1 pt-[0.3em] text-sm text-muted-foreground">{{ session.user()?.displayName }}</span>
-            <button hlmBtn variant="ghost" size="sm" type="button" (click)="logout()">{{ 'nav.logout' | t }}</button>
-          } @else {
-            <a hlmBtn size="sm" routerLink="/login">{{ 'auth.login' | t }}</a>
-          }
-        </nav>
+        @if (session.isAdmin()) {
+          <!-- Admin navigation in the style of the website menu: active item green and underlined -->
+          <nav class="flex w-full justify-center gap-5 text-[15px] md:ml-auto md:w-auto md:justify-end md:pr-2">
+            <a routerLink="/events" routerLinkActive="text-primary! border-primary!" class="border-b-2 border-transparent py-2 hover:text-primary">{{ 'nav.events' | t }}</a>
+            <a routerLink="/users" routerLinkActive="text-primary! border-primary!" class="border-b-2 border-transparent py-2 hover:text-primary">{{ 'nav.users' | t }}</a>
+          </nav>
+        }
       </div>
     </header>
   `,

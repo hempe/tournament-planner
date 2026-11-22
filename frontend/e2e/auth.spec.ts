@@ -45,22 +45,21 @@ test('a member cannot open admin pages', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Benutzer', exact: true })).toHaveCount(0);
 });
 
-test('branding header: logo and club name; login sits top right on desktop, centred below on phones', async ({ page, isMobile }) => {
+test('branding header: green account bar above the logo and club name', async ({ page, isMobile }) => {
   await page.goto('/');
   const logo = page.locator('header img[src="/favicon.svg"]');
   await expect(logo).toBeVisible();
   await expect(page.getByTestId('site-name')).toContainText('EL FARO DE MASPALOMAS');
 
   const logoBox = (await logo.boundingBox())!;
-  const login = (await page.locator('header a[hlmBtn]').boundingBox())!;
+  expect(logoBox.width).toBe(isMobile ? 75 : 100);
+
+  // Login lives in the green bar at the top (as the utility bar on www.golfelfaro.es), right-aligned
+  const login = page.getByRole('link', { name: 'Mitglieder Anmeldung' });
+  const loginBox = (await login.boundingBox())!;
   const viewport = page.viewportSize()!;
-  if (isMobile) {
-    expect(logoBox.width).toBe(75);
-    expect(login.y).toBeGreaterThanOrEqual(logoBox.y + logoBox.height); // own row below the logo
-    expect(Math.abs(login.x + login.width / 2 - viewport.width / 2)).toBeLessThanOrEqual(1); // centred
-  } else {
-    expect(logoBox.width).toBe(100);
-    expect(login.y).toBeLessThan(logoBox.y + logoBox.height); // same row as the logo
-    expect(login.x + login.width).toBeGreaterThan(viewport.width - 40); // right edge
-  }
+  expect(loginBox.y + loginBox.height).toBeLessThanOrEqual(logoBox.y);
+  expect(loginBox.x + loginBox.width).toBeGreaterThan(viewport.width - 40);
+  const barColour = await login.evaluate((el) => getComputedStyle(el.closest('.bg-primary')!).backgroundColor);
+  expect(barColour).toBe('rgb(135, 183, 35)');
 });
