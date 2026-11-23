@@ -1,6 +1,6 @@
 # Amigos + El Faro: one code base, two flavours — design
 
-Status: **all sections agreed with the user (2026-11-22); spec awaiting user review → then writing-plans.**
+Status: **implemented (2026-11-23)** — plan: `docs/superpowers/plans/2026-11-22-amigos-flavor.md`. Deviations: flavour folders in `frontend/flavors/<name>/`, texts merged at runtime, club-neutral base texts, `logo` in flavor.json.
 
 ## Background
 

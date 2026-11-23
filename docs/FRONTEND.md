@@ -24,8 +24,23 @@ src/app/
 ├── core/       api/ (ApiClient + generated.ts), auth/, i18n/, feedback/, errors/, layout/, init.ts, version.ts
 ├── features/   one folder per area, each lazy-loaded from app.routes.ts
 └── ui/         Spartan components — copied into the repo, ours to change
-src/i18n/       de.json, en.json, es.json (also read by PHP)
+src/i18n/       de.json, en.json, es.json — club-neutral base texts (also read by PHP)
+flavors/<name>/ flavor.json, theme.css, index.html, i18n/{de,en,es}.json (overrides), assets/ (icons, manifest, logo)
 ```
+
+## Flavours
+
+- `angular.json` has one configuration per flavour; combine it with `production`/`development`:
+  `ng build -c production,amigos`, `ng serve -c development-amigos` (`./run.sh amigos` does this). The default is El Faro,
+  and **unit tests always compile El Faro**.
+- The configuration swaps `core/flavor/active-flavor.ts` for `active-flavor.amigos.ts`, and sets that flavour's
+  `index.html`, `theme.css` and `assets/`. Only `active-flavor*.ts` may import from `flavors/`.
+- In code: `inject(Features).has('guests')`, `.userField('handicap')`; `inject(FLAVOR)` for name, logo, website.
+  Routes of switched-off features use `featureGuard('…')` (→ `/not-found`).
+- Texts: base file deep-merged with the flavour override at load time (same rule in PHP). Overrides may only use keys
+  that exist in the base texts (`npm run check:i18n` and a PHPUnit test check this). Club names live only in overrides.
+- Specs: `provideTestFlavor()` in the providers and `setTestFlavor(amigosFlavor)` inside a test (from
+  `core/flavor/testing.ts`; reset with `setTestFlavor(null)` in `afterEach`).
 
 ## Screens
 

@@ -1,4 +1,4 @@
-# GOLF EL FARO - Tournament Planner
+# Tournament Planner (GOLF EL FARO, Amigos de Tauro)
 
 A modern PHP web application for managing golf event registrations.
 
@@ -10,6 +10,19 @@ Tournament Planner is a web application for a golf club:
 - **Admins** create events (also in bulk), manage registrations, guests and users
 
 It is an Angular single-page app (installable PWA) on top of a PHP JSON API.
+
+### Flavours
+
+One code base, built separately for two clubs (`frontend/flavors/<name>/`: logo, icons, theme, texts, switches):
+
+- **`elfaro`** — GOLF EL FARO: everything on (dinners, guests, prices, deadlines, men/women lists).
+- **`amigos`** — Amigos de Tauro: tournaments only, waitlist by priority, phone/handicap/priority per user,
+  dark mode with a background photo on phones.
+
+```bash
+./run.sh amigos                     # develop as Amigos (default: elfaro)
+./build.sh --flavor amigos          # build an upload for the Amigos host
+```
 
 ## Quick Start
 
@@ -60,7 +73,7 @@ mysql -u root -p < database/init.sql
 
 - Tournament management (create, edit, delete, lock/unlock, CSV export, bulk create)
 - Social events linked to tournaments (menu + table selection, no waitlist)
-- User authentication and admin roles
+- User authentication and admin roles; login with the username or with "first last" / "last first" name
 - Event registration with waitlist support
 - Free-text event prices and descriptions
 - Guest registration (no account required)
@@ -68,7 +81,7 @@ mysql -u root -p < database/init.sql
 - German/English/Spanish
 - Responsive, installable PWA with an in-app update prompt
 - Health monitoring endpoint (`/health`)
-- Test suites: 425 PHPUnit, 292 Vitest, 58 Playwright E2E tests
+- Test suites: 456 PHPUnit, 304 Vitest, 69 Playwright E2E tests (59 El Faro + 10 against an Amigos build)
 
 ## Testing
 
@@ -83,8 +96,8 @@ See [docs/TESTING.md](docs/TESTING.md) for details.
 
 ## Deploying to Production
 
-Run `./build.sh` on a clean git tree and upload the two folders it creates (`dist/1-upload-first/`, then
-`dist/2-upload-last/`) to the web root. Never upload the source tree. The full procedure, rollback and the
+Run `./build.sh --flavor <elfaro|amigos>` on a clean git tree and upload the two folders it creates
+(`dist/<flavour>/1-upload-first/`, then `dist/<flavour>/2-upload-last/`) to that club's web root. Never upload the source tree. The full procedure, rollback and the
 one-time cut-over checklist are in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
 ## Quick Links

@@ -69,6 +69,9 @@ fresh cookie, so clients retry once.
 | POST | `/api/auth/login` | `{ "username", "password" }` | `200 { "user": User }`, `422 auth.login_failed` |
 | POST | `/api/auth/logout` | – | `204` (requires login) |
 
+`username` may also be the person's name as "first last" or "last first" (case and extra spaces don't matter).
+The exact login name is tried first; a name that matches more than one user never logs in.
+
 `User` = `UserDto` = `{ id, username, firstName, lastName, displayName, isAdmin }`. Responses are DTOs from `src/Api/Dto/`, never hand-built arrays (plan 2 generates TypeScript from them).
 
 ## Client error reports
@@ -101,7 +104,10 @@ Members act only on their own registration (`/registrations/me`).
 | GET | `/{id}/guest-info` | public | – | `PublicEventDto` | 404 `events.not_found` |
 | POST | `/{id}/guests` | public | `GuestRegistrationRequest` | `204` | 404; 409 `events.locked_message` (non-admins); 422 `validation.failed` + `fields` |
 
-Registering on a full event puts the user on the waitlist. Registering again updates the comment.
+`ParticipantDto.handicap` is filled only in flavours with the `handicap` user field (Amigos), otherwise `null`.
+
+Registering on a full event puts the user on the waitlist. Waitlist promotion is first come, first served; in the
+Amigos flavour (`waitlistOrder: "priority"`) by `priority` ascending (users without one last), then registration time. Registering again updates the comment.
 Locked means manually locked, date passed or registration deadline passed. Guest registration is
 rejected on locked events unless the caller is an admin; email and handicap are optional for admins.
 
@@ -173,6 +179,24 @@ generator skips it; the UI links to the URL directly.
 | `PUT /{id}` | `UserUpdateRequest` | `AdminUserDto` | empty/missing `password` keeps the old one; 422 as above (own username is fine) |
 | `PUT /{id}/admin`, `DELETE /{id}/admin` | – | `AdminUserDto` | grant / revoke admin |
 | `DELETE /{id}` | – | 204 | 409 `errors.forbidden` when an admin deletes themselves |
+
+Optional fields per flavour (`flavor.json` → `features.userFields`): `rfeg`, `memberNumber` (El Faro), `phone`,
+`handicap` (−10…54), `priority` (0…99999, lower = first off the waitlist) (Amigos). Fields the flavour doesn't use are
+returned as `null` and ignored on save (the stored value is kept). Without `genderSplit`, `male` is optional.
+`AdminUserDto.nameConflict` is `true` when another user has the same name or uses it as login name: name login is
+then ambiguous for this user (warning only, saving is never blocked).
+
+## Flavour switches (`#[Feature]`)
+
+Routes of features a flavour switches off answer **404 `errors.not_found`** (checked before authentication), as if
+they didn't exist. Annotate a controller class or method with `#[Feature('<switch>')]`:
+
+| Switch | Routes |
+|---|---|
+| `socialEvents` | all of `/api/social-events/*` |
+| `guests` | `GET /api/events/{id}/guest-info`, `POST /api/events/{id}/guests`, `GET|PUT|DELETE /api/events/{id}/guests/{guestId}`, the social-event guest routes |
+
+Prices, description, deadline and the men/women split are only hidden in the UI (the API accepts them).
 
 ## Testing
 

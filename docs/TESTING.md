@@ -142,9 +142,15 @@ Three layers; run all of them for cross-cutting changes.
 
 | Layer | Command | Count |
 |---|---|---|
-| PHPUnit (API, core, models, security) | `composer test` | 425 tests |
-| Vitest (Angular unit/component tests) | `cd frontend && npm test` | 292 tests in 44 files |
-| Playwright E2E (Apache + MariaDB in Docker) | `cd frontend && npm run e2e` | 58 tests (desktop + iPhone 13) |
+| PHPUnit (API, core, models, security) | `composer test` | 456 tests |
+| Vitest (Angular unit/component tests) | `cd frontend && npm test` | 304 tests in 45 files |
+| Playwright E2E (Apache + MariaDB in Docker) | `cd frontend && npm run e2e` | 69 tests: 59 El Faro (desktop + iPhone 13) + 10 against an Amigos build (desktop + dark-mode iPhone 13) |
+
+**Flavours:** PHPUnit and Vitest always run as El Faro; each switch is tested in both states within the same run
+(`Flavor::override(['guests' => false])` in PHPUnit — reset per test by `IntegrationTestCase` — and
+`provideTestFlavor()` + `setTestFlavor(amigosFlavor)` in Vitest). `npm run e2e` builds and tests El Faro, then builds
+an Amigos release and runs `frontend/e2e/amigos.spec.ts` against it with `e2e/seed-amigos.sql`.
+The old Amigos schema migration is covered by `AmigosMigrationTest` (its own database `TP_test_migration`, made-up data).
 
 Never run PHPUnit in parallel (or alongside `npm run e2e`): all suites share the test database `TP_test`.
 
