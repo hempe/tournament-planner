@@ -22,12 +22,23 @@ export default defineConfig({
     timezoneId: 'Europe/Zurich',
     trace: 'retain-on-failure',
   },
-  projects: [
-    { name: 'desktop', use: { ...devices['Desktop Chrome'] } },
-    {
-      name: 'mobile',
-      testMatch: /(auth|member|guest)\.spec\.ts/,
-      use: { ...devices['iPhone 13'], browserName: 'chromium', defaultBrowserType: 'chromium' },
-    },
-  ],
+  // E2E_FLAVOR=amigos (set by e2e/run.sh for its second run) runs only amigos.spec.ts against the Amigos build.
+  projects:
+    process.env['E2E_FLAVOR'] === 'amigos'
+      ? [
+          { name: 'amigos-desktop', testMatch: /amigos\.spec\.ts/, use: { ...devices['Desktop Chrome'] } },
+          {
+            name: 'amigos-mobile',
+            testMatch: /amigos\.spec\.ts/,
+            use: { ...devices['iPhone 13'], browserName: 'chromium', defaultBrowserType: 'chromium', colorScheme: 'dark' },
+          },
+        ]
+      : [
+          { name: 'desktop', testIgnore: /amigos\.spec\.ts/, use: { ...devices['Desktop Chrome'] } },
+          {
+            name: 'mobile',
+            testMatch: /(auth|member|guest)\.spec\.ts/,
+            use: { ...devices['iPhone 13'], browserName: 'chromium', defaultBrowserType: 'chromium' },
+          },
+        ],
 });

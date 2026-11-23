@@ -7,9 +7,10 @@ const root = join(__dirname, '..', '..');
 
 export const DB_CONTAINER = 'tp-e2e-db';
 
-/** Drops the database and recreates it from database/init.sql + e2e/seed.sql (about one second). */
+/** Drops the database and recreates it from database/init.sql + the seed (E2E_SEED, default e2e/seed.sql), about one second. */
 export function resetDatabase(): void {
-  const sql = ['database/init.sql', 'e2e/seed.sql', 'e2e/grant.sql'].map((f) => readFileSync(join(root, f), 'utf8')).join('\n');
+  const seed = process.env['E2E_SEED'] ?? 'e2e/seed.sql';
+  const sql = ['database/init.sql', seed, 'e2e/grant.sql'].map((f) => readFileSync(join(root, f), 'utf8')).join('\n');
   execSync(`docker exec -i ${DB_CONTAINER} mariadb -uroot -pe2e-root -e "DROP DATABASE IF EXISTS TPDb"`, { stdio: 'pipe' });
   execSync(`docker exec -i ${DB_CONTAINER} mariadb -uroot -pe2e-root`, { input: sql, stdio: ['pipe', 'pipe', 'pipe'] });
 }

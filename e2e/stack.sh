@@ -51,7 +51,7 @@ ENV
     docker run -d --name "$DB" --network "$NET" \
         -e MARIADB_ROOT_PASSWORD=e2e-root -e MARIADB_USER=TP -e MARIADB_PASSWORD=e2e-password \
         -v "$PWD/database/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro" \
-        -v "$PWD/e2e/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql:ro" \
+        -v "$PWD/${E2E_SEED:-e2e/seed.sql}:/docker-entrypoint-initdb.d/02-seed.sql:ro" \
         -v "$PWD/e2e/grant.sql:/docker-entrypoint-initdb.d/03-grant.sql:ro" \
         --health-cmd 'healthcheck.sh --connect --innodb_initialized' --health-interval 2s --health-retries 60 \
         mariadb:11 >/dev/null
