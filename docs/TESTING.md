@@ -144,7 +144,7 @@ Three layers; run all of them for cross-cutting changes.
 |---|---|---|
 | PHPUnit (API, core, models, security) | `composer test` | 456 tests |
 | Vitest (Angular unit/component tests) | `cd frontend && npm test` | 304 tests in 45 files |
-| Playwright E2E (Apache + MariaDB in Docker) | `cd frontend && npm run e2e` | 69 tests: 59 El Faro (desktop + iPhone 13) + 10 against an Amigos build (desktop + dark-mode iPhone 13) |
+| Playwright E2E (Apache + MariaDB in Docker) | `cd frontend && npm run e2e` | 70 tests: 60 El Faro (desktop + iPhone 13) + 10 against an Amigos build (desktop + dark-mode iPhone 13) |
 
 **Flavours:** PHPUnit and Vitest always run as El Faro; each switch is tested in both states within the same run
 (`Flavor::override(['guests' => false])` in PHPUnit — reset per test by `IntegrationTestCase` — and

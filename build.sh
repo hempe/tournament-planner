@@ -75,7 +75,7 @@ composer api:check
 echo "Building frontend..."
 (cd frontend && npm ci && npx ng build --configuration "production,$FLAVOR" \
     --deploy-url="/app/$VERSION/" \
-    --define "APP_BUILD_VERSION='\"$VERSION\"'")
+    --define "APP_BUILD_VERSION='$VERSION'")
 BROWSER="frontend/dist/tournament-planner-ui/browser"
 
 # 4. Stage frontend

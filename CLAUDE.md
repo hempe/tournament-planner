@@ -71,7 +71,7 @@ Every change is tested, no exceptions:
 - Cross-cutting, routing, `.htaccess`, build or deploy changes also need `npm run e2e` (and an E2E spec when behavior is new).
 - All tests must pass; pre-existing failures are acceptable, new ones are not.
 - Never run PHPUnit in parallel (shared test DB `TP_test`) — also not alongside `npm run e2e`.
-- Current counts: 456 PHPUnit tests, 304 Vitest tests, 69 Playwright tests (59 El Faro on desktop + iPhone 13, 10 Amigos on desktop + dark-mode iPhone 13). PHP coverage must stay >= 85 %.
+- Current counts: 456 PHPUnit tests, 304 Vitest tests, 70 Playwright tests (60 El Faro on desktop + iPhone 13, 10 Amigos on desktop + dark-mode iPhone 13). PHP coverage must stay >= 85 %.
 - Test DB: `TP_test`, admin seeded as `admin` / `Admin123!`. `IntegrationTestCase::request()` resets `$_GET`/`$_POST` on every call.
   Details: [docs/TESTING.md](docs/TESTING.md).
 

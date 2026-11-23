@@ -148,3 +148,14 @@ test('old Amigos links redirect permanently', async ({ request }) => {
   // the API still runs through index.php (internal rewrite, no redirect)
   expect((await request.get('/api/auth/me')).status()).toBe(200);
 });
+
+test('the app knows its own version exactly as the server reports it (no update prompt loop)', async ({ page }) => {
+  const response = await page.goto('/');
+  const api = await page.request.get('/api/auth/me');
+  const serverVersion = api.headers()['x-app-version'];
+  expect(serverVersion).toBeTruthy();
+  expect(response?.status()).toBe(200);
+  await expect(page.locator('app-footer')).toContainText(serverVersion);
+  const footer = (await page.locator('app-footer').textContent())?.trim() ?? '';
+  expect(footer.endsWith(`· ${serverVersion}`), footer).toBe(true);
+});
