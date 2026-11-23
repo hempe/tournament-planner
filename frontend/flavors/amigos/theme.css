@@ -1,1 +1,54 @@
-/* Amigos de Tauro theme (filled in later). */
+/* Club theme (Amigos de Tauro) — colours of the old Amigos app.
+   Light everywhere; on phones in dark mode the background photo with translucent dark panels (as in the old app). */
+:root {
+  --font-sans: -apple-system, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+  --foreground: #333333;
+  --muted-foreground: #636e73;
+  --border: #e6e9ea;
+  --primary: #029062;
+  --primary-foreground: #ffffff;
+  --ring: #029062;
+  --destructive: #b6334d;
+  --social: #1c84c9;
+  /* calendar: light = registered, dark = open for registration */
+  --primary-light: #b1d4ec;
+  --social-light: #cce0f5;
+  --social-foreground: #ffffff;
+  /* desktop page background (grey-green of the old app) */
+  --page-bg: #888a7c;
+}
+
+html,
+body {
+  font-family: var(--font-sans);
+}
+
+@media (prefers-color-scheme: dark) and (max-width: 1000px) {
+  :root {
+    color-scheme: dark;
+    --background: rgba(0, 0, 0, 0.35);
+    --foreground: rgba(255, 255, 255, 0.9);
+    --card: rgba(0, 0, 0, 0.6);
+    --card-foreground: rgba(255, 255, 255, 0.9);
+    --popover: #1f2a1c;
+    --popover-foreground: rgba(255, 255, 255, 0.9);
+    --primary: #425b3b;
+    --primary-foreground: #ffffff;
+    --primary-light: rgba(155, 189, 145, 0.35);
+    --secondary: rgba(0, 0, 0, 0.4);
+    --secondary-foreground: rgba(255, 255, 255, 0.9);
+    --muted: rgba(0, 0, 0, 0.4);
+    --muted-foreground: rgba(255, 255, 255, 0.7);
+    --accent: rgba(255, 255, 255, 0.1);
+    --accent-foreground: rgba(255, 255, 255, 0.9);
+    --border: rgba(255, 255, 255, 0.1);
+    --input: rgba(255, 255, 255, 0.2);
+    --ring: #9bbd91;
+    --social-light: rgba(28, 132, 201, 0.35);
+  }
+
+  /* the photo sits behind everything; panels and header are translucent */
+  body {
+    background: url('/background_low_res.png') center / cover no-repeat fixed, #1d2a1a;
+  }
+}

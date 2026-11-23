@@ -5,7 +5,8 @@ import { FLAVOR, FlavorConfig, Features, featureGuard, provideFlavor } from './f
 import { mergeTexts } from '../i18n/i18n';
 
 const amigos: FlavorConfig = {
-  name: 'Amigos de Tauro', shortName: 'Amigos', timezone: 'Atlantic/Canary', usernameOrder: 'lastFirst', website: null,
+  name: 'Amigos de Tauro', shortName: 'Amigos',
+  logo: '/logo-header.png', timezone: 'Atlantic/Canary', usernameOrder: 'lastFirst', website: null,
   features: {
     socialEvents: false, guests: false, prices: false, description: false, deadline: false, genderSplit: false,
     waitlistOrder: 'priority', userFields: ['phone', 'handicap', 'priority'],

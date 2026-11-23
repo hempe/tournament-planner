@@ -1,6 +1,7 @@
 {
   "name": "GOLF EL FARO",
   "shortName": "el faro",
+  "logo": "/favicon.svg",
   "timezone": "Europe/Zurich",
   "usernameOrder": "firstLast",
   "website": "https://www.golfelfaro.es",

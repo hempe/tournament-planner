@@ -71,7 +71,7 @@ final class Config
         // Default configuration
         $this->config = [
             'app' => [
-                'name' => $_ENV['APP_NAME'] ?? 'GOLF EL FARO',
+                'name' => $_ENV['APP_NAME'] ?? Flavor::displayName(),
                 'url' => $_ENV['APP_URL'] ?? 'http://localhost:5000',
                 'locale' => $_ENV['APP_LOCALE'] ?? 'de',
                 'secure' => filter_var(

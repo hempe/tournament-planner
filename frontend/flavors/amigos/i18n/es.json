@@ -1,1 +1,16 @@
-{}
+{
+  "app": {
+    "name": "Amigos de Tauro",
+    "welcome": "Bienvenido a Amigos de Tauro",
+    "club_name_line1": "AMIGOS DE TAURO",
+    "club_name_line2": "GRAN CANARIA"
+  },
+  "auth": {
+    "welcome": "Bienvenido a Amigos de Tauro"
+  },
+  "events": {
+    "locked_message": "Lista cerrada: para cambios de última hora o comentarios, llame a Arno.",
+    "max_participants": "Máx. jugadores",
+    "participants": "Jugadores"
+  }
+}

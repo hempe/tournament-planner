@@ -1,1 +1,11 @@
-{}
+{
+  "app": {
+    "name": "GOLF EL FARO",
+    "welcome": "Bienvenido a GOLF EL FARO",
+    "club_name_line1": "CLUB DEPORTIVO DE GOLF",
+    "club_name_line2": "EL FARO DE MASPALOMAS"
+  },
+  "auth": {
+    "welcome": "Bienvenido a GOLF EL FARO"
+  }
+}

@@ -43,6 +43,8 @@ class FlavorTest extends TestCase
         $this->assertTrue(Flavor::hasUserField('rfeg'));
         $this->assertFalse(Flavor::hasUserField('phone'));
         $this->assertSame('Europe/Zurich', Flavor::timezone());
+        $this->assertSame('GOLF EL FARO', Flavor::displayName());
+        $this->assertSame('/favicon.svg', Flavor::logo());
     }
 
     public function testAmigosFromEnvironment(): void

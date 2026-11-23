@@ -33,11 +33,11 @@ import { TranslatePipe } from '../i18n/translate.pipe';
       <!-- Branding as on the previous site: logo 100px (75px below md), club name 21px/13px Hind Guntur -->
       <div class="flex flex-wrap items-center gap-x-4 gap-y-2 p-[10px]">
         <div class="flex min-w-0 gap-5">
-          <!-- Logo = the flavour's favicon.svg; links to the club website when the flavour has one -->
+          <!-- Logo from flavor.json; links to the club website when the flavour has one -->
           @if (flavor.website; as website) {
-            <a [href]="website" class="shrink-0"><img src="/favicon.svg" [alt]="flavor.name" class="size-[75px] md:size-[100px]" /></a>
+            <a [href]="website" class="shrink-0"><img [src]="flavor.logo" [alt]="flavor.name" class="size-[75px] md:size-[100px]" /></a>
           } @else {
-            <a routerLink="/" class="shrink-0"><img src="/favicon.svg" [alt]="flavor.name" class="size-[75px] md:size-[100px]" /></a>
+            <a routerLink="/" class="shrink-0"><img [src]="flavor.logo" [alt]="flavor.name" class="size-[75px] md:size-[100px]" /></a>
           }
           <a
             routerLink="/"

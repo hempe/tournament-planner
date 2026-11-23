@@ -1,9 +1,9 @@
 {
     "app": {
-        "name": "GOLF EL FARO",
-        "welcome": "Willkommen bei GOLF EL FARO",
-        "club_name_line1": "CLUB DEPORTIVO DE GOLF",
-        "club_name_line2": "EL FARO DE MASPALOMAS"
+        "name": "Turnierplaner",
+        "welcome": "Willkommen",
+        "club_name_line1": "GOLF",
+        "club_name_line2": "Turnierplaner"
     },
     "nav": {
         "home": "Startseite",
@@ -27,7 +27,7 @@
     },
     "auth": {
         "login": "Mitglieder Anmeldung",
-        "welcome": "Willkomen bei GOLF EL FARO",
+        "welcome": "Willkommen",
         "username": "Benutzername oder Vor- und Nachname",
         "password": "Passwort",
         "login_failed": "Anmeldung fehlgeschlagen",

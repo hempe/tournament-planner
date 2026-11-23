@@ -6,6 +6,7 @@ import { FLAVOR, FlavorConfig } from './flavor';
 export const amigosFlavor: FlavorConfig = {
   name: 'Amigos de Tauro',
   shortName: 'Amigos',
+  logo: '/logo-header.png',
   timezone: 'Atlantic/Canary',
   usernameOrder: 'lastFirst',
   website: null,

@@ -9,6 +9,8 @@ export type UserField = 'rfeg' | 'memberNumber' | 'phone' | 'handicap' | 'priori
 export interface FlavorConfig {
   name: string;
   shortName: string;
+  /** Header logo, a root-level file of the flavour's assets. */
+  logo: string;
   timezone: string;
   usernameOrder: 'firstLast' | 'lastFirst';
   website: string | null;

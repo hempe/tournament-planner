@@ -28,6 +28,18 @@ final class Flavor
         return self::$flavorName;
     }
 
+    /** Club name shown to people (flavor.json "name"). */
+    public static function displayName(): string
+    {
+        return self::load()['name'];
+    }
+
+    /** Header logo path (flavor.json "logo"). */
+    public static function logo(): string
+    {
+        return self::load()['logo'];
+    }
+
     public static function enabled(string $feature): bool
     {
         return self::features()[$feature] === true;
@@ -124,7 +136,7 @@ final class Flavor
         if (!is_array($data)) {
             $fail('root must be an object');
         }
-        foreach (['name', 'shortName'] as $field) {
+        foreach (['name', 'shortName', 'logo'] as $field) {
             if (!is_string($data[$field] ?? null) || $data[$field] === '') {
                 $fail($field);
             }
