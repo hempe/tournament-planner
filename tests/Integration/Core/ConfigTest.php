@@ -200,19 +200,30 @@ class ConfigTest extends TestCase
 
     public function testConfigCastsPortToInteger(): void
     {
+        // Restore afterwards: later tests open their own connections with $_ENV['DB_PORT']
+        // (over TCP in CI, where a leaked 3308 means "Connection refused").
+        $originalPort = $_ENV['DB_PORT'] ?? null;
         $_ENV['DB_PORT'] = '3308';
 
-        $reflection = new \ReflectionClass(Config::class);
-        $instance = $reflection->getProperty('instance');
-        $instance->setAccessible(true);
-        $instance->setValue(null, null);
+        try {
+            $reflection = new \ReflectionClass(Config::class);
+            $instance = $reflection->getProperty('instance');
+            $instance->setAccessible(true);
+            $instance->setValue(null, null);
 
-        $config = Config::getInstance();
+            $config = Config::getInstance();
 
-        $port = $config->get('database.port');
+            $port = $config->get('database.port');
 
-        $this->assertIsInt($port);
-        $this->assertEquals(3308, $port);
+            $this->assertIsInt($port);
+            $this->assertEquals(3308, $port);
+        } finally {
+            if ($originalPort === null) {
+                unset($_ENV['DB_PORT']);
+            } else {
+                $_ENV['DB_PORT'] = $originalPort;
+            }
+        }
     }
 
     public function testConfigCastsSessionLifetimeToInteger(): void
